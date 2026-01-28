@@ -1,0 +1,108 @@
+body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: lightgrey;
+}
+header{
+    background-color: rgb(11, 46, 110);
+    color: white;
+    font: 17px Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    /* position: fixed; */
+
+}
+header p{
+    font: normal 15px Arial, Helvetica, sans-serif;
+}
+
+.conta{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.iconde-login{
+    width: 50px;
+    height: auto;
+    border-radius: 50%;
+}
+.arrow-drop{
+    width: 20px;
+    height: auto;
+}
+
+main{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px;
+}
+
+.indicadores{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 400px;
+    padding: 20px;
+}
+.img-indicador{
+    width: 100px;
+    height: auto;
+}
+.p-pendente{
+    background-color: orange;
+    width: 400px;
+    height: 200px;
+    border-radius: 20px;
+}
+.p-pendente h1{
+    color: white;
+    text-align: center;
+    font: bold 35px Arial, Helvetica, sans-serif;
+}
+.info{
+    display: flex;
+    align-items: center;   /* centraliza o h2 em relação à imagem */
+    justify-content: flex-start;
+    padding-left: 30px;   /* controla o quão pra esquerda fica */
+    gap: 20px;
+}
+.info h2{
+    color: white;
+    font: bold 40px Arial, Helvetica, sans-serif;
+}
+.p-pronto{
+    background-color: green;
+    width: 400px;
+    height: 200px;
+    border-radius: 20px;
+}
+.p-pronto h1{
+    color: white;
+    text-align: center;
+    font: bold 35px Arial, Helvetica, sans-serif;
+}
+
+
+.conteudo{
+    display: flex;
+    gap: 30px;
+}
+.container-esquerda{
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    width: 50%;
+    height: 100vh;
+}
+.container-direita{
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    width: 50%;
+    height: 100vh;
+}
