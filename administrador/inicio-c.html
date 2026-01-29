@@ -10,12 +10,25 @@
 
 <body>
     <header>
-        <h4>Inicio</h4>
-        <h4>Clientes</h4>
-        <h4>Estoque</h4>
-        <h4>Pedidos</h4>
-        <h4>Relatorios</h4>
-        <div class="conta">
+        <nav>
+            <ul>
+                <li><a>Inicio</a></li>
+                <li><a>Clientes</a></li>
+                <li><a>Estoque</a></li>
+                <li>
+                    <a onmouseover="menuPedidos()">Pedidos</a>
+                    <ul class="submenu">
+                        <li><a>Historico de Pedidos</a></li>
+                        <li><a>Novo Pedido</a></li>
+                        <li><a>.</a></li>
+                    </ul>
+                </li>
+                <li><a>Relatorios</a></li>
+            </ul>
+        </nav>
+
+
+        <div onclick="loginMenu()" class="conta">
             <img class="icone-login" 
             src="../imagens-inicio-administrador/loginicon.svg"
             alt="icone-login">
@@ -73,9 +86,59 @@
             <div class="container-direita">
                 <h2>Pedidos Recentes</h2>
                 <hr>
+
+                <table>
+                <thead>
+                    <tr>
+                        <th>Pedido</th>
+                        <th>Cliente</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>#1023</b></td>
+                        <td>Empresa X</td>
+                        <td>
+                            <div class="status" data-status="producao">
+                                Em Producao
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><b>#1024</b></td>
+                        <td>Loja A</td>
+                        <td>
+                            <div class="status" data-status="aguardando">
+                                Aguardando
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><b>#1025</b></td>
+                        <td>Escola Y</td>
+                        <td>
+                            <div class="status" data-status="concluido">
+                                Concluido
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             </div>
         </section>
     </main>
+
+
+    <script>
+        document.querySelectorAll('.status').forEach(status => {
+            const tipo = status.dataset.status; //pega o valor do atributo data-status
+            status.classList.add(tipo);
+        });
+    </script>
+    
 </body>
 
 </html>

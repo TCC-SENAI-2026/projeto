@@ -8,12 +8,57 @@ body{
 header{
     background-color: rgb(11, 46, 110);
     color: white;
-    font: 17px Arial, Helvetica, sans-serif;
+    width: 100%;
+    height: 60px;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    /* position: fixed; */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 
+}
+nav{
+    align-content: center;
+}
+nav ul{
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 200px;
+}
+nav ul li{
+    position: relative;
+}
+nav ul li a{
+    text-decoration: none;
+    display: block;
+}
+nav ul li a:hover{
+    color: orange;
+}
+.submenu{
+    display: none;
+    position: absolute;
+    background-color: rgb(11, 46, 110);
+    top: 100%;
+    left: 0;
+    padding: 10px;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    min-width: 180px;
+    gap: 20px;
+}
+nav ul li:hover > .submenu{
+    display: flex;
+}
+
+header a{
+    color: white;
+    text-decoration: none;
+    font: bold 17px Arial, Helvetica, sans-serif;
+    cursor: pointer;
 }
 header p{
     font: normal 15px Arial, Helvetica, sans-serif;
@@ -143,4 +188,39 @@ main{
 }
 .container-direita hr{
     margin: 10px 20px;
+}
+
+table{
+    width: 95%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+    color: rgb(11, 46, 110);
+    font: bold 15px Arial, Helvetica, sans-serif;
+}
+thead{
+    background-color: lightgrey;
+    
+}
+th, td{
+    padding: 8px;
+    text-align: center;
+}
+.status{
+    color: white;
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.concluido{
+    background-color: green;
+}
+.producao{
+    background-color: orange;
+}
+.aguardando{
+    background-color: red;
 }
