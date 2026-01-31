@@ -28,23 +28,42 @@
         <a href="#" class="reset-link" onclick="openModal()">Solicitar Redefinição</a>
 
         <!-- MODAL -->
-            <div id="resetModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>Redefinir senha</h2>
-      <button class="close" type="button" onclick="closeModal()">x</button>
-    </div>
+        <div id="resetModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Redefinir senha</h2>
+                    <button class="close" type="button" onclick="closeModal()">x</button>
+                </div>
 
-    <div class="modal-body">
-      <input type="text" id="reReset" placeholder="RE (Registro de Empregado)" />
-      <button type="button" onclick="enviarSolicitacao()">Enviar</button>
-      <p class="modal-help">Sua solicitação será enviada ao administrador.</p>
-    </div>
-  </div>
-</div>
+                <div class="modal-body">
+                    <input type="text" id="reReset" placeholder="RE (Registro de Empregado)" />
+                    <button type="button" onclick="enviarSolicitacao()">Enviar</button>
+                    <p class="modal-help">Sua solicitação será enviada ao administrador.</p>
+                </div>
+            </div>
+        </div>
 
         </div>
-        <script src="redefinir.js">
+        <script>
+
+            function openModal() {
+                document.getElementById("resetModal").style.display = "flex";
+            }
+
+            function closeModal() {
+                document.getElementById("resetModal").style.display = "none";
+            }
+
+            function enviarSolicitacao() {
+                alert("Solicitação enviada com sucesso.");
+                closeModal();
+            }
+
+            /* fecha ao clicar fora da caixinha */
+            window.addEventListener("click", function (e) {
+                const modal = document.getElementById("resetModal");
+                if (e.target === modal) closeModal();
+            });
 
         </script>
 
