@@ -96,7 +96,7 @@ label {
   padding: 24px; /* pra não colar nas bordas em tela pequena */
 }
 
-/* caixinha */
+/* caixa */
 .modal-content {
   width: 420px;
   max-width: 100%;
@@ -128,14 +128,14 @@ label {
   line-height: 1;
 }
 
-/* corpo: organiza tudo e tira aqueles “buracos” */
+/* corpo: organiza tudo */
 .modal-body {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* input bonito */
+/* modificar input */
 .modal-body input {
   width: 100%;
   padding: 14px;
@@ -157,7 +157,7 @@ label {
   font-size: 18px;
 }
 
-/* textinho de baixo */
+/* texto de baixo */
 .modal-help {
   margin: 0;
   font-size: 13px;
