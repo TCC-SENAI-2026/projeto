@@ -1,0 +1,166 @@
+/* reset de pagina */
+* { 
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #8f8f8f;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  min-height: 95vh;
+}
+
+.login{
+  width: 570px;
+  height: 530px;
+  /* Espaço entre borda e conteudo */
+  padding: 50px; 
+  background: #fff;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centraliza o form horizontalmente */
+
+}
+.login form {
+  width: 100%;
+  /* aumenta margem de cima, colocando os campos para baixo */
+  margin-top: 140px;
+  flex: 1;
+}
+
+.campo{
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.campo input{
+  /* aumenta a altura dentro do input */
+  padding: 13px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+label {
+  align-items: center;
+  font-weight: bold;;
+}
+
+.botao1_2 {
+ display: flex;
+  justify-content: center;
+  gap: 20px;
+
+}
+.botao1_2 button {
+   width: 300px;
+   padding: 14px 3px;
+   margin-top: 24px;
+   font-size: 17px;
+  cursor: pointer;
+}
+
+.reset-link {
+  font-size: 18px;
+  color: #555;
+  text-decoration: none;
+}
+
+.reset-link:hover {
+  text-decoration: underline;
+  
+}
+
+/* modal */
+
+/* fundo escuro */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0; /* top right bottom left = 0 */
+  background: rgba(0,0,0,0.55);
+  z-index: 9999;
+
+  /* centraliza o modal */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px; /* pra não colar nas bordas em tela pequena */
+}
+
+/* caixinha */
+.modal-content {
+  width: 420px;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* cabeçalho: título + X */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+/* botão X */
+.close {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* corpo: organiza tudo e tira aqueles “buracos” */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* input bonito */
+.modal-body input {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #cfcfcf;
+  box-sizing: border-box;
+}
+
+/* botão enviar */
+.modal-body button {
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  color: #000000;
+  border-radius: 8px;
+  background-color: rgb(214, 214, 214);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* textinho de baixo */
+.modal-help {
+  margin: 0;
+  font-size: 13px;
+  color: #686868;
+  text-align: center;
+}
