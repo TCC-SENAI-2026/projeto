@@ -1,4 +1,4 @@
-/* reset de pagina */
+/* reset de pagina, tira a formatação padrao do navegador */
 * { 
   margin: 0;
   padding: 0;
@@ -83,44 +83,42 @@ label {
 /* fundo escuro */
 .modal {
   display: none;
-  position: fixed;
-  inset: 0; /* top right bottom left = 0 */
-  background: rgba(0,0,0,0.55);
-  z-index: 9999;
 
-  /* centraliza o modal */
+  /* Cobre a tela toda, cria efeito de foco no modal */
+  position: fixed;
+  inset: 0; 
+  background: rgba(0,0,0,0.55);
+
+  /* Centraliza a caixa branca no meio da tela */
   display: flex;
   align-items: center;
   justify-content: center;
 
-  padding: 24px; /* pra não colar nas bordas em tela pequena */
 }
 
-/* caixa */
+/* caixa branca*/
 .modal-content {
+  /* largura controlada, campos arredondados e cor do fundo */
   width: 420px;
-  max-width: 100%;
   background: #fff;
   border-radius: 12px;
+  max-width: 100%;
   padding: 20px;
   box-sizing: border-box;
 }
 
-/* cabeçalho: título + X */
+/* cabeçalho do modal */
 .modal-header {
+  /* Titulo e botao X na mesma linha, separação entre conteudo e cabeçalho */
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
 }
 
-.modal-header h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-/* botão X */
+/* botão X fechar */
 .close {
+  /* botao sem fundo e sem borda, estilo de icone, indicação de clique */
   border: none;
   background: transparent;
   font-size: 22px;
@@ -128,15 +126,17 @@ label {
   line-height: 1;
 }
 
-/* corpo: organiza tudo */
+/* corpo do modal */
 .modal-body {
+  /* organiza input, botao, texto, um abaixo do outro, com espaçamento */
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* modificar input */
+/* Campo de texto */
 .modal-body input {
+  /* cria campo largo, alinhado com o botão */
   width: 100%;
   padding: 14px;
   font-size: 16px;
@@ -147,6 +147,7 @@ label {
 
 /* botão enviar */
 .modal-body button {
+  /* Botão maior, estilo mais limpo */
   width: 100%;
   padding: 12px 14px;
   border: none;
@@ -157,8 +158,9 @@ label {
   font-size: 18px;
 }
 
-/* texto de baixo */
+/* texto de ajuda */
 .modal-help {
+  /* texto centralizado */
   margin: 0;
   font-size: 13px;
   color: #686868;
