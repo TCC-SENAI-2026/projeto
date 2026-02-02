@@ -1,3 +1,26 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+h2{
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+}
+p{
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+}
+/* celular */
+@media (min-width: 480px){}
+
+/* tablet */
+@media (min-width: 768px){}
+
+/* notebook */
+@media (min-width: 1024px){}
+
+/* desktop grande */
+@media (min-width: 1280px){}
+
 body{
     margin: 0;
     padding: 0;
