@@ -10,16 +10,17 @@
 
 <body>
     <main class="login">
-        <img src="Imagens/logo.png" alt="Logo do sistema" class="logo">
+        <img src="Imagens/E-threads.png" alt="Logo do sistema" class="logo">
 
         <form>
             <div class="campo">
                 <label for="re"></label>
-                <input type="text" id="re" name="re" placeholder="RE (Registro de Empregado)" required>
+                <input type="text" id="re" name="re" placeholder="RE (Registro de Empregado)" autocomplete="off"
+                    required>
             </div>
             <div class="campo">
                 <label for="senha"></label>
-                <input type="password" id="senha" name="senha" placeholder="Senha" required>
+                <input type="password" id="senha" name="senha" placeholder="Senha" autocomplete="off" required>
             </div>
             <div class="botao1_2">
                 <button class="bt-colab" type="submit">Colaborador</button>
@@ -29,66 +30,75 @@
 
         <a href="#" class="reset-link" onclick="openModal()">Solicitar Redefinição</a>
         <!-- "#" evita sair da página. Quando o usuario clica, o navegador executa a função openModal() -->
-
-        <!-- MODAL -->
-
-        <div id="resetModal" class="modal" style="display:none;">
-            <!-- id="resetModal" o JS usa isso para encontrar o modal, class="modal" o css estiliza esse fundo, style="display:none" o modal começa escondido até alguem clicar-->
-
-            <div class="modal-content"> <!-- caixa branca do centro, tudo que o usuário ve, fica aqui dentro -->
-
-                <div class="modal-header"> <!-- titulo do modal -->
-                    <h2>Redefinir Senha</h2>
-
-                    <button class="close" type="button" onclick="closeModal()">x</button>
-                    <!-- botão de fechar, ao clicar no "x" o modal desaparece -->
-                </div>
-
-                <div class="modal-body"> <!-- Corpo do modal -->
-
-                    <input type="text" id="reReset" placeholder="RE (Registro de Empregado)" />
-                    <!-- id="reReset" identifica o campo, placeholder -> texto de ajuda -->
-
-                    <button type="button" onclick="enviarSolicitacao()">Enviar</button>
-                    <!-- Quando clica, chama a função enviarSolicitacao() -->
-
-                    <p class="modal-help">Sua solicitação será enviada ao administrador.</p> <!-- Texto informativo -->
-                </div>
-            </div>
-        </div>
-
-        </div>
-        <script>
-
-            // Procura o elemento com id "resetModal", muda o display para "flex", fazendo o modal aparecer
-            function openModal() {
-                document.getElementById("resetModal").style.display = "flex";
-            }
-
-            // Procura o elemento com id "resetModal", muda o display para "none", fazendo o modal desaparecer
-            function closeModal() {
-                document.getElementById("resetModal").style.display = "none";
-            }
-
-            // Mostra um alerta e fecha o modal
-            function enviarSolicitacao() {
-                alert("Solicitação enviada com sucesso.");
-                closeModal();
-            }
-
-            /* window: pagina inteira, click: evento de clique, function (e): função que recebe o evento (informação do clique) */
-            window.addEventListener("click", function (e) {
-
-                // Guar a variável modal, que recebe o elemento com id "resetModal" (que cobre a tela toda)
-                const modal = document.getElementById("resetModal");
-
-                // Se o clique (e.target) for igual ao modal (ou seja, se o clique foi fora da caixa branca) closeModal() (entao fecha o modal)
-                if (e.target === modal) closeModal();
-            });
-
-        </script>
-
     </main>
+    <!-- MODAL -->
+
+    <div id="resetModal" class="modal" style="display:none;">
+        <!-- id="resetModal" o JS usa isso para encontrar o modal, class="modal" o css estiliza esse fundo, style="display:none" o modal começa escondido até alguem clicar-->
+
+        <div class="modal-content"> <!-- caixa branca do centro, tudo que o usuário ve, fica aqui dentro -->
+
+            <div class="modal-header"> <!-- titulo do modal -->
+                <h2>Redefinir Senha</h2>
+                <button class="close" type="button" onclick="closeModal()">x</button>
+                <!-- botão de fechar, ao clicar no "x" o modal desaparece -->
+            </div>
+
+            <hr class="linha-personalizada">
+
+            <form class="modal-body" onsubmit="enviarSolicitacao(event)"> <!-- Corpo do modal -->
+                <label for="reReset"></label>
+                <input type="text" id="reReset" placeholder="RE (Registro de Empregado)" autocomplete="off" required />
+                <!-- id="reReset" identifica o campo, placeholder -> texto de ajuda -->
+
+                <button type="submit" onclick="enviarSolicitacao()">Enviar</button>
+                <!-- Quando clica, chama a função enviarSolicitacao() -->
+
+                <p class="modal-help">Sua solicitação será enviada ao administrador.</p> <!-- Texto informativo -->
+            </form>
+        </div>
+    </div>
+
+    </div>
+    <script>
+
+        // Procura o elemento com id "resetModal", muda o display para "flex", fazendo o modal aparecer
+        function openModal() {
+            document.getElementById("resetModal").style.display = "flex";
+        }
+
+        // Procura o elemento com id "resetModal", muda o display para "none", fazendo o modal desaparecer
+        function closeModal() {
+            document.getElementById("resetModal").style.display = "none";
+        }
+
+        // Mostra um alerta e fecha o modal
+        function enviarSolicitacao(event) {
+            event.preventDefault();
+
+            const re = document.getElementById("reReset").value.trim();
+
+            if (re === "") {
+                return;
+            }
+
+            alert("Solicitação enviada com sucesso.");
+            closeModal();
+        }
+
+        /* window: pagina inteira, click: evento de clique, function (e): função que recebe o evento (informação do clique) */
+        window.addEventListener("click", function (e) {
+
+            // Guar a variável modal, que recebe o elemento com id "resetModal" (que cobre a tela toda)
+            const modal = document.getElementById("resetModal");
+
+            // Se o clique (e.target) for igual ao modal (ou seja, se o clique foi fora da caixa branca) closeModal() (entao fecha o modal)
+            if (e.target === modal) closeModal();
+        });
+
+    </script>
+
+
 </body>
 
 </html>
