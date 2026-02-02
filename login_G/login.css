@@ -6,35 +6,46 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #8f8f8f;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  min-height: 95vh;
+  min-height: 100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(135deg, #0f2440, #6fa3d7);
+}
+
+.logo{
+  display: block;
+  width: 200px;
+  max-width: 100%;
+  height: auto;
+  margin-top: 30px;
+  margin-right: 12px;
 }
 
 .login{
-  width: 570px;
-  height: 530px;
-  /* Espaço entre borda e conteudo */
-  padding: 50px; 
-  background: #fff;
-  border-radius: 8px;
+ width: 450px;
+ min-height: 490px;
+  padding: 40px;
+ background: rgba(255, 255, 255, 0.28); /* um pouco mais claro */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 30px 70px rgba(0,0,0,0.25);
+  border-radius: 13px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* centraliza o form horizontalmente */
-
+  align-items: center;
+  gap: 18px; /* <-- espaçamento entre logo, form, link */
 }
 .login form {
   width: 100%;
-  /* aumenta margem de cima, colocando os campos para baixo */
-  margin-top: 140px;
-  flex: 1;
+  margin-top: 50px;
+  flex: 0;    
 }
 
 .campo{
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -42,11 +53,18 @@ body {
 
 .campo input{
   /* aumenta a altura dentro do input */
-  padding: 13px;
-  font-size: 18px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 10px;
+  font-size: 16px;
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.6);
 }
+
+.campo input:focus {
+  outline: none;
+  border-color: #153057;
+  box-shadow: 0 0 0 3px rgba(31,58,95,0.2);
+}
+
 
 label {
   align-items: center;
@@ -57,18 +75,47 @@ label {
  display: flex;
   justify-content: center;
   gap: 20px;
+ 
 
 }
 .botao1_2 button {
-   width: 300px;
-   padding: 14px 3px;
-   margin-top: 24px;
-   font-size: 17px;
-  cursor: pointer;
+   width: 240px;
+   padding: 10px 3px;
+   margin-top: 15px;
+   font-size: 16px;
+   cursor: pointer;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+  transition: background-color .2s ease, transform .1s ease;
+}
+
+.botao1_2 button:hover {
+  transform: translateY(-1px);
+}
+
+.bt-colab{
+    background-color: #23416b;
+    color: #ffffff;
+}
+
+.bt-colab:hover {
+   background-color: #2b3b56;
+}
+
+.bt-adm{
+background-color: #414f60; /* grafite azulado */
+  color: #ffffff;
+  border: none;
+}
+
+.bt-adm:hover {
+  background-color: #374555;
 }
 
 .reset-link {
-  font-size: 18px;
+  margin-top: 20px;
+  font-size: 16px;
   color: #555;
   text-decoration: none;
 }
@@ -82,28 +129,25 @@ label {
 
 /* fundo escuro */
 .modal {
-  display: none;
-
   /* Cobre a tela toda, cria efeito de foco no modal */
+  display: none;
   position: fixed;
-  inset: 0; 
+  inset: 0;
   background: rgba(0,0,0,0.55);
+  z-index: 9999;
 
-  /* Centraliza a caixa branca no meio da tela */
-  display: flex;
   align-items: center;
   justify-content: center;
-
 }
 
 /* caixa branca*/
 .modal-content {
   /* largura controlada, campos arredondados e cor do fundo */
-  width: 420px;
+  width: 360px;
   background: #fff;
   border-radius: 12px;
   max-width: 100%;
-  padding: 20px;
+  padding: 15px;
   box-sizing: border-box;
 }
 
@@ -114,6 +158,7 @@ label {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
+  font-size: 13px;
 }
 
 /* botão X fechar */
@@ -130,6 +175,7 @@ label {
 .modal-body {
   /* organiza input, botao, texto, um abaixo do outro, com espaçamento */
   display: flex;
+  height: 140px;
   flex-direction: column;
   gap: 12px;
 }
@@ -138,30 +184,32 @@ label {
 .modal-body input {
   /* cria campo largo, alinhado com o botão */
   width: 100%;
-  padding: 14px;
-  font-size: 16px;
+  padding: 10px;
+  font-size: 15px;
   border-radius: 8px;
   border: 1px solid #cfcfcf;
   box-sizing: border-box;
+  margin-top: 3px;
 }
 
 /* botão enviar */
 .modal-body button {
   /* Botão maior, estilo mais limpo */
   width: 100%;
-  padding: 12px 14px;
+  padding: 10px 10px;
   border: none;
   color: #000000;
   border-radius: 8px;
   background-color: rgb(214, 214, 214);
   cursor: pointer;
-  font-size: 18px;
+  margin-top: 2px;
+  font-size: 16px;
 }
 
 /* texto de ajuda */
 .modal-help {
   /* texto centralizado */
-  margin: 0;
+  margin-top: 6px;
   font-size: 13px;
   color: #686868;
   text-align: center;
