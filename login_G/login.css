@@ -1,244 +1,444 @@
-/* reset de pagina, tira a formatação padrao do navegador */
-* { 
+/* reset de página: tira a formatação padrão do navegador */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* variáveis do projeto:
+   - fonte, tamanhos e pesos
+   - cores neutras
+   - cores de destaque */
+:root {
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --text-base: 16px;
+  --text-sm: 15px;
+  --text-xs: 14px;
+
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  --text: #1f2a37;
+  --muted: #6b7280;
+
+  /* cores de destaque do sistema */
+  --accent: #4f8cff;
+  /* neon suave */
+  --accent-2: #7c5cff;
+  /* roxo suave */
+}
+
+/* body:
+   - centraliza o card no meio da tela (flex)
+   - cria o fundo com profundidade (radiais + degradê)
+   - define a tipografia base */
 body {
   min-height: 100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(to right, #3a475b, #b7c4ce);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(circle at 20% 15%, rgba(80, 159, 255, 0.319), transparent 45%),
+    radial-gradient(circle at 80% 75%, rgba(160, 120, 255, 0.12), transparent 50%),
+    linear-gradient(135deg, #0b1020 0%, #141b2d 45%, #0f172a 100%);
+
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  color: var(--text);
+
+  /* deixa a fonte mais suave no navegador */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.logo{
+/* logo:
+   - tamanho e espaçamento
+   - contraste leve */
+.logo {
   display: block;
-  width: 200px;
+  width: 162px;
   max-width: 100%;
   height: auto;
+
   margin-top: 30px;
-  margin-right: 20px;
+  margin-bottom: 8px;
+  margin-right: 0;
+
+  filter: contrast(1.08);
 }
 
-.login{
- width: 450px;
- min-height: 490px;
+/* card do login (efeito vidro):
+   - fundo branco com opacidade + blur
+   - borda e sombra pra separar do fundo
+   - flex em coluna pra organizar logo, form e link */
+.login {
+  position: relative;
+  /* necessário para o ::before ficar preso no card */
+  width: 450px;
+  min-height: 490px;
   padding: 40px;
- background: rgba(225, 226, 245, 0.28); /* um pouco mais claro */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 30px 70px rgba(0,0,0,0.25);
-  border-radius: 13px;
+  color: rgba(255, 255, 255, 0.88);
+
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-radius: 18px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px; /* <-- espaçamento entre logo, form, link */
+  gap: 18px;
+  /* espaço entre logo, form e link */
 }
+
+/* efeito de brilho no card*/
+.login::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  background: radial-gradient(circle at top,
+      rgba(79, 140, 255, 0.18),
+      transparent 60%);
+  pointer-events: none;
+}
+
+/* form:
+   - ocupa a largura do card
+   - margin-top empurra os campos pra baixo*/
 .login form {
   width: 100%;
   margin-top: 50px;
-  flex: 0;    
+  flex: 0;
 }
 
-.campo{
+/* campo:
+   - container para label + input
+   - gap controla o espaço entre eles */
+.campo {
   margin-bottom: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.campo input{
-  /* aumenta a altura dentro do input */
-  padding: 10px;
-  font-size: 16px;
-  background: rgba(255,255,255,0.75);
-  border: 1px solid rgba(255,255,255,0.6);
-  border-radius: 2px;
+/* input do login:
+   - fundo claro pra contraste com card escuro
+   - transição suave de foco */
+.campo input {
+  height: 48px;
+  padding: 0 14px;
+
+  border-radius: 8px;
+  border: 1px solid #cfd6df;
+  background: rgba(255, 255, 255, 0.95);
+
+  transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* foco no input:
+   - remove contorno padrão
+   - adiciona borda */
 .campo input:focus {
   outline: none;
-  border-color: #153057;
-  box-shadow: 0 0 0 3px rgba(31,58,95,0.2);
+  border-color: rgba(79, 140, 255, 0.75);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.22);
 }
 
-
+/* label:
+   - mantém o texto padronizado */
 label {
-  align-items: center;
-  font-weight: bold;;
+  font-weight: var(--w-medium);
+  font-size: var(--text-sm);
+  color: var(--text);
 }
 
+/* linha dos botões:
+   - deixa um ao lado do outro, com espaço entre eles */
 .botao1_2 {
- display: flex;
+  display: flex;
   justify-content: center;
   gap: 20px;
- 
-
 }
+
+/* botões (base):
+   - estilo comum pros dois (colab e adm) */
 .botao1_2 button {
-   width: 240px;
-   padding: 10px 3px;
-   margin-top: 15px;
-   font-size: 16px;
-   cursor: pointer;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-  transition: background-color .2s ease, transform .1s ease;
+  width: 240px;
+  padding: 10px 3px;
+  margin-top: 15px;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
+/* hover base:
+   - sobe 1px pra dar sensação de clique */
 .botao1_2 button:hover {
   transform: translateY(-1px);
 }
 
-.bt-colab{
-    background-color: #23416b;
-    color: #ffffff;
+/* botão colaborador:
+   - degradê com cores do sistema */
+.bt-colab {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 25px rgba(79, 140, 255, 0.25);
+
+  color: #fff;
+  border-radius: 8px;
+  height: 42px;
+
+  font-weight: 500;
+  transition: background 0.2s ease;
 }
 
+/* hover do colaborador:
+   - leve brilho */
 .bt-colab:hover {
-   background-color: #2b3b56;
+  filter: brightness(1.05);
 }
 
-.bt-adm{
-background-color: #414f60; /* grafite azulado */
-  color: #ffffff;
+/* botão administrador:
+   - mais neutro pra ficar “secundário” */
+.bt-adm {
+  background-color: #5f6f82;
+
   border: none;
+  color: #fff;
+
+  border-radius: 8px;
+  height: 42px;
+
+  font-weight: 500;
+  transition: background 0.2s ease;
 }
 
 .bt-adm:hover {
-  background-color: #132840;
+  background-color: #526173;
 }
 
+/* link de redefinição:
+   - branco/translúcido
+   - hover com underline */
 .reset-link {
-  margin-top: 20px;
-  font-size: 16px;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #223a53;
+  font-size: 15.5px;
+  font-family: var(--font-ui);
+  font-weight: var(--w-medium);
+
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 18px;
+  display: inline-block;
   text-decoration: none;
 }
 
 .reset-link:hover {
   text-decoration: underline;
-  
+  opacity: 0.85;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* tipografia padrão para inputs e placeholders */
+.campo input,
+.modal-body input {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.campo input::placeholder,
+.modal-body input::placeholder {
+  color: #6b7280;
+}
+
+/* tipografia padrão dos botões (login e modal) */
+.botao1_2 button,
+.modal-body button {
+  font-family: var(--font-ui);
+  font-weight: var(--w-semibold);
+  letter-spacing: 0.2px;
 }
 
 /* modal */
 
-/* fundo escuro */
+/* overlay do modal:
+   - cobre a tela toda
+   - escurece o fundo pra focar na caixa */
 .modal {
-  /* Cobre a tela toda, cria efeito de foco no modal */
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+
+  background: rgba(0, 0, 0, 0.566);
+  /* um pouco mais escuro */
+  backdrop-filter: blur(2px);
+  /* dá foco no modal */
+  -webkit-backdrop-filter: blur(2px);
   z-index: 9999;
 
   align-items: center;
   justify-content: center;
+  padding: 16px;
 }
 
-/* caixa branca*/
+/* caixa do modal:
+   - também é “vidro”
+   - overflow hidden pra respeitar o border-radius do header */
 .modal-content {
-  /* largura controlada, campos arredondados e cor do fundo */
-  width: 360px;
-  background: rgba(255, 255, 255, 0.287); /* um pouco mais claro */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 30px 70px rgba(0,0,0,0.25);
-  border-radius: 12px;
+  width: 380px;
   max-width: 100%;
-  padding: 15px;
-  box-sizing: border-box;
+
+  background: rgba(94, 118, 155, 0.315);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(159, 199, 255, 0.447);
+  border-radius: 14px;
+  color: rgba(220, 234, 255, 0.704);
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(134, 141, 192, 0.27);
+  overflow: hidden;
 }
 
-/* cabeçalho do modal */
+/* header do modal:
+   - título e botão X na mesma linha
+   - tem um degradê leve pra separar do corpo */
 .modal-header {
-  /* Titulo e botao X na mesma linha, separação entre conteudo e cabeçalho */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 13px;
-  color: #22222d;
+
+  padding: 12px 16px;
+
+  font-family: var(--font-ui);
+  font-size: 18px;
+  font-weight: var(--w-bold);
+
+  background: rgba(136, 155, 210, 0.188);
+  color: rgb(230, 230, 230);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+
 }
 
 hr.linha-personalizada {
-  border: none; /* Remove a borda padrão */
-  border-top: 1px solid #9f9f9f; /* Define cor e espessura */
-  width: 100%; /* Ajusta o comprimento */
-  margin: 10px auto; /* Centraliza e ajusta o espaço */
+  display: none;
 }
 
-/* botão X fechar */
+/* botão X:
+   - com “área de clique” grande (40x40) */
 .close {
-  /* botao sem fundo e sem borda, estilo de icone, indicação de clique */
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  opacity: 0.85;
   border: none;
   background: transparent;
-  font-size: 22px;
+
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 24px;
+
+  border-radius: 10px;
   cursor: pointer;
-  line-height: 1;
+
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
-/* corpo do modal */
+.close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  opacity: 1;
+}
+
+.close:active {
+  transform: scale(0.96);
+}
+
+/* corpo do modal:
+   - empilha input, botão e texto um embaixo do outro */
 .modal-body {
-  /* organiza input, botao, texto, um abaixo do outro, com espaçamento */
+  padding: 14px 16px 16px;
   display: flex;
-  height: 140px;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+
 }
 
-/* Campo de texto */
+/* input do modal*/
 .modal-body input {
-  /* cria campo largo, alinhado com o botão */
-  width: 100%;
-  padding: 10px;
-  font-size: 15px;
-  border-radius: 2px;
-  border: 1px solid #e3e1e1;
-  box-sizing: border-box;
+  height: 46px;
+  padding: 0 14px;
+
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.92);
+  color: #111827;
+
+  outline: none;
 }
 
-/* botão enviar */
+/* foco do input do modal*/
+.modal-body input:focus {
+  border-color: rgba(79, 140, 255, 0.75);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.22);
+}
+
+/* botão do modal */
 .modal-body button {
-  /* Botão maior, estilo mais limpo */
-  width: 100%;
-  padding: 10px 10px;
+  height: 44px;
+
   border: none;
-  color: #000000;
-  border-radius: 5px;
-  background-color: #384554;
-  color: #ffffff;
-  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 25px rgba(79, 140, 255, 0.25);
+  color: #fff;
+
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: var(--w-semibold);
+
   cursor: pointer;
-  margin-top: 0px;
-  font-size: 16px;
-  transition: background-color .2s ease, transform .1s ease;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .modal-body button:hover {
-  background-color: #2f3843;
+
   transform: translateY(-1px);
+  filter: brightness(1.05);
 }
 
-.modal-body input:focus {
-  outline: none;
-  border-color: #153057;
-  box-shadow: 0 0 0 3px rgba(31,58,95,0.2);
+.modal-body button:active {
+  transform: translateY(1px);
 }
 
-/* texto de ajuda */
+/* texto de ajuda:*/
 .modal-help {
-  /* texto centralizado */
   margin-top: 6px;
-  font-size: 13px;
-  color: #000000;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.82);
   text-align: center;
 }
