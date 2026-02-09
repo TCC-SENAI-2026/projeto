@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style-padrao.css">
+    <link rel="stylesheet" href="style-pedidos.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+        <img class="logo" src="../imagens-inicio-administrador/E-threads-branco.png" alt="logo">
+        <nav>
+            <ul>
+                <li><a>Inicio</a></li>
+                <li><a>Clientes</a></li>
+                <li><a>Estoque</a></li>
+                <li>
+                    <a onmouseover="menuPedidos()">Pedidos</a>
+                    <ul class="submenu">
+                        <li><a>Historico de Pedidos</a></li>
+                        <li><a>Novo Pedido</a></li>
+                        <li><a>.</a></li>
+                    </ul>
+                </li>
+                <li><a>Relatorios</a></li>
+            </ul>
+        </nav>
+
+
+        <div onclick="loginMenu()" class="conta">
+            <img class="icone-login" src="../imagens-inicio-administrador/loginicon.svg" alt="icone-login">
+            <p>Ola, nome</p>
+            <img class="arrow-drop" src="../imagens-inicio-administrador/arrowdrop.svg" alt="arrow drop">
+        </div>
+    </header>
+
+    <main>
+        <h1>Pedidos</h1>
+            <hr>
+        <section class="conteudo">
+            
+            <div class="container">    
+                <div id="indicador">
+
+                </div>
+                <div id="indicador">
+
+                </div>
+                <div id="indicador">
+
+                </div>
+                <div id="indicador">
+
+                </div>
+
+                <div class="pedidos">
+                    <h2>Pedidos Pendentes</h2>
+                </div>
+            </div>
+            
+
+            <aside>
+                <h1>Filtros de Pedidos</h1>
+                <hr>
+            </aside>
+        </section>
+    </main>
+
+    <footer>
+
+    </footer>
+</body>
+
+</html>
