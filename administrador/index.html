@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <header>
+        <img class="logo" src="E-threads (3) (1).png" alt="logo">
+        <nav>
+            <ul>
+                <li><a>Inicio</a></li>
+                <li><a>Clientes</a></li>
+                <li><a>Estoque</a></li>
+                <li>
+                    <a onmouseover="menuPedidos()">Pedidos</a>
+                    <ul class="submenu">
+                        <li><a>Historico de Pedidos</a></li>
+                        <li><a>Novo Pedido</a></li>
+                        <li><a>.</a></li>
+                    </ul>
+                </li>
+                <li><a>Relatorios</a></li>
+            </ul>
+        </nav>
+
+
+
+
+        <div onclick="loginMenu()" class="conta">
+            <img class="icone-login" src="E-threads (3) (1).png" alt="icone-login">
+            <p>Ola, nome</p>
+            <img class="arrow-drop" src="E-threads (3) (1).png" alt="arrow drop">
+        </div>
+    </header>
+
+    <main>
+        <div class="formulario">
+
+            <form action="" method="post">
+                <fieldset>
+                    <legend class="titulo-f">Formulário de pedidos</legend>
+                    <div class="form-nome">
+                        <label for="">Nome:</label>
+                        <input type="text" name="nome:" required minlength=" 10">
+                    </div>
+
+                    <div class="form-email">
+                        <label for="email-id">Email:</label>
+                        <input type="email" name="Email:" id="email-id" required>
+                    </div>
+
+                    <div class="form-cpf">
+                        <label for="cpf-id">CPF</label>
+                        <input type="number" name="CPF:" id="cpf-id" required minlength="1" maxlength="9">
+                    </div>
+
+                    <div class="form-hamal">
+                        <label for="hamal-id">Hamal:</label>
+                        <input type="number" name="Hamal:" id="hamal-id">
+                    </div>
+                    <hr>
+                </fieldset>
+
+                <legend class="titulo-c">Categorias</legend>
+                <label for="form-produto">Roupas:</label>
+                <select name="produtos" id="produtos">
+
+                    <option value="produtos">camisa</option>
+                    <option value="produtos">camiseta</option>
+
+                </select>
+
+                <legend>Tipo do tecido</legend>
+                <label for="form-tecido">tecidos:</label>
+                <select name="tecidos" id="tecidos">
+
+                    <option value="tecido">Algodão</option>
+                    <option value="tecido">Poliester</option>
+                    <option value="tecido">Elastano</option>
+                    <option value="tecido">Seda</option>
+                </select>
+
+
+            </form>
+        </div>
+    </main>
+
+
+
+</body>
+
+</html>
