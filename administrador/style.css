@@ -1,38 +1,42 @@
-*{
+* {
    box-sizing: border-box;
    margin: 0;
    padding: 0;
 }
-h2{
+
+h2 {
    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
 }
-p{
+
+p {
    font-size: clamp(0.9rem, 2vw, 1.1rem);
 }
+
 /* celular */
-@media (min-width: 480px){}
+@media (min-width: 480px) {}
 
 
 /* tablet */
-@media (min-width: 768px){}
+@media (min-width: 768px) {}
 
 
 /* notebook */
-@media (min-width: 1024px){}
+@media (min-width: 1024px) {}
 
 
 /* desktop grande */
-@media (min-width: 1280px){}
+@media (min-width: 1280px) {}
 
 
-body{
+body {
    margin: 0;
    padding: 0;
    box-sizing: border-box;
    font-family: Arial, Helvetica, sans-serif;
    background-color: lightgrey;
 }
-header{
+
+header {
    background-color: rgb(11, 46, 110);
    color: white;
    width: 100%;
@@ -46,26 +50,32 @@ header{
 
 
 }
-nav{
+
+nav {
    align-content: center;
 }
-nav ul{
+
+nav ul {
    list-style: none;
    display: flex;
    align-items: center;
    gap: 200px;
 }
-nav ul li{
+
+nav ul li {
    position: relative;
 }
-nav ul li a{
+
+nav ul li a {
    text-decoration: none;
    display: block;
 }
-nav ul li a:hover{
+
+nav ul li a:hover {
    color: orange;
 }
-.submenu{
+
+.submenu {
    display: none;
    position: absolute;
    background-color: rgb(11, 46, 110);
@@ -78,55 +88,62 @@ nav ul li a:hover{
    min-width: 180px;
    gap: 20px;
 }
-nav ul li:hover > .submenu{
+
+nav ul li:hover>.submenu {
    display: flex;
 }
-.logo{
+
+.logo {
    max-width: 150px;
    width: 100%;
    height: auto;
    padding: 10px;
 }
-header{
+
+header {
    display: flex;
    justify-content: space-between;
    align-items: center;
 }
-header a{
+
+header a {
    color: white;
    text-decoration: none;
    font: bold 17px Arial, Helvetica, sans-serif;
    cursor: pointer;
 }
-header p{
+
+header p {
    font: normal 15px Arial, Helvetica, sans-serif;
 }
 
 
-.conta{
+.conta {
    display: flex;
    justify-content: center;
    align-items: center;
    gap: 10px;
 }
-.iconde-login{
+
+.iconde-login {
    width: 50px;
    height: auto;
    border-radius: 50%;
 }
-.arrow-drop{
+
+.arrow-drop {
    width: 20px;
    height: auto;
 }
 
 
-main{
+main {
    display: flex;
    padding-bottom: 30px
 }
 
 
-footer{
+footer {
    background-color: rgb(11, 46, 110);
    color: white;
    width: 100%;
@@ -138,45 +155,120 @@ footer{
    z-index: 1000;
 }
 
-/* formulário */
-.titulo-f{
-    margin: auto;
+
+
+/* formulário de pedidos */
+
+.container1 {
+   height: 240px;
+   width: 700px;
+   background: linear-gradient(to right, #c4bfbfab 0%, #aaa7a786 100%, #3f3838ec,rgba(116, 110, 110, 0.699));
+   border: 3px solid black;
+   border-radius: 10px;
+   position: absolute;
+   top: 150px;
+   left: 15%;
+   
 }
 
-.titulo-c{
-    margin: auto;
+h3 {
+   color: rgb(0, 0, 0);
+   position: absolute;
+   position: relative;
+   left: 20px;
+   bottom: -20px;
 }
 
-.formulario{
-    height: 500px;
-    width: 35%;
-    background-color: antiquewhite;
-    margin: auto;
-    
+/* icone-camiseta 01*/
+.icon-camiseta {
+   height: 85px;
+   width: 82px;
+   position: absolute;
+   bottom: 86.7px;
+   left: 18.5px;
 }
 
-input{
-    width: 220px;
+/*posição do input n1*/
+.checkbox-n1 {
+   display: flex;
+   position: relative;
+   left: 20px;
+   top: 130px; 
+   gap: 4px;  
+
+}
+/*icone-camisa 02*/
+.icon-camisa{
+   height: 85px;
+   width: 90px;
+   position: absolute;
+   position: relative;
+   top: 19px;
+   left: 130px;
+
+}
+/*posição do input 2*/
+.checkbox-n2{
+   display: flex;
+   position: absolute;
+   left: 120px;
+   top: 152.3px;
+   gap: 4px; 
 }
 
-.form-nome{
-    width: 100px;
-    padding-left: 30%;
+/*icone-camisa-longa*/
+.icon-camisa-longa{
+    height: 85px;
+    width: 90px;
+    position: absolute;
+    position: relative;
+    left: 160px;
+    top: 19px ;
+}
+/*posição do input3*/
+.checkbox-n3{
+   display: flex;
+   position: absolute;
+   left: 252px;
+   top: 151.5px;
+   gap: 4px
+   ;
+}
+/*icone da blusa*/
+.icon-blusaa{
+   height: 90px;
+   width: 90px;
+   position: absolute;
+   position: relative;
+   left: 202px;
+   top: 20px;
+}
+/*posição do input4*/
+.checkboxn-n4{
+   display: flex;
+   position: absolute;
+   left: 415px;
+   top: 151.5px;
+   gap: 4px;
 }
 
-.form-email{
-    width: 30px;
-    padding-left: 30%;
+/*icone do moletom*/
+.icon-moletom{
+    height: 90px;
+   width: 90px;
+   position: absolute;
+   position: relative;
+   left: 225px;
+   top: 20px;
 }
-
-.form-cpf{
-    width: 30px;
-    padding-left: 30%;
-}
-
-.form-hamal{
-    width: 30px;
-    padding-left: 30%;  
+/*posição do input5*/
+.checkboxn-n5{
+   display: flex;
+   position: absolute;
+   position: relative;
+   left: 524px;
+   top: 19px;
+   gap: 4px;
 }
 
 
