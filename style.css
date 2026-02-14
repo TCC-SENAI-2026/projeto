@@ -1,0 +1,351 @@
+* {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+}
+
+h2 {
+   font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+}
+
+p {
+   font-size: clamp(0.9rem, 2vw, 1.1rem);
+}
+
+/* celular */
+@media (min-width: 480px) {}
+
+
+/* tablet */
+@media (min-width: 768px) {}
+
+
+/* notebook */
+@media (min-width: 1024px) {}
+
+
+/* desktop grande */
+@media (min-width: 1280px) {}
+
+
+body {
+   margin: 0;
+   padding: 0;
+   width: 100%;
+   height: 100vh;
+   /* 1. Criando o degradê (as cores se repetem para o efeito de "volta" ser suave) */
+    background: linear-gradient(-45deg, #ffffff, #a2a3a3bb);
+    
+    /* 2. Aumentei o tamanho do fundo para ele poder se mover */
+    background-size: 400% 400%;
+    
+    /* 3. Chamamos a animação: nome | tempo | suavidade | infinito */
+    animation: degradeLento 10s ease infinite;
+
+   box-sizing: border-box;
+   font-family: Arial, Helvetica, sans-serif;
+   background-image: linear-gradient(width);
+}
+/* 4. Criando os movimentos do fundo */
+@keyframes degradeLento {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+header {
+   background-color: rgb(11, 46, 110);
+   color: white;
+   width: 100%;
+   height: 60px;
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   position: sticky;
+   top: 0;
+   z-index: 1000;
+
+
+}
+
+nav {
+   align-content: center;
+}
+
+nav ul {
+   list-style: none;
+   display: flex;
+   align-items: center;
+   gap: 200px;
+}
+
+nav ul li {
+   position: relative;
+}
+
+nav ul li a {
+   text-decoration: none;
+   display: block;
+}
+
+nav ul li a:hover {
+   color: orange;
+}
+
+.submenu {
+   display: none;
+   position: absolute;
+   background-color: rgb(11, 46, 110);
+   top: 100%;
+   left: 0;
+   padding: 10px;
+   border-radius: 0 0 5px 5px;
+   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+   flex-direction: column;
+   min-width: 180px;
+   gap: 20px;
+}
+
+nav ul li:hover>.submenu {
+   display: flex;
+}
+
+.logo {
+   max-width: 150px;
+   width: 100%;
+   height: auto;
+   padding: 10px;
+}
+
+header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+header a {
+   color: white;
+   text-decoration: none;
+   font: bold 17px Arial, Helvetica, sans-serif;
+   cursor: pointer;
+}
+
+header p {
+   font: normal 15px Arial, Helvetica, sans-serif;
+}
+
+
+.conta {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
+}
+
+.iconde-login {
+   width: 50px;
+   height: auto;
+   border-radius: 50%;
+}
+
+.arrow-drop {
+   width: 20px;
+   height: auto;
+}
+
+
+main {
+   display: flex;
+   padding-bottom: 30px
+}
+
+
+footer {
+   background-color: rgb(11, 46, 110);
+   color: white;
+   width: 100%;
+   height: 60px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   bottom: 0;
+   z-index: 1000;
+}
+
+
+
+/* formulário de pedidos */
+
+.container01 {
+   height: 240px;
+   width: 700px;
+   background: radial-gradient( rgb(243, 238, 238),rgb(243, 238, 238),rgb(213, 207, 207));
+   border: 3px solid black;
+   border-radius: 10px;
+   position: absolute;
+   top: 150px;
+   left: 15%;
+   
+}
+
+h3 {
+   color: rgb(0, 0, 0);
+   position: absolute;
+   position: relative;
+   left: 20px;
+   bottom: -20px;
+}
+
+/* icone-camiseta 01*/
+.icon-camiseta {
+   height: 85px;
+   width: 82px;
+   position: absolute;
+   bottom: 86.7px;
+   left: 18.5px;
+}
+
+/*posição do input n1*/
+.checkbox-n1 {
+   display: flex;
+   position: relative;
+   left: 20px;
+   top: 130px; 
+   gap: 4px;
+
+
+}
+/*icone-camisa 02*/
+.icon-camisa{
+   height: 85px;
+   width: 90px;
+   position: absolute;
+   position: relative;
+   top: 19px;
+   left: 130px;
+
+
+}
+/*posição do input 2*/
+.checkbox-n2{
+   display: flex;
+   position: absolute;
+   left: 120px;
+   top: 152.3px;
+   gap: 4px; 
+}
+
+/*icone-camisa-longa*/
+.icon-camisa-longa{
+    height: 85px;
+    width: 90px;
+    position: absolute;
+    position: relative;
+    left: 160px;
+    top: 19px ;
+}
+/*posição do input3*/
+.checkbox-n3{
+   display: flex;
+   position: absolute;
+   left: 252px;
+   top: 151.5px;
+   gap: 4px
+   ;
+}
+/*icone da blusa*/
+.icon-blusaa{
+   height: 90px;
+   width: 90px;
+   position: absolute;
+   position: relative;
+   left: 202px;
+   top: 20px;
+}
+/*posição do input4*/
+.checkboxn-n4{
+   display: flex;
+   position: absolute;
+   left: 415px;
+   top: 151.5px;
+   gap: 4px;
+}
+
+/*icone do moletom*/
+.icon-moletom{
+    height: 90px;
+   width: 90px;
+   position: absolute;
+   position: relative;
+   left: 225px;
+   top: 20px;
+}
+/*posição do input5*/
+.checkboxn-n5{
+   display: flex;
+   position: absolute;
+   position: relative;
+   left: 524px;
+   top: 19px;
+   gap: 4px;
+}
+
+.conteiner02{
+   height: 240px;
+   width: 700px;
+   background: radial-gradient( rgb(243, 238, 238),rgb(243, 238, 238),rgb(213, 207, 207));
+   border: 3px solid black;
+   border-radius: 10px;
+   position: absolute;
+   top: 250px;
+   left: -1.3px;
+}
+
+
+/* Estiliza o botão de cor para não ficar com a aparência padrão do Windows */
+input[type="color"] {
+   position: relative;    /* Usei para poder mover o quadrodo pra qualquer lado*/
+    width: 75px;          /* Define a largura do botão */
+    height: 75px;         /* Define a altura do botão */
+    background: none;     /* Remove qualquer fundo extra */
+    top: 18%;
+    left: 30px;
+   }
+
+.checkboxn-01-algodão{
+   position: relative;
+   top: 50px;
+   left: 31px;
+}
+
+
+/* Esse bloco remove as molduras internas de todos os input "color" que navegadores como Chrome colocam */
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;           /* Tira o espaço interno */
+}
+
+/* Estiliza a "amostra" de cor dentro do botão redondo */
+input[type="color"]::-webkit-color-swatch {
+    border: none;         /* Remove a borda interna */
+}
+
+/* cor 02*/
+
+
+#cor{
+   position: relative;
+   top: -22.2%;
+   left: 150px;
+}
+
+.checkbox-linho{
+   position: relative;
+   top: -44.5px;
+   left: 158px;
+}

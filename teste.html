@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moda Ágil</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #f1f1f1;
+}
+
+header {
+    background: #ffffff;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+header h1 {
+    font-size: 18px;
+}
+
+nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.card h2 {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.opcoes {
+    display: flex;
+    gap: 15px;
+}
+
+.opcao {
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.opcao div {
+    width: 50px;
+    height: 50px;
+    background: #eee;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.cores {
+    display: flex;
+    gap: 10px;
+}
+
+.cor {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+}
+
+.upload-area {
+    border: 2px dashed #bbb;
+    padding: 30px;
+    text-align: center;
+    border-radius: 8px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.quantidades {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.quantidades input {
+    width: 50px;
+    padding: 5px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-azul {
+    background: #2f7ed8;
+    color: #fff;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.resumo {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.resumo h3 {
+    margin-bottom: 15px;
+}
+
+.resumo img {
+    width: 80px;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.tabela {
+    width: 100%;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.tabela td {
+    padding: 4px 0;
+}
+
+.btn-verde {
+    background: #27ae60;
+    color: white;
+    width: 100%;
+    margin-top: 10px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>MODA ÁGIL</h1>
+    <nav>
+        <a href="#">Início</a>
+        <a href="#">Produtos</a>
+        <a href="#">Sobre Nós</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <!-- LADO ESQUERDO -->
+    <div>
+        <div class="card">
+            <h2>1. Detalhe do Tipo</h2>
+            <div class="opcoes">
+                <div class="opcao">
+                    <div></div>
+                    Camiseta
+                </div>
+                <div class="opcao">
+                    <div></div>
+                    Moletom
+                </div>
+                <div class="opcao">
+                    <div></div>
+                    Calça
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>2. Escolha Tecido</h2>
+            <div class="cores">
+                <div class="cor" style="background:#d8c3a5;"></div>
+                <div class="cor" style="background:#eee;"></div>
+                <div class="cor" style="background:#a3b18a;"></div>
+                <div class="cor" style="background:#3a5a40;"></div>
+                <div class="cor" style="background:#344e41;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>3. Upload de arte</h2>
+            <div class="upload-area">
+                Arraste arquivos PNG, AI ou PDF aqui
+            </div>
+
+            <div class="quantidades">
+                <label>P:</label><input type="number" value="0">
+                <label>M:</label><input type="number" value="0">
+                <label>G:</label><input type="number" value="0">
+                <label>GG:</label><input type="number" value="0">
+            </div>
+
+            <button class="btn-azul">FINALIZAR PEDIDO</button>
+        </div>
+    </div>
+
+    <!-- LADO DIREITO -->
+    <div class="resumo">
+        <h3>RESUMO DO SEU PEDIDO</h3>
+        <img src="https://cdn-icons-png.flaticon.com/512/892/892458.png" alt="Camiseta">
+
+        <p><strong>Camiseta</strong> | Algodão | Logo: uploaded.ai</p>
+
+        <table class="tabela">
+            <tr><td>P</td><td>10</td></tr>
+            <tr><td>M</td><td>15</td></tr>
+            <tr><td>G</td><td>5</td></tr>
+            <tr><td>GG</td><td>5</td></tr>
+        </table>
+
+        <p><strong>Total de peças: 35</strong></p>
+
+        <button class="btn-verde">CONCLUIR E PAGAR</button>
+    </div>
+    
+
+</div>
+
+</body>
+</html>
