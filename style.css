@@ -184,13 +184,13 @@ footer {
 
 .container01 {
    height: 240px;
-   width: 700px;
+   width: 870px;
    background: radial-gradient( rgb(243, 238, 238),rgb(243, 238, 238),rgb(213, 207, 207));
    border: 3px solid black;
    border-radius: 10px;
    position: absolute;
    top: 150px;
-   left: 15%;
+   left: 10%;
    
 }
 
@@ -208,14 +208,14 @@ h3 {
    width: 82px;
    position: absolute;
    bottom: 86.7px;
-   left: 18.5px;
+   left: 22px;
 }
 
 /*posição do input n1*/
 .checkbox-n1 {
    display: flex;
    position: relative;
-   left: 20px;
+   left: 25px;
    top: 130px; 
    gap: 4px;
 
@@ -228,7 +228,7 @@ h3 {
    position: absolute;
    position: relative;
    top: 19px;
-   left: 130px;
+   left: 150px;
 
 
 }
@@ -236,7 +236,7 @@ h3 {
 .checkbox-n2{
    display: flex;
    position: absolute;
-   left: 120px;
+   left: 140px;
    top: 152.3px;
    gap: 4px; 
 }
@@ -247,14 +247,14 @@ h3 {
     width: 90px;
     position: absolute;
     position: relative;
-    left: 160px;
+    left: 200px;
     top: 19px ;
 }
 /*posição do input3*/
 .checkbox-n3{
    display: flex;
    position: absolute;
-   left: 252px;
+   left: 285px;
    top: 151.5px;
    gap: 4px
    ;
@@ -265,25 +265,25 @@ h3 {
    width: 90px;
    position: absolute;
    position: relative;
-   left: 202px;
+   left: 260px;
    top: 20px;
 }
 /*posição do input4*/
 .checkboxn-n4{
    display: flex;
    position: absolute;
-   left: 415px;
+   left: 470px;
    top: 151.5px;
    gap: 4px;
 }
 
 /*icone do moletom*/
 .icon-moletom{
-    height: 90px;
+   height: 90px;
    width: 90px;
    position: absolute;
    position: relative;
-   left: 225px;
+   left: 310px;
    top: 20px;
 }
 /*posição do input5*/
@@ -291,14 +291,34 @@ h3 {
    display: flex;
    position: absolute;
    position: relative;
-   left: 524px;
+   left: 600px;
    top: 19px;
    gap: 4px;
 }
 
+.icon-calça{
+   height: 80px;
+   width: 100px;
+   position: absolute;
+   position: relative;
+   left: 720px;
+   top: -85px;
+}
+
+.checkboxn-n6{
+   display: flex;
+   position: absolute;
+   position: relative;
+   margin-top: 10px;
+   top: -93px;
+   left: 740px;
+   gap: 4px;
+}
+
+
 .conteiner02{
    height: 240px;
-   width: 700px;
+   width: 870px;
    background: radial-gradient( rgb(243, 238, 238),rgb(243, 238, 238),rgb(213, 207, 207));
    border: 3px solid black;
    border-radius: 10px;
@@ -322,6 +342,7 @@ input[type="color"] {
    position: relative;
    top: 50px;
    left: 31px;
+   font-size: 15px;
 }
 
 
@@ -335,17 +356,149 @@ input[type="color"]::-webkit-color-swatch {
     border: none;         /* Remove a borda interna */
 }
 
-/* cor 02*/
+/* cor 02-linho*/
 
 
-#cor{
+#cor-linho{
    position: relative;
-   top: -22.2%;
+   top: -22.5%;
    left: 150px;
+   cursor: pointer;
+
 }
 
 .checkbox-linho{
    position: relative;
-   top: -44.5px;
+   top: -46.5px;
    left: 158px;
+   font-size: 15px;
 }
+
+/*cor 03-poliéster*/
+
+#cor-poliester{
+   position: relative;
+   top: -148px;
+   left: 270px;
+   cursor: pointer;
+}
+
+.checkbox-poliester{
+   position: relative;
+   top: -141px;
+   left: 270px;
+   font-size: 15px;
+}
+
+/*cor 04-Seda*/
+
+#cor-seda{
+   position: relative;
+   top: -243px;
+   left: 380px;
+   cursor: pointer;
+}
+
+.checkbox-04-seda{
+   position: relative;
+   top: -236px;
+   left:  390px;
+   cursor: pointer;
+   font-size: 15px;
+}
+
+#cor-lã{
+    position: relative;
+   top: -338px;
+   left: 490px;
+   cursor: pointer;
+}
+
+.checkbox-05-lã{
+   position: relative;
+   top: -331px;
+   left:  510px;
+   cursor: pointer;
+   font-size: 15px;
+}
+
+#cor-elastano{
+   position: relative;
+   top: -433.4px ;
+   left: 600px;
+   cursor: pointer;
+}
+
+.checkbox-06-elastano{
+   position: relative;
+   top: -427px;
+   left:  600px;
+   cursor: pointer;
+   font-size: 15px;
+}
+
+#cor-renda{
+   position: relative;
+   top: -529.4px ;
+   left: 712px;
+   cursor: pointer;
+}
+
+.checkbox-07-renda{
+   position: relative;
+   top: -523px;
+   left:  717px;
+   cursor: pointer;
+   font-size: 15px;
+}
+
+/*Container 3- upload da imagem*/
+
+.conteiner03{
+   height: 400px;
+   width: 870px;
+   background: radial-gradient( rgb(243, 238, 238),rgb(243, 238, 238),rgb(213, 207, 207));
+   border: 3px solid black;
+   border-radius: 10px;
+   position: absolute;
+   top: 250px;
+   left: -1.3px;
+}
+
+/* Definindo variáveis para cores de marca */
+.upload-img{
+   background-color: #c7c0c0cc;
+   animation: degradeLe;
+   height: 200px;
+   width: 700px;
+   border: 3px dashed  rgb(0, 0, 0);
+   margin: auto;
+   margin-top: 40px;
+   
+}
+
+:root {
+    --cor-borda-tracejada: #a5c7f7; /* Um azul suave combinando com seu botão */
+    --cor-fundo-upload: #fcfcfc;
+    --cor-texto-escuro: #070707;
+    --cor-texto-claro: #888;
+    --fonte-tamanho-p: 1.1rem;
+    --fonte-tamanho-s: 0.9rem;
+}
+
+.upload-texto-principal{
+   position: relative;
+   margin-top: 70px;
+   left: 170px;
+
+}
+
+.upload-legendas{
+   position: relative;
+   margin-top: 5px;
+   left: 210px;
+   color: var(--cor-texto-claro);
+   
+}
+
+  
