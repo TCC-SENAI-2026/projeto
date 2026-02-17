@@ -1,296 +1,329 @@
-/* reset de página: tira a formatação padrão do navegador */
+/* Reset + vcariaveis*/
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* variáveis do projeto:
-   - fonte, tamanhos e pesos
-   - cores neutras
-   - cores de destaque */
 :root {
   --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 
   --text-base: 16px;
-  --text-sm: 15px;
-  --text-xs: 14px;
+  --text-sm: 14px;
 
   --w-regular: 400;
   --w-medium: 500;
   --w-semibold: 600;
   --w-bold: 700;
 
-  --text: #1f2a37;
-  --muted: #6b7280;
-
-  /* cores de destaque do sistema */
   --accent: #4f8cff;
-  /* neon suave */
   --accent-2: #7c5cff;
-  /* roxo suave */
+
+  --glass: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --white-strong: rgba(255, 255, 255, 0.92);
+  --white-mid: rgba(255, 255, 255, 0.82);
+
+  --shadow-strong: 0 40px 90px rgba(0, 0, 0, 0.6);
 }
 
-/* body:
-   - centraliza o card no meio da tela (flex)
-   - cria o fundo com profundidade (radiais + degradê)
-   - define a tipografia base */
+
 body {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(120deg,
+      #0b1020,
+      #141b2d,
+      #1c2950,
+      #141b2d,
+      #0b1020);
 
-  background:
-    radial-gradient(circle at 20% 15%, rgba(80, 159, 255, 0.319), transparent 45%),
-    radial-gradient(circle at 80% 75%, rgba(160, 120, 255, 0.12), transparent 50%),
-    linear-gradient(135deg, #0b1020 0%, #141b2d 45%, #0f172a 100%);
+  background-size: 200% 200%;
 
+  animation: gradientMove 10s ease infinite alternate;
   font-family: var(--font-ui);
   font-size: var(--text-base);
-  color: var(--text);
 
-  /* deixa a fonte mais suave no navegador */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* logo:
-   - tamanho e espaçamento
-   - contraste leve */
-.logo {
-  display: block;
-  width: 162px;
-  max-width: 100%;
-  height: auto;
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
 
-  margin-top: 30px;
-  margin-bottom: 8px;
-  margin-right: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(22, 47, 92, 0), transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(25, 11, 81, 0), transparent 60%);
 
-  filter: contrast(1.08);
+  background-size: 300% 300%;
+
+  animation: gradientMove 100s ease-in-out infinite;
+
+
+
+  pointer-events: none;
 }
 
-/* card do login (efeito vidro):
-   - fundo branco com opacidade + blur
-   - borda e sombra pra separar do fundo
-   - flex em coluna pra organizar logo, form e link */
+
+
 .login {
   position: relative;
-  /* necessário para o ::before ficar preso no card */
   width: 450px;
-  min-height: 490px;
-  padding: 40px;
+  max-width: calc(100vw - 32px);
 
-  color: rgba(255, 255, 255, 0.88);
+  padding: 40px 50px;
+  border-radius: 18px;
 
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
 
-  box-shadow:
-    0 40px 90px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow-strong), 0 0 0 1px rgba(255, 255, 255, 0.06);
 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 
-  border-radius: 18px;
+  color: rgba(255, 255, 255, 0.90);
 
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 18px;
-  /* espaço entre logo, form e link */
+  /* era 16px */
 }
 
-/* efeito de brilho no card*/
+/* brilho suave no topo do card */
 .login::before {
   content: "";
   position: absolute;
   inset: -2px;
   border-radius: 20px;
-  background: radial-gradient(circle at top,
-      rgba(79, 140, 255, 0.18),
-      transparent 60%);
+  background: radial-gradient(circle at top, rgba(79, 140, 255, 0.18), transparent 60%);
   pointer-events: none;
 }
 
-/* form:
-   - ocupa a largura do card
-   - margin-top empurra os campos pra baixo*/
+
+.logo {
+  width: 150px;
+  max-width: 100%;
+  height: auto;
+
+  display: block;
+  margin: 6px auto 6px;
+
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22));
+}
+
+
 .login form {
   width: 100%;
-  margin-top: 50px;
-  flex: 0;
+  margin-top: 4px;
 }
 
-/* campo:
-   - container para label + input
-   - gap controla o espaço entre eles */
-.campo {
-  margin-bottom: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* input do login:
-   - fundo claro pra contraste com card escuro
-   - transição suave de foco */
-.campo input {
-  height: 48px;
-  padding: 0 14px;
-
-  border-radius: 8px;
-  border: 1px solid #cfd6df;
-  background: rgba(255, 255, 255, 0.95);
-
-  transition: border 0.2s ease, box-shadow 0.2s ease;
-}
-
-/* foco no input:
-   - remove contorno padrão
-   - adiciona borda */
-.campo input:focus {
-  outline: none;
-  border-color: rgba(79, 140, 255, 0.75);
-  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.22);
-}
-
-/* label:
-   - mantém o texto padronizado */
-label {
-  font-weight: var(--w-medium);
-  font-size: var(--text-sm);
-  color: var(--text);
-}
-
-/* linha dos botões:
-   - deixa um ao lado do outro, com espaço entre eles */
+/* 
+   Abas (administrador/colaborador)
+ */
 .botao1_2 {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 6px 0 14px;
+  margin-bottom: 30px;
+  margin-top: 30px;
 }
 
-/* botões (base):
-   - estilo comum pros dois (colab e adm) */
 .botao1_2 button {
-  width: 240px;
-  padding: 10px 3px;
-  margin-top: 15px;
+  width: 100%;
+  padding: 9px 10px;
 
-  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  background: transparent;
+  color: rgba(255, 255, 255, 0.80);
+  box-shadow: none;
+
+  font-size: 13px;
+  font-weight: var(--w-semibold);
+
   cursor: pointer;
 
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-/* hover base:
-   - sobe 1px pra dar sensação de clique */
-.botao1_2 button:hover {
-  transform: translateY(-1px);
-}
-
-/* botão colaborador:
-   - degradê com cores do sistema */
-.bt-colab {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  box-shadow: 0 10px 25px rgba(79, 140, 255, 0.25);
-
-  color: #fff;
-  border-radius: 8px;
-  height: 42px;
-
-  font-weight: 500;
-  transition: background 0.2s ease;
-}
-
-/* hover do colaborador:
-   - leve brilho */
-.bt-colab:hover {
-  filter: brightness(1.05);
-}
-
-/* botão administrador:
-   - mais neutro pra ficar “secundário” */
-.bt-adm {
-  background-color: #5f6f82;
-
-  border: none;
-  color: #fff;
-
-  border-radius: 8px;
-  height: 42px;
-
-  font-weight: 500;
-  transition: background 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.12s ease, filter 0.2s ease;
 }
 
 .bt-adm:hover {
-  background-color: #526173;
+  background: linear-gradient(135deg,
+      rgba(169, 169, 169, 0.318),
+      rgba(37, 43, 61, 0.166));
+  border-color: rgba(255, 255, 255, 0.29);
+  transform: translateY(-1px);
 }
 
-/* link de redefinição:
-   - branco/translúcido
-   - hover com underline */
-.reset-link {
-  font-size: 15.5px;
-  font-family: var(--font-ui);
-  font-weight: var(--w-medium);
+.bt-colab:hover {
+  background: linear-gradient(135deg,
+      rgba(0, 67, 150, 0.401),
+      rgba(49, 49, 117, 0.51));
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
 
-  color: rgba(255, 255, 255, 0.9);
-  margin-top: 18px;
-  display: inline-block;
+
+/* “aba” ativa */
+.botao1_2 button.is-active {
+
+  border-color: rgba(169, 169, 169, 0.381);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+  /* era 14px */
+}
+
+
+.campo input {
+  width: 100%;
+  height: 41px;
+  /* diminui a altura total */
+  padding: 0 12px;
+  /* diminui o espaço interno */
+
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.92);
+
+  font-family: var(--font-ui);
+  font-size: 15px;
+  color: #111827;
+
+  transition: border-color .2s ease, box-shadow .2s ease, transform .12s ease;
+}
+
+.senha-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.senha-wrap input {
+  padding-right: 44px;
+  /* espaço pro ícone não ficar em cima do texto */
+}
+
+.toggle-senha {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: rgba(56, 56, 56, 0.75);
+}
+
+.toggle-senha:hover {
+  color: rgba(67, 67, 67, 0.95);
+}
+
+.icone-olho {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.olho-aberto {
+  display: none;
+  /* começa escondido */
+}
+
+
+.campo input::placeholder {
+  color: rgba(17, 24, 39, 0.55);
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: rgba(79, 140, 255, 0.75);
+  box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.18);
+}
+
+.campo input:hover {
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+/* 
+  Botao entrar
+ */
+.bt-entrar {
+  width: 240px;
+  display: block;
+  margin: 10px auto 0 auto;
+  margin-top: 23px;
+  height: 42px;
+  /* era 46px */
+  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg,
+      rgba(79, 140, 255, 0.78),
+      rgba(124, 92, 255, 0.78));
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: var(--w-semibold);
+
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.2s ease;
+}
+
+.bt-entrar:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  /* menos “estouro” */
+}
+
+.bt-entrar:active {
+  transform: translateY(0px);
+  filter: brightness(0.98);
+}
+
+.reset-link {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: var(--w-medium);
+  color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
 }
 
 .reset-link:hover {
+  color: #ffffff;
   text-decoration: underline;
-  opacity: 0.85;
-  color: rgba(255, 255, 255, 0.92);
 }
 
-/* tipografia padrão para inputs e placeholders */
-.campo input,
-.modal-body input {
-  font-family: var(--font-ui);
-  font-size: 15px;
-  font-weight: 400;
-}
+/* Modal */
 
-.campo input::placeholder,
-.modal-body input::placeholder {
-  color: #6b7280;
-}
-
-/* tipografia padrão dos botões (login e modal) */
-.botao1_2 button,
-.modal-body button {
-  font-family: var(--font-ui);
-  font-weight: var(--w-semibold);
-  letter-spacing: 0.2px;
-}
-
-/* modal */
-
-/* overlay do modal:
-   - cobre a tela toda
-   - escurece o fundo pra focar na caixa */
 .modal {
   display: none;
   position: fixed;
   inset: 0;
 
-  background: rgba(0, 0, 0, 0.566);
-  /* um pouco mais escuro */
+  background: rgba(0, 0, 0, 0.58);
   backdrop-filter: blur(2px);
-  /* dá foco no modal */
   -webkit-backdrop-filter: blur(2px);
+
   z-index: 9999;
 
   align-items: center;
@@ -298,29 +331,24 @@ label {
   padding: 16px;
 }
 
-/* caixa do modal:
-   - também é “vidro”
-   - overflow hidden pra respeitar o border-radius do header */
+/* caixa do modal (glass) */
 .modal-content {
   width: 380px;
   max-width: 100%;
 
-  background: rgba(94, 118, 155, 0.315);
+  background: rgba(94, 118, 155, 0.32);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 
-  border: 1px solid rgba(159, 199, 255, 0.447);
+  border: 1px solid rgba(159, 199, 255, 0.45);
   border-radius: 14px;
-  color: rgba(220, 234, 255, 0.704);
-  box-shadow:
-    0 40px 90px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(134, 141, 192, 0.27);
+
+  color: rgba(220, 234, 255, 0.88);
+
+  box-shadow: var(--shadow-strong), 0 0 0 1px rgba(134, 141, 192, 0.27);
   overflow: hidden;
 }
 
-/* header do modal:
-   - título e botão X na mesma linha
-   - tem um degradê leve pra separar do corpo */
 .modal-header {
   display: flex;
   align-items: center;
@@ -329,21 +357,20 @@ label {
   padding: 12px 16px;
 
   font-family: var(--font-ui);
-  font-size: 18px;
-  font-weight: var(--w-bold);
+  font-size: 16px;
+  font-weight: var(--w-semibold);
 
-  background: rgba(136, 155, 210, 0.188);
-  color: rgb(230, 230, 230);
+  background: rgba(136, 155, 210, 0.18);
+  color: rgba(255, 255, 255, 0.92);
+
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-
 }
 
 hr.linha-personalizada {
   display: none;
 }
 
-/* botão X:
-   - com “área de clique” grande (40x40) */
+/* botão X */
 .close {
   width: 40px;
   height: 40px;
@@ -351,7 +378,6 @@ hr.linha-personalizada {
   display: grid;
   place-items: center;
 
-  opacity: 0.85;
   border: none;
   background: transparent;
 
@@ -366,49 +392,43 @@ hr.linha-personalizada {
 
 .close:hover {
   background: rgba(255, 255, 255, 0.08);
-  opacity: 1;
 }
 
 .close:active {
   transform: scale(0.96);
 }
 
-/* corpo do modal:
-   - empilha input, botão e texto um embaixo do outro */
+/* corpo modal */
 .modal-body {
   padding: 14px 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-
 }
 
-/* input do modal*/
+/* input modal */
 .modal-body input {
   height: 46px;
   padding: 0 14px;
 
   font-family: var(--font-ui);
-  font-size: var(--text-sm);
+  font-size: 15px;
 
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.92);
   color: #111827;
-
-  outline: none;
 }
 
-/* foco do input do modal*/
 .modal-body input:focus {
+  outline: none;
   border-color: rgba(79, 140, 255, 0.75);
   box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.22);
 }
 
-/* botão do modal */
+/* botão modal */
 .modal-body button {
   height: 44px;
-
   border: none;
   border-radius: 10px;
 
@@ -421,24 +441,32 @@ hr.linha-personalizada {
   font-weight: var(--w-semibold);
 
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+  transition: transform 0.12s ease, filter 0.2s ease;
 }
 
 .modal-body button:hover {
-
   transform: translateY(-1px);
   filter: brightness(1.05);
 }
 
 .modal-body button:active {
-  transform: translateY(1px);
+  transform: translateY(0px);
+  filter: brightness(0.98);
 }
 
-/* texto de ajuda:*/
 .modal-help {
   margin-top: 6px;
-  font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.82);
   text-align: center;
+}
+
+@keyframes gradientMove {
+  from {
+    background-position: 0% 50%;
+  }
+
+  to {
+    background-position: 100% 50%;
+  }
 }

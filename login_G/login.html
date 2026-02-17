@@ -17,22 +17,44 @@
         <img src="Imagens/E-threads.png" alt="Logo do sistema" class="logo">
 
         <form>
-            <div class="campo">
-                <label for="re"></label>
-                <input type="text" id="re" name="re" placeholder="RE (Registro de Empregado)" autocomplete="off"
-                    required>
-            </div>
-            <div class="campo">
-                <label for="senha"></label>
-                <input type="password" id="senha" name="senha" placeholder="Senha" autocomplete="off" required>
-            </div>
             <div class="botao1_2">
-                <button class="bt-colab" type="submit">Colaborador</button>
-                <button class="bt-adm" type="submit">Administrador</button>
+                <button class="bt-colab is-active" type="button">Colaborador</button>
+                <button class="bt-adm" type="button">Administrador</button>
+
             </div>
+            <div class="campo">
+                <input type="text" id="re" name="re" placeholder="Digite seu RE" inputmode="numeric" pattern="[0-9]*"
+                    autocomplete="off" minlength="6" required>
+            </div>
+            <div class="campo senha-wrap">
+                <input type="password" id="senha" name="senha" placeholder="Digite sua senha" autocomplete="off"
+                    maxlength="11" required>
+
+                <button type="button" class="toggle-senha" aria-label="Mostrar senha">
+
+                    <svg class="icone-olho olho-fechado" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 3L21 21" />
+                        <path
+                            d="M10.58 10.58C10.21 10.95 10 11.45 10 12C10 13.1 10.9 14 12 14C12.55 14 13.05 13.79 13.42 13.42" />
+                        <path
+                            d="M9.88 4.24C10.55 4.08 11.26 4 12 4C17 4 20.73 7.11 22 12C21.62 13.47 20.87 14.81 19.84 15.91M14.12 19.76C13.45 19.92 12.74 20 12 20C7 20 3.27 16.89 2 12C2.6 9.67 4.06 7.7 6.11 6.39" />
+                    </svg>
+
+                    <svg class="icone-olho olho-aberto" viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M2 12C3.27 7.11 7 4 12 4C17 4 20.73 7.11 22 12C20.73 16.89 17 20 12 20C7 20 3.27 16.89 2 12Z" />
+                        <path
+                            d="M12 15.5C10.07 15.5 8.5 13.93 8.5 12C8.5 10.07 10.07 8.5 12 8.5C13.93 8.5 15.5 10.07 15.5 12C15.5 13.93 13.93 15.5 12 15.5Z" />
+                    </svg>
+                </button>
+            </div>
+
+            <button class="bt-entrar" type="submit">Entrar</button>
+
+
         </form>
 
-        <a href="#" class="reset-link" onclick="openModal()">Solicitar Redefinição</a>
+        <a href="#" class="reset-link" onclick="openModal()">Solicitar redefinição de senha</a>
         <!-- "#" evita sair da página. Quando o usuario clica, o navegador executa a função openModal() -->
     </main>
     <!-- MODAL -->
@@ -61,8 +83,6 @@
                 <p class="modal-help">Sua solicitação será enviada ao administrador.</p> <!-- Texto informativo -->
             </form>
         </div>
-    </div>
-
     </div>
     <script>
 
@@ -99,6 +119,36 @@
             // Se o clique (e.target) for igual ao modal (ou seja, se o clique foi fora da caixa branca) closeModal() (entao fecha o modal)
             if (e.target === modal) closeModal();
         });
+        const reInput = document.getElementById("re");
+
+        reInput.addEventListener("input", function () {
+            // remove tudo que não é número
+            this.value = this.value.replace(/\D/g, "");
+
+            // limita a 6 números
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+        });
+        const senhaInput = document.getElementById("senha");
+        const btnToggle = document.querySelector(".toggle-senha");
+        const olhoFechado = document.querySelector(".olho-fechado");
+        const olhoAberto = document.querySelector(".olho-aberto");
+
+        btnToggle.addEventListener("click", () => {
+            const estaVisivel = senhaInput.type === "text";
+
+            senhaInput.type = estaVisivel ? "password" : "text";
+
+            // troca os ícones
+            olhoFechado.style.display = estaVisivel ? "block" : "none";
+            olhoAberto.style.display = estaVisivel ? "none" : "block";
+
+            // acessibilidade (texto do botão)
+            btnToggle.setAttribute("aria-label", estaVisivel ? "Mostrar senha" : "Ocultar senha");
+        });
+
+
 
     </script>
 
