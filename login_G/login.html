@@ -18,9 +18,13 @@
 
         <form>
             <div class="botao1_2">
-                <button class="bt-colab is-active" type="button">Colaborador</button>
-                <button class="bt-adm" type="button">Administrador</button>
+                <button type="button" class="bt-colab active">
+                    Colaborador
+                </button>
 
+                <button type="button" class="bt-adm">
+                    Administrador
+                </button>
             </div>
             <div class="campo">
                 <input type="text" id="re" name="re" placeholder="Digite seu RE" inputmode="numeric" pattern="[0-9]*"
@@ -74,7 +78,7 @@
 
             <form class="modal-body" onsubmit="enviarSolicitacao(event)"> <!-- Corpo do modal -->
                 <label for="reReset"></label>
-                <input type="text" id="reReset" placeholder="RE (Registro de Empregado)" autocomplete="off" required />
+                <input type="text" id="reReset" placeholder="Digite seu RE" autocomplete="off" required />
                 <!-- id="reReset" identifica o campo, placeholder -> texto de ajuda -->
 
                 <button type="submit" onclick="enviarSolicitacao()">Enviar</button>
@@ -147,6 +151,23 @@
             // acessibilidade (texto do botão)
             btnToggle.setAttribute("aria-label", estaVisivel ? "Mostrar senha" : "Ocultar senha");
         });
+
+        const botoes = document.querySelectorAll(".botao1_2 button");
+
+        botoes.forEach(function (botao) {
+
+            botao.addEventListener("click", function () {
+
+                botoes.forEach(function (b) {
+                    b.classList.remove("active");
+                });
+
+                botao.classList.add("active");
+
+            });
+
+        });
+
 
 
 
