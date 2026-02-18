@@ -148,7 +148,7 @@ body::before {
   min-height: unset;
 
   border-radius: 7px;
- 
+
 
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.85);
@@ -207,11 +207,13 @@ body::before {
 
 
 .botao1_2 button.active {
-  background: linear-gradient(135deg, #1e4f8a74, #0e4fc1);
+  background: linear-gradient(135deg,
+      rgba(17, 115, 236, 0.779),
+      rgba(61, 55, 174, 0.636));
 
   color: #ffffff;
 
-  border: 0.4px solid rgba(106, 0, 255, 0.367);
+  border: 0.4px solid rgba(106, 0, 255, 0.515);
 
   box-shadow:
     0 0 0 1px rgba(79, 140, 255, 0.4),
@@ -321,7 +323,10 @@ body::before {
   border-radius: 10px;
   border: 1px solid rgba(59, 142, 234, 0.35);
 
-  background: linear-gradient(135deg, #1e4f8a, #3a7eff);
+  background: linear-gradient(135deg,
+      rgba(17, 116, 236, 0.903),
+      rgb(66, 62, 144));
+  box-shadow: 0 8px 17px rgba(0, 0, 0, 0.30);
 
   color: #ffffff;
   font-weight: 600;
@@ -332,9 +337,6 @@ body::before {
   margin: 8px auto 0 auto;
   display: block;
 
-  box-shadow:
-    0 6px 18px rgba(30, 79, 138, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 
   transition:
     transform 0.15s ease,
@@ -343,14 +345,16 @@ body::before {
 }
 
 .bt-entrar:hover {
-  background: linear-gradient(135deg, #2560a8db, #3a7fffd7);
+  background: linear-gradient(135deg,
+      rgba(17, 115, 236, 0.916),
+      rgb(66, 62, 144));
 
   box-shadow:
-    0 0 18px rgba(59, 141, 234, 0.282),
-    0 8px 22px rgba(58, 58, 58, 0.45);
+    0 0 12px rgba(59, 141, 234, 0.116),
+    0 2px 22px rgba(58, 58, 58, 0.45);
 
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(79, 140, 255, 0.25);
+  box-shadow: 0 4px 10px rgba(79, 141, 255, 0.149);
 }
 
 .bt-entrar:active {
