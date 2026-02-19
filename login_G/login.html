@@ -16,7 +16,7 @@
     <main class="login">
         <img src="Imagens/E-threads.png" alt="Logo do sistema" class="logo">
 
-        <form onsubmit="handleLogin(event)" id="loginForm" action="#" method="post" novalidate >
+        <form onsubmit="handleLogin(event)" id="loginForm" action="#" method="post" novalidate>
             <div class="botao1_2">
                 <button type="button" class="bt-colab active" onclick="selecionarModo('colaborador')">
                     Colaborador
@@ -196,7 +196,7 @@
         });
 
 
-        // define o modo padrão como colaborador
+        // define modo padrão como colaborador
         let modoSelecionado = "colaborador";
 
 
@@ -261,6 +261,18 @@
             erro.textContent = "RE ou senha inválidos.";
 
         }
+
+        document.getElementById("re").focus();
+
+        const form = document.querySelector("form");
+
+        form.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                document.querySelector(".bt-entrar").click();
+            }
+        });
+
 
     </script>
 

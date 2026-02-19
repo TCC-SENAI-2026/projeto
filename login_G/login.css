@@ -78,7 +78,7 @@ body::before {
   width: 420px;
   max-width: calc(100vw - 32px);
 
-  padding: 40px 50px;
+  padding: 35px 50px;
   border-radius: 18px;
 
   background: var(--glass);
@@ -116,10 +116,10 @@ body::before {
   width: 135px;
   max-width: 100%;
   height: auto;
-
   display: block;
   margin: 6px auto 6px;
-
+  margin-bottom: -5px;
+  margin-top: 13px;
   filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22));
 }
 
@@ -148,7 +148,7 @@ body::before {
   padding: 0px 14px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   line-height: 1.2;
-  height: 30px;
+  height: 28px;
   min-height: unset;
 
   border-radius: 10px;
@@ -195,17 +195,17 @@ body::before {
   transform: translateY(-1px);
 }
 
-
-
-
 .botao1_2 button.active {
-  background: rgba(79, 140, 255, 0.14);
-  border: 1px solid rgba(79, 141, 255, 0.556);
-  border-color: rgba(79, 141, 255, 0.719);
+  background: linear-gradient(135deg,
+      rgba(47, 110, 237, 0.274),
+      rgba(90, 95, 207, 0.16));
+
+  border: 1px solid rgba(79, 141, 255, 0.258);
+  border-color: rgba(106, 103, 249, 0.537);
   color: rgba(255, 255, 255, 0.95);
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    0 0 0 1px rgba(79, 140, 255, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .botao1_2 button:not(.is-active) {
@@ -291,8 +291,8 @@ body::before {
 
 .campo input:focus {
   outline: none;
-  border-color: rgb(0, 63, 181);
-  box-shadow: 0 0 0 4px rgba(95, 100, 240, 0.348);
+  border-color: #3834ff;
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
 }
 
 .campo input:hover {
@@ -308,10 +308,7 @@ body::before {
 
   border: 1px solid rgb(29, 7, 85);
   border-radius: 10px;
-  background: linear-gradient(135deg,
-      rgb(55, 58, 112),
-      rgba(64, 130, 216, 0.745));
-
+  background: linear-gradient(135deg, #0f4cadc8, #4a30b1a8);
   box-shadow:
     0 6px 18px rgba(26, 26, 26, 0.433),
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
@@ -325,6 +322,7 @@ body::before {
   cursor: pointer;
   margin: 0px auto 0 auto;
   display: block;
+  margin-top: px;
 
   transition:
     transform 0.15s ease,
@@ -334,9 +332,7 @@ body::before {
 }
 
 .bt-entrar:hover {
-  background: linear-gradient(135deg,
-      rgb(68, 62, 127),
-      rgba(64, 130, 216, 0.763));
+  background: linear-gradient(135deg, #165ac9bc, #4530b1d8);
   box-shadow:
     0 9px 18px rgba(0, 0, 0, 0.221),
     inset 0 0 0 1px rgba(255, 255, 255, 0.10),
@@ -353,8 +349,6 @@ body::before {
     inset 0 0 0 1px rgba(255, 255, 255, 0.03),
     inset 0 2px 4px rgba(0, 0, 0, 0.25);
 }
-
-
 
 .reset-link {
   margin-top: 14px;
@@ -488,9 +482,7 @@ hr.linha-personalizada {
   border: none;
   border-radius: 10px;
 
-  background: linear-gradient(135deg,
-      rgb(39, 42, 79),
-      rgba(89, 133, 235, 0.926));
+  background: linear-gradient(135deg, #1f5fc6c8, #4a30b1a8);
   box-shadow: 0 8px 17px rgba(0, 0, 0, 0.30);
   color: #fff;
 
@@ -530,10 +522,13 @@ hr.linha-personalizada {
 }
 
 .erro-login {
+  display: block;
   color: #ff6b6b;
   font-size: 13px;
   text-align: center;
-  margin-top: 6px;
+  margin-bottom: 10px;
+  margin-top: -5px;
+
   min-height: 16px;
 }
 
