@@ -16,23 +16,25 @@
     <main class="login">
         <img src="Imagens/E-threads.png" alt="Logo do sistema" class="logo">
 
-        <form>
+        <form onsubmit="handleLogin(event)" id="loginForm" action="#" method="post" novalidate >
             <div class="botao1_2">
-                <button type="button" class="bt-colab active">
+                <button type="button" class="bt-colab active" onclick="selecionarModo('colaborador')">
                     Colaborador
                 </button>
 
-                <button type="button" class="bt-adm">
+                <button type="button" class="bt-adm" onclick="selecionarModo('admin')">
                     Administrador
                 </button>
             </div>
             <div class="campo">
                 <input type="text" id="re" name="re" placeholder="Digite seu RE" inputmode="numeric" pattern="[0-9]*"
-                    autocomplete="off" minlength="6" required>
+                    autocomplete="off" maxlength="6" required>
             </div>
             <div class="campo senha-wrap">
                 <input type="password" id="senha" name="senha" placeholder="Digite sua senha" autocomplete="off"
                     maxlength="11" required>
+
+
 
                 <button type="button" class="toggle-senha" aria-label="Mostrar senha">
 
@@ -52,6 +54,8 @@
                     </svg>
                 </button>
             </div>
+
+            <p id="loginErro" class="erro-login"></p>
 
             <button class="bt-entrar" type="submit">Entrar</button>
 
@@ -78,7 +82,9 @@
 
             <form class="modal-body" onsubmit="enviarSolicitacao(event)"> <!-- Corpo do modal -->
                 <label for="reReset"></label>
-                <input type="text" id="reReset" placeholder="Digite seu RE" autocomplete="off" required />
+                <input type="text" id="reReset" placeholder="Digite seu RE" inputmode="numeric" pattern="[0-9]*"
+                    autocomplete="off" maxlength="6" required />
+
                 <!-- id="reReset" identifica o campo, placeholder -> texto de ajuda -->
 
                 <button type="submit" onclick="enviarSolicitacao()">Enviar</button>
@@ -114,18 +120,10 @@
             closeModal();
         }
 
-        /* window: pagina inteira, click: evento de clique, function (e): função que recebe o evento (informação do clique) */
-        window.addEventListener("click", function (e) {
+        // bloqueia letras no campo RE do modal
+        const reResetInput = document.getElementById("reReset");
 
-            // Guar a variável modal, que recebe o elemento com id "resetModal" (que cobre a tela toda)
-            const modal = document.getElementById("resetModal");
-
-            // Se o clique (e.target) for igual ao modal (ou seja, se o clique foi fora da caixa branca) closeModal() (entao fecha o modal)
-            if (e.target === modal) closeModal();
-        });
-        const reInput = document.getElementById("re");
-
-        reInput.addEventListener("input", function () {
+        reResetInput.addEventListener("input", function () {
             // remove tudo que não é número
             this.value = this.value.replace(/\D/g, "");
 
@@ -134,12 +132,40 @@
                 this.value = this.value.slice(0, 6);
             }
         });
+
+
+        /* window: pagina inteira, click: evento de clique, function (e): função que recebe o evento (informação do clique) */
+        window.addEventListener("click", function (e) {
+
+            // Guarda a variável modal, que recebe o elemento com id "resetModal" (que cobre a tela toda)
+            const modal = document.getElementById("resetModal");
+
+            // Se o clique (e.target) for igual ao modal (ou seja, se o clique foi fora da caixa branca) closeModal() (entao fecha o modal)
+            if (e.target === modal) closeModal();
+        });
+
+        // bloqueia letras no campo RE do login
+        const reInput = document.getElementById("re");
+
+        reInput.addEventListener("input", function () {
+
+            // remove tudo que não é número
+            this.value = this.value.replace(/\D/g, "");
+
+            // limita a 6 números
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+        });
+
+
         const senhaInput = document.getElementById("senha");
         const btnToggle = document.querySelector(".toggle-senha");
         const olhoFechado = document.querySelector(".olho-fechado");
         const olhoAberto = document.querySelector(".olho-aberto");
 
         btnToggle.addEventListener("click", () => {
+
             const estaVisivel = senhaInput.type === "text";
 
             senhaInput.type = estaVisivel ? "password" : "text";
@@ -151,6 +177,7 @@
             // acessibilidade (texto do botão)
             btnToggle.setAttribute("aria-label", estaVisivel ? "Mostrar senha" : "Ocultar senha");
         });
+
 
         const botoes = document.querySelectorAll(".botao1_2 button");
 
@@ -169,9 +196,74 @@
         });
 
 
+        // define o modo padrão como colaborador
+        let modoSelecionado = "colaborador";
 
+
+        function selecionarModo(modo) {
+
+            modoSelecionado = modo;
+
+            const botaoColab = document.querySelector(".bt-colab");
+            const botaoAdm = document.querySelector(".bt-adm");
+
+            botaoColab.classList.remove("is-active");
+            botaoAdm.classList.remove("is-active");
+
+            if (modo === "colaborador") {
+                botaoColab.classList.add("is-active");
+            } else {
+                botaoAdm.classList.add("is-active");
+            }
+        }
+
+
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const re = document.getElementById("re").value.trim();
+            const senha = document.getElementById("senha").value.trim();
+            const erro = document.getElementById("loginErro");
+
+            // limpa erro anterior
+            erro.textContent = "";
+
+            // erro de preenchimento (front-end)
+            if (re === "") {
+                erro.textContent = "Digite seu RE.";
+                return;
+            }
+
+            if (re.length !== 6) {
+                erro.textContent = "O RE deve ter 6 números.";
+                return;
+            }
+
+            if (senha === "") {
+                erro.textContent = "Digite sua senha.";
+                return;
+            }
+
+            // simulação para TCC (depois será MySQL)
+            // verifica se o usuário tentou entrar como administrador
+            if (modoSelecionado === "admin") {
+
+                // apenas o RE 999999 tem permissão de administrador (simulação)
+                if (re !== "999999") {
+                    erro.textContent = "Esta conta não possui permissão de administrador.";
+                    return;
+                }
+
+            }
+
+            // simulação de autenticação
+            // depois será substituído pelo backend Python + MySQL
+            erro.textContent = "RE ou senha inválidos.";
+
+        }
 
     </script>
+
 
 
 </body>

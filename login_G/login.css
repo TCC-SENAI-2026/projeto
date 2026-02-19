@@ -27,6 +27,12 @@
   --shadow-strong: 0 40px 90px rgba(0, 0, 0, 0.6);
 }
 
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(79, 140, 255, .55);
+  outline-offset: 3px;
+}
 
 body {
   min-height: 100vh;
@@ -66,8 +72,6 @@ body::before {
 
   pointer-events: none;
 }
-
-
 
 .login {
   position: relative;
@@ -122,7 +126,7 @@ body::before {
 
 .login form {
   width: 100%;
-  margin-top: 4px;
+  margin-top: 28px;
 }
 
 /* 
@@ -133,59 +137,42 @@ body::before {
   align-items: center;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 6px 0 14px;
-  margin-bottom: 25px;
-  margin-top: 30px;
+  gap: 12px;
+  margin: 18px 0 18px;
+  margin-top: 20px;
+
 }
 
 .botao1_2 button {
-  width: 100%;
-  padding: 7px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  padding: 0px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   line-height: 1.2;
-  height: auto;
+  height: 30px;
   min-height: unset;
 
-  border-radius: 7px;
+  border-radius: 10px;
 
 
   background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.82);
   box-shadow: none;
 
-  font-size: 12.5px;
-  font-weight: var(--w-semibold);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .2px;
 
   cursor: pointer;
 
-  transition: all 0.15s ease;
+  transition: filter .2s ease, transform .12s ease, background .2s ease, border-color .2s ease;
 }
 
-.bt-adm:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  border-color: rgba(106, 106, 106, 0.745);
-
-}
-
-.bt-colab:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  border-color: rgba(106, 106, 106, 0.745);
-
-}
 
 .bt-colab {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.18);
 
   color: rgba(255, 255, 255, 0.82);
-
-  border-radius: 10px;
-  height: 42px;
-
-  font-weight: 500;
 
   transition: all 0.2s ease;
 }
@@ -196,32 +183,33 @@ body::before {
 
   color: rgba(255, 255, 255, 0.82);
 
-  border-radius: 10px;
-  height: 42px;
-
   font-weight: 500;
 
   transition: background 0.2s ease, border 0.2s ease;
 }
 
+.botao1_2 button:hover {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.26);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+
 
 
 .botao1_2 button.active {
-  background: linear-gradient(135deg,
-      rgba(17, 115, 236, 0.779),
-      rgba(61, 55, 174, 0.636));
-
-  color: #ffffff;
-
-  border: 0.4px solid rgba(106, 0, 255, 0.515);
-
+  background: rgba(79, 140, 255, 0.14);
+  border: 1px solid rgba(79, 141, 255, 0.556);
+  border-color: rgba(79, 141, 255, 0.719);
+  color: rgba(255, 255, 255, 0.95);
   box-shadow:
-    0 0 0 1px rgba(79, 140, 255, 0.4),
-    0 4px 12px rgba(79, 140, 255, 0.15);
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.botao1_2 button.is-active:hover {
-  background: linear-gradient(135deg, #2560a8, #3a7eff);
+.botao1_2 button:not(.is-active) {
+  opacity: .92;
 }
 
 .campo {
@@ -235,8 +223,8 @@ body::before {
 
 .campo input {
 
-  width: 340px;
-  height: 41px;
+  width: 319px;
+  height: 38px;
   /* diminui a altura total */
   padding: 0 12px;
   /* diminui o espaço interno */
@@ -295,9 +283,7 @@ body::before {
 
 .olho-aberto {
   display: none;
-  /* começa escondido */
 }
-
 
 .campo input::placeholder {
   color: rgba(17, 24, 39, 0.55);
@@ -305,8 +291,8 @@ body::before {
 
 .campo input:focus {
   outline: none;
-  border-color: rgba(79, 140, 255, 0.75);
-  box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.18);
+  border-color: rgb(0, 63, 181);
+  box-shadow: 0 0 0 4px rgba(95, 100, 240, 0.348);
 }
 
 .campo input:hover {
@@ -320,47 +306,54 @@ body::before {
   width: 199px;
   height: 40px;
 
+  border: 1px solid rgb(29, 7, 85);
   border-radius: 10px;
-  border: 1px solid rgba(59, 142, 234, 0.35);
-
   background: linear-gradient(135deg,
-      rgba(17, 116, 236, 0.903),
-      rgb(66, 62, 144));
-  box-shadow: 0 8px 17px rgba(0, 0, 0, 0.30);
+      rgb(55, 58, 112),
+      rgba(64, 130, 216, 0.745));
+
+  box-shadow:
+    0 6px 18px rgba(26, 26, 26, 0.433),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 
   color: #ffffff;
   font-weight: 600;
   font-size: 15px;
+  letter-spacing: 0.2px;
 
   cursor: pointer;
-
-  margin: 8px auto 0 auto;
+  margin: 0px auto 0 auto;
   display: block;
-
 
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
-    filter 0.15s ease;
+    filter 0.15s ease,
+    background 0.2s ease;
 }
 
 .bt-entrar:hover {
   background: linear-gradient(135deg,
-      rgba(17, 115, 236, 0.916),
-      rgb(66, 62, 144));
-
+      rgb(68, 62, 127),
+      rgba(64, 130, 216, 0.763));
   box-shadow:
-    0 0 12px rgba(59, 141, 234, 0.116),
-    0 2px 22px rgba(58, 58, 58, 0.45);
+    0 9px 18px rgba(0, 0, 0, 0.221),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
 
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(79, 141, 255, 0.149);
 }
 
 .bt-entrar:active {
-  transform: translateY(0px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transform: translateY(0);
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 2px 4px rgba(0, 0, 0, 0.25);
 }
+
 
 
 .reset-link {
@@ -398,7 +391,6 @@ body::before {
 .modal-content {
   width: 350px;
   max-width: 100%;
-
 
   background: rgba(104, 107, 112, 0.593);
   backdrop-filter: blur(18px);
@@ -472,7 +464,7 @@ hr.linha-personalizada {
 
 /* input modal */
 .modal-body input {
-  height: 44px;
+  height: 40px;
   padding: 0 14px;
 
   font-family: var(--font-ui);
@@ -497,8 +489,8 @@ hr.linha-personalizada {
   border-radius: 10px;
 
   background: linear-gradient(135deg,
-      rgba(17, 116, 236, 0.903),
-      rgb(66, 62, 144));
+      rgb(39, 42, 79),
+      rgba(89, 133, 235, 0.926));
   box-shadow: 0 8px 17px rgba(0, 0, 0, 0.30);
   color: #fff;
 
@@ -534,5 +526,19 @@ hr.linha-personalizada {
 
   to {
     background-position: 100% 50%;
+  }
+}
+
+.erro-login {
+  color: #ff6b6b;
+  font-size: 13px;
+  text-align: center;
+  margin-top: 6px;
+  min-height: 16px;
+}
+
+@media (max-width: 420px) {
+  .login {
+    padding: 28px 22px;
   }
 }
