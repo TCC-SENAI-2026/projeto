@@ -34,13 +34,13 @@ body {
    width: 100%;
    height: 100vh;
    /* 1. Criando o degradê (as cores se repetem para o efeito de "volta" ser suave) */
-    background: linear-gradient(-45deg, #ffffff, #a2a3a3bb);
+    background: linear-gradient(-45deg,  rgba(61, 177, 255, 0.786), #ffffffbb);
     
     /* 2. Aumentei o tamanho do fundo para ele poder se mover */
     background-size: 400% 400%;
     
     /* 3. Chamamos a animação: nome | tempo | suavidade | infinito */
-    animation: degradeLento 10s ease infinite;
+    animation: degradeLento 5s ease infinite;
 
    box-sizing: border-box;
    font-family: Arial, Helvetica, sans-serif;
@@ -130,14 +130,14 @@ header {
 }
 
 header a {
-   color: white;
+   color: rgb(255, 255, 255);
    text-decoration: none;
    font: bold 17px Arial, Helvetica, sans-serif;
    cursor: pointer;
 }
 
 header p {
-   font: normal 15px Arial, Helvetica, sans-serif;
+   font: normal 17px Arial, Helvetica, sans-serif;
 }
 
 
@@ -149,14 +149,15 @@ header p {
 }
 
 .iconde-login {
-   width: 50px;
+   width: 10px;
    height: auto;
    border-radius: 50%;
 }
 
 .arrow-drop {
-   width: 20px;
+   width: 50px;
    height: auto;
+   border-radius: 50%;
 }
 
 
@@ -185,9 +186,10 @@ footer {
 .container01 {
    height: 240px;
    width: 870px;
-   background: radial-gradient( rgb(243, 238, 238),rgb(243, 238, 238),rgb(213, 207, 207));
-   border: 3px solid black;
+   background-color: white;
    border-radius: 10px;
+   border: 3px solid black;
+   cursor: pointer;
    position: absolute;
    top: 150px;
    left: 10%;
@@ -319,10 +321,11 @@ h3 {
 .conteiner02{
    height: 240px;
    width: 870px;
-   background: radial-gradient( rgb(243, 238, 238),rgb(243, 238, 238),rgb(213, 207, 207));
+   background-color: white;
    border: 3px solid black;
    border-radius: 10px;
    position: absolute;
+   cursor: pointer;
    top: 250px;
    left: -1.3px;
 }
@@ -334,6 +337,7 @@ input[type="color"] {
     width: 75px;          /* Define a largura do botão */
     height: 75px;         /* Define a altura do botão */
     background: none;     /* Remove qualquer fundo extra */
+    cursor: pointer;
     top: 18%;
     left: 30px;
    }
@@ -457,8 +461,8 @@ input[type="color"]::-webkit-color-swatch {
 .conteiner03{
    height: 400px;
    width: 870px;
-   background: radial-gradient( rgb(243, 238, 238),rgb(243, 238, 238),rgb(213, 207, 207));
-   border: 3px solid black;
+   background-color: white;
+   border: 3px #030303 solid;
    border-radius: 10px;
    position: absolute;
    top: 250px;
@@ -467,24 +471,17 @@ input[type="color"]::-webkit-color-swatch {
 
 /* Definindo variáveis para cores de marca */
 .upload-img{
-   background-color: #c7c0c0cc;
-   animation: degradeLe;
+   background-color: #fffffffe;
    height: 200px;
-   width: 700px;
+   width: 710px;
    border: 3px dashed  rgb(0, 0, 0);
    margin: auto;
    margin-top: 40px;
+   border-radius: 10px;
    
 }
 
-:root {
-    --cor-borda-tracejada: #a5c7f7; /* Um azul suave combinando com seu botão */
-    --cor-fundo-upload: #fcfcfc;
-    --cor-texto-escuro: #070707;
-    --cor-texto-claro: #888;
-    --fonte-tamanho-p: 1.1rem;
-    --fonte-tamanho-s: 0.9rem;
-}
+
 
 .upload-texto-principal{
    position: relative;
@@ -497,8 +494,71 @@ input[type="color"]::-webkit-color-swatch {
    position: relative;
    margin-top: 5px;
    left: 210px;
-   color: var(--cor-texto-claro);
+   color: #888;
    
 }
 
-  
+.move{
+   display: flex;
+   margin-top: 20px;
+   justify-content: center;
+   align-items: center;
+   
+}
+
+/* Seletor de tamanhos*/
+
+.seletor-tamanhos{
+   position: relative;
+   margin-top: 15px;
+   left: 115px;
+   display: flex;
+   align-items: center;
+   gap: 5px;
+   font-family: Arial, sans-serif;
+}
+/* Esconde o círculo original do Radio Button */
+
+.opcoes-tamanhos input[type="radio"]{
+   display: none;
+}
+
+/* Estilo padrão do "Botão" de tamanho */
+
+.opcoes-tamanhos label{
+   display: inline-block;
+   padding: 8px 15px;
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   cursor: pointer;
+   transition: all 0.3s ease;
+   background-color: rgb(215, 209, 209);
+   font-weight: bold;
+   color: #030303;
+
+   
+}
+
+/*Efeito ao passar o mouse*/
+
+.opcoes-tamanhos label:hover{
+   background-color: #f0f0f0;
+}
+
+
+
+/*Estilo de quando o botão está selecionado */
+.opcoes-tamanhos input[type="radio"]:checked + label { 
+background-color: #007bff; /* Cor azul igual ao seu botão Finalizar */
+color: white;
+border-color: #007bff;
+}
+
+input[type="number"]{
+   margin-right: 0px;
+   height: 36px;
+   width: 34px;
+   border-radius: 5px;
+   text-align: center;
+   
+}
