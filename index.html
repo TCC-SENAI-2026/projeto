@@ -11,6 +11,7 @@
 <body>
 
     <header>
+
         <img class="logo" src="E-threads (3) (1).png" alt="logo">
         <nav>
             <ul>
@@ -43,37 +44,37 @@
         <div class="container01">
             <h3>1. Selecione qual modelo</h3>
 
-            <img class="icon-camiseta" src="https://shrtlink.ai/bn7S" alt="camiseta">
+            <img class="icon-camiseta" src="camisa.png" alt="camiseta">
             <div class=" checkbox-n1">
                 <label for="input-camiseta">camiseta</label>
                 <input type="checkbox" name="camiseta" id="input-camiseta">
             </div>
 
-            <img class="icon-camisa" src="https://shrtlink.ai/Yfao" alt="">
+            <img class="icon-camisa" src="camisa-curta.png" alt="">
             <div class=" checkbox-n2">
                 <label for="input-camisa">camisa/curta</label>
                 <input type="checkbox" name="camisa-manga-curta" id="input-camisa">
             </div>
 
-            <img class="icon-camisa-longa" src="https://shrtlink.ai/dVR0" alt="camisa/longa">
+            <img class="icon-camisa-longa" src="camisa (1).png" alt="camisa/longa">
             <div class="checkbox-n3">
                 <label for="input-camisa-longa">camisa/longa</label>
                 <input type="checkbox" name="camisa-manga-longa" id="input-camisa-longa">
             </div>
 
-            <img class="icon-blusaa" src="https://shrtlink.ai/zq0u" alt="blusa">
+            <img class="icon-blusaa" src="capuz.png" alt="blusa">
             <div class="checkboxn-n4">
                 <label for="icon-blusa">blusa</label>
                 <input type="checkbox" name="blusa" id="icon-blusa">
             </div>
 
-            <img class="icon-moletom" src="https://shrtlink.ai/lqj9" alt="moletom">
+            <img class="icon-moletom" src="moletom-com-capuz.png" alt="moletom">
             <div class="checkboxn-n5">
-                <label for="icon-moletom">moletom</label>
+                <label for="icon-moletom">moletom/capuz</label>
                 <input type="checkbox" name="moletom" id="icon-moletom">
             </div>
 
-            <img class="icon-calça" src="https://shrtlink.ai/yywc" alt="calça">
+            <img class="icon-calça" src="jeans.png" alt="calça">
             <div class="checkboxn-n6">
                 <label for="icon-calça">Calça</label>
                 <input type="checkbox" name="calça" id="icon-calça">
@@ -163,7 +164,7 @@
                             <input type="radio" name="tamanho" id="p" value="p">
                             <label for="p">P</label>
                             <input type="number" name="quantidade-p" id="" value="0">
-                            
+
 
                             <input type="radio" name="tamanho" id="m" value="m">
                             <label for="m">M</label>
@@ -194,11 +195,37 @@
                             <label for="g3">G3</label>
                             <input type="number" name="quantidade-g3" id="" value="0">
 
-                       </div>
-                        
-                       
+                        </div>
 
                     </div>
+
+                </div>
+
+                <div class="conteiner04">
+                    <p class="title">Autentificação</p>
+                    <form class="autentificacao" method="post" autocomplete="off">
+                        <div class="campo">
+                            <label for="nome">
+                                <input type="text" name="nome" id="nome" required placeholder="Nome:">
+                            </label>
+
+                            <label for="cpf">
+                                <input type="text" name="cpf" id="cpf" required 
+                               minlength="11" maxlength="15" placeholder="CPF:">
+                            </label>
+
+                            <label for="senha">
+                                <input type="password" name="senha" id="senha" required minlength="8"
+                                    placeholder="Senha:">
+                            </label>
+
+                            <label for="botao">
+                                <input type="submit" id="botao" value="Confirmar">
+                            </label>
+
+                        </div>
+
+                    </form>
 
                 </div>
 
