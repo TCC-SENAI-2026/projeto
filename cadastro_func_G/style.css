@@ -1,0 +1,118 @@
+* {
+    box-sizing: border-box;
+     margin: 0;
+  padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(255, 241, 219);
+    margin: 0;
+
+    display: flex;
+    justify-content: center; /* centraliza horizontal */
+    align-items: center;     /* centraliza vertical */
+    min-height: 100vh;       /* ocupa altura total da tela */
+}
+
+
+main {
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: rgb(78, 78, 78);
+
+}
+
+fieldset {
+    border: 1px solid #5a3500;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.campo {
+    margin-bottom: 15px;
+}
+
+/* especificar grupos para estilizar ao mesmo tempo */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+
+
+/* focus: pseudoclasse, tirando qualquer estilização */
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: rgb(100, 54, 0);
+    box-shadow: 0 0 5px rgb(255, 162, 0);
+
+}
+
+.radio-status {
+    display: flex;
+    flex-direction: column;
+    /* coloca um embaixo do outro */
+    gap: 10px;
+}
+
+.opcao {
+    display: flex;
+    /* deixa bolinha + texto lado a lado */
+    align-items: center;
+    gap: 6px;
+}
+
+/* .botao1_2 {
+  width: 70%;
+  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 18px 0 30px;
+  margin-top: 20px;
+  justify-content: center;
+  align-self: center;
+}
+
+.botao1_2 button {
+  height: 25px;      
+  font-size: 16px;   
+  border-radius: 5px;
+  border: 1px;
+  cursor: pointer;
+
+} */
+
+.botao1_2 {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+.botao1_2 input {
+    height: 50px;
+    padding: 0 20px;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: rgb(224, 224, 224);
+}

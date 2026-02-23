@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <main class="cadastro">
+        <h1>Cadastro de Funcionário</h1>
+        <form  class="cadastro1" action="">
+            <fieldset>
+                <div class="campo">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" placeholder="Insira o nome">
+                </div>
+
+                <div class="campo">
+                    <label for="re">RE:</label>
+                    <input type="text" maxlength="6" name="re" id="re" placeholder="Digite o RE">
+                </div>
+
+                <div class="campo">
+                    <label for="Setor">Setor:</label>
+                    <select name="setor_usuario" id="setor" required>
+                        <option value="">Selecione o Setor</option>
+                        <option value="Administração">Administração</option>
+                        <option value="Produção">Produção</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="Senha">Senha:</label>
+                    <input type="password" maxlength="9" name="senha" id="senha" placeholder="Digite a senha">
+                </div>
+
+                <div class="campo">
+                    <p>Status:</p>
+                    <div class="radio-status">
+
+                        <div class="opcao">
+                            <input type="radio" id="ativo" name="status" value="ativo">
+                            <label for="ativo">Ativo</label>
+                        </div>
+
+                        <div class="opcao">
+                            <input type="radio" id="inativo" name="status" value="inativo">
+                            <label for="inativo">Inativo</label>
+                        </div>
+
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="botao1_2">
+                <button type="submit">Cancelar</button>
+                <button type="submit">Enviar</button>
+            </div>
+
+        </form>
+    </main>
+</body>
+
+</html>
