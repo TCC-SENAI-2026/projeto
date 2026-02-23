@@ -1,24 +1,22 @@
 // Selecionando os elementos
+const btnContinuar = document.getElementById('botao-continuar');
+const btnVoltarModal = document.querySelector('.btn-voltar');
 const modalContainer = document.getElementById('modal-container');
-const btnContinuar = document.querySelector('.container-3 .btn-continuar'); // Ajuste a classe se necessário
-const btnVoltar = document.querySelector('.btn-voltar');
+const fade = document.getElementById('fadee');
 
-// Função para abrir o modal
+// Função para abrir
 btnContinuar.addEventListener('click', () => {
-    modalContainer.style.display = 'flex'; // Exibe o container como flex para centralizar
-    document.body.style.overflow = 'hidden'; // Opcional: trava o scroll da página ao fundo
+    modalContainer.style.display = 'flex';
+    fade.style.display = 'block';
+    document.body.style.overflow = 'hidden';
 });
 
-// Função para fechar o modal
-btnVoltar.addEventListener('click', () => {
-    modalContainer.style.display = 'none'; // Esconde o modal
-    document.body.style.overflow = 'auto'; // Devolve o scroll à página
-});
+// Função para fechar
+const fecharModal = () => {
+    modalContainer.style.display = 'none';
+    fade.style.display = 'none';
+    document.body.style.overflow = 'auto';
+};
 
-// BÔNUS: Fechar ao clicar fora do modal (no fundo escuro)
-modalContainer.addEventListener('click', (event) => {
-    if (event.target === modalContainer) {
-        modalContainer.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-});
+btnVoltarModal.addEventListener('click', fecharModal);
+fade.addEventListener('click', fecharModal); // Fecha se clicar no fundo escuro

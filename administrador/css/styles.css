@@ -520,7 +520,7 @@ input[type="color"]::-webkit-color-swatch {
 
 /*Container 3- upload da imagem*/
 
-.conteiner03 {
+.conteiner03{
    font-family: "Rubik", sans-serif;
    font-size: 20px;
    height: 34%;
@@ -676,7 +676,8 @@ background-color: #30e80b;
    border-radius: 5px
 }
 /*fade do modal*/
-#fade{
+#fadee{
+   display: none;
    position: fixed;
    top: 0;
    left: 0;
@@ -691,17 +692,16 @@ background-color: #30e80b;
 
 /* Container que centraliza o modal e escurece o fundo */
 #modal-container {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  z-index: 1000;
+  z-index: 5;
 }
 
 /* O cartão do modal (Tamanho Grande) */
