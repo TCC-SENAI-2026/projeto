@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/styles.css">
     <title>Document</title>
 </head>
 
 <body>
 
     <header>
-        <img class="logo" src="E-threads (3) (1).png" alt="logo">
+
+        <img class="logo" src="img/E-threads (3) (1).png" alt="logo">
         <nav>
             <ul>
                 <li><a>Inicio</a></li>
@@ -33,47 +34,247 @@
 
 
         <div onclick="loginMenu()" class="conta">
-            <img class="icone-login" src="E-threads (3) (1).png" alt="icone-login">
+            <img class="icone-login" src="img/E-threads (3) (1).png" alt="icone-login">
             <p>Ola, nome</p>
-            <img class="arrow-drop" src="E-threads (3) (1).png" alt="arrow drop">
+            <img class="arrow-drop" src="img/E-threads (3) (1).png" alt="arrow drop">
         </div>
     </header>
 
     <main>
-        <div class="container1">
-            <h3>1. Selecione qual modelo</h3>
-            
-            <img class="icon-camiseta" src="https://shrtlink.ai/bn7S" alt="camiseta">
+        <div class="container01">
+            <h3>1. Selecione o modelo</h3>
+
+            <img class="icon-camiseta" src="img/camisa.png" alt="camiseta">
             <div class=" checkbox-n1">
                 <label for="input-camiseta">camiseta</label>
                 <input type="checkbox" name="camiseta" id="input-camiseta">
             </div>
 
-            <img class="icon-camisa" src="https://shrtlink.ai/Yfao" alt="">
+            <img class="icon-camisa" src="img/camisa-curta.png" alt="">
             <div class=" checkbox-n2">
                 <label for="input-camisa">camisa/curta</label>
-                <input type="checkbox" name="camisa-manga-curta" id="input-camisa">
+                <input type="checkbox" name="camisa-curta" id="input-camisa">
             </div>
 
-            <img class="icon-camisa-longa"  src="https://shrtlink.ai/dVR0" alt="camisa/longa">
+            <img class="icon-camisa-longa" src="img/camisa-1.png" alt="camisa-longa">
             <div class="checkbox-n3">
-                <label for="input-camisa-longa">camisa/longa</label>
-                <input type="checkbox" name="camisa-manga-longa" id="input-camisa-longa">
+                <label for="camisa-longa">camisa/longa</label>
+                <input type="checkbox" name="camisa-longa" id="camisa-longa">
             </div>
 
-            <img class="icon-blusaa" src="https://shrtlink.ai/zq0u" alt="blusa">
+            <img class="icon-blusaa" src="img/capuz.png" alt="blusa">
             <div class="checkboxn-n4">
                 <label for="icon-blusa">blusa</label>
                 <input type="checkbox" name="blusa" id="icon-blusa">
             </div>
 
-             <img class="icon-moletom" src="https://shrtlink.ai/lqj9" alt="moletom">
+            <img class="icon-moletom" src="img/moletom-com-capuz.png" alt="moletom">
             <div class="checkboxn-n5">
-                <label for="icon-moletom">moletom</label>
+                <label for="icon-moletom">moletom/capuz</label>
                 <input type="checkbox" name="moletom" id="icon-moletom">
             </div>
 
+            <img class="icon-calça" src="img/jeans.png" alt="calça">
+            <div class="checkboxn-n6">
+                <label for="icon-calça">Calça</label>
+                <input type="checkbox" name="calça" id="icon-calça">
+            </div>
+
+
         </div>
+
+
+        <div class="conteiner02">
+            <h3>2. Escolha o tecido e a cor desejável</h3>
+
+            <input type="color" id="color" name="cor-algodão[]" value="#ffffff">
+
+            <div class="checkboxn-01-algodão">
+                <label class="posição-algodão" for="checkbox-algodão">Algodão</label>
+                <input type="checkbox" name="checkbox-algodão[]" id="checkbox-algodão">
+            </div>
+
+            <input type="color" id="cor-linho" name="cor-linho[]" value="#ffffff">
+
+            <div class="checkbox-02-linho">
+                <label class="checkbox-linho" for="checkbox-linho">Linho
+                    <input type="checkbox" name="checkbox-linho[]" id="checkbox-linho" value="#ffffff">
+                </label>
+            </div>
+
+            <input type="color" id="cor-poliester" name="cor-poliester[]" value="#ffffff">
+
+            <div class="checkbox-03-poliester">
+                <label class="checkbox-poliester" for="checkbox-poliester">Poliéster
+                    <input type="checkbox" name="checkbox-poliester[]" id="checkbox-poliester" value="#ffffff">
+                </label>
+            </div>
+
+            <input type="color" id="cor-seda" name="cor-seda[]" value="#ffffff">
+
+            <div class="checkbox-04-seda">
+                <label for="checkbox-seda">Seda
+                    <input type="checkbox" name="checkbox-seda[]" id="checkbox-seda">
+                </label>
+            </div>
+
+            <input type="color" id="cor-lã" name="cor-lã[]" value="#ffffff">
+
+            <div class="checkbox-05-lã">
+                <label for="checkbox-lã">Lã
+                    <input type="checkbox" name="checkbox-lã[]" id="checkbox-lã">
+                </label>
+            </div>
+
+
+            <input type="color" id="cor-elastano" name="cor-elastano[]" value="#ffffff">
+
+            <div class="checkbox-06-elastano">
+                <label for="checkbox-elastano">Elastano
+                    <input type="checkbox" name="checkbox-elastano[]" id="checkbox-elastano">
+                </label>
+            </div>
+
+            <input type="color" id="cor-renda" name="cor-renda[]" value="#ffffff">
+
+            <div class="checkbox-07-renda">
+                <label for="checkbox-renda">Renda
+                    <input type="checkbox" name="checkbox-renda[]" id="checkbox-renda">
+                </label>
+            </div>
+
+            <input type="color" name="cor-poliamida[]" id="cor-poliamida" value="#ffffff">
+
+            <div class="checkbox-08-poliamida">
+                <label for="checkbox-poliamiada">Poliamida
+                    <input type="checkbox" name="checkbox-poliamida[]" id="checkbox-poliamida">
+                </label>
+            </div>
+
+        </div>
+
+        <div class="conteiner03">
+            <h3>3. Upload da Imagem</h3>
+
+            <div class="upload-img">
+
+                <p class="upload-texto-principal">
+                    <strong>Arraste sua arte aqui</strong> <a href="">ou clique para enviar</a>
+                </p>
+                <p class="upload-legendas">Formatos aceitos: PNG, AI e PDF.</p>
+            </div>
+
+            <p class="move">Quantidade e Tamanho:</p>
+
+            <div class="seletor-tamanhos">
+
+                <div class="opcoes-tamanhos">
+
+                    <input type="checkbox" name="tamanho" id="p" value="p">
+                    <label for="p">P</label>
+                    <input type="number" name="quantidade-p[]" id="" value="0">
+
+
+                    <input type="checkbox" name="tamanho" id="m" value="m">
+                    <label for="m">M</label>
+                    <input type="number" name="quantidade-m[]" id="" value="0">
+
+
+                    <input type="checkbox" name="tamanho" id="g" value="g">
+                    <label for="g">G</label>
+                    <input type="number" name="quantidade-g[]" id="" value="0">
+
+
+                    <input type="checkbox" name="tamanho" id="gg" value="gg">
+                    <label for="gg">GG</label>
+                    <input type="number" name="quantidade-gg[]" id="" value="0">
+
+
+                    <input type="checkbox" name="tamanho" id="g1" value="g1">
+                    <label for="g1">G1</label>
+                    <input type="number" name="quantidade-g1[]" id="" value="0">
+
+
+                    <input type="checkbox" name="tamanho" id="g2" value="g2">
+                    <label for="g2">G2</label>
+                    <input type="number" name="quantidade-g2[]" id="" value="0">
+
+
+                    <input type="checkbox" name="tamanho" id="g3" value="g3">
+                    <label for="g3">G3</label>
+                    <input type="number" name="quantidade-g3[]" id="" value="0">
+
+                    <div class="botoes">
+
+                        <button class="open" id="botao-voltar">
+                            <b>Voltar</b>
+                        </button>
+
+                        <button class="next" id="botao-continuar">
+                            <b>Continuar</b>
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="fadee"></div>
+
+            <div id="modal-container">
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h2>Revisão do pedido</h2>
+                    </div>
+
+                    <div class="modal-body">
+                        <table class="pedido-table">
+                            <thead>
+                                <tr>
+                                    <th>Modelo</th>
+                                    <th>Tam</th>
+                                    <th>Tecido</th>
+                                    <th>Cor</th>
+                                    <th>Qtd</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Camisa</td>
+                                    <td>G1</td>
+                                    <td>algodão</td>
+                                    <td>azul</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>Blusa</td>
+                                    <td>M</td>
+                                    <td>algodão</td>
+                                    <td>Preto</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>Calça</td>
+                                    <td>GG</td>
+                                    <td>poliéster</td>
+                                    <td>marrom</td>
+                                    <td>5</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p class="aviso-texto">
+                            Confira antes de finalizar. Depois disso,<br>
+                            o pedido será registrado.
+                        </p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn-voltar">Voltar e editar</button>
+                        <button class="btn-finalizar">Finalizar pedido</button>
+                    </div>
+                </div>
+            </div>
     </main>
 
 
