@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Automação</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- parte superior do site, com título e menu de usuário -->
+  <header class="navbar">
+  <div class="title">
+    Sistema de Automação para Confecção de Uniformes
+  </div>
+
+  <!-- Barra de pesquisa -->
+  <div class="search-container">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" id="searchRelatorios" placeholder="Pesquisar Relatórios">
+  </div>
+
+  <!-- Menu usuário -->
+  <div class="user-menu"> 
+    <i class="fa-solid fa-user"></i>
+    <span>Olá, Supervisor</span>
+    <i class="fa-solid fa-caret-down"></i>
+
+    <ul class="dropdown">
+      <li><a href="#">Perfil</a></li>
+      <li><a href="#">Configurações</a></li>
+      <li><a href="#">Acessibilidade</a></li>
+      <li><a href="#">Sair</a></li>
+    </ul>
+  </div>
+</header>
+
+  <!-- Opções do menu principal com interações-->
+  <nav class="menu">
+    <a href="#" class="active">Início</a>
+    <a href="#">Produção</a>
+    <a href="#">Estoque</a>
+    <a href="#">Pedidos</a>
+    <a href="#">Relatórios</a>
+  </nav>
+
+<!-- Quadrados de informações das Produções-->
+  <main class="container">
+    <div class="card">Relatorio de Produção</div>
+    <div class="card">Relatorio de Estoque</div>
+    <div class="card">Relatório de Pedidos</div>
+    <div class="card">Relatorio de Desempenho</div>
+
+    <!-- Gráficos e área de relatórios -->
+    <div class="chart">Peças Produzidas por Semana</div>
+    <div class="chart">Tipos de Pedidos</div>
+    <div class="report">Gerar outros Relatórios</div>
+  </main>
+    
+ <!-- Rodapé do site para ser interativo ao usuário-->
+  <script>
+    const links = document.querySelectorAll('.menu a');
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+
+    <!-- Interação para o menu de usuário -->
+    const userMenu = document.querySelector('.user-menu');
+    const dropdown = document.querySelector('.dropdown');
+  
+    userMenu.addEventListener('click', () => {
+      dropdown.classList.toggle('show');
+    });
+
+    
+
+  </script>
+</body>
+</html>

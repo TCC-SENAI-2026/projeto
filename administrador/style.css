@@ -1,0 +1,175 @@
+
+/* Estilos para o dashboard do administrador */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #eee;
+}
+
+/* Navbar do Site */
+
+.navbar {
+  background: #104b76;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Para colocar a barra de pesquisa centralizada*/
+.search-container {
+  margin-left: 40px;
+}
+
+/* Título do dashboard e tamanhos */
+
+.title {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+/* Menu do usuário no canto superior direito */
+
+.user-menu {
+  position: absolute;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* Ícone do usuário e nome */
+
+.user-menu span {
+  font-size: 14px;
+}
+
+/* Dropdown do menu do usuário */
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: white;
+  color: black;
+  list-style: none;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.dropdown.show {
+  display: block;
+}
+
+/* MENU */
+
+.menu {
+  display: flex;
+  justify-content: center;
+  background: #f4f4f4;
+  padding: 10px;
+  gap: 20px;
+}
+
+/* Alterar cor */
+.menu a {
+  text-decoration: none;
+  color: #0d0d0d;
+  padding: 5px 10px;
+  border-bottom: 3px solid transparent;
+  transition: 0.3s;
+}
+
+/* Efeito hover para os itens do menu */
+.menu a:hover {
+  color: #1b71ae;
+}
+
+/* Estilo para o item ativo (linhas) do menu */
+
+.menu a.active {
+  border-bottom: 3px solid #0077cc;
+  font-weight: bold;
+  color: #3f8ac0; 
+}
+
+/* Estilização para o container principal do dashboard, utilizando grid para organizar os elementos */
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  padding: 20px;
+}
+
+/* Estilização para os quadrados de informações, ocupando uma coluna cada */
+
+.card {
+  background: white;
+  border: 1px solid #918a8a;
+  padding: 20px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilização para a seção de gráficos, ocupando duas colunas da grade */
+
+.chart {
+  grid-column: span 2;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 20px;
+  height: 220px;
+}
+
+/* Estilização para a seção de relatórios, ocupando toda a largura da grade */
+
+.report {
+  grid-column: 1 / -1;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 20px;
+  height: 180px; 
+}
+
+/* Estilização para a barra de pesquisa dentro da seção de relatórios */
+
+.search-container {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 300px;
+}
+
+/* Cor para o ícone de pesquisa */ 
+.search-container i {
+  color: #777;
+}
+
+/* Estilos para o campo de pesquisa */
+.search-container input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+}
+
+/* Estilos para os itens de relatório dentro da seção de relatórios */
+
+.report-item {
+  grid-column: 1 / -1;
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 6px;
+}
