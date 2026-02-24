@@ -5,23 +5,19 @@
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(255, 241, 219);
+   font-family: Arial, Helvetica, sans-serif;
+    background-color: rgba(7, 30, 104, 0.867);
     margin: 0;
+    padding: 40px 20px;
+
     display: flex;
-    justify-content: center;
-    /* centraliza horizontal */
-    align-items: center;
-    /* centraliza vertical */
-    min-height: 100vh;
-    /* altura total da tela */
+    justify-content: center; /* só centraliza horizontal */
 }
 
 main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 100%;
+    display: flex;
+    justify-content: center; /* só horizontal */
 }
 
 .cadastro form {
@@ -65,9 +61,8 @@ select {
 }
 
 .cadastro {
-    padding: 40px;
-    width: 37%;
-
+    width: 100%;
+    max-width: 720px;
 }
 
 
