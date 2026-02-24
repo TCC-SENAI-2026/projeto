@@ -4,63 +4,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="cadastro.css">
     <title>Document</title>
 </head>
 
 <body>
-    <main class="cadastro">
-        <h1>Cadastro de Funcionário</h1>
-        <form  class="cadastro1" action="">
-            <fieldset>
-                <div class="campo">
-                    <label for="nome">Nome:</label>
-                    <input type="text" id="nome" name="nome" placeholder="Insira o nome">
-                </div>
+    <main>
 
-                <div class="campo">
-                    <label for="re">RE:</label>
-                    <input type="text" maxlength="6" name="re" id="re" placeholder="Digite o RE">
-                </div>
+        <div class="cadastro">
 
-                <div class="campo">
-                    <label for="Setor">Setor:</label>
-                    <select name="setor_usuario" id="setor" required>
-                        <option value="">Selecione o Setor</option>
-                        <option value="Administração">Administração</option>
-                        <option value="Produção">Produção</option>
-                    </select>
-                </div>
-
-                <div class="campo">
-                    <label for="Senha">Senha:</label>
-                    <input type="password" maxlength="9" name="senha" id="senha" placeholder="Digite a senha">
-                </div>
-
-                <div class="campo">
-                    <p>Status:</p>
-                    <div class="radio-status">
-
-                        <div class="opcao">
-                            <input type="radio" id="ativo" name="status" value="ativo">
-                            <label for="ativo">Ativo</label>
-                        </div>
-
-                        <div class="opcao">
-                            <input type="radio" id="inativo" name="status" value="inativo">
-                            <label for="inativo">Inativo</label>
-                        </div>
-
+            <form class="cadastro1" action="">
+                <h1 class="titulo">Cadastro de Funcionário</h1>
+                <fieldset>
+                    <div class="campo">
+                        <label for="nome">Nome Completo:</label>
+                        <input type="text" id="nomecompleto" name="nomecompleto" placeholder="Insira o nome completo"
+                            required>
                     </div>
+
+                    <div class="campo">
+                        <label for="re">RE (Registro do Empregado):</label>
+                        <input type="text" maxlength="6" name="re" id="re" placeholder="Digite o número do RE">
+                    </div>
+
+                    <div class="campo">
+                        <label for="cpf">CPF:</label>
+                        <input type="text" maxlength="14" name="cpf" id="cpf" placeholder="000.000.000-00">
+                    </div>
+
+                    <div class="campo">
+                        <label for="dataNascimento">Data de Nascimento:</label>
+                        <input type="date" name="dataNascimento" id="dataNascimento" required>
+                    </div>
+
+                    <div class="campo">
+                        <label for="telefone">Telefone:</label>
+                        <input type="tel" name="telefone" id="telefone" placeholder="(11) 99999-9999">
+                    </div>
+
+                    <div class="campo">
+                        <label for="email">E-mail:</label>
+                        <input type="text" name="email" id="email" placeholder="Digite o E-mail">
+                    </div>
+
+
+                    <div class="campo">
+                        <label for="endereco">Endereço:</label>
+                        <input type="text" name="endereco" id="endereco" placeholder="Rua, número, bairro">
+                    </div>
+
+                    <div class="campo">
+                        <label for="Setor">Setor:</label>
+                        <select name="setor_usuario" id="setor" required>
+                            <option value="">Selecione o Setor</option>
+                            <option value="Administração">Administração</option>
+                            <option value="Produção">Produção</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label for="Senha">Senha:</label>
+                        <input type="password" maxlength="9" name="senha" id="senha" placeholder="Digite a senha">
+                    </div>
+
+                    <div class="campo">
+                        <p>Status:</p>
+                        <div class="radio-status">
+
+                            <div class="opcao">
+                                <input type="radio" id="ativo" name="status" value="ativo">
+                                <label for="ativo">Ativo</label>
+                            </div>
+
+                            <div class="opcao">
+                                <input type="radio" id="inativo" name="status" value="inativo">
+                                <label for="inativo">Inativo</label>
+                            </div>
+
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="botao1_2">
+                    <button type="submit">Cancelar</button>
+                    <button type="submit">Enviar</button>
                 </div>
-            </fieldset>
 
-            <div class="botao1_2">
-                <button type="submit">Cancelar</button>
-                <button type="submit">Enviar</button>
-            </div>
+            </form>
+        </div>
 
-        </form>
     </main>
 </body>
 

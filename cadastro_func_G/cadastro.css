@@ -1,31 +1,41 @@
 * {
     box-sizing: border-box;
-     margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: rgb(255, 241, 219);
     margin: 0;
-
     display: flex;
-    justify-content: center; /* centraliza horizontal */
-    align-items: center;     /* centraliza vertical */
-    min-height: 100vh;       /* ocupa altura total da tela */
+    justify-content: center;
+    /* centraliza horizontal */
+    align-items: center;
+    /* centraliza vertical */
+    min-height: 100vh;
+    /* altura total da tela */
 }
-
 
 main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    max-width: 500px;
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+.cadastro form {
+
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+
+.titulo {
+    margin-bottom: 35px;
     text-align: center;
     color: rgb(78, 78, 78);
 
@@ -54,6 +64,11 @@ select {
     border-radius: 5px;
 }
 
+.cadastro {
+    padding: 40px;
+    width: 37%;
+
+}
 
 
 
@@ -103,16 +118,30 @@ select:focus {
 } */
 
 .botao1_2 {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
+   display: flex;           /* organiza os botões em linha */
+    justify-content: center; /* centraliza todos horizontalmente */
+    gap: 280px;               /* aumenta o espaço entre os botões */
+    margin-top: 20px;        /* distancia do restante do formulário */
 }
-.botao1_2 input {
-    height: 50px;
-    padding: 0 20px;
+/* Estilo dos botões */
+.botao1_2 input,
+.botao1_2 button {
+    padding: 9px 20px;
+    /* tamanho interno dos botões */
     font-size: 16px;
+    /* tamanho da fonte */
+    border-radius: 5px;
+    /* cantos arredondados */
+    border: 1px solid #ccc;
+    /* borda simples */
+    cursor: pointer;
+    /* muda o cursor ao passar o mouse */
+    transition: 0.3s;
+    /* efeito suave ao passar o mouse */
 }
 
-button:hover {
+/* Efeito ao passar o mouse */
+.botao1_2 input:hover,
+.botao1_2 button:hover {
     background-color: rgb(224, 224, 224);
 }
