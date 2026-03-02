@@ -82,26 +82,28 @@ header p{
 
 /* ---------------------------------------------------------------------------- */
 
-main{
+main {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin: 10px;
 }
 
-.indicadores{
+.indicadores {
     display: flex;
     flex-direction: row;
     justify-content: center;
     gap: 400px;
     padding: 20px;
 }
-.img-indicador{
+
+.img-indicador {
     max-width: 100px;
     width: 100%;
     height: auto;
 }
-.p-pendente{
+
+.p-pendente {
     padding: 30px;
     background-image: linear-gradient(to right, rgb(173, 97, 4), orange);
     max-width: 400px;
@@ -111,28 +113,35 @@ main{
     box-shadow: 2px 2px 10px rgb(0, 0, 0, 0.8);
     transition: 0.2s;
 }
-.p-pendente:hover{
+
+.p-pendente:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
     cursor: pointer;
 }
-.p-pendente h1{
+
+.p-pendente h1 {
     color: white;
     text-align: center;
     font: bold 35px Arial, Helvetica, sans-serif;
 }
-.info{
+
+.info {
     display: flex;
-    align-items: center;   /* centraliza o h2 em relação à imagem */
+    align-items: center;
+    /* centraliza o h2 em relação à imagem */
     justify-content: flex-start;
-    padding-left: 30px;   /* controla o quão pra esquerda fica */
+    padding-left: 30px;
+    /* controla o quão pra esquerda fica */
     gap: 20px;
 }
-.info h2{
+
+.info h2 {
     color: white;
     font: bold 40px Arial, Helvetica, sans-serif;
 }
-.p-pronto{
+
+.p-pronto {
     padding: 30px;
     background-image: linear-gradient(to right, rgb(3, 71, 3), green);
     max-width: 400px;
@@ -142,12 +151,14 @@ main{
     box-shadow: 2px 2px 10px rgb(0, 0, 0, 0.8);
     transition: 0.2s;
 }
-.p-pronto:hover{
+
+.p-pronto:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
     cursor: pointer;
 }
-.p-pronto h1{
+
+.p-pronto h1 {
     color: white;
     text-align: center;
     font: bold 35px Arial, Helvetica, sans-serif;
@@ -155,26 +166,29 @@ main{
 
 /* ------------------------------------------------------------------------------------ */
 
-.conteudo{
+.conteudo {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
-@media (min-width: 768px){
-    .conteudo{
+
+@media (min-width: 768px) {
+    .conteudo {
         flex-direction: row;
         align-items: flex-start;
     }
 }
 
-.conteudo h2{
+.conteudo h2 {
     margin: 10px 0 0 10px;
     color: rgb(11, 46, 110);
 }
-.conteudo hr{
+
+.conteudo hr {
     margin: 10px 10px;
 }
-.container-esquerda{
+
+.container-esquerda {
     justify-content: center;
     align-items: center;
     max-width: 40%;
@@ -182,7 +196,8 @@ main{
     height: 100vh;
     margin: 0 0 0 40px;
 }
-.estoque-produto{
+
+.estoque-produto {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
@@ -194,28 +209,34 @@ main{
     margin-bottom: 20px;
     box-shadow: 2px 2px 10px grey;
 }
-@media(min-width: 768px){
-    .estoque-produto{
+
+@media(min-width: 768px) {
+    .estoque-produto {
         grid-template-columns: 2fr 1fr;
     }
 }
-.estoque-produto h2, .estoque-produto hr{
+
+.estoque-produto h2,
+.estoque-produto hr {
     grid-column: 1 / -1;
 }
-.estoque-produto p{
+
+.estoque-produto p {
     padding: 10px;
 }
-.estoque-produto p:nth-of-type(odd){
+
+.estoque-produto p:nth-of-type(odd) {
     text-align: left;
     padding-left: 10px;
 }
-.estoque-produto p:nth-of-type(even){
+
+.estoque-produto p:nth-of-type(even) {
     text-align: right;
     padding-right: 10px;
 }
 
 
-.estoque-material{
+.estoque-material {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
@@ -226,27 +247,33 @@ main{
     padding: 10px;
     box-shadow: 2px 2px 10px grey;
 }
-@media(min-width: 768px){
-    .estoque-material{
+
+@media(min-width: 768px) {
+    .estoque-material {
         grid-template-columns: 2fr 1fr;
     }
 }
-.estoque-material h2, .estoque-material hr{
+
+.estoque-material h2,
+.estoque-material hr {
     grid-column: 1 / -1;
 }
-.estoque-material p{
+
+.estoque-material p {
     padding: 10px;
 }
-.estoque-material p:nth-of-type(odd){
+
+.estoque-material p:nth-of-type(odd) {
     text-align: left;
     padding-left: 10px;
 }
-.estoque-material p:nth-of-type(even){
+
+.estoque-material p:nth-of-type(even) {
     text-align: right;
     padding-right: 10px;
 }
 
-.container-direita{
+.container-direita {
     justify-content: center;
     align-items: center;
     background-color: white;
@@ -256,17 +283,19 @@ main{
     margin: 0 40px 0 0;
     box-shadow: 2px 2px 10px grey;
     padding-bottom: 30px;
-    
+
 }
-.container-direita h2{
+
+.container-direita h2 {
     margin: 20px 0 0 20px;
     color: rgb(11, 46, 110);
 }
-.container-direita hr{
+
+.container-direita hr {
     margin: 10px 20px;
 }
 
-table{
+table {
     max-width: 95%;
     width: 100%;
     margin: 0 auto;
@@ -275,15 +304,19 @@ table{
     color: rgb(11, 46, 110);
     font: bold 15px Arial, Helvetica, sans-serif;
 }
-thead{
+
+thead {
     background-color: lightgrey;
-    
+
 }
-th, td{
+
+th,
+td {
     padding: 8px;
     text-align: center;
 }
-.status{
+
+.status {
     color: white;
     width: 100%;
     height: 30px;
@@ -292,12 +325,57 @@ th, td{
     justify-content: center;
     align-items: center;
 }
-.concluido{
+
+.concluido {
     background-color: green;
 }
-.producao{
+
+.producao {
     background-color: orange;
 }
-.aguardando{
+
+.aguardando {
     background-color: red;
+}
+
+
+
+
+
+.menuEscolha {
+    background-color: rgb(156, 176, 213);
+    color: white;
+    margin: 0 auto;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-radius: 15px;
+}
+
+nav {
+    align-content: center;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 200px;
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
+    text-decoration: none;
+    display: block;
+}
+
+nav ul li a:hover {
+    color: orange;
 }

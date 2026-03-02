@@ -27,6 +27,11 @@ body{
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
     background-color: lightgrey;
+    background:
+       radial-gradient(1200px 700px at 20% 15%, rgba(68, 102, 158, 0.175), transparent 55%),
+       radial-gradient(900px 600px at 80% 10%, rgba(50, 84, 158, 0.156), transparent 50%),
+       linear-gradient(180deg, rgba(27, 40, 84, 0.95), rgb(29, 37, 64));
+
 }
 header{
     background-color: rgb(11, 46, 110);
