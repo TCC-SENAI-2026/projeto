@@ -1,3 +1,26 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+h2{
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+}
+p{
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+}
+/* celular */
+@media (min-width: 480px){}
+
+/* tablet */
+@media (min-width: 768px){}
+
+/* notebook */
+@media (min-width: 1024px){}
+
+/* desktop grande */
+@media (min-width: 1280px){}
+
 body{
     margin: 0;
     padding: 0;
@@ -53,7 +76,17 @@ nav ul li a:hover{
 nav ul li:hover > .submenu{
     display: flex;
 }
-
+.logo{
+    max-width: 150px;
+    width: 100%;
+    height: auto;
+    padding: 10px;
+}
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 header a{
     color: white;
     text-decoration: none;
@@ -70,14 +103,19 @@ header p{
     align-items: center;
     gap: 10px;
 }
-.icone-login{
-    width: 40px;
+.iconde-login{
+    width: 50px;
     height: auto;
     border-radius: 50%;
 }
 .arrow-drop{
     width: 20px;
     height: auto;
+}
+
+main{
+    display: flex;
+    padding-bottom: 30px
 }
 
 footer{
@@ -90,5 +128,4 @@ footer{
     align-items: center;
     bottom: 0;
     z-index: 1000;
-    margin-top: 50px;
 }
