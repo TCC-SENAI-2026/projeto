@@ -4,27 +4,59 @@
     padding: 0;
 }
 
+:root {
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --text-base: 16px;
+  --text-sm: 14px;
+
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  --accent: #4f8cff;
+  --accent-2: #7c5cff;
+
+  --glass: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --white-strong: rgba(255, 255, 255, 0.92);
+  --white-mid: rgba(255, 255, 255, 0.82);
+
+  --shadow-strong: 0 40px 90px rgba(0, 0, 0, 0.6);
+}
 body {
     font-family: Arial, Helvetica, sans-serif;
     background:
-        radial-gradient(1200px 700px at 20% 15%, rgba(59, 130, 246, .28), transparent 55%),
-        radial-gradient(900px 600px at 80% 10%, rgba(37, 99, 235, .22), transparent 50%),
-        linear-gradient(180deg, rgba(7, 30, 104, .95), rgba(7, 30, 104, .88));
+        radial-gradient(1200px 700px at 20% 15%, rgba(68, 102, 158, 0.175), transparent 55%),
+        radial-gradient(900px 600px at 80% 10%, rgba(50, 84, 158, 0.156), transparent 50%),
+        linear-gradient(180deg, rgba(27, 40, 84, 0.95), rgb(29, 37, 64));
     padding: clamp(12px, 3vh, 40px) clamp(12px, 2vw, 20px);
     display: flex;
+    /* pega a tela toda da tela */
+    height: 100vh; 
     justify-content: center;
+    font-family: var(--font-ui);
+  font-size: var(--text-base);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 main {
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .cadastro {
     width: 100%;
-    max-width: 720px;
+    height: auto;
+    max-width: 850px;
     margin: 0 auto;
+    backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 form.cadastro1 {
@@ -132,10 +164,11 @@ fieldset {
 
 .campo label {
     display: block;
+    margin-top: 7px;
     font-size: 14px;
     font-weight: 600;
     color: #374151;
-    margin-bottom: 6px;
+    margin-bottom: 3px;
 }
 
 .label-like {
@@ -307,4 +340,44 @@ textarea:focus {
         width: 100%;
         min-width: 0;
     }
+}
+.senha-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.senha-wrap input {
+  padding-right: 44px;
+  /* espaço pro ícone não ficar em cima do texto */
+}
+
+.toggle-senha {
+  position: absolute;
+  top: 60%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: rgba(56, 56, 56, 0.75);
+}
+
+.toggle-senha:hover {
+  color: rgba(67, 67, 67, 0.95);
+}
+
+.icone-olho {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.olho-aberto {
+  display: none;
 }
