@@ -23,7 +23,7 @@
                     <ul class="submenu">
                         <li><a>Historico de Pedidos</a></li>
                         <li><a>Novo Pedido</a></li>
-                        <li><a>.</a></li>
+                        <li><a>Sair</a></li>
                     </ul>
                 </li>
                 <li><a>Relatorios</a></li>
@@ -34,9 +34,7 @@
 
 
         <div onclick="loginMenu()" class="conta">
-            <img class="icone-login" src="img/E-threads (3) (1).png" alt="icone-login">
-            <p>Ola, nome</p>
-            <img class="arrow-drop" src="img/E-threads (3) (1).png" alt="arrow drop">
+            <p class="ola-nome">Ola, nome</p>
         </div>
     </header>
 
@@ -87,73 +85,72 @@
         <div class="conteiner02">
             <h3>2. Escolha o tecido e a cor desejável</h3>
 
-            <input type="color" id="color" name="cor-algodão[]" value="#ffffff">
-
-            <div class="checkboxn-01-algodão">
-                <label class="posição-algodão" for="checkbox-algodão">Algodão</label>
-                <input type="checkbox" name="checkbox-algodão[]" id="checkbox-algodão">
+            <div class="tecido-item">
+                <input type="color" id="cor-algodao" name="cor-algodao" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-algodao">Algodão</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-algodao">
+                </div>
             </div>
 
-            <input type="color" id="cor-linho" name="cor-linho[]" value="#ffffff">
-
-            <div class="checkbox-02-linho">
-                <label class="checkbox-linho" for="checkbox-linho">Linho
-                    <input type="checkbox" name="checkbox-linho[]" id="checkbox-linho" value="#ffffff">
-                </label>
+            <div class="tecido-item">
+                <input type="color" id="cor-linho" name="cor-linho" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-linho">Linho</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-linho">
+                </div>
             </div>
 
-            <input type="color" id="cor-poliester" name="cor-poliester[]" value="#ffffff">
-
-            <div class="checkbox-03-poliester">
-                <label class="checkbox-poliester" for="checkbox-poliester">Poliéster
-                    <input type="checkbox" name="checkbox-poliester[]" id="checkbox-poliester" value="#ffffff">
-                </label>
+            <div class="tecido-item">
+                <input type="color" id="cor-poliester" name="cor-poliester" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-poliester">Poliéster</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-poliester">
+                </div>
             </div>
 
-            <input type="color" id="cor-seda" name="cor-seda[]" value="#ffffff">
-
-            <div class="checkbox-04-seda">
-                <label for="checkbox-seda">Seda
-                    <input type="checkbox" name="checkbox-seda[]" id="checkbox-seda">
-                </label>
+            <div class="tecido-item">
+                <input type="color" id="cor-seda" name="cor-seda" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-seda">Seda</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-seda">
+                </div>
             </div>
 
-            <input type="color" id="cor-lã" name="cor-lã[]" value="#ffffff">
-
-            <div class="checkbox-05-lã">
-                <label for="checkbox-lã">Lã
-                    <input type="checkbox" name="checkbox-lã[]" id="checkbox-lã">
-                </label>
+            <div class="tecido-item">
+                <input type="color" id="cor-la" name="cor-la" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-la">Lã</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-la">
+                </div>
             </div>
 
-
-            <input type="color" id="cor-elastano" name="cor-elastano[]" value="#ffffff">
-
-            <div class="checkbox-06-elastano">
-                <label for="checkbox-elastano">Elastano
-                    <input type="checkbox" name="checkbox-elastano[]" id="checkbox-elastano">
-                </label>
+            <div class="tecido-item">
+                <input type="color" id="cor-elastano" name="cor-elastano" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-elastano">Elastano</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-elastano">
+                </div>
             </div>
 
-            <input type="color" id="cor-renda" name="cor-renda[]" value="#ffffff">
-
-            <div class="checkbox-07-renda">
-                <label for="checkbox-renda">Renda
-                    <input type="checkbox" name="checkbox-renda[]" id="checkbox-renda">
-                </label>
+            <div class="tecido-item">
+                <input type="color" id="cor-poliamida" name="cor-poliamida" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-poliamida">Poliamida</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-poliamida">
+                </div>
             </div>
 
-            <input type="color" name="cor-poliamida[]" id="cor-poliamida" value="#ffffff">
-
-            <div class="checkbox-08-poliamida">
-                <label for="checkbox-poliamiada">Poliamida
-                    <input type="checkbox" name="checkbox-poliamida[]" id="checkbox-poliamida">
-                </label>
+            <div class="tecido-item">
+                <input type="color" id="cor-renda" name="cor-renda" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-renda">Renda</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-renda">
+                </div>
             </div>
-
         </div>
 
-        <div class="conteiner03">
+        <div class="container03">
             <h3>3. Upload da Imagem</h3>
 
             <div class="upload-img">
@@ -170,118 +167,130 @@
 
                 <div class="opcoes-tamanhos">
 
-                    <input type="checkbox" name="tamanho" id="p" value="p">
-                    <label for="p">P</label>
-                    <input type="number" name="quantidade-p[]" id="" value="0">
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="p" value="p">
+                        <label for="p">P</label>
+                        <input type="number" name="qtd-p" class="input-qtd" min="0" value="0">
+                    </div>
 
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="m" value="m">
+                        <label for="m">M</label>
+                        <input type="number" name="qtd-m" class="input-qtd" min="0" value="0">
+                    </div>
 
-                    <input type="checkbox" name="tamanho" id="m" value="m">
-                    <label for="m">M</label>
-                    <input type="number" name="quantidade-m[]" id="" value="0">
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="g" value="g">
+                        <label for="g">G</label>
+                        <input type="number" name="qtd-g" class="input-qtd" min="0" value="0">
+                    </div>
 
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="gg" value="gg">
+                        <label for="gg">GG</label>
+                        <input type="number" name="qtd-gg" class="input-qtd" min="0" value="0">
+                    </div>
 
-                    <input type="checkbox" name="tamanho" id="g" value="g">
-                    <label for="g">G</label>
-                    <input type="number" name="quantidade-g[]" id="" value="0">
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="g1" value="g1">
+                        <label for="g1">G1</label>
+                        <input type="number" name="qtd-g1" class="input-qtd" min="0" value="0">
+                    </div>
 
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho" id="g2" value="g2">
+                         <label for="g2">G2</label>
+                        <input type="number" name="qtd-g2" class="input-qtd" min="0" value="0">
+                    </div>
 
-                    <input type="checkbox" name="tamanho" id="gg" value="gg">
-                    <label for="gg">GG</label>
-                    <input type="number" name="quantidade-gg[]" id="" value="0">
-
-
-                    <input type="checkbox" name="tamanho" id="g1" value="g1">
-                    <label for="g1">G1</label>
-                    <input type="number" name="quantidade-g1[]" id="" value="0">
-
-
-                    <input type="checkbox" name="tamanho" id="g2" value="g2">
-                    <label for="g2">G2</label>
-                    <input type="number" name="quantidade-g2[]" id="" value="0">
-
-
-                    <input type="checkbox" name="tamanho" id="g3" value="g3">
-                    <label for="g3">G3</label>
-                    <input type="number" name="quantidade-g3[]" id="" value="0">
-
-                    <div class="botoes">
-
-                        <button class="open" id="botao-voltar-form">
-                            <b>Voltar</b>
-                        </button>
-
-                        <button class="next" id="botao-continuar">
-                            <b>Continuar</b>
-                        </button>
-
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho" id="g3" value="g3">
+                        <label for="g3">G3</label>
+                        <input type="number" name="qtd-g3" class="input-qtd" min="0" value="0">
                     </div>
                 </div>
 
             </div>
 
-            <div id="fadee"></div>
 
-            <div id="modal-container">
-                <div class="modal-card">
-                    <div class="modal-header">
-                        <h2>Revisão do pedido</h2>
-                    </div>
+            <div class="botoes">
 
-                    <div class="modal-body">
-                        <table class="pedido-table">
-                            <thead>
-                                <tr>
-                                    <th>Modelo</th>
-                                    <th>Tam</th>
-                                    <th>Tecido</th>
-                                    <th>Cor</th>
-                                    <th>Qtd</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Camisa</td>
-                                    <td>G1</td>
-                                    <td>algodão</td>
-                                    <td>azul</td>
-                                    <td>10</td>
-                                </tr>
-                                <tr>
-                                    <td>Blusa</td>
-                                    <td>M</td>
-                                    <td>algodão</td>
-                                    <td>Preto</td>
-                                    <td>2</td>
-                                </tr>
-                                <tr>
-                                    <td>Calça</td>
-                                    <td>GG</td>
-                                    <td>poliéster</td>
-                                    <td>marrom</td>
-                                    <td>5</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <button class="open" id="botao-voltar-form">
+                    <b>Voltar</b>
+                </button>
 
-                        <p class="aviso-texto">
-                            Confira antes de finalizar. Depois disso,<br>
-                            o pedido será registrado.
-                        </p>
-                    </div>
+                <button class="next" id="botao-continuar-modal">
+                    <b>Continuar</b>
+                </button>
 
-                    <div class="modal-footer">
-                        <button class="btn-voltar">Voltar e editar</button>
-                        <button class="btn-finalizar">Finalizar pedido</button>
-                    </div>
+            </div>
+
+        </div>
+
+        <div id="fade"></div>
+
+        <div id="modal-container">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h2>Revisão do pedido</h2>
+                </div>
+
+                <div class="modal-body">
+                    <table class="pedido-table">
+                        <thead>
+                            <tr>
+                                <th>Modelo</th>
+                                <th>Tam</th>
+                                <th>Tecido</th>
+                                <th>Cor</th>
+                                <th>Qtd</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Camisa</td>
+                                <td>G1</td>
+                                <td>algodão</td>
+                                <td>azul</td>
+                                <td>10</td>
+                            </tr>
+                            <tr>
+                                <td>Blusa</td>
+                                <td>M</td>
+                                <td>algodão</td>
+                                <td>Preto</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>Calça</td>
+                                <td>GG</td>
+                                <td>poliéster</td>
+                                <td>marrom</td>
+                                <td>5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="aviso-texto">
+                        <b>Confira antes de finalizar. Depois disso,<br>
+                        o pedido será registrado.</b>
+                    </p>
+
+                    <p id="aviso-pecas">
+                        <b>Total de peças: </b>
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn-voltar">Voltar e editar</button>
+                    <button class="btn-finalizar">Finalizar pedido</button>
                 </div>
             </div>
+        </div>
     </main>
 
- 
-  <script src="scripts.js">
+    <script src="js/scripts.js"></script>
 
-    
-  </script>
 </body>
 
 </html>
