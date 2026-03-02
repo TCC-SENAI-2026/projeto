@@ -37,7 +37,7 @@
         </div>
     </header>
 
-    <main> 
+    <main>
         <div class="container">
             <h1>Clientes</h1>
 
@@ -48,19 +48,49 @@
                     <option value="ativos">Ativos</option>
                     <option value="inativos">Inativos</option>
                     <option value="crescente">A - Z</option>
-                    <option value="decrescente">Z - A</option>                
+                    <option value="decrescente">Z - A</option>
                 </select>
             </div>
         </div>
-       
+
         <hr>
-            
+
         <div class="clientes">
-           
-            <div class="card">
+
+            <div onclick="openModal()" class="card">
                 <img src="../../imagens-clientes-administrador/7455353.jpg" alt="">
                 <div class="nome-cliente">
                     <h3>Cliente 1</h3>
+                    <div id="resetModal" class="modal" style="display:none;">
+                        <!-- id="resetModal" o JS usa isso para encontrar o modal, class="modal" o css estiliza esse fundo, style="display:none" o modal começa escondido até alguem clicar-->
+
+                        <div class="modal-content">
+                            <!-- caixa branca do centro, tudo que o usuário ve, fica aqui dentro -->
+
+                            <div class="modal-header"> <!-- titulo do modal -->
+                                <h2>Redefinir Senha</h2>
+                                <button class="close" aria-label="Fechar" type="button"
+                                    onclick="closeModal()">×</button>
+                                <!-- botão de fechar, ao clicar no "x" o modal desaparece -->
+                            </div>
+
+                            <hr class="linha-personalizada">
+
+                            <form class="modal-body" onsubmit="enviarSolicitacao(event)"> <!-- Corpo do modal -->
+                                <label for="reReset"></label>
+                                <input type="text" id="reReset" placeholder="Digite seu RE" inputmode="numeric"
+                                    pattern="[0-9]*" autocomplete="off" maxlength="6" required />
+
+                                <!-- id="reReset" identifica o campo, placeholder -> texto de ajuda -->
+
+                                <button type="submit" onclick="enviarSolicitacao()">Enviar</button>
+                                <!-- Quando clica, chama a função enviarSolicitacao() -->
+
+                                <p class="modal-help">Sua solicitação será enviada ao administrador.</p>
+                                <!-- Texto informativo -->
+                            </form>
+                        </div>
+                    </div>
                     <div class="status"></div>
                 </div>
             </div>
@@ -105,6 +135,57 @@
         </div>
 
     </main>
+
+    <script>
+         function openModal() {
+            document.getElementById("resetModal").style.display = "flex";
+        }
+
+        // Procura o elemento com id "resetModal", muda o display para "none", fazendo o modal desaparecer
+        function closeModal() {
+            document.getElementById("resetModal").style.display = "none";
+        }
+
+        // Mostra um alerta e fecha o modal
+        function enviarSolicitacao(event) {
+            event.preventDefault();
+
+            const re = document.getElementById("reReset").value.trim();
+
+            if (re === "") {
+                return;
+            }
+
+            alert("Solicitação enviada com sucesso.");
+            closeModal();
+        }
+
+          // bloqueia letras no campo RE do modal
+        const reResetInput = document.getElementById("reReset");
+
+        reResetInput.addEventListener("input", function () {
+            // remove tudo que não é número
+            this.value = this.value.replace(/\D/g, "");
+
+            // limita a 6 números
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+        });
+
+
+        /* window: pagina inteira, click: evento de clique, function (e): função que recebe o evento (informação do clique) */
+        window.addEventListener("click", function (e) {
+
+            // Guarda a variável modal, que recebe o elemento com id "resetModal" (que cobre a tela toda)
+            const modal = document.getElementById("resetModal");
+
+            // Se o clique (e.target) for igual ao modal (ou seja, se o clique foi fora da caixa branca) closeModal() (entao fecha o modal)
+            if (e.target === modal) closeModal();
+        });
+
+
+    </script>
 
     <footer>
         <h4>Desenvolvido por </h4>
