@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style1.css">
+    <title>Novo Pedido</title>
+</head>
+
+<body>
+
+    <header>
+
+        <img class="logo" src="img/E-threads (3) (1).png" alt="logo">
+        <nav>
+            <ul>
+                <li><a>Inicio</a></li>
+                <li><a>Clientes</a></li>
+                <li><a>Estoque</a></li>
+                <li>
+                    <a onmouseover="menuPedidos()">Pedidos</a>
+                    <ul class="submenu">
+                        <li><a>Historico de Pedidos</a></li>
+                        <li><a>Novo Pedido</a></li>
+                        <li><a>Sair</a></li>
+                    </ul>
+                </li>
+                <li><a>Relatorios</a></li>
+            </ul>
+        </nav>
+
+
+
+
+        <div onclick="loginMenu()" class="conta">
+            <p class="ola-nome">Ola, nome</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="container01">
+            <h3>1. Selecione o modelo</h3>
+
+            <img class="icon-camiseta" src="img/camisa.png" alt="camiseta">
+            <div class=" checkbox-n1">
+                <label for="input-camiseta">camiseta</label>
+                <input type="checkbox" name="camiseta" id="input-camiseta">
+            </div>
+
+            <img class="icon-camisa" src="img/camisa-curta.png" alt="">
+            <div class=" checkbox-n2">
+                <label for="input-camisa">camisa/curta</label>
+                <input type="checkbox" name="camisa-curta" id="input-camisa">
+            </div>
+
+            <img class="icon-camisa-longa" src="img/camisa-1.png" alt="camisa-longa">
+            <div class="checkbox-n3">
+                <label for="camisa-longa">camisa/longa</label>
+                <input type="checkbox" name="camisa-longa" id="camisa-longa">
+            </div>
+
+            <img class="icon-blusaa" src="img/capuz.png" alt="blusa">
+            <div class="checkboxn-n4">
+                <label for="icon-blusa">blusa</label>
+                <input type="checkbox" name="blusa" id="icon-blusa">
+            </div>
+
+            <img class="icon-moletom" src="img/moletom-com-capuz.png" alt="moletom">
+            <div class="checkboxn-n5">
+                <label for="icon-moletom">moletom/capuz</label>
+                <input type="checkbox" name="moletom" id="icon-moletom">
+            </div>
+
+            <img class="icon-calça" src="img/jeans.png" alt="calça">
+            <div class="checkboxn-n6">
+                <label for="icon-calça">Calça</label>
+                <input type="checkbox" name="calça" id="icon-calça">
+            </div>
+
+
+        </div>
+
+
+        <!-- <div class="conteiner02">
+            <h3>2. Escolha o tecido e a cor desejável</h3>
+
+            <div class="tecido-item">
+                <input type="color" id="cor-algodao" name="cor-algodao" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-algodao">Algodão</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-algodao">
+                </div>
+            </div>
+
+            <div class="tecido-item">
+                <input type="color" id="cor-linho" name="cor-linho" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-linho">Linho</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-linho">
+                </div>
+            </div>
+
+            <div class="tecido-item">
+                <input type="color" id="cor-poliester" name="cor-poliester" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-poliester">Poliéster</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-poliester">
+                </div>
+            </div>
+
+            <div class="tecido-item">
+                <input type="color" id="cor-seda" name="cor-seda" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-seda">Seda</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-seda">
+                </div>
+            </div>
+
+            <div class="tecido-item">
+                <input type="color" id="cor-la" name="cor-la" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-la">Lã</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-la">
+                </div>
+            </div>
+
+            <div class="tecido-item">
+                <input type="color" id="cor-elastano" name="cor-elastano" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-elastano">Elastano</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-elastano">
+                </div>
+            </div>
+
+            <div class="tecido-item">
+                <input type="color" id="cor-poliamida" name="cor-poliamida" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-poliamida">Poliamida</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-poliamida">
+                </div>
+            </div>
+
+            <div class="tecido-item">
+                <input type="color" id="cor-renda" name="cor-renda" value="#ffffff">
+                <div class="checkbox-wrapper">
+                    <label for="checkbox-renda">Renda</label>
+                    <input type="checkbox" name="tecido[]" id="checkbox-renda">
+                </div>
+            </div>
+        </div> -->
+
+        <div class="container03">
+            <h3>3. Upload da Imagem</h3>
+
+            <div class="upload-img">
+
+                <p class="upload-texto-principal">
+                    <strong>Arraste sua arte aqui</strong> <a href="">ou clique para enviar</a>
+                </p>
+                <p class="upload-legendas">Formatos aceitos: PNG, AI e PDF.</p>
+            </div>
+
+            <p class="move">Quantidade e Tamanho:</p>
+
+            <div class="seletor-tamanhos">
+
+                <div class="opcoes-tamanhos">
+
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="p" value="p">
+                        <label for="p">P</label>
+                        <input type="number" name="qtd-p" class="input-qtd" min="0" value="0">
+                    </div>
+
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="m" value="m">
+                        <label for="m">M</label>
+                        <input type="number" name="qtd-m" class="input-qtd" min="0" value="0">
+                    </div>
+
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="g" value="g">
+                        <label for="g">G</label>
+                        <input type="number" name="qtd-g" class="input-qtd" min="0" value="0">
+                    </div>
+
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="gg" value="gg">
+                        <label for="gg">GG</label>
+                        <input type="number" name="qtd-gg" class="input-qtd" min="0" value="0">
+                    </div>
+
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho[]" id="g1" value="g1">
+                        <label for="g1">G1</label>
+                        <input type="number" name="qtd-g1" class="input-qtd" min="0" value="0">
+                    </div>
+
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho" id="g2" value="g2">
+                        <label for="g2">G2</label>
+                        <input type="number" name="qtd-g2" class="input-qtd" min="0" value="0">
+                    </div>
+
+                    <div class="tamanho-grupo">
+                        <input type="checkbox" name="tamanho" id="g3" value="g3">
+                        <label for="g3">G3</label>
+                        <input type="number" name="qtd-g3" class="input-qtd" min="0" value="0">
+                    </div>
+                </div>
+
+            </div>
+          
+
+            <div class="botoes">
+
+                <button class="open" id="botao-voltar-form">
+                    <b>Voltar</b>
+                </button>
+
+                <button class="next" id="botao-continuar-modal">
+                    <b>Revisar ficha técnica</b>
+                </button>
+
+            </div>
+
+        </div>
+
+        <script src="js/script1.js"></script>
+</body>
+
+</html>
