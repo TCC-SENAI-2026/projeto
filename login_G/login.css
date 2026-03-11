@@ -39,18 +39,15 @@ body {
   display: grid;
   place-items: center;
   background: linear-gradient(120deg,
-      #0b1020,
-      #141b2d,
-      #1c2950,
-      #141b2d,
-      #0b1020);
-
+      #1c2431,
+      #1d2634,
+      #252d4c,
+      #1d2533,
+      #12161e);
   background-size: 200% 200%;
-
   animation: gradientMove 10s ease infinite alternate;
   font-family: var(--font-ui);
   font-size: var(--text-base);
-
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -59,17 +56,11 @@ body::before {
   content: "";
   position: fixed;
   inset: -20%;
-
   background:
     radial-gradient(circle at 20% 30%, rgba(22, 47, 92, 0), transparent 60%),
     radial-gradient(circle at 80% 70%, rgba(25, 11, 81, 0), transparent 60%);
-
   background-size: 300% 300%;
-
   animation: gradientMove 100s ease-in-out infinite;
-
-
-
   pointer-events: none;
 }
 
@@ -77,28 +68,20 @@ body::before {
   position: relative;
   width: 420px;
   max-width: calc(100vw - 32px);
-
   padding: 35px 50px;
   border-radius: 18px;
-
   background: var(--glass);
   border: 1px solid var(--glass-border);
-
   box-shadow:
-    0 40px 90px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 20px 60px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
   color: rgba(255, 255, 255, 0.90);
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
-
+  gap: 16px;
 }
 
 /* brilho suave no topo do card */
@@ -111,105 +94,35 @@ body::before {
   pointer-events: none;
 }
 
-
 .logo {
   width: 135px;
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 6px auto 6px;
-  margin-bottom: -5px;
-  margin-top: 13px;
+  margin: 13px auto 16px;
   filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22));
 }
 
+.login-divisor {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right,
+      transparent,
+      rgba(255, 255, 255, 0.258),
+      transparent);
+  margin: 16px 0 6px;
+}
+
+.login-texto {
+  font-size: 13.4px;
+  opacity: 0.75;
+  text-align: center;
+  margin-bottom: 20px;
+}
 
 .login form {
   width: 100%;
-  margin-top: 28px;
-}
-
-/* 
-   Abas (administrador/colaborador)
- */
-.botao1_2 {
-  width: 100%;
-  align-items: center;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 18px 0 18px;
-  margin-top: 20px;
-
-}
-
-.botao1_2 button {
-
-  padding: 0px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  line-height: 1.2;
-  height: 28px;
-  min-height: unset;
-
-  border-radius: 10px;
-
-
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.82);
-  box-shadow: none;
-
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .2px;
-
-  cursor: pointer;
-
-  transition: filter .2s ease, transform .12s ease, background .2s ease, border-color .2s ease;
-}
-
-
-.bt-colab {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-
-  color: rgba(255, 255, 255, 0.82);
-
-  transition: all 0.2s ease;
-}
-
-.bt-adm {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-
-  color: rgba(255, 255, 255, 0.82);
-
-  font-weight: 500;
-
-  transition: background 0.2s ease, border 0.2s ease;
-}
-
-.botao1_2 button:hover {
-  background: rgba(255, 255, 255, 0.11);
-  border-color: rgba(255, 255, 255, 0.26);
-  color: #fff;
-  transform: translateY(-1px);
-}
-
-.botao1_2 button.active {
-  background: linear-gradient(135deg,
-      rgba(47, 110, 237, 0.274),
-      rgba(90, 95, 207, 0.16));
-
-  border: 1px solid rgba(79, 141, 255, 0.258);
-  border-color: rgba(106, 103, 249, 0.537);
-  color: rgba(255, 255, 255, 0.95);
-  box-shadow:
-    0 0 0 1px rgba(79, 140, 255, 0.25),
-    0 4px 12px rgba(0, 0, 0, 0.25);
-}
-
-.botao1_2 button:not(.is-active) {
-  opacity: .92;
+  margin-top: 10px;
 }
 
 .campo {
@@ -220,28 +133,31 @@ body::before {
   margin-bottom: 14px;
 }
 
-
 .campo input {
-
   width: 319px;
   height: 38px;
-  /* diminui a altura total */
   padding: 0 12px;
-  /* diminui o espaço interno */
-
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.28);
   background: rgba(255, 255, 255, 0.85);
-
   font-family: var(--font-ui);
   font-size: 15px;
   color: #111827;
-
   transition: all 0.2s ease;
 }
 
+.campo input::placeholder {
+  color: rgba(17, 24, 39, 0.55);
+}
+
 .campo input:hover {
-  border-color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: #3834ff;
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
 }
 
 .senha-wrap {
@@ -251,7 +167,6 @@ body::before {
 
 .senha-wrap input {
   padding-right: 44px;
-  /* espaço pro ícone não ficar em cima do texto */
 }
 
 .toggle-senha {
@@ -285,45 +200,26 @@ body::before {
   display: none;
 }
 
-.campo input::placeholder {
-  color: rgba(17, 24, 39, 0.55);
-}
-
-.campo input:focus {
-  outline: none;
-  border-color: #3834ff;
-  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
-}
-
-.campo input:hover {
-  border-color: rgba(255, 255, 255, 0.38);
-}
-
 /* 
   Botao entrar
  */
 .bt-entrar {
   width: 199px;
   height: 40px;
-
   border: 1px solid rgb(29, 7, 85);
   border-radius: 10px;
-  background: linear-gradient(135deg, #0f4cadc8, #4a30b1a8);
+  background: linear-gradient(135deg, #4575b8, #2d4365);
   box-shadow:
     0 6px 18px rgba(26, 26, 26, 0.433),
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
-
   color: #ffffff;
   font-weight: 600;
   font-size: 15px;
   letter-spacing: 0.2px;
-
   cursor: pointer;
-  margin: 0px auto 0 auto;
+  margin: 0 auto;
   display: block;
-  margin-top: px;
-
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
@@ -332,18 +228,16 @@ body::before {
 }
 
 .bt-entrar:hover {
-  background: linear-gradient(135deg, #165ac9bc, #4530b1d8);
+  background: linear-gradient(135deg, #4d7ab4, #2f466a);
   box-shadow:
     0 9px 18px rgba(0, 0, 0, 0.221),
     inset 0 0 0 1px rgba(255, 255, 255, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.16);
-
   transform: translateY(-1px);
 }
 
 .bt-entrar:active {
   transform: translateY(0);
-
   box-shadow:
     0 4px 10px rgba(0, 0, 0, 0.35),
     inset 0 0 0 1px rgba(255, 255, 255, 0.03),
@@ -352,7 +246,8 @@ body::before {
 
 .reset-link {
   margin-top: 14px;
-  font-size: 13px;
+  font-size: 12.4px;
+  opacity: 0.85;
   font-weight: var(--w-medium);
   color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
@@ -369,13 +264,10 @@ body::before {
   display: none;
   position: fixed;
   inset: 0;
-
   background: rgba(0, 0, 0, 0.58);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
-
   z-index: 9999;
-
   align-items: center;
   justify-content: center;
   padding: 16px;
@@ -385,16 +277,12 @@ body::before {
 .modal-content {
   width: 350px;
   max-width: 100%;
-
   background: rgba(104, 107, 112, 0.593);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
   border: 1px solid rgba(159, 199, 255, 0.129);
   border-radius: 14px;
-
   color: rgba(220, 234, 255, 0.441);
-
   box-shadow: var(--shadow-strong), 0 0 0 1px rgba(134, 141, 192, 0.27);
   overflow: hidden;
 }
@@ -403,16 +291,12 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 12px 16px;
-
   font-family: var(--font-ui);
   font-size: 14px;
   font-weight: var(--w-semibold);
-
   background: rgba(136, 155, 210, 0.18);
   color: rgba(255, 255, 255, 0.92);
-
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
@@ -424,19 +308,14 @@ hr.linha-personalizada {
 .close {
   width: 40px;
   height: 40px;
-
   display: grid;
   place-items: center;
-
   border: none;
   background: transparent;
-
   color: rgba(255, 255, 255, 0.92);
   font-size: 24px;
-
   border-radius: 10px;
   cursor: pointer;
-
   transition: background 0.2s ease, transform 0.1s ease;
 }
 
@@ -460,11 +339,9 @@ hr.linha-personalizada {
 .modal-body input {
   height: 40px;
   padding: 0 14px;
-
   font-family: var(--font-ui);
   font-size: 15px;
-
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.92);
   color: #111827;
@@ -481,15 +358,12 @@ hr.linha-personalizada {
   height: 40px;
   border: none;
   border-radius: 10px;
-
-  background: linear-gradient(135deg, #1f5fc6c8, #4a30b1a8);
+  background: linear-gradient(135deg, #4575b8, #2d4365);
   box-shadow: 0 8px 17px rgba(0, 0, 0, 0.30);
   color: #fff;
-
   font-family: var(--font-ui);
   font-size: 15px;
   font-weight: var(--w-semibold);
-
   cursor: pointer;
   transition: transform 0.12s ease, filter 0.2s ease;
 }
@@ -528,7 +402,6 @@ hr.linha-personalizada {
   text-align: center;
   margin-bottom: 10px;
   margin-top: -5px;
-
   min-height: 16px;
 }
 

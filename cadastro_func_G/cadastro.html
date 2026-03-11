@@ -11,7 +11,7 @@
 <body>
     <main>
         <div class="cadastro">
-            <form class="cadastro1" action="">
+            <form class="cadastro1" autocomplete="off">
                 <h1 class="titulo">Cadastro de Funcionário</h1>
 
                 <fieldset>
@@ -26,38 +26,77 @@
                                 <div class="campo full">
                                     <label for="nomecompleto">Nome Completo:</label>
                                     <input type="text" id="nomecompleto" name="nomecompleto"
-                                        placeholder="Insira o nome completo" required>
+                                        placeholder="Insira o nome completo" required autocomplete="off">
                                 </div>
 
                                 <div class="campo">
                                     <label for="re">RE (Registro do Empregado):</label>
                                     <input type="text" maxlength="6" name="re" id="re"
-                                        placeholder="Digite o número do RE">
+                                        placeholder="Digite o número do RE" autocomplete="off">
                                 </div>
 
                                 <div class="campo">
                                     <label for="cpf">CPF:</label>
-                                    <input type="text" maxlength="14" name="cpf" id="cpf" placeholder="000.000.000-00">
+                                    <input type="text" maxlength="14" name="cpf" id="cpf" placeholder="000.000.000-00"
+                                        autocomplete="off">
                                 </div>
 
                                 <div class="campo">
                                     <label for="dataNascimento">Data de Nascimento:</label>
-                                    <input type="date" name="dataNascimento" id="dataNascimento" required>
+                                    <input type="date" name="dataNascimento" id="dataNascimento" required
+                                        autocomplete="off">
                                 </div>
 
                                 <div class="campo">
                                     <label for="telefone">Telefone:</label>
-                                    <input type="tel" name="telefone" id="telefone" placeholder="(11) 99999-9999">
+                                    <input type="tel" name="telefone" id="telefone" placeholder="(11) 99999-9999"
+                                        autocomplete="off">
                                 </div>
 
                                 <div class="campo full">
                                     <label for="email">E-mail:</label>
-                                    <input type="text" name="email" id="email" placeholder="Digite o E-mail">
+                                    <input type="text" name="email" id="email" placeholder="Digite o E-mail"
+                                        autocomplete="off">
                                 </div>
 
                                 <div class="campo full">
                                     <label for="endereco">Endereço:</label>
-                                    <input type="text" name="endereco" id="endereco" placeholder="Rua, número, bairro">
+                                    <input type="text" name="endereco" id="endereco" placeholder="Rua, número, bairro"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="secao">
+                        <div class="secao-lado-esquerdo">
+                            <p class="secao-titulo">Profissional</p>
+                        </div>
+
+                        <div class="secao-lado-direito">
+                            <div class="grid">
+                                <div class="campo full">
+                                    <label for="setor">Setor:</label>
+                                    <select name="setor_usuario" id="setor" required autocomplete="off">
+                                        <option value="">Selecione o Setor</option>
+                                        <option value="Administração">Administração</option>
+                                        <option value="Produção">Produção</option>
+                                    </select>
+                                </div>
+
+                                <div class="campo">
+                                    <label for="data-contrato">Data de Contratação:</label>
+                                    <input type="date" id="data-contrato" name="data-contrato" required
+                                        autocomplete="off">
+                                </div>
+
+                                <div class="campo">
+                                    <label for="salario">Salário:</label>
+                                    <div class="input-money">
+                                        <span>R$</span>
+                                        <input type="text" id="salario" name="salario" placeholder="0,00"
+                                            inputmode="numeric" autocomplete="off">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -70,19 +109,10 @@
 
                         <div class="secao-lado-direito">
                             <div class="grid">
-                                <div class="campo full">
-                                    <label for="setor">Setor:</label>
-                                    <select name="setor_usuario" id="setor" required>
-                                        <option value="">Selecione o Setor</option>
-                                        <option value="Administração">Administração</option>
-                                        <option value="Produção">Produção</option>
-                                    </select>
-                                </div>
-
                                 <div class="campo">
                                     <label for="senha">Criar Senha:</label>
                                     <input type="password" maxlength="9" name="senha" id="senha"
-                                        placeholder="Digite a senha">
+                                        placeholder="Digite a senha" autocomplete="new-password">
                                 </div>
 
                                 <div class="campo">
@@ -109,6 +139,23 @@
             </form>
         </div>
     </main>
+
+    <script>
+        const salario = document.getElementById("salario");
+
+        salario.addEventListener("input", function () {
+
+            let valor = this.value.replace(/\D/g, "");
+
+            valor = (valor / 100).toFixed(2);
+            valor = valor.replace(".", ",");
+            valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+            this.value = valor;
+
+        });
+    </script>
+
 </body>
 
 </html>

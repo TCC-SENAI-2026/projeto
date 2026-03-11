@@ -1,43 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
     <link rel="stylesheet" href="login.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <title>Login</title>
 </head>
 
 <body>
     <main class="login">
         <img src="Imagens/E-threads.png" alt="Logo do sistema" class="logo">
 
-        <form onsubmit="handleLogin(event)" id="loginForm" action="#" method="post" novalidate>
-            <div class="botao1_2">
-                <button type="button" class="bt-colab active" onclick="selecionarModo('colaborador')">
-                    Colaborador
-                </button>
+        <div class="login-divisor"></div>
 
-                <button type="button" class="bt-adm" onclick="selecionarModo('admin')">
-                    Administrador
-                </button>
-            </div>
+        <form id="loginForm" onsubmit="handleLogin(event)" method="post" novalidate>
+            <p class="login-texto">Acesse sua conta para continuar</p>
+
             <div class="campo">
                 <input type="text" id="re" name="re" placeholder="Digite seu RE" inputmode="numeric" pattern="[0-9]*"
                     autocomplete="off" maxlength="6" required>
             </div>
+
             <div class="campo senha-wrap">
                 <input type="password" id="senha" name="senha" placeholder="Digite sua senha" autocomplete="off"
                     maxlength="11" required>
 
-
-
                 <button type="button" class="toggle-senha" aria-label="Mostrar senha">
-
                     <svg class="icone-olho olho-fechado" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M3 3L21 21" />
                         <path
@@ -58,226 +51,135 @@
             <p id="loginErro" class="erro-login"></p>
 
             <button class="bt-entrar" type="submit">Entrar</button>
-
-
         </form>
 
-        <a href="#" class="reset-link" onclick="openModal()">Solicitar redefinição de senha</a>
-        <!-- "#" evita sair da página. Quando o usuario clica, o navegador executa a função openModal() -->
+        <a href="#" class="reset-link">Solicitar redefinição de senha</a>
     </main>
+
     <!-- MODAL -->
-
-    <div id="resetModal" class="modal" style="display:none;">
-        <!-- id="resetModal" o JS usa isso para encontrar o modal, class="modal" o css estiliza esse fundo, style="display:none" o modal começa escondido até alguem clicar-->
-
-        <div class="modal-content"> <!-- caixa branca do centro, tudo que o usuário ve, fica aqui dentro -->
-
-            <div class="modal-header"> <!-- titulo do modal -->
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
                 <h2>Redefinir Senha</h2>
                 <button class="close" aria-label="Fechar" type="button" onclick="closeModal()">×</button>
-                <!-- botão de fechar, ao clicar no "x" o modal desaparece -->
             </div>
 
             <hr class="linha-personalizada">
 
-            <form class="modal-body" onsubmit="enviarSolicitacao(event)"> <!-- Corpo do modal -->
+            <form class="modal-body" onsubmit="enviarSolicitacao(event)">
                 <label for="reReset"></label>
+
                 <input type="text" id="reReset" placeholder="Digite seu RE" inputmode="numeric" pattern="[0-9]*"
-                    autocomplete="off" maxlength="6" required />
+                    autocomplete="off" maxlength="6" required>
 
-                <!-- id="reReset" identifica o campo, placeholder -> texto de ajuda -->
+                <button type="submit">Enviar</button>
 
-                <button type="submit" onclick="enviarSolicitacao()">Enviar</button>
-                <!-- Quando clica, chama a função enviarSolicitacao() -->
-
-                <p class="modal-help">Sua solicitação será enviada ao administrador.</p> <!-- Texto informativo -->
+                <p class="modal-help">Sua solicitação será enviada ao administrador.</p>
             </form>
         </div>
     </div>
+
     <script>
-
-        // Procura o elemento com id "resetModal", muda o display para "flex", fazendo o modal aparecer
         function openModal() {
-            document.getElementById("resetModal").style.display = "flex";
+            resetModal.style.display = "flex";
         }
 
-        // Procura o elemento com id "resetModal", muda o display para "none", fazendo o modal desaparecer
         function closeModal() {
-            document.getElementById("resetModal").style.display = "none";
+            resetModal.style.display = "none";
         }
 
-        // Mostra um alerta e fecha o modal
+        function limitarNumeros(input, maximo) {
+            input.addEventListener("input", function () {
+                this.value = this.value.replace(/\D/g, "").slice(0, maximo);
+            });
+        }
+
         function enviarSolicitacao(event) {
             event.preventDefault();
 
-            const re = document.getElementById("reReset").value.trim();
+            const re = reResetInput.value.trim();
 
-            if (re === "") {
-                return;
-            }
+            if (!re) return;
 
             alert("Solicitação enviada com sucesso.");
             closeModal();
         }
 
-        // bloqueia letras no campo RE do modal
-        const reResetInput = document.getElementById("reReset");
-
-        reResetInput.addEventListener("input", function () {
-            // remove tudo que não é número
-            this.value = this.value.replace(/\D/g, "");
-
-            // limita a 6 números
-            if (this.value.length > 6) {
-                this.value = this.value.slice(0, 6);
-            }
-        });
-
-
-        /* window: pagina inteira, click: evento de clique, function (e): função que recebe o evento (informação do clique) */
-        window.addEventListener("click", function (e) {
-
-            // Guarda a variável modal, que recebe o elemento com id "resetModal" (que cobre a tela toda)
-            const modal = document.getElementById("resetModal");
-
-            // Se o clique (e.target) for igual ao modal (ou seja, se o clique foi fora da caixa branca) closeModal() (entao fecha o modal)
-            if (e.target === modal) closeModal();
-        });
-
-        // bloqueia letras no campo RE do login
-        const reInput = document.getElementById("re");
-
-        reInput.addEventListener("input", function () {
-
-            // remove tudo que não é número
-            this.value = this.value.replace(/\D/g, "");
-
-            // limita a 6 números
-            if (this.value.length > 6) {
-                this.value = this.value.slice(0, 6);
-            }
-        });
-
-
-        const senhaInput = document.getElementById("senha");
-        const btnToggle = document.querySelector(".toggle-senha");
-        const olhoFechado = document.querySelector(".olho-fechado");
-        const olhoAberto = document.querySelector(".olho-aberto");
-
-        btnToggle.addEventListener("click", () => {
-
-            const estaVisivel = senhaInput.type === "text";
-
-            senhaInput.type = estaVisivel ? "password" : "text";
-
-            // troca os ícones
-            olhoFechado.style.display = estaVisivel ? "block" : "none";
-            olhoAberto.style.display = estaVisivel ? "none" : "block";
-
-            // acessibilidade (texto do botão)
-            btnToggle.setAttribute("aria-label", estaVisivel ? "Mostrar senha" : "Ocultar senha");
-        });
-
-
-        const botoes = document.querySelectorAll(".botao1_2 button");
-
-        botoes.forEach(function (botao) {
-
-            botao.addEventListener("click", function () {
-
-                botoes.forEach(function (b) {
-                    b.classList.remove("active");
-                });
-
-                botao.classList.add("active");
-
-            });
-
-        });
-
-
-        // define modo padrão como colaborador
-        let modoSelecionado = "colaborador";
-
-
-        function selecionarModo(modo) {
-
-            modoSelecionado = modo;
-
-            const botaoColab = document.querySelector(".bt-colab");
-            const botaoAdm = document.querySelector(".bt-adm");
-
-            botaoColab.classList.remove("is-active");
-            botaoAdm.classList.remove("is-active");
-
-            if (modo === "colaborador") {
-                botaoColab.classList.add("is-active");
-            } else {
-                botaoAdm.classList.add("is-active");
-            }
-        }
-
-
         function handleLogin(event) {
             event.preventDefault();
 
-            const re = document.getElementById("re").value.trim();
-            const senha = document.getElementById("senha").value.trim();
-            const erro = document.getElementById("loginErro");
+            const re = reInput.value.trim();
+            const senha = senhaInput.value.trim();
 
-            // limpa erro anterior
-            erro.textContent = "";
+            loginErro.textContent = "";
 
-            // erro de preenchimento (front-end)
-            if (re === "") {
-                erro.textContent = "Digite seu RE.";
+            if (!re) {
+                loginErro.textContent = "Digite seu RE.";
                 return;
             }
 
             if (re.length !== 6) {
-                erro.textContent = "O RE deve ter 6 números.";
+                loginErro.textContent = "O RE deve ter 6 números.";
                 return;
             }
 
-            if (senha === "") {
-                erro.textContent = "Digite sua senha.";
+            if (!senha) {
+                loginErro.textContent = "Digite sua senha.";
                 return;
             }
 
-            // simulação para TCC (depois será MySQL)
-            // verifica se o usuário tentou entrar como administrador
-            if (modoSelecionado === "admin") {
-
-                // apenas o RE 999999 tem permissão de administrador (simulação)
-                if (re !== "999999") {
-                    erro.textContent = "Esta conta não possui permissão de administrador.";
-                    return;
-                }
-
-            }
-
-            // simulação de autenticação
-            // depois será substituído pelo backend Python + MySQL
-            erro.textContent = "RE ou senha inválidos.";
-
+            loginErro.textContent = "RE ou senha inválidos.";
         }
 
-        document.getElementById("re").focus();
+        const loginForm = document.getElementById("loginForm");
+        const reInput = document.getElementById("re");
+        const senhaInput = document.getElementById("senha");
+        const loginErro = document.getElementById("loginErro");
 
-        const form = document.querySelector("form");
+        const resetModal = document.getElementById("resetModal");
+        const reResetInput = document.getElementById("reReset");
+        const resetLink = document.querySelector(".reset-link");
 
-        form.addEventListener("keydown", function (e) {
-            if (e.key === "Enter") {
-                e.preventDefault();
+        const btnToggle = document.querySelector(".toggle-senha");
+        const olhoFechado = document.querySelector(".olho-fechado");
+        const olhoAberto = document.querySelector(".olho-aberto");
+
+        limitarNumeros(reInput, 6);
+        limitarNumeros(reResetInput, 6);
+
+        btnToggle.addEventListener("click", function () {
+            const estaVisivel = senhaInput.type === "text";
+
+            senhaInput.type = estaVisivel ? "password" : "text";
+            olhoFechado.style.display = estaVisivel ? "block" : "none";
+            olhoAberto.style.display = estaVisivel ? "none" : "block";
+
+            btnToggle.setAttribute(
+                "aria-label",
+                estaVisivel ? "Mostrar senha" : "Ocultar senha"
+            );
+        });
+
+        window.addEventListener("click", function (event) {
+            if (event.target === resetModal) {
+                closeModal();
+            }
+        });
+
+        resetLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            openModal();
+        });
+
+        loginForm.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
                 document.querySelector(".bt-entrar").click();
             }
         });
 
-
+        reInput.focus();
     </script>
-
-
-
 </body>
 
 </html>
