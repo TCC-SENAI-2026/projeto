@@ -44,72 +44,193 @@ header {
     top: 0;
     z-index: 1000;
 }
+
 nav {
-            align-content: center;
-        }
+    align-content: center;
+}
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 200px;
-        }
+nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 200px;
+}
 
-        nav ul li {
-            position: relative;
-        }
+nav ul li {
+    position: relative;
+}
 
-        nav ul li a {
-            text-decoration: none;
-            display: block;
-        }
+nav ul li a {
+    text-decoration: none;
+    display: block;
+}
 
-        nav ul li a:hover {
-            color: orange;
-        }
+nav ul li a:hover {
+    color: orange;
+}
 
-        .submenu {
-            display: none;
-            position: absolute;
-            background-color: rgb(11, 46, 110);
-            top: 100%;
-            left: 0;
-            padding: 10px;
-            border-radius: 0 0 5px 5px;
-            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
-            flex-direction: column;
-            min-width: 180px;
-            gap: 20px;
-        }
+.submenu {
+    display: none;
+    position: absolute;
+    background-color: rgb(11, 46, 110);
+    top: 100%;
+    left: 0;
+    padding: 10px;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    min-width: 180px;
+    gap: 20px;
+}
 
-        nav ul li:hover>.submenu {
-            display: flex;
-        }
+nav ul li:hover>.submenu {
+    display: flex;
+}
 
-        .logo {
-            max-width: 150px;
-            width: 100%;
-            height: auto;
-            padding: 10px;
-            margin-right: 0%;
-        }
+.logo {
+    max-width: 150px;
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    margin-right: 0%;
+}
 
-        header a {
-            color: white;
-            text-decoration: none;
-            font: bold 17px Arial, Helvetica, sans-serif;
-            cursor: pointer;
-        }
+header a {
+    color: white;
+    text-decoration: none;
+    font: bold 17px Arial, Helvetica, sans-serif;
+    cursor: pointer;
+}
 
-        header p {
-            font: normal 15px Arial, Helvetica, sans-serif;
-        }
+header p {
+    font: normal 15px Arial, Helvetica, sans-serif;
+}
 
-        /*MAIN */
-        /* container1 */
-        .formulario{
-            display: flex;
-            justify-content: center;
-            background-color: antiquewhite;
-        }
+
+/*MAIN */
+/* container1 */
+form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.container1{
+    background-color: aliceblue;
+    border-radius: 15px;
+    height: 1200px;
+    width: 1400px;
         
+}
+h1{ 
+    text-align: center;
+    font-size: 40px;
+    margin-top: 30px;
+}
+h2{
+    text-align: center;
+    font-size: 38px;
+    margin-top: 30px;
+    border-top: 3px solid rgb(68, 68, 73);
+    border-bottom: 3px solid rgb(68, 68, 73);
+    
+}
+
+p{
+     font-size: 25px;
+}
+.D-client1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.campo1{
+    padding: 30px 20px 0px 30px ;
+    display: flex;
+    flex-direction: column;
+    
+}
+.D-client2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.campo2{
+    padding: 5px 20px 0px 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.D-logistic{
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-color: rgb(255, 255, 255);
+}
+
+.campo3{
+    display: flex;
+    flex-direction: column;
+    padding: 25px 100px 0px 30px;
+}
+#data-entrega{
+    font-size: 25px;
+    height: 40px;
+    width: 300px;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.container-prioridade{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 10px;
+
+}
+.campo4{
+    margin-bottom: 2px;
+}
+
+.box-checkbox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.niveis{
+    border: 2px solid black;
+    height: 40px;
+    width: 330px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-around; 
+    align-items: center;
+    margin-top: 4px;
+
+}
+/* input dos checkbox */
+input[type="checkbox"]{
+    width: auto;
+    height: 25px;
+    width: 30px;
+}
+
+label{
+    font-size: 25px;
+}
+input[type="text"],
+input[type="date"],
+input[type="tel"],
+input[type="email"]{
+    font-size: 25px;
+    height: 40px;
+    width: 500px;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
