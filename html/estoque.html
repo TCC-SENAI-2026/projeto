@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/style-padrao.css">
+    <link rel="stylesheet" href="../style/style-estoque.css">
+    <link rel="stylesheet" href="../style/style-responsivo.css">
+    <title>Estoque</title>
+</head>
+
+<script src="script.js"></script>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo" src="../imgs/logo.png" alt="">
+            <img class="logo-nome" src="../imgs/E-threads.png" alt="">
+        </div>
+        <hr>
+
+        <div class="menu">
+            <button>
+                <a href="/inicio.html">Início</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/pedidos.html">Pedidos</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/estoque.html">Estoque</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/clientes.html">Clientes</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/funcionario.html">Funcionários</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/relatorio.html">Relatórios</a>
+            </button>
+        </div>
+    </div>
+
+<div class="container">
+
+    <div class="top">
+
+        <div class="top-left">
+            <input class="search" placeholder="Pesquisar item no estoque">
+        </div>
+
+        <div class="top-right">
+
+            <select class="btn btn-filter">
+                <option>Filtro</option>
+                <option>Baixo estoque</option>
+                <option>Sem estoque</option>
+                <option>Disponível</option>
+            </select>
+
+            <button class="btn btn-add">+ Item</button>
+
+            <div class="profile"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="list">
+
+        <div class="tabs">
+
+            <button class="tab-btn active" onclick="openTab('produtos')">
+                Estoque Produtos
+            </button>
+
+            <button class="tab-btn" onclick="openTab('materiais')">
+                Estoque Materiais
+            </button>
+
+            <button class="tab-btn" onclick="openTab('movimentacoes')">
+                Movimentações
+            </button>
+
+        </div>
+
+
+        <!-- CABEÇALHO -->
+
+        <div class="table-header">
+
+            <span>Item</span>
+            <span>Categoria</span>
+            <span>Quantidade</span>
+            <span>Status</span>
+            <span>Ações</span>
+
+        </div>
+
+
+        <!-- TAB PRODUTOS -->
+
+        <div id="produtos" class="tab-content active">
+
+            <div class="product">
+
+                <div class="img"></div>
+
+                <div class="produto">
+                    <p>Camiseta Oversized</p>
+                </div>
+
+                <div class="categoria">
+                    <p>Vestuário</p>
+                </div>
+
+                <div class="quantidade">
+                    <p>120</p>
+                </div>
+
+                <div class="status ok">
+                    Disponível
+                </div>
+
+                <div class="actions">
+                    ✏️
+                    🗑️
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TAB MATERIAIS -->
+
+        <div id="materiais" class="tab-content">
+
+            <div class="product">
+
+                <div class="img"></div>
+
+                <div class="produto">
+                    <p>Tecido Algodão</p>
+                </div>
+
+                <div class="categoria">
+                    <p>Matéria-prima</p>
+                </div>
+
+                <div class="quantidade">
+                    <p>30m</p>
+                </div>
+
+                <div class="status baixo">
+                    Baixo estoque
+                </div>
+
+                <div class="actions">
+                    ✏️
+                    🗑️
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TAB MOVIMENTAÇÕES -->
+
+        <div id="movimentacoes" class="tab-content">
+
+            <div class="product">
+
+                <div class="img"></div>
+
+                <div class="produto">
+                    <p>Camiseta Oversized</p>
+                </div>
+
+                <div class="categoria">
+                    <p>Saída</p>
+                </div>
+
+                <div class="quantidade">
+                    <p>10</p>
+                </div>
+
+                <div class="status saida">
+                    Movimentação
+                </div>
+
+                <div class="actions">
+                    🔍
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/style-padrao.css">
+    <link rel="stylesheet" href="../style/style-relatorio.css">
+    <link rel="stylesheet" href="../style/style-responsivo.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <title>Relatório</title>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo" src="../imgs/logo.png" alt="">
+            <img class="logo-nome" src="../imgs/E-threads.png" alt="">
+        </div>
+        <hr>
+
+        <div class="menu">
+            <button>
+                <a href="/inicio.html">Início</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/pedidos.html">Pedidos</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/estoque.html">Estoque</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/clientes.html">Clientes</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/funcionario.html">Funcionários</a>
+            </button>
+            <hr>
+            <button>
+                <a href="">Relatórios</a>
+            </button>
+            <hr>
+        </div>
+
+        <div class="footer">
+
+        </div>
+    </div>
+
+
+    <div class="container">
+
+        <div class="top">
+
+            <div class="top-left">
+                <input class="search" placeholder="Pesquisar pedido">
+
+            </div>
+
+            <div class="top-right">
+
+                <select class="btn btn-filter">
+                    <option value="">Filtro</option>
+                    <option value="">Pendentes</option>
+                    <option value="">Finalizados</option>
+                    <option value="">Cancelados</option>
+                </select>
+
+                <button class="btn btn-add">+ Pedido</button>
+
+                <div class="profile"></div>
+
+            </div>
+
+        </div>
+
+        <div class="list">
+
+            <div class="report-top">
+
+                <select class="btn btn-filter">
+                    <option>Últimos 30 dias</option>
+                    <option>Últimos 3 meses</option>
+                    <option>Este ano</option>
+                </select>
+
+                <button class="btn btn-add" onclick="downloadPDF()">
+                    Baixar PDF
+                </button>
+
+            </div>
+
+            <!-- CARDS RESUMO -->
+
+            <div class="report-cards">
+
+                <div class="report-card">
+                    <span>Produção Total</span>
+                    <h2>245</h2>
+                </div>
+
+                <div class="report-card">
+                    <span>Pedidos Concluídos</span>
+                    <h2>38</h2>
+                </div>
+
+                <div class="report-card">
+                    <span>Itens em Estoque Baixo</span>
+                    <h2>4</h2>
+                </div>
+
+                <div class="report-card">
+                    <span>Pedidos Pendentes</span>
+                    <h2>12</h2>
+                </div>
+
+            </div>
+
+            <!-- GRAFICOS -->
+
+            <div class="charts">
+
+                <div class="chart-box">
+                    <h3>Produção por Mês</h3>
+                    <canvas id="producaoChart"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Status dos Pedidos</h3>
+                    <canvas id="statusChart"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="../script/script.js"></script>
+</body>
+
+</html>

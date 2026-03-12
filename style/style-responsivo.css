@@ -1,0 +1,107 @@
+/* ========================================= */
+/* RESPONSIVIDADE */
+/* ========================================= */
+
+@media (max-width: 768px){
+
+/* SIDEBAR */
+
+.sidebar{
+    width:70px;
+}
+
+.logo-nome{
+    display:none;
+}
+
+.menu a{
+    font-size:14px;
+}
+
+/* CONTAINER */
+
+.container{
+    padding:15px;
+}
+
+/* TOPO */
+
+.top{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+}
+
+.top-right{
+    width:100%;
+    flex-wrap:wrap;
+}
+
+.search{
+    width:100%;
+}
+
+/* DASHBOARD CARDS */
+
+.dashboard-cards{
+    grid-template-columns:1fr;
+}
+
+/* ESTOQUE / CLIENTES GRID */
+
+.stock-grid{
+    grid-template-columns:1fr;
+}
+
+.clients-grid{
+    grid-template-columns:1fr;
+}
+
+/* GRAFICOS */
+
+.charts{
+    grid-template-columns:1fr;
+}
+
+/* TABELAS */
+
+.table-header,
+.product{
+    grid-template-columns: 60px 1fr 1fr;
+    font-size:14px;
+}
+
+/* LISTA SCROLL */
+
+.list{
+    overflow-x:auto;
+}
+
+/* BOTÕES */
+
+.btn{
+    padding:8px 12px;
+    font-size:14px;
+}
+
+}
+
+/* ========================================= */
+/* CELULARES PEQUENOS */
+/* ========================================= */
+
+@media (max-width:480px){
+
+.profile{
+    display:none;
+}
+
+.menu{
+    gap:25px;
+}
+
+.dashboard-card h2{
+    font-size:20px;
+}
+
+}

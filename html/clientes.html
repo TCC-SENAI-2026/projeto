@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes</title>
+    <link rel="stylesheet" href="../style/style-padrao.css">
+    <link rel="stylesheet" href="../style/style-cliente.css">
+    <link rel="stylesheet" href="../style/style-responsivo.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo" src="../imgs/logo.png" alt="">
+            <img class="logo-nome" src="../imgs/E-threads.png" alt="">
+        </div>
+        <hr>
+
+        <div class="menu">
+            <button>
+                <a href="/inicio.html">Início</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/pedidos.html">Pedidos</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/estoque.html">Estoque</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/clientes.html">Clientes</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/funcionario.html">Funcionários</a>
+            </button>
+            <hr>
+            <button>
+                <a href="/relatorio.html">Relatórios</a>
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="top">
+
+            <div class="top-left">
+                <input class="search" placeholder="Pesquisar cliente">
+            </div>
+
+            <div class="top-right">
+
+                <select class="btn btn-filter">
+                    <option value="">Filtro</option>
+                    <option value="">A - Z</option>
+                    <option value="">Z - A</option>
+                    <option value="">Ativos</option>
+                    <option value="">Inativos</option>
+                </select>
+
+                <button class="btn btn-add">+ Cliente</button>
+
+                <div class="profile"></div>
+
+            </div>
+
+        </div>
+
+        <div class="list">
+            <div class="clients-grid">
+
+                <div class="client-card">
+                    <div class="client-logo"></div>
+
+                    <div class="client-footer">
+                        <span>Cliente 1</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="client-card">
+                    <div class="client-logo"></div>
+
+                    <div class="client-footer">
+                        <span>Cliente 2</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="client-card">
+                    <div class="client-logo">
+                        <img src="imgs/logo.png" alt="">
+                    </div>
+
+                    <div class="client-footer">
+                        <span>Cliente 3</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="client-card">
+                    <div class="client-logo"></div>
+
+                    <div class="client-footer">
+                        <span>Cliente 4</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
