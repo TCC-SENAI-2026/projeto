@@ -7,48 +7,72 @@
     <link rel="stylesheet" href="../CSS_padrao/padrao.css">
     <link rel="stylesheet" href="../InicioC_G/inicio.css">
     <link rel="stylesheet" href="../CSS_padrao/responsivo.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Inicio</title>
 </head>
 
 <body>
 
     <div class="sidebar">
-        <div class="logo-sidebar">
-            <img class="logo-nome" src="../Imagens/E-threads3.png" alt="">
-        </div>
-        <hr>
-
-        <div class="menu">
-            <button>
-                <a href="inicio.html" class="ativo">Início</a>
-            </button>
-            <hr>
-            <button>
-                <a href="pedidos.html">Pedidos</a>
-            </button>
-            <hr>
-            <button>
-                <a href="estoque.html">Estoque</a>
-            </button>
-            <hr>
-            <button>
-                <a href="clientes.html">Clientes</a>
-            </button>
-            <hr>
-            <button>
-                <a href="funcionario.html">Funcionários</a>
-            </button>
-            <hr>
-            <button>
-                <a href="relatorio.html">Relatórios</a>
-            </button>
-            <hr>
-        </div>
-
-        <div class="footer">
-
-        </div>
+    <div class="logo-sidebar">
+        <img class="logo-nome" src="../Imagens/E-threads3.png" alt="Logo E-threads">
     </div>
+    <hr>
+
+    <nav class="menu">
+        <a href="inicio.html" class="ativo">
+            <span class="menu-link-left">
+                <span class="material-icons">dashboard</span>
+                Início
+            </span>
+        </a>
+
+        <details class="menu-dropdown" open>
+            <summary>
+                <span class="summary-left">
+                    <span class="material-icons">receipt_long</span>
+                    Pedidos
+                </span>
+                <span class="material-icons seta">expand_more</span>
+            </summary>
+
+            <div class="submenu">
+                <a href="novo-pedido.html">Criar novo pedido</a>
+                <a href="pedidos.html">Lista de pedidos</a>
+            </div>
+        </details>
+
+        <a href="estoque.html">
+            <span class="menu-link-left">
+                <span class="material-icons">inventory_2</span>
+                Estoque
+            </span>
+        </a>
+
+        <a href="clientes.html">
+            <span class="menu-link-left">
+                <span class="material-icons">group</span>
+                Clientes
+            </span>
+        </a>
+
+        <a href="funcionario.html">
+            <span class="menu-link-left">
+                <span class="material-icons">badge</span>
+                Funcionários
+            </span>
+        </a>
+
+        <a href="relatorio.html">
+            <span class="menu-link-left">
+                <span class="material-icons">bar_chart</span>
+                Relatórios
+            </span>
+        </a>
+    </nav>
+
+    <div class="footer"></div>
+</div>
 
 
     <div class="container">
@@ -71,7 +95,7 @@
 
                 <button class="btn btn-add">+ Pedido</button>
 
-                <div class="profile"></div>
+                <div class="profile">GA</div>
 
             </div>
 
@@ -79,7 +103,7 @@
 
 
         <div class="dashboard">
-            
+
             <!-- CARDS RESUMO -->
 
             <div class="dashboard-cards">
@@ -176,4 +200,3 @@
 </body>
 
 </html>
-
