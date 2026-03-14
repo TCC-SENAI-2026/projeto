@@ -7,7 +7,7 @@
 
 body {
     display: flex;
-    background: #f4f6f8;
+    background: #efefef;
 }
 
 /* -------------------------------------------------TABS------------------------------------------------ */
@@ -66,27 +66,28 @@ body {
 
 .status {
     padding: 6px 12px;
-    border-radius: 20px;
+    border-radius: 3px;
     font-size: 13px;
     font-weight: 600;
-    width: fit-content;
+    min-width: 90px;
+    text-align: center;
 }
 
 .status.ok {
-    background: #d1fae5;
-    color: #065f46;
+    background: #4f9c5053;
+    color: #002e08;
 }
 
 .status.baixo,
 .status.pendente {
-    background: #fef3c7;
-    color: #92400e;
+    background: #ffeca1e9;
+    color: #552507;
 }
 
 .status.saida,
 .status.producao {
-    background: #e0e7ff;
-    color: #3730a3;
+    background: #4e8fff51;
+    color: #003091;
 }
 
 .actions {
@@ -101,7 +102,7 @@ body {
 .sidebar {
     width: 220px;
     min-height: 100vh;
-    background: #0f172a;
+    background: #151e31;
     color: white;
     display: flex;
     flex-direction: column;
@@ -118,9 +119,7 @@ body {
 }
 
 .logo-nome {
-    width: 130px;
-    height: auto;
-    display: block;
+    width: 120px;
 }
 
 .sidebar > hr {
@@ -133,7 +132,7 @@ body {
 .menu {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     padding: 0 12px;
 }
 
@@ -143,11 +142,11 @@ body {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 13px 16px;
+    padding: 10px 16px;
     border-radius: 10px;
     text-decoration: none;
     color: rgba(255, 255, 255, 0.88);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     transition: background 0.18s ease, color 0.18s ease;
     cursor: pointer;
@@ -157,11 +156,10 @@ body {
 .menu-dropdown summary:hover {
     background: rgba(255, 255, 255, 0.06);
     color: #ffffff;
-    transform: none;
 }
 
 .menu > a.ativo {
-   background: rgba(37, 99, 235, 0.16);
+    background: rgba(37, 99, 235, 0.16);
     color: #ffffff;
     font-weight: 600;
     box-shadow: inset 3px 0 0 #3b82f6;
@@ -175,10 +173,12 @@ body {
 }
 
 .menu .material-icons {
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1;
     transform: translateY(-1px);
 }
+
+/* submenu */
 
 .menu-dropdown {
     border-radius: 12px;
@@ -194,7 +194,7 @@ body {
 }
 
 .seta {
-    font-size: 16px;
+    font-size: 15px;
     opacity: 0.85;
     transition: transform 0.25s ease;
 }
@@ -227,13 +227,130 @@ body {
     text-decoration: none;
     color: rgba(255, 255, 255, 0.78);
     font-size: 14px;
-    font-weight: 400;
-    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .submenu a:hover {
     background: rgba(255, 255, 255, 0.07);
     color: #ffffff;
+}
+
+/* footer usuário */
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 3px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.167);
+}
+
+.user-dropdown summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.user-dropdown summary::-webkit-details-marker {
+    display: none;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    text-decoration: none;
+    color: white;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.user-info:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #334155;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.user-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.user-role {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.user-menu {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    gap: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 6px;
+}
+
+.user-option,
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.user-option {
+    color: white;
+}
+
+.user-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.logout-btn {
+    color: #fca5a5;
+}
+
+.logout-btn:hover {
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.user-menu a {
+    text-decoration: none;
+}
+
+/* setas mantidas */
+
+.user-arrow {
+    margin-left: auto;
+    font-size: 4px;
+    opacity: 0.4;
+    transition: transform 0.3s ease;
+}
+
+.user-dropdown[open] .user-arrow {
+    transform: rotate(180deg);
 }
 
 /* CONTAINER */
@@ -277,11 +394,6 @@ body {
     border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
-}
-
-.btn:hover {
-    transform: translateY(-1px);
 }
 
 .btn-filter {
@@ -291,11 +403,6 @@ body {
 .btn-add {
     background: #2563eb;
     color: white;
-    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
-}
-
-.btn-add:hover {
-    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
 }
 
 .search {
@@ -304,13 +411,6 @@ body {
     border-radius: 10px;
     border: 1px solid #d1d5db;
     background: white;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.search:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 /* LISTA */

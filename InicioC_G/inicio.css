@@ -15,7 +15,7 @@
 .dashboard-card {
     position: relative;
     background: white;
-    padding: 22px;
+    padding: 20px 22px;
     border-radius: 10px;
     text-decoration: none;
     color: #111827;
@@ -29,9 +29,9 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 5px;
+    width: 4px;
     height: 100%;
-    background: #2564eb4b;
+    background: #0051ad3e;
 }
 
 .dashboard-card:hover {
@@ -71,6 +71,10 @@
     font-size: 18px;
 }
 
+.dashboard-card h2{
+    font-size:32px;
+}
+
 .section-header a {
     color: #2564eba3;
     font-size: 14px;
@@ -93,7 +97,7 @@
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
-    padding: 12px 10px;
+    padding: 14px 10px;
     border-bottom: 1px solid #e5e7eb;
     transition: background 0.18s ease;
 }
@@ -127,6 +131,8 @@
 
 .stock-card .img {
     margin-bottom: 14px;
+      background:#e5e7eb;
+    border-radius:10px;
 }
 
 .stock-card span {
@@ -140,16 +146,23 @@
     font-size: 14px;
 }
 
-.profile {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, #cfd4dc, #bfc6d1);
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #475569;
-    font-size: 14px;
-    font-weight: 700;
+.search-box{
+    position:relative;
+    display:flex;
+    align-items:center;
+}
+
+.search-icon{
+    position:absolute;
+    left:10px;
+    font-size:18px;
+    color:#9ca3af;
+}
+
+.search{
+    width:280px;
+    padding:11px 14px 11px 36px;
+    border-radius:10px;
+    border:1px solid #d1d5db;
+    background:white;
 }
