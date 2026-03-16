@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../CSS_padrao/padrao.css">
+    <link rel="stylesheet" href="../InicioC_G/inicio.css">
+    <link rel="stylesheet" href="../CSS_padrao/responsivo.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Inicio</title>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="../Imagens/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="inicio.html" class="ativo">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown" open>
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="estoque/estoque.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="clientes.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="funcionario.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="relatorio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+
+    <div class="sidebar-footer">
+    <details class="user-dropdown">
+        <summary class="user-info">
+            <div class="user-avatar">GA</div>
+
+            <div class="user-text">
+                <span class="user-name">Gabrielly</span>
+                <span class="user-role">Administrador</span>
+            </div>
+
+           <span class="material-icons user-arrow">unfold_more</span>
+        </summary>
+
+        <div class="user-menu">
+            <a href="perfil.html" class="user-option">
+                <span class="material-icons">person</span>
+                Perfil
+            </a>
+
+            <a href="../login_G/login.html" class="user-option logout">
+                <span class="material-icons">exit_to_app</span>
+                Sair
+            </a>
+        </div>
+    </details>
+</div>
+    </div>
+
+
+    <div class="container">
+
+        <div class="top">
+
+            <div class="top-left">
+                <div class="search-box">
+                    <span class="material-icons search-icon">search</span>
+                    <input class="search" placeholder="Pesquisar pedido">
+                </div>
+
+
+            </div>
+
+            <div class="top-right">
+
+                <select class="btn btn-filter">
+                    <option value="">Filtro</option>
+                    <option value="">Pendentes</option>
+                    <option value="">Finalizados</option>
+                    <option value="">Cancelados</option>
+                </select>
+
+                <button class="btn btn-add">+ Pedido</button>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard">
+
+            <!-- CARDS RESUMO -->
+
+            <div class="dashboard-cards">
+
+                <a href="/pedidos.html" class="dashboard-card">
+                    <span>Pedidos Pendentes</span>
+                    <h2>12</h2>
+                </a>
+
+                <a href="/estoque.html" class="dashboard-card">
+                    <span>Total em Estoque</span>
+                    <h2>245</h2>
+                </a>
+
+                <a href="/estoque.html" class="dashboard-card">
+                    <span>Estoque Baixo</span>
+                    <h2>4 itens</h2>
+                </a>
+
+            </div>
+
+
+            <!-- PEDIDOS RECENTES -->
+
+            <div class="dashboard-section">
+
+                <div class="section-header">
+                    <h3>Pedidos Recentes</h3>
+                    <a href="/pedidos.html">Ver todos</a>
+                </div>
+
+                <div class="recent-orders">
+
+                    <div class="order-row">
+                        <span>#1023</span>
+                        <span>Empresa X</span>
+                        <span class="status pendente">Pendente</span>
+                    </div>
+
+                    <div class="order-row">
+                        <span>#1024</span>
+                        <span>Empresa Y</span>
+                        <span class="status ok">Finalizado</span>
+                    </div>
+
+                    <div class="order-row">
+                        <span>#1025</span>
+                        <span>Empresa Z</span>
+                        <span class="status producao">Produção</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ESTOQUE RELEVANTE -->
+
+            <div class="dashboard-section">
+
+                <div class="section-header">
+                    <h3>Itens Relevantes do Estoque</h3>
+                    <a href="/InicioC_G/estoque/estoque.html">Ver estoque</a>
+                </div>
+
+                <div class="stock-grid">
+
+                    <div class="stock-card">
+                        <div class="img"></div>
+                        <span>Camiseta Polo</span>
+                        <p>32 unidades</p>
+                    </div>
+
+                    <div class="stock-card">
+                        <div class="img"></div>
+                        <span>Tecido Azul</span>
+                        <p>8 rolos</p>
+                    </div>
+
+                    <div class="stock-card">
+                        <div class="img"></div>
+                        <span>Camiseta Oversized</span>
+                        <p>12 unidades</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

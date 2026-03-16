@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/CSS_padrao/padrao.css">
+    <link rel="stylesheet" href="../funcionarios/funcionarios.css">
+    <link rel="stylesheet" href="/CSS_padrao/responsivo.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Funcionários</title>
+</head>
+<body>
+        <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="/Imagens/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="/InicioC_G/inicio.html" class="ativo">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown" open>
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="../estoque/estoque.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="../clientes/clientes.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="../funcionarios/funcionarios.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="../relatorios/relatorios.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+    <details class="user-dropdown">
+        <summary class="user-info">
+            <div class="user-avatar">GA</div>
+
+            <div class="user-text">
+                <span class="user-name">Gabrielly</span>
+                <span class="user-role">Administrador</span>
+            </div>
+
+           <span class="material-icons user-arrow">unfold_more</span>
+        </summary>
+
+        <div class="user-menu">
+            <a href="perfil.html" class="user-option">
+                <span class="material-icons">person</span>
+                Perfil
+            </a>
+
+            <a href="/login_G/login.html" class="user-option logout">
+                <span class="material-icons">exit_to_app</span>
+                Sair
+            </a>
+        </div>
+    </details>
+</div>
+    </div>
+</body>
+</html>
