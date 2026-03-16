@@ -18,20 +18,13 @@ body {
 }
 
 @keyframes degradeLento {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-/* HEADER RESPONSIVO */
+/* HEADER */
+
 header {
     background-color: rgb(11, 46, 110);
     color: white;
@@ -53,7 +46,8 @@ nav ul {
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 200px;
+    gap: 4vw;
+    flex-wrap: wrap;
 }
 
 nav ul li {
@@ -83,7 +77,7 @@ nav ul li a:hover {
     gap: 20px;
 }
 
-nav ul li:hover>.submenu {
+nav ul li:hover > .submenu {
     display: flex;
 }
 
@@ -92,7 +86,6 @@ nav ul li:hover>.submenu {
     width: 100%;
     height: auto;
     padding: 10px;
-    margin-right: 0%;
 }
 
 header a {
@@ -106,67 +99,70 @@ header p {
     font: normal 15px Arial, Helvetica, sans-serif;
 }
 
+/* MAIN */
 
-/*MAIN */
-/* container1 */
 form{
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 10px;
 }
+
 .container1{
     background-color: aliceblue;
     border-radius: 15px;
-    height: 1200px;
-    width: 1400px;
-        
+    width: 95%;
+    max-width: 1400px;
+    min-height: 1200px;
+    padding-bottom: 40px;
 }
+
 h1{ 
     text-align: center;
     font-size: 40px;
     margin-top: 30px;
 }
+
 h2{
     text-align: center;
     font-size: 38px;
     margin-top: 30px;
     border-top: 3px solid rgb(68, 68, 73);
     border-bottom: 3px solid rgb(68, 68, 73);
-    
 }
 
 p{
      font-size: 25px;
 }
-.D-client1{
+
+/* CLIENTE */
+
+.D-client1,
+.D-client2{
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 40px;
 }
 
-.campo1{
+.campo1,
+.campo2{
     padding: 30px 20px 0px 30px ;
     display: flex;
     flex-direction: column;
-    
-}
-.D-client2{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    flex: 1;
+    min-width: 320px;
 }
 
-.campo2{
-    padding: 5px 20px 0px 30px;
-    display: flex;
-    flex-direction: column;
-}
+/* LOGISTICA */
 
 .D-logistic{
     display: flex;
     justify-content: center;
     align-items: center; 
+    flex-wrap: wrap;
     background-color: rgb(255, 255, 255);
 }
 
@@ -175,10 +171,12 @@ p{
     flex-direction: column;
     padding: 25px 100px 0px 30px;
 }
+
 #data-entrega{
     font-size: 25px;
     height: 40px;
-    width: 300px;
+    width: 100%;
+    max-width: 650px;
     border-radius: 5px;
     margin-top: 5px;
     margin-bottom: 10px;
@@ -189,8 +187,8 @@ p{
     flex-direction: column;
     align-items: flex-start;
     padding-top: 10px;
-
 }
+
 .campo4{
     margin-bottom: 2px;
 }
@@ -199,23 +197,21 @@ p{
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
 
 .niveis{
     border: 2px solid black;
     height: 40px;
-    width: 330px;
+    width: 100%;
+    max-width: 330px;
     border-radius: 5px;
     display: flex;
     justify-content: space-around; 
     align-items: center;
     margin-top: 4px;
-
 }
-/* input dos checkbox */
+
 input[type="checkbox"]{
-    width: auto;
     height: 25px;
     width: 30px;
 }
@@ -223,14 +219,93 @@ input[type="checkbox"]{
 label{
     font-size: 25px;
 }
+
+/* INPUTS */
+
 input[type="text"],
 input[type="date"],
 input[type="tel"],
 input[type="email"]{
     font-size: 25px;
     height: 40px;
-    width: 500px;
+    width: 100%;
+    max-width: 650px;
     border-radius: 5px;
     margin-top: 5px;
     margin-bottom: 10px;
+}
+
+/* PERSONALIZAÇÃO */
+
+.D-personalizacao{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.container-pesonalizacao{
+    display: flex;
+    padding: 25px 30px 0px 30px;
+    flex-wrap: wrap;
+}
+
+select[id="local-1"]{
+    height: 43px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
+    font-size:20px;
+    margin-top: 4px;
+}
+
+.campo{
+    display: flex;
+    flex-direction: column;
+    padding: 20px 25px 10px 50px;
+    gap: 10px;
+}
+
+/* OBSERVAÇÃO */
+
+input[id="observacao-pedido"]{
+    height: 150px;
+    width: 100%;
+    max-width: 1300px;
+    border-radius: 5px;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 900px){
+
+    h1{
+        font-size: 28px;
+    }
+
+    h2{
+        font-size: 26px;
+    }
+
+    p,
+    label{
+        font-size: 18px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="tel"],
+    input[type="email"]{
+        font-size: 18px;
+        height: 35px;
+    }
+
+    .campo{
+        padding: 15px;
+    }
+
+    .campo3{
+        padding: 20px;
+    }
+
 }
