@@ -1,0 +1,82 @@
+/* LINHA DO PEDIDO */
+
+.product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    transition: 0.2s;
+}
+
+.product:hover {
+    background: #f9fafb;
+}
+
+/* GRID DA INFORMAÇÃO */
+
+.product-grid {
+    display: grid;
+    grid-template-columns: 70px 180px 180px auto;
+    align-items: center;
+    gap: 30px;
+}
+
+/* IMAGEM */
+
+.img {
+    width: 55px;
+    height: 55px;
+    background: #ddd;
+    border-radius: 8px;
+}
+
+/* COLUNAS */
+
+.produto,
+.empresa,
+.status-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.page-header{
+    margin-bottom: 20px;
+}
+
+.page-title{
+    font-size: 25px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.page-subtitle{
+    font-size: 18px;
+    color: #6b7280;
+    margin-top: 3px;
+}
+
+.table-header .product{
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+}
+
+/* AÇÕES */
+
+.actions {
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.actions .material-icons {
+    font-size: 20px;
+    color: #6b7280;
+}
+
+.actions .material-icons:hover {
+    color: #111827;
+}

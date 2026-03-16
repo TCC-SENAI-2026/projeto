@@ -1,36 +1,42 @@
 // ---------------------GRAFICOS---------------------
 
-const producaoChart = new Chart(
-document.getElementById('producaoChart'),
-{
-    type: 'bar',
-    data: {
-        labels: ['Jan','Fev','Mar','Abr','Mai','Jun'],
-        datasets: [{
-            label: 'Peças Produzidas',
-            data: [120,190,150,220,180,240],
-            backgroundColor: '#2563eb'
-        }]
-    }
-});
+const producaoCanvas = document.getElementById("producaoChart");
 
-const statusChart = new Chart(
-document.getElementById('statusChart'),
-{
-    type: 'doughnut',
-    data: {
-        labels: ['Pendentes','Produção','Concluídos'],
-        datasets: [{
-            data: [12,8,38],
-            backgroundColor:[
-                '#f59e0b',
-                '#3b82f6',
-                '#16a34a'
-            ]
-        }]
-    }
-});
+if (producaoCanvas) {
 
+    const producaoChart = new Chart(producaoCanvas, {
+        type: 'bar',
+        data: {
+            labels: ['Jan','Fev','Mar','Abr','Mai','Jun'],
+            datasets: [{
+                label: 'Peças Produzidas',
+                data: [120,190,150,220,180,240],
+                backgroundColor: '#2563eb'
+            }]
+        }
+    });
+
+}
+const statusCanvas = document.getElementById("statusChart");
+
+if (statusCanvas) {
+
+    const statusChart = new Chart(statusCanvas, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pendentes','Produção','Concluídos'],
+            datasets: [{
+                data: [12,8,38],
+                backgroundColor:[
+                    '#f59e0b',
+                    '#3b82f6',
+                    '#16a34a'
+                ]
+            }]
+        }
+    });
+
+}
 
 // -----------------------------PDF--------------------------
 function downloadPDF(){
@@ -76,3 +82,30 @@ doc.save("relatorio-producao.pdf")
 
 }
 
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const links = document.querySelectorAll(".menu a, .submenu a");
+
+    links.forEach(link => {
+
+        if (link.href === window.location.href) {
+            link.classList.add("ativo");
+        }
+
+    });
+
+});
+
+function openTab(tabName, el) {
+
+    const tabs = document.querySelectorAll(".tab-content");
+    const buttons = document.querySelectorAll(".tab-btn");
+
+    tabs.forEach(tab => tab.classList.remove("active"));
+    buttons.forEach(btn => btn.classList.remove("active"));
+
+    document.getElementById(tabName).classList.add("active");
+    el.classList.add("active");
+}

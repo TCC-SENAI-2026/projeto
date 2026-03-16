@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../CSS_padrao/padrao.css">
+    <link rel="stylesheet" href="../pedidos/pedido.css">
+    <link rel="stylesheet" href="../CSS_padrao/responsivo.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Pedidos</title>
+</head>
+
+
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="../Imagens/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="/InicioC_G/inicio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown" open>
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="/pedidos/pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="estoque.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="clientes.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="funcionario.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="relatorio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+
+        <div class="sidebar-footer">
+            <details class="user-dropdown">
+                <summary class="user-info">
+                    <div class="user-avatar">GA</div>
+
+                    <div class="user-text">
+                        <span class="user-name">Gabrielly</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+
+                    <span class="material-icons user-arrow">unfold_more</span>
+                </summary>
+
+                <div class="user-menu">
+                    <a href="perfil.html" class="user-option">
+                        <span class="material-icons">person</span>
+                        Perfil
+                    </a>
+
+                    <a href="../login_G/login.html" class="user-option logout">
+                        <span class="material-icons">exit_to_app</span>
+                        Sair
+                    </a>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    
+
+
+    <div class="container">
+
+        <div class="top">
+                <div class="page-header">
+        <h1 class="page-title">Pedidos</h1>
+        <p class="page-subtitle">Gerencie todos os pedidos do sistema</p>
+    </div>
+
+            <div class="top-right">
+
+                 <div class="search-box">
+                    <span class="material-icons search-icon">search</span>
+                    <input class="search" placeholder="Pesquisar pedido">
+                </div>
+
+                <select class="btn btn-filter">
+                    <option value="">Filtro</option>
+                    <option value="">Pendentes</option>
+                    <option value="">Finalizados</option>
+                    <option value="">Cancelados</option>
+                </select>
+
+                <button class="btn btn-add">+ Pedido</button>
+
+            </div>
+
+        </div>
+
+        
+
+        <div class="list">
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab('recentes', this)">
+                    Pedidos Recentes
+                </button>
+
+                <button class="tab-btn" onclick="openTab('historico', this)">
+                    Histórico de Pedidos
+                </button>
+            </div>
+
+            <div class="table-header">
+                <span></span>
+                <span>Produto</span>
+                <span>Empresa</span>
+                <span>Status</span>
+                <span>Ações</span>
+            </div>
+
+            <!-- PEDIDOS RECENTES -->
+
+            <div id="recentes" class="tab-content active">
+
+                <div class="product">
+
+                    <div class="product-grid">
+
+                        <div class="img"></div>
+
+                        <div class="produto">
+                            <p>#1023</p>
+                        </div>
+
+                        <div class="empresa">
+                            <p>Empresa X</p>
+                        </div>
+
+                        <div class="status-col">
+
+                            <span class="status pendente">Pendente</span>
+                        </div>
+
+                    </div>
+
+                    <div class="actions">
+                        <span class="material-icons">edit</span>
+                        <span class="material-icons">delete</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HISTORICO -->
+
+            <div id="historico" class="tab-content">
+
+                <div class="product">
+
+                    <div class="product-grid">
+
+                        <div class="img"></div>
+
+                        <div class="produto">
+                            <p>#1023</p>
+                        </div>
+
+                        <div class="empresa">
+                            <p>Empresa X</p>
+                        </div>
+
+                        <div class="status-col">
+                            <span class="status ok">Finalizado</span>
+                        </div>
+
+                    </div>
+
+                    <div class="actions">
+                        <span class="material-icons">edit</span>
+                        <span class="material-icons">delete</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/script/script.js"></script>
+
+</html>
