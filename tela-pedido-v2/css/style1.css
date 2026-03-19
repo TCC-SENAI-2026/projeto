@@ -141,111 +141,73 @@ h2{
     
 }
 
-.container {
+.container1 {
     display: flex;
     background-color: white;
     border: 3px solid black;
     border-radius: 12px;
     width: 100%;
     max-width: 900px;
-    height: 400px;
+    min-height: 500px;
+    padding: 20px;
     box-shadow: 0 10px 30px rgba(255, 255, 255, 0.776);
     text-align: center;
     flex-direction: column; /* coloca h2 em cima e icones abaixo */
 }
 /* tamanho dos icones */
-img {
+
+.grid{
+    display: grid;  /*Ativa o modo grade*/    /* Agora os filhos(cards) vao se organizando automaticamente.*/
+    grid-template-columns: repeat(3, 1fr); /* Cria 3 colunas iguais | 3 = quantidade | 1fr = cada coluna ocupa o mesmo espaço   */
+    gap: 20px;  /*Espaço entre os cards*/
+    padding: 20px; /*Espaço interno da grid*/
+}
+
+/* estilizando as caixas */
+.card{
+    background-color:  #ffffff;
+    border: 2px solid rgb(0, 0, 0);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    transition: 0.3s;
+}
+.card:hover{                /*Quando passar o mouse em cima a caixa ira almentar e mudar a cor da borda*/
+    transform: scale(1.03);
+    border-color: #000000;
+}
+.card img{
     height: 100px;
     width: 100px;
+    object-fit: contain; /*mantém a proporcáo da imagem e diminui ou aumenta a imagem automaticamente para caber  no quadrado*/
+}
+.card h3{
+    font-size: 20px;
+    margin: 5px 0;
 }
 
-.container1{
-    flex: 1; /* ocupa o espaço restante */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.box-icons{
-    display: flex;
-    gap: 150px;
-}
-
-.icons1, .icons2, .icons3 {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-label{
+.card select{
+    width: 100%;
+    margin: 5px 0;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #000000;
     font-size: 20px;
 }
 
-
-/* SEÇÃO 2 - TECIDOS (8 COLUNAS FIXAS) 
- .conteiner02 {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    /* Garante a linha única horizontal 
-    gap: 10px;
-    justify-items: center;
-    align-items: center;
-}
-
-.conteiner02 h3 {
-    grid-column: 1 / -1;
-}
-
- Estilo específico para o item de tecido (Cor + Checkbox) 
-.conteiner02>div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-input[type="color"] {
-    -webkit-appearance: none;
-    width: 65px;
-    height: 65px;
-    border: 1.5px solid #000;
-    border-radius: 12px;
-    cursor: pointer;
-    background: none;
-    overflow: hidden;
-}
-
- Remove a moldura interna cinza e o padding no Chrome/Safari/Edge 
-input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0;
-}
-
-Define como a cor preenchida deve aparecer 
-input[type="color"]::-webkit-color-swatch {
-    border: none;
-    border-radius: 10px;
-     Um pouco menor que o container para dar um respiro se quiser 
-}
-
- Para o Firefox 
-
-input[type="color"]::-moz-color-swatch {
-    border: none;
-    border-radius: 10px;
-}
- */
-
 /* SEÇÃO 3 - UPLOAD E TAMANHOS */
 .container03 {
+    display: flex;
     background-color: white;
     border: 3px solid black;
     border-radius: 12px;
     width: 100%;
     max-width: 900px;
+    height: 500px;
     padding: 30px;
-    padding-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.776);
+    text-align: center;
+    flex-direction: column; /* coloca h2 em cima e icones abaixo */
 }
 
 h3 {

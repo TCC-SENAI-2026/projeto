@@ -1,36 +1,20 @@
-// 1. Seleção dos elementos do DOM
-const modal = document.getElementById('modal-container');
-const botaoAbrir = document.getElementById('botao-continuar-modal');
-const botaoFecharModal = document.querySelector('.btn-voltar'); // Botão "Voltar e editar" dentro do modal
-const botaoVoltarForm = document.getElementById('botao-voltar-form'); // Botão "Voltar" do formulário principal
+// --- LÓGICA DA PÁGINA DO FORMULÁRIO ---
+const formulario = document.getElementById("meuFormulario");
 
-// 2. Função para Abrir o Modal
-// Unificada em um único evento para evitar repetições
-botaoAbrir.addEventListener('click', function(event) {
-    event.preventDefault(); // Impede o comportamento padrão do botão/formulário
-    
-    console.log('Abrindo revisão do pedido...');
-    
-    // Adiciona a classe que torna o modal visível
-    modal.classList.add('mostrar');
-});
-
-// 3. Função para Fechar o Modal
-// O modal SÓ fecha quando este botão for clicado
-botaoFecharModal.addEventListener('click', function(event) {
-    event.preventDefault();
-    
-    console.log('Fechando modal para edição...');
-    
-    // Remove a classe e esconde o modal
-    modal.classList.remove('mostrar');
-});
-
-// 4. Lógica para o botão "Voltar" do Formulário Principal (Card 3)
-if (botaoVoltarForm) {
-    botaoVoltarForm.addEventListener('click', function(event) {
+if (formulario) { // Só executa se o formulário existir na página atual
+    formulario.addEventListener("submit", function(event) {
         event.preventDefault();
-        // Aqui você pode adicionar uma ação, como voltar para a seção anterior
-        console.log('Usuário clicou em voltar no formulário.');
+        console.log("Validado! Indo para novo-pedido...");
+        window.location.href = "novo-pedido.html";
+    });
+}
+
+// --- LÓGICA DA PÁGINA NOVO-PEDIDO ---
+const botaovoltarFormulario = document.getElementById("botao-voltar-form");
+
+if (botaovoltarFormulario) { // Só executa se o botão de voltar existir na página atual
+    botaovoltarFormulario.addEventListener("click", function() {
+        console.log("Voltando para o formulário...");
+        window.location.href = "formulario.html";
     });
 }
