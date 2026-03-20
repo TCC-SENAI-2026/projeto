@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../CSS_padrao/padrao.css">
     <link rel="stylesheet" href="../Clientes/cliente.css">
     <link rel="stylesheet" href="../CSS_padrao/style-responsivo.css">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
@@ -41,14 +41,14 @@
                 </div>
             </details>
 
-            <a href="estoque.html" class="ativo">
+            <a href="../Estoque/estoque.html" class="ativo">
                 <span class="menu-link-left">
                     <span class="material-icons">inventory_2</span>
                     Estoque
                 </span>
             </a>
 
-            <a href="clientes.html">
+            <a href="../Clientes/cliente.html">
                 <span class="menu-link-left">
                     <span class="material-icons">group</span>
                     Clientes
@@ -69,6 +69,7 @@
                 </span>
             </a>
         </nav>
+
 
         <div class="sidebar-footer">
             <details class="user-dropdown">
@@ -101,66 +102,62 @@
     <div class="container">
 
         <div class="top">
-
-            <div class="top-left">
-                <input class="search" placeholder="Pesquisar cliente">
+            <div class="page-header">
+                <div class="page-title-row">
+                    <h1 class="page-title">Clientes Cadastrados</h1>
+                    <span id="client-count" class="page-count">0</span>
+                </div>
+                <p class="page-subtitle">Gerenciamento de clientes cadastrados no sistema</p>
             </div>
 
             <div class="top-right">
+                <div class="search-box">
+                    <span class="material-icons search-icon">search</span>
+                    <input class="search" placeholder="Pesquisar cliente">
+                </div>
 
                 <select class="btn btn-filter">
-                    <option value="">Filtro</option>
+                    <option value="">Todos os Clientes</option>
                     <option value="">A - Z</option>
                     <option value="">Z - A</option>
                     <option value="">Ativos</option>
                     <option value="">Inativos</option>
                 </select>
 
-                <button class="btn btn-add">+ Cliente</button>
-
-                <div class="profile"></div>
+                <a href="form_cliente.html" class="btn btn-add" >+ Cliente</a>
 
             </div>
-
         </div>
 
         <div class="list">
             <div class="clients-grid">
 
-                <div class="client-card">
-                    <div class="client-logo"></div>
+                <!-- CARD 1 -->
+                <div class="client-card" data-id="1" data-empresa="Caio Induscar" data-responsavel="João Silva"
+                    data-telefone="(14) 99999-9999" data-email="empresa@email.com" data-pedidos="12 pedidos"
+                    data-ultimo-pedido="02/03/2026">
 
-                    <div class="client-footer">
-                        <span>Cliente 1</span>
-                        <div class="status-dot"></div>
-                    </div>
-                </div>
-
-                <div class="client-card">
-                    <div class="client-logo"></div>
-
-                    <div class="client-footer">
-                        <span>Cliente 2</span>
-                        <div class="status-dot"></div>
-                    </div>
-                </div>
-
-                <div class="client-card">
                     <div class="client-logo">
-                        <img src="imgs/logo.png" alt="">
+                        <img src="../Imagens/caio2.png" alt="Caio Induscar">
                     </div>
 
                     <div class="client-footer">
-                        <span>Cliente 3</span>
+                        <span class="client-name">Caio Induscar</span>
                         <div class="status-dot"></div>
                     </div>
                 </div>
 
-                <div class="client-card">
-                    <div class="client-logo"></div>
+                <!-- CARD 2 -->
+                <div class="client-card" data-id="2" data-empresa="Irizar" data-responsavel="Maria Souza"
+                    data-telefone="(11) 98888-8888" data-email="beta@email.com" data-pedidos="5 pedidos"
+                    data-ultimo-pedido="10/03/2026">
+
+                    <div class="client-logo">
+                        <img src="/Imagens/IRIZAR3.jpg" alt="Irizar">
+                    </div>
 
                     <div class="client-footer">
-                        <span>Cliente 4</span>
+                        <span class="client-name">Irizar</span>
                         <div class="status-dot"></div>
                     </div>
                 </div>
@@ -169,6 +166,60 @@
         </div>
 
     </div>
+
+    <!-- MODAL -->
+    <div id="clienteModal" class="modal-overlay">
+        <div class="cliente-modal">
+            <button class="modal-close" type="button" onclick="fecharModalCliente()">
+                <span class="material-icons">close</span>
+            </button>
+
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h2 class="modal-title" data-campo="empresa"></h2>
+                    <p class="modal-subtitle">Cliente cadastrado</p>
+                </div>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="modal-info">
+                    <span class="modal-label">Responsável</span>
+                    <p class="modal-value" data-campo="responsavel"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">Telefone</span>
+                    <p class="modal-value" data-campo="telefone"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">E-mail</span>
+                    <p class="modal-value" data-campo="email"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">Pedidos</span>
+                    <p class="modal-value" data-campo="pedidos"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">Último pedido</span>
+                    <p class="modal-value" data-campo="ultimo-pedido"></p>
+                </div>
+
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-sec" type="button" onclick="fecharModalCliente()">Fechar</button>
+                <button class="btn btn-add" type="button" onclick="editarCliente()" >Editar</button>
+            </div>
+        </div>
+    </div>
+    <script src="/script/script.js"></script>
+
+
+
 </body>
 
 </html>

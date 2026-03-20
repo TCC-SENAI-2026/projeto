@@ -19,9 +19,19 @@
     color: #111827;
 }
 
-.page-count {
-    font-size: 16px;
-    color: #94a3b8;
+.page-count{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:28px;
+    height:24px;
+    padding:0 8px;
+
+    border-radius:999px;
+    background:#e5e7eb;
+
+    font-size:16px;
+    color: #7d8794;
     font-weight: 500;
 }
 
