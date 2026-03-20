@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../CSS_padrao/padrao.css">
+    <link rel="stylesheet" href="../Estoque/estoque.css">
     <link rel="stylesheet" href="../CSS_padrao/responsivo.css">
-    <link rel="stylesheet" href="../pedidos/pedido.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <title>Pedidos</title>
+    <title>Estoque</title>
 </head>
 
 <body>
@@ -42,14 +42,14 @@
                 </div>
             </details>
 
-            <a href="../Estoque/estoque.html">
+            <a href="../Estoque/estoque.html" class="ativo">
                 <span class="menu-link-left">
                     <span class="material-icons">inventory_2</span>
                     Estoque
                 </span>
             </a>
 
-            <a href="clientes.html">
+            <a href="../Clientes/cliente.html">
                 <span class="menu-link-left">
                     <span class="material-icons">group</span>
                     Clientes
@@ -105,118 +105,157 @@
             <div class="page-header">
                 <div class="page-title-row">
                     <h1 class="page-title">
-                        Pedidos <span class="page-count">0</span>
+                        Estoque <span class="page-count" >(0)</span>
                     </h1>
                 </div>
-                <p class="page-subtitle">Gerencie todos os pedidos do sistema</p>
+                <p class="page-subtitle">Gerenciamento do estoque de produtos e materiais</p>
             </div>
 
             <div class="top-right">
                 <div class="search-box">
                     <span class="material-icons search-icon">search</span>
-                    <input class="search" placeholder="Pesquisar pedido">
+                    <input class="search" placeholder="Pesquisar item">
                 </div>
 
                 <select class="btn btn-filter">
-                    <option value="">Todos os pedidos</option>
-                    <option value="pendente">Pendentes</option>
-                    <option value="finalizado">Finalizados</option>
-                    <option value="cancelado">Cancelados</option>
+                    <option value="">Todos os itens</option>
+                    <option value="baixo">Baixo estoque</option>
+                    <option value="sem">Sem estoque</option>
+                    <option value="disponivel">Disponível</option>
                 </select>
 
-                <button class="btn btn-add" type="button">+ Pedido</button>
+                <button class="btn btn-add" type="button">+ Item</button>
             </div>
         </div>
 
         <div class="list">
 
             <div class="tabs">
-                <button class="tab-btn active" onclick="openTab('recentes', this)">
-                    Pedidos Recentes
+                <button class="tab-btn active" onclick="openTab('produtos', this)">
+                    Estoque Produtos
                 </button>
 
-                <button class="tab-btn" onclick="openTab('historico', this)">
-                    Histórico de Pedidos
+                <button class="tab-btn" onclick="openTab('materiais', this)">
+                    Estoque Materiais
+                </button>
+
+                <button class="tab-btn" onclick="openTab('movimentacoes', this)">
+                    Movimentações
                 </button>
             </div>
 
-            <div class="table-header">
-                <span>Produto</span>
-                <span>Empresa</span>
+            <div class="table-header estoque-header">
+                <span>Item</span>
+                <span>Categoria</span>
+                <span>Quantidade</span>
                 <span>Status</span>
                 <span>Ações</span>
             </div>
 
-            <!-- PEDIDOS RECENTES -->
-            <div id="recentes" class="tab-content active">
-                <div class="product" onclick="abrirPedido(1023)">
-                    <div class="produto">
+            <!-- TAB PRODUTOS -->
+            <div id="produtos" class="tab-content active">
+                <div class="product estoque-row" onclick="abrirItemEstoque('camiseta-oversized')">
+                    <div class="item-info">
                         <div class="img"></div>
-                        <p>#1023</p>
+                        <div class="produto">
+                            <p>Camiseta Oversized</p>
+                        </div>
                     </div>
 
-                    <div class="empresa">
-                        <p>Empresa X</p>
+                    <div class="categoria">
+                        <p>Vestuário</p>
+                    </div>
+
+                    <div class="quantidade">
+                        <p>120</p>
                     </div>
 
                     <div class="status-col">
-                        <span class="status pendente">Pendente</span>
+                        <span class="status ok">Disponível</span>
                     </div>
 
                     <div class="actions">
-                        <button class="action-btn edit-btn" type="button" title="Editar"
-                            onclick="event.stopPropagation()">
+                        <button class="action-btn edit-btn" type="button" title="Editar" onclick="event.stopPropagation()">
                             <span class="material-icons">edit</span>
                         </button>
 
-                        <button class="action-btn delete-btn" type="button" title="Excluir" onclick="event.stopPropagation(); confirmarExclusao(1023)">
+                        <button class="action-btn delete-btn" type="button" title="Excluir" onclick="event.stopPropagation()">
                             <span class="material-icons">delete</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-
-            <!-- HISTÓRICO -->
-            <div id="historico" class="tab-content">
-                <div class="product" onclick="abrirPedido(1024)">
-                    <div class="produto">
+            <!-- TAB MATERIAIS -->
+            <div id="materiais" class="tab-content">
+                <div class="product estoque-row" onclick="abrirItemEstoque('tecido-algodao')">
+                    <div class="item-info">
                         <div class="img"></div>
-                        <p>#1024</p>
+                        <div class="produto">
+                            <p>Tecido Algodão</p>
+                        </div>
                     </div>
 
-                    <div class="empresa">
-                        <p>Empresa Y</p>
+                    <div class="categoria">
+                        <p>Matéria-prima</p>
+                    </div>
+
+                    <div class="quantidade">
+                        <p>30m</p>
                     </div>
 
                     <div class="status-col">
-                        <span class="status ok">Finalizado</span>
+                        <span class="status baixo">Baixo estoque</span>
                     </div>
 
                     <div class="actions">
-                        <button class="action-btn edit-btn" type="button" title="Editar"
-                            onclick="event.stopPropagation()">
+                        <button class="action-btn edit-btn" type="button" title="Editar" onclick="event.stopPropagation()">
                             <span class="material-icons">edit</span>
                         </button>
 
-                        <button class="action-btn delete-btn" type="button" title="Excluir" onclick="event.stopPropagation(); confirmarExclusao(1024)">
+                        <button class="action-btn delete-btn" type="button" title="Excluir" onclick="event.stopPropagation()">
                             <span class="material-icons">delete</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB MOVIMENTAÇÕES -->
+            <div id="movimentacoes" class="tab-content">
+                <div class="product estoque-row" onclick="abrirItemEstoque('movimentacao-camiseta-oversized')">
+                    <div class="item-info">
+                        <div class="img"></div>
+                        <div class="produto">
+                            <p>Camiseta Oversized</p>
+                        </div>
+                    </div>
+
+                    <div class="categoria">
+                        <p>Saída</p>
+                    </div>
+
+                    <div class="quantidade">
+                        <p>10</p>
+                    </div>
+
+                    <div class="status-col">
+                        <span class="status saida">Movimentação</span>
+                    </div>
+
+                    <div class="actions">
+                        <button class="action-btn edit-btn" type="button" title="Ver detalhes" onclick="event.stopPropagation()">
+                            <span class="material-icons">visibility</span>
                         </button>
                     </div>
                 </div>
             </div>
 
         </div>
+
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/script/script.js"></script>
+    <script src="../Script/script.js"></script>
 
-    <script>
-        function abrirPedido(id) {
-            window.location.href = `pedido-detalhe.html?id=${id}`;
-        }
-    </script>
 </body>
 
 </html>

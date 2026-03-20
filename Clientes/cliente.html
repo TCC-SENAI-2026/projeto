@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes</title>
+    <link rel="stylesheet" href="../CSS_padrao/padrao.css">
+    <link rel="stylesheet" href="../Clientes/cliente.css">
+    <link rel="stylesheet" href="../CSS_padrao/style-responsivo.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="../Imagens/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="/InicioC_G/inicio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown" open>
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="/pedidos/pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="estoque.html" class="ativo">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="clientes.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="funcionario.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="relatorio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <details class="user-dropdown">
+                <summary class="user-info">
+                    <div class="user-avatar">GA</div>
+
+                    <div class="user-text">
+                        <span class="user-name">Gabrielly</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+
+                    <span class="material-icons user-arrow">unfold_more</span>
+                </summary>
+
+                <div class="user-menu">
+                    <a href="perfil.html" class="user-option">
+                        <span class="material-icons">person</span>
+                        Perfil
+                    </a>
+
+                    <a href="../login_G/login.html" class="user-option logout">
+                        <span class="material-icons">exit_to_app</span>
+                        Sair
+                    </a>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="top">
+
+            <div class="top-left">
+                <input class="search" placeholder="Pesquisar cliente">
+            </div>
+
+            <div class="top-right">
+
+                <select class="btn btn-filter">
+                    <option value="">Filtro</option>
+                    <option value="">A - Z</option>
+                    <option value="">Z - A</option>
+                    <option value="">Ativos</option>
+                    <option value="">Inativos</option>
+                </select>
+
+                <button class="btn btn-add">+ Cliente</button>
+
+                <div class="profile"></div>
+
+            </div>
+
+        </div>
+
+        <div class="list">
+            <div class="clients-grid">
+
+                <div class="client-card">
+                    <div class="client-logo"></div>
+
+                    <div class="client-footer">
+                        <span>Cliente 1</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="client-card">
+                    <div class="client-logo"></div>
+
+                    <div class="client-footer">
+                        <span>Cliente 2</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="client-card">
+                    <div class="client-logo">
+                        <img src="imgs/logo.png" alt="">
+                    </div>
+
+                    <div class="client-footer">
+                        <span>Cliente 3</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="client-card">
+                    <div class="client-logo"></div>
+
+                    <div class="client-footer">
+                        <span>Cliente 4</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

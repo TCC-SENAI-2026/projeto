@@ -1,13 +1,39 @@
+.page-header {
+    margin-bottom: 20px;
+}
+
+.page-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 25px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.page-subtitle {
+    font-size: 15px;
+    color: #6b7280;
+    margin-top: 5px;
+}
+
 .dashboard {
     display: flex;
     flex-direction: column;
     gap: 30px;
 }
 
-/* CARDS */
+/*cards*/
 
 .dashboard-cards {
     display: grid;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
     grid-template-columns: repeat(3, minmax(220px, 1fr));
     gap: 20px;
 }
@@ -35,29 +61,29 @@
 }
 
 .dashboard-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
+     transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
 }
 
-.dashboard-card span {
-    color: #6b7280;
-    font-size: 15px;
-    font-weight: 600;
+.dashboard-card h2{
+    font-size:28px;
+    font-weight:700;
+    margin-top:6px;
 }
 
-.dashboard-card h2 {
-    margin-top: 12px;
-    font-size: 42px;
-    line-height: 1;
+.dashboard-card span{
+    font-size:14px;
+    color:#64748b;
 }
 
-/* SEÇÕES */
+/*seções*/
 
 .dashboard-section {
     background: white;
     padding: 20px;
     border-radius: 14px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    margin-top: 5px;
 }
 
 .section-header {
@@ -85,37 +111,27 @@
     text-decoration: underline;
 }
 
-/* PEDIDOS */
+/*pedidos*/
 
-.recent-orders {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.recent-orders{
+    display:flex;
+    flex-direction:column;
 }
 
-.order-row {
-    display: grid;
-    grid-template-columns: 120px 1fr 120px;
-    align-items: center;
-    padding: 14px 10px;
-    border-bottom: 1px solid #e5e7eb;
-    transition: background 0.18s ease;
-
+.order-row{
+    display:grid;
+    grid-template-columns:120px 1fr 140px;
+    align-items:center;
+    padding:14px 10px;
+    border-bottom:1px solid #e5e7eb;
 }
 
-.order-row .status{
-    display:inline-block;
-    padding:6px 30px;
-    font-size:14px;
-    text-align: center;
+.order-row:hover{
+    background:#f8fafc;
 }
 
-.order-row:hover {
-    background: #f8fafc;
-    border-radius: 10px;
-}
 
-/* ESTOQUE */
+/*estoque*/
 
 .stock-grid {
     display: grid;
@@ -127,7 +143,7 @@
     background: white;
     padding: 16px;
     border-radius: 12px;
-    text-align: center;
+       text-align:left;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
     transition: transform 0.18s ease, box-shadow 0.2s ease;
 }
@@ -147,11 +163,12 @@
     display: block;
     font-size: 16px;
     margin-bottom: 4px;
+     font-weight:600;
 }
 
 .stock-card p {
-    color: #6b7280;
-    font-size: 14px;
+   font-size:14px;
+    color:#64748b;
 }
 
 .search-box{
@@ -174,3 +191,42 @@
     border:1px solid #d1d5db;
     background:white;
 }
+
+.recent-header,
+.order-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 140px;
+    align-items: center;
+    gap: 16px;
+}
+
+.recent-header {
+    padding: 0 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-top: 25px;
+}
+
+.recent-header span {
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+}
+
+.recent-orders {
+    display: flex;
+    flex-direction: column;
+}
+
+.order-row {
+    padding: 14px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    transition: background 0.18s ease;
+}
+
+.order-row:hover {
+    background: #f8fafc;
+    cursor: pointer;
+}
+

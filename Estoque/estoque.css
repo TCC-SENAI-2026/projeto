@@ -1,4 +1,4 @@
-/*Header*/
+/* ---------------- HEADER ---------------- */
 
 .page-header {
     margin-bottom: 20px;
@@ -19,19 +19,13 @@
     color: #111827;
 }
 
-.page-count {
-    font-size: 16px;
-    color: #94a3b8;
-    font-weight: 500;
-}
-
 .page-subtitle {
     font-size: 15px;
     color: #6b7280;
-    margin-top: 4px;
+    margin-top: 5px;
 }
 
-/*Topo/Pesquisar*/
+/* ---------------- TOPO / BUSCA ---------------- */
 
 .top-right {
     display: flex;
@@ -47,7 +41,7 @@
 
 .search-icon {
     position: absolute;
-    left: 12px;
+    left: 10px;
     font-size: 18px;
     color: #9ca3af;
     pointer-events: none;
@@ -55,20 +49,13 @@
 
 .search {
     width: 280px;
-    padding: 11px 14px 11px 38px;
+    padding: 11px 14px 11px 36px;
     border-radius: 10px;
     border: 1px solid #d1d5db;
-    background: #fff;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: white;
 }
 
-.search:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-}
-
-/*filtro*/
+/* ---------------- FILTRO ---------------- */
 
 .btn-filter {
     appearance: none;
@@ -80,7 +67,6 @@
     color: #374151;
     cursor: pointer;
     transition: all 0.2s ease;
-
     background-image: url("data:image/svg+xml;utf8,<svg fill='%236b7280' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 5 5-5H5z'/></svg>");
     background-repeat: no-repeat;
     background-position: right 10px center;
@@ -97,24 +83,22 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-/*tabela*/
+/* ---------------- TABELA ---------------- */
 
-.table-header,
-.product {
+.estoque-header,
+.estoque-row {
     display: grid;
-    grid-template-columns: 2fr 2fr 1fr 80px;
+    grid-template-columns: 2.4fr 1.4fr 1fr 1.2fr 90px;
     align-items: center;
     gap: 16px;
     padding: 16px 14px;
 }
 
-/*cabeçalho*/
-
-.table-header {
+.estoque-header {
     border-bottom: 1px solid #e5e7eb;
 }
 
-.table-header span {
+.estoque-header span {
     font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
@@ -122,26 +106,32 @@
     color: #64748b;
 }
 
-/*linhas*/
-
-.product {
+.estoque-row {
     border-bottom: 1px solid #f1f5f9;
     border-radius: 12px;
     transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.product:hover {
+.estoque-row:hover {
     background: #f8fafc;
     transform: scale(1.002);
     cursor: pointer;
 }
 
-/*produto*/
+/* ---------------- ITEM ---------------- */
 
-.produto {
+.item-info {
     display: flex;
     align-items: center;
     gap: 16px;
+}
+
+.img {
+    width: 62px;
+    height: 62px;
+    background: #dbe1ea;
+    border-radius: 14px;
+    flex-shrink: 0;
 }
 
 .produto p {
@@ -151,30 +141,14 @@
     color: #0f172a;
 }
 
-/*imagem*/
-
-.img {
-    width: 55px;
-    height: 55px;
-    background: #dbe1ea;
-    border-radius: 14px;
-    flex-shrink: 0;
-}
-
-/*empresa*/
-
-.empresa {
-    display: flex;
-    align-items: center;
-}
-
-.empresa p {
+.categoria p,
+.quantidade p {
     margin: 0;
-    font-size: 16px;
+    font-size: 15px;
     color: #334155;
 }
 
-/*status*/
+/* ---------------- STATUS ---------------- */
 
 .status-col {
     display: flex;
@@ -199,19 +173,17 @@
     color: #166534;
 }
 
-.status.pendente,
 .status.baixo {
     background: #fde68a;
     color: #78350f;
 }
 
-.status.saida,
-.status.producao {
+.status.saida {
     background: #dbeafe;
     color: #1d4ed8;
 }
 
-/*ações*/
+/* ---------------- AÇÕES ---------------- */
 
 .actions {
     display: flex;
@@ -248,4 +220,26 @@
 
 .delete-btn:hover .material-icons {
     color: #dc2626;
+}
+
+.page-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.page-count{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:28px;
+    height:24px;
+    padding:0 8px;
+
+    border-radius:999px;
+    background:#e5e7eb;
+
+    font-size:16px;
+    color: #94a3b8;
+    font-weight: 500;
 }

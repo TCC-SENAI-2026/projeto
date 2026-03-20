@@ -109,3 +109,56 @@ function openTab(tabName, el) {
     document.getElementById(tabName).classList.add("active");
     el.classList.add("active");
 }
+
+function abrirPedido(id){
+    window.location.href = `pedido-detalhe.html?id=${id}`;
+}
+
+function confirmarExclusao(id) {
+    const confirmar = window.confirm(`Deseja realmente excluir o pedido #${id}?`);
+
+    if (confirmar) {
+            alert(`Pedido #${id} excluído com sucesso.`);
+     }
+ }
+
+  function atualizarContador() {
+        const pedidos = document.querySelectorAll("#recentes .product");
+        const contador = document.querySelector(".page-count");
+
+        const total = pedidos.length;
+
+        contador.textContent = `(${total})`;
+    }
+
+    atualizarContador();
+
+ function abrirItemEstoque(id) {
+            window.location.href = `item-estoque.html?id=${id}`;
+        }
+
+// Estoque
+// Contagem de itens no estoque
+
+   function atualizarContadorEstoque(tabId) {
+        const itens = document.querySelectorAll(`#${tabId} .estoque-row`);
+        const contador = document.querySelector(".page-count");
+        contador.textContent = `(${itens.length})`;
+    }
+
+    function openTab(tabId, btn) {
+        document.querySelectorAll(".tab-content").forEach(tab => {
+            tab.classList.remove("active");
+        });
+
+        document.querySelectorAll(".tab-btn").forEach(botao => {
+            botao.classList.remove("active");
+        });
+
+        document.getElementById(tabId).classList.add("active");
+        btn.classList.add("active");
+
+        atualizarContadorEstoque(tabId);
+    }
+
+    atualizarContadorEstoque("produtos");
