@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/padrao.css">
+    <link rel="stylesheet" href="../style/style-relatorio.css">
+    <link rel="stylesheet" href="../style/responsivo.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <title>Relatórios</title>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="../img/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="inicio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown">
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="estoque.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="cliente.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="funcionario.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="#" class="ativo">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <details class="user-dropdown">
+                <summary class="user-info">
+                    <div class="user-avatar">GA</div>
+
+                    <div class="user-text">
+                        <span class="user-name">Gabrielly</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+
+                    <span class="material-icons user-arrow">unfold_more</span>
+                </summary>
+
+                <div class="user-menu">
+                    <a href="perfil.html" class="user-option">
+                        <span class="material-icons">person</span>
+                        Perfil
+                    </a>
+
+                    <a href="login.html" class="user-option logout">
+                        <span class="material-icons">exit_to_app</span>
+                        Sair
+                    </a>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="title">
+            <h1>Relatórios</h1>
+        </div>
+
+        <div class="list">
+
+            <div class="report-top">
+
+                <select class="btn btn-filter">
+                    <option>Últimos 30 dias</option>
+                    <option>Últimos 3 meses</option>
+                    <option>Este ano</option>
+                </select>
+
+                <button class="btn btn-add" onclick="downloadPDF()">
+                    Baixar PDF
+                </button>
+
+            </div>
+
+            <div class="report-cards">
+
+                <div class="report-card">
+                    <span>Produção Total</span>
+                    <h2>245</h2>
+                </div>
+
+                <div class="report-card">
+                    <span>Pedidos Concluídos</span>
+                    <h2>38</h2>
+                </div>
+
+                <div class="report-card">
+                    <span>Itens em Estoque Baixo</span>
+                    <h2>4</h2>
+                </div>
+
+                <div class="report-card">
+                    <span>Pedidos Pendentes</span>
+                    <h2>12</h2>
+                </div>
+
+            </div>
+
+            <div class="charts">
+
+                <div class="chart-box">
+                    <h3>Produção por Mês</h3>
+                    <canvas id="producaoChart"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Status dos Pedidos</h3>
+                    <canvas id="statusChart"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="../script/script.js"></script>
+</body>
+
+</html>

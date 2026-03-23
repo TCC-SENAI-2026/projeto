@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Estoque TESTE</title>
+    <link rel="stylesheet" href="../style/padrao.css">
+    <link rel="stylesheet" href="../style/add-estoqueTESTE.css">
+    <link rel="stylesheet" href="../style/responsivo.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="../img/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="inicio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown">
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="estoque.html" class="ativo">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="cliente.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="funcionario.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="relatorio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <details class="user-dropdown">
+                <summary class="user-info">
+                    <div class="user-avatar">GA</div>
+
+                    <div class="user-text">
+                        <span class="user-name">Gabrielly</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+
+                    <span class="material-icons user-arrow">unfold_more</span>
+                </summary>
+
+                <div class="user-menu">
+                    <a href="perfil.html" class="user-option">
+                        <span class="material-icons">person</span>
+                        Perfil
+                    </a>
+
+                    <a href="login.html" class="user-option logout">
+                        <span class="material-icons">exit_to_app</span>
+                        Sair
+                    </a>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top">
+            <div class="page-header">
+                <div class="page-title-row">
+                    <h1 class="page-title">Adicionar ao Estoque</h1>
+                </div>
+                <p class="page-subtitle">Proposta de tela temporária para discutir o cadastro de produtos, materiais e movimentações.</p>
+            </div>
+        </div>
+
+        <!-- TESTE TEMPORARIO:
+             Esta tela foi criada como proposta visual/funcional.
+             Se a equipe não aprovar, pode apagar:
+             1. html/add-estoqueTESTE.html
+             2. style/add-estoqueTESTE.css
+             3. o link no botão + Item em html/estoque.html
+        -->
+        <div class="estoque-teste-page">
+            <main class="estoque-teste-form">
+                <div class="estoque-teste-header">
+                    <div>
+                        <span class="estoque-teste-badge">
+                            <span class="material-icons">science</span>
+                            teste temporário
+                        </span>
+                        <h1 class="estoque-teste-title">add-estoqueTESTE</h1>
+                        <p class="estoque-teste-subtitle">
+                            A ideia aqui é concentrar em uma única tela o cadastro de produto acabado,
+                            matéria-prima e movimentação, direcionando cada item para sua aba correta no estoque.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="teste-alerta">
+                    Esta proposta é intencionalmente explícita e separada do fluxo real.
+                    O objetivo é testar estrutura e campos antes de transformar isso em funcionalidade definitiva.
+                </div>
+
+                <form autocomplete="off">
+                    <section class="estoque-teste-section">
+                        <h2>1. Tipo de cadastro</h2>
+                        <p class="section-help">Escolha se você está registrando um produto pronto, um material de produção ou uma movimentação de entrada/saída.</p>
+
+                        <div class="type-switch">
+                            <label>
+                                <input type="radio" name="tipo_cadastro" value="produto" checked data-destino="Vai para a aba Estoque Produtos" data-preview="Camiseta Polo Azul Marinho" data-meta="Produto acabado • Uniforme">
+                                <span class="type-card">
+                                    <strong>Produto</strong>
+                                    <span>Ex.: camiseta, camisa, moletom, calça, jaleco.</span>
+                                </span>
+                            </label>
+
+                            <label>
+                                <input type="radio" name="tipo_cadastro" value="material" data-destino="Vai para a aba Estoque Materiais" data-preview="Tecido Algodão 30/1" data-meta="Matéria-prima • Produção">
+                                <span class="type-card">
+                                    <strong>Material</strong>
+                                    <span>Ex.: algodão, linho, poliéster, botões, linha, zíper.</span>
+                                </span>
+                            </label>
+
+                            <label>
+                                <input type="radio" name="tipo_cadastro" value="movimentacao" data-destino="Vai para a aba Movimentações" data-preview="Saída de 24 camisetas para corte" data-meta="Registro operacional">
+                                <span class="type-card">
+                                    <strong>Movimentação</strong>
+                                    <span>Entrada, saída, ajuste interno, consumo na produção.</span>
+                                </span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <section class="estoque-teste-section">
+                        <h2>2. Identificação do item</h2>
+                        <p class="section-help">Aqui entram os dados principais que ajudam a equipe a localizar e diferenciar cada item.</p>
+
+                        <div class="estoque-form-grid">
+                            <div class="estoque-campo full">
+                                <label for="nome_item">Nome do item</label>
+                                <input id="nome_item" type="text" placeholder="Ex.: Camiseta gola polo / Tecido algodão / Saída para costura">
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="categoria_item">Categoria</label>
+                                <select id="categoria_item">
+                                    <option value="">Selecione</option>
+                                    <option>Uniforme</option>
+                                    <option>Malharia</option>
+                                    <option>Tecido</option>
+                                    <option>Aviamento</option>
+                                    <option>Movimentação</option>
+                                </select>
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="codigo_item">Código interno / SKU</label>
+                                <input id="codigo_item" type="text" placeholder="Ex.: UNI-CAM-001">
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="unidade_medida">Unidade de medida</label>
+                                <select id="unidade_medida">
+                                    <option value="">Selecione</option>
+                                    <option>Unidade</option>
+                                    <option>Peça</option>
+                                    <option>Metro</option>
+                                    <option>Quilo</option>
+                                    <option>Rolo</option>
+                                </select>
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="localizacao">Localização no estoque</label>
+                                <input id="localizacao" type="text" placeholder="Ex.: Prateleira B2 / Armário tecidos">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="estoque-teste-section">
+                        <h2>3. Atributos do item</h2>
+                        <p class="section-help">Campo útil para o contexto de uniformes: cor, tamanho, tecido, composição ou detalhes de movimentação.</p>
+
+                        <div class="estoque-form-grid">
+                            <div class="estoque-campo">
+                                <label for="cor_item">Cor</label>
+                                <input id="cor_item" type="text" placeholder="Ex.: Azul marinho">
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="tamanho_item">Tamanho / Variante</label>
+                                <input id="tamanho_item" type="text" placeholder="Ex.: P, M, G, GG ou 1,40m largura">
+                            </div>
+
+                            <div class="estoque-campo full">
+                                <label for="composicao_item">Tecido / composição / detalhe técnico</label>
+                                <input id="composicao_item" type="text" placeholder="Ex.: 100% algodão penteado / poliéster com elastano / saída para bordado">
+                            </div>
+
+                            <div class="estoque-campo full">
+                                <span class="label-like">Aplicação rápida</span>
+                                <div class="pill-select">
+                                    <input type="radio" id="pill-1" name="aplicacao_real" checked>
+                                    <label for="pill-1">Linha casual</label>
+
+                                    <input type="radio" id="pill-2" name="aplicacao_real">
+                                    <label for="pill-2">Uniforme escolar</label>
+
+                                    <input type="radio" id="pill-3" name="aplicacao_real">
+                                    <label for="pill-3">Uniforme industrial</label>
+
+                                    <input type="radio" id="pill-4" name="aplicacao_real">
+                                    <label for="pill-4">Reposição interna</label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="estoque-teste-section">
+                        <h2>4. Controle de estoque</h2>
+                        <p class="section-help">Campos para monitorar saldo, ponto de reposição e custo. Para movimentação, eles também podem representar quantidade entrada/saída.</p>
+
+                        <div class="estoque-form-grid">
+                            <div class="estoque-campo">
+                                <label for="quantidade_atual">Quantidade atual</label>
+                                <input id="quantidade_atual" type="number" placeholder="0">
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="estoque_minimo">Estoque mínimo</label>
+                                <input id="estoque_minimo" type="number" placeholder="Ex.: 20">
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="valor_unitario">Valor unitário estimado</label>
+                                <input id="valor_unitario" type="text" placeholder="Ex.: 39,90">
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="fornecedor_item">Fornecedor</label>
+                                <input id="fornecedor_item" type="text" placeholder="Ex.: Tecidos Brasil">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="estoque-teste-section">
+                        <h2>5. Observações</h2>
+                        <p class="section-help">Espaço útil para avisos da equipe, lote, cliente vinculado ou justificativa de ajuste.</p>
+
+                        <div class="estoque-form-grid">
+                            <div class="estoque-campo full">
+                                <label for="observacoes_item">Observações gerais</label>
+                                <textarea id="observacoes_item" placeholder="Ex.: lote reservado para pedido da empresa X / material sujeito a encolhimento / movimentação para setor de bordado"></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="estoque-teste-actions">
+                        <a class="btn-ghost" href="estoque.html">Cancelar teste</a>
+                        <button class="btn btn-filter" type="button">Salvar rascunho</button>
+                        <button class="btn btn-add" type="submit">Simular cadastro</button>
+                    </div>
+                </form>
+            </main>
+
+            <aside class="estoque-teste-side">
+                <h2 class="side-title">Como esta proposta pensa o fluxo</h2>
+
+                <div class="side-card">
+                    <strong>Destino automático</strong>
+                    <p id="destinoResumo">Vai para a aba Estoque Produtos</p>
+                    <div class="destino-chip" id="destinoChip">Produtos</div>
+                </div>
+
+                <div class="side-card">
+                    <strong>Quando isso faz sentido</strong>
+                    <p>Se vocês quiserem um cadastro único e o sistema decidir a aba correta com base no tipo escolhido.</p>
+                </div>
+
+                <ul class="side-list">
+                    <li>Produto: item acabado pronto para venda ou entrega.</li>
+                    <li>Material: insumo usado na produção do uniforme.</li>
+                    <li>Movimentação: registro operacional de entrada, saída ou ajuste.</li>
+                </ul>
+
+                <div class="preview-box">
+                    <h3>Prévia de cartão</h3>
+                    <div class="preview-item">
+                        <div class="preview-thumb"></div>
+                        <div>
+                            <strong id="previewNome">Camiseta Polo Azul Marinho</strong>
+                            <span id="previewMeta">Produto acabado • Uniforme</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="../script/script.js"></script>
+    <script>
+        // TESTE TEMPORARIO - comportamento local apenas para visualizacao da proposta.
+        const radiosTipoCadastro = document.querySelectorAll('input[name="tipo_cadastro"]');
+        const destinoResumo = document.getElementById("destinoResumo");
+        const destinoChip = document.getElementById("destinoChip");
+        const previewNome = document.getElementById("previewNome");
+        const previewMeta = document.getElementById("previewMeta");
+
+        function atualizarPainelTeste() {
+            const selecionado = document.querySelector('input[name="tipo_cadastro"]:checked');
+
+            if (!selecionado) {
+                return;
+            }
+
+            const destino = selecionado.dataset.destino || "";
+            const preview = selecionado.dataset.preview || "";
+            const meta = selecionado.dataset.meta || "";
+
+            destinoResumo.textContent = destino;
+            previewNome.textContent = preview;
+            previewMeta.textContent = meta;
+
+            if (selecionado.value === "produto") {
+                destinoChip.textContent = "Produtos";
+            } else if (selecionado.value === "material") {
+                destinoChip.textContent = "Materiais";
+            } else {
+                destinoChip.textContent = "Movimentações";
+            }
+        }
+
+        radiosTipoCadastro.forEach(radio => {
+            radio.addEventListener("change", atualizarPainelTeste);
+        });
+
+        atualizarPainelTeste();
+    </script>
+</body>
+
+</html>

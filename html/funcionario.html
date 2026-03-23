@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funcionários</title>
+    <link rel="stylesheet" href="../style/padrao.css">
+    <link rel="stylesheet" href="../style/funcionario.css">
+    <link rel="stylesheet" href="../style/form-modal-padrao.css">
+    <link rel="stylesheet" href="../style/responsivo.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="../img/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="inicio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown">
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="estoque.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="cliente.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="funcionario.html" class="ativo">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="relatorio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <details class="user-dropdown">
+                <summary class="user-info">
+                    <div class="user-avatar">GA</div>
+
+                    <div class="user-text">
+                        <span class="user-name">Gabrielly</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+
+                    <span class="material-icons user-arrow">unfold_more</span>
+                </summary>
+
+                <div class="user-menu">
+                    <a href="perfil.html" class="user-option">
+                        <span class="material-icons">person</span>
+                        Perfil
+                    </a>
+
+                    <a href="login.html" class="user-option logout">
+                        <span class="material-icons">exit_to_app</span>
+                        Sair
+                    </a>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top">
+            <div class="page-header">
+                <div class="page-title-row">
+                    <h1 class="page-title">Funcionários Cadastrados</h1>
+                    <span id="funcionario-count" class="page-count">0</span>
+                </div>
+                <p class="page-subtitle">Gerenciamento de funcionários cadastrados no sistema</p>
+            </div>
+
+            <div class="top-right">
+                <div class="search-box">
+                    <span class="material-icons search-icon">search</span>
+                    <input class="search" placeholder="Pesquisar funcionário">
+                </div>
+
+                <select class="btn btn-filter">
+                    <option value="">Todos os Funcionários</option>
+                    <option value="">A - Z</option>
+                    <option value="">Z - A</option>
+                    <option value="">Ativos</option>
+                    <option value="">Inativos</option>
+                </select>
+
+                <button type="button" class="btn btn-add" onclick="window.location.href='add-funcionario.html'">+ Funcionário</button>
+            </div>
+        </div>
+
+        <div class="list">
+            <div class="funcionario-grid">
+                <div class="funcionario-card" data-id="1" data-empresa="João Silva" data-responsavel="Produção"
+                    data-telefone="(14) 99999-9999" data-email="joao@email.com" data-pedidos="Turno manhã"
+                    data-ultimo-pedido="Admissão 02/03/2026">
+
+                    <div class="funcionario-logo">
+                        <img src="../img/caio2.png" alt="Funcionário João Silva">
+                    </div>
+
+                    <div class="funcionario-footer">
+                        <span class="funcionario-name">João Silva</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="funcionario-card" data-id="2" data-empresa="Maria Souza" data-responsavel="Administração"
+                    data-telefone="(11) 98888-8888" data-email="maria@email.com" data-pedidos="Turno integral"
+                    data-ultimo-pedido="Admissão 10/03/2026">
+
+                    <div class="funcionario-logo">
+                        <img src="../img/IRIZAR3.jpg" alt="Funcionária Maria Souza">
+                    </div>
+
+                    <div class="funcionario-footer">
+                        <span class="funcionario-name">Maria Souza</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="funcionarioModal" class="modal-overlay">
+        <div class="funcionario-modal">
+            <button class="modal-close" type="button" data-modal-close="funcionarioModal">
+                <span class="material-icons">close</span>
+            </button>
+
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h2 class="modal-title" data-campo="empresa"></h2>
+                    <p class="modal-subtitle">Funcionário cadastrado</p>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-info">
+                    <span class="modal-label">Setor</span>
+                    <p class="modal-value" data-campo="responsavel"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">Telefone</span>
+                    <p class="modal-value" data-campo="telefone"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">E-mail</span>
+                    <p class="modal-value" data-campo="email"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">Escala</span>
+                    <p class="modal-value" data-campo="pedidos"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">Último registro</span>
+                    <p class="modal-value" data-campo="ultimo-pedido"></p>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-sec" type="button" data-modal-close="funcionarioModal">Fechar</button>
+                <button class="btn btn-add" type="button">Editar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="funcionarioFormModal" class="modal-overlay">
+        <div class="funcionario-form-modal form-modal-shell">
+            <button class="modal-close" type="button" data-modal-close="funcionarioFormModal">
+                <span class="material-icons">close</span>
+            </button>
+
+            <div class="form-modal-layout">
+                <form class="cadastro1 funcionario-form-wrapper form-modal-wrapper form-modal-main" id="funcionarioForm" autocomplete="off">
+                    <span class="form-modal-kicker">
+                        <span class="material-icons">badge</span>
+                        Novo funcionário
+                    </span>
+                    <h2 class="titulo">Cadastro de Funcionário</h2>
+                    <p class="form-modal-intro">Centralize os dados pessoais, profissionais e de acesso do colaborador em um único cadastro antes de liberá-lo no sistema.</p>
+
+                    <fieldset>
+                        <div class="secao">
+                            <div class="secao-lado-esquerdo">
+                                <p class="secao-titulo">Dados Pessoais</p>
+                            </div>
+
+                            <div class="secao-lado-direito">
+                                <div class="grid">
+                                    <div class="campo full">
+                                        <label for="nomecompleto">Nome Completo:</label>
+                                        <input type="text" id="nomecompleto" name="nomecompleto"
+                                            placeholder="Insira o nome completo" required autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="re">RE (Registro do Empregado):</label>
+                                        <input type="text" maxlength="6" name="re" id="re"
+                                            placeholder="Digite o número do RE" autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="cpf">CPF:</label>
+                                        <input type="text" maxlength="14" name="cpf" id="cpf" placeholder="000.000.000-00"
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="dataNascimento">Data de Nascimento:</label>
+                                        <input type="date" name="dataNascimento" id="dataNascimento" required
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="telefone">Telefone:</label>
+                                        <input type="tel" name="telefone" id="telefone" placeholder="(11) 99999-9999"
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="campo full">
+                                        <label for="email">E-mail:</label>
+                                        <input type="text" name="email" id="email" placeholder="Digite o e-mail"
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="campo full">
+                                        <label for="endereco">Endereço:</label>
+                                        <input type="text" name="endereco" id="endereco" placeholder="Rua, número, bairro"
+                                            autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="secao">
+                            <div class="secao-lado-esquerdo">
+                                <p class="secao-titulo">Profissional</p>
+                            </div>
+
+                            <div class="secao-lado-direito">
+                                <div class="grid">
+                                    <div class="campo full">
+                                        <label for="setor">Setor:</label>
+                                        <select name="setor_usuario" id="setor" required autocomplete="off">
+                                            <option value="">Selecione o Setor</option>
+                                            <option value="Administração">Administração</option>
+                                            <option value="Produção">Produção</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="data-contrato">Data de Contratação:</label>
+                                        <input type="date" id="data-contrato" name="data-contrato" required
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="salario">Salário:</label>
+                                        <div class="input-money">
+                                            <span>R$</span>
+                                            <input type="text" id="salario" name="salario" placeholder="0,00"
+                                                inputmode="numeric" autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="secao">
+                            <div class="secao-lado-esquerdo">
+                                <p class="secao-titulo">Acesso</p>
+                            </div>
+
+                            <div class="secao-lado-direito">
+                                <div class="grid">
+                                    <div class="campo">
+                                        <label for="senha">Criar Senha:</label>
+                                        <input type="password" maxlength="9" name="senha" id="senha"
+                                            placeholder="Digite a senha" autocomplete="new-password">
+                                    </div>
+
+                                    <div class="campo">
+                                        <p class="label-like">Status:</p>
+                                        <div class="status-toggle">
+                                            <input type="radio" id="ativo" name="status" value="ativo" checked>
+                                            <label for="ativo">Ativo</label>
+
+                                            <input type="radio" id="inativo" name="status" value="inativo">
+                                            <label for="inativo">Inativo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="botao1_2">
+                        <button type="button" class="btn-sec" data-modal-close="funcionarioFormModal">Cancelar</button>
+                        <button type="submit" class="btn-prim">Enviar</button>
+                    </div>
+                </form>
+
+                <aside class="form-modal-side">
+                    <h3>Resumo do cadastro</h3>
+
+                    <div class="form-modal-side-card">
+                        <strong>Destino</strong>
+                        <p>Este registro entra na base interna de colaboradores da confecção.</p>
+                        <span class="form-modal-chip">Lista de Funcionários</span>
+                    </div>
+
+                    <div class="form-modal-side-card">
+                        <strong>Uso mais comum</strong>
+                        <p>Admissão de novos funcionários, atualização de setor e organização de acesso administrativo.</p>
+                    </div>
+
+                    <ul class="form-modal-side-list">
+                        <li>Dados pessoais servem para contato e identificação interna.</li>
+                        <li>Setor, contratação e salário ajudam no controle administrativo.</li>
+                        <li>Senha e status controlam o acesso ao sistema.</li>
+                    </ul>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script src="../script/script.js"></script>
+</body>
+
+</html>

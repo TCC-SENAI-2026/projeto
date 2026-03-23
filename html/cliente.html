@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes</title>
+    <link rel="stylesheet" href="../style/padrao.css">
+    <link rel="stylesheet" href="../style/cliente.css">
+    <link rel="stylesheet" href="../style/form-modal-padrao.css">
+    <link rel="stylesheet" href="../style/responsivo.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="../img/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="inicio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown">
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="estoque.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="#" class="ativo">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="funcionario.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="relatorio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <details class="user-dropdown">
+                <summary class="user-info">
+                    <div class="user-avatar">GA</div>
+
+                    <div class="user-text">
+                        <span class="user-name">Gabrielly</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+
+                    <span class="material-icons user-arrow">unfold_more</span>
+                </summary>
+
+                <div class="user-menu">
+                    <a href="perfil.html" class="user-option">
+                        <span class="material-icons">person</span>
+                        Perfil
+                    </a>
+
+                    <a href="login.html" class="user-option logout">
+                        <span class="material-icons">exit_to_app</span>
+                        Sair
+                    </a>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="top">
+            <div class="page-header">
+                <div class="page-title-row">
+                    <h1 class="page-title">Clientes Cadastrados</h1>
+                    <span id="client-count" class="page-count">0</span>
+                </div>
+                <p class="page-subtitle">Gerenciamento de clientes cadastrados no sistema</p>
+            </div>
+
+            <div class="top-right">
+                <div class="search-box">
+                    <span class="material-icons search-icon">search</span>
+                    <input class="search" placeholder="Pesquisar cliente">
+                </div>
+
+                <select class="btn btn-filter">
+                    <option value="">Todos os Clientes</option>
+                    <option value="">A - Z</option>
+                    <option value="">Z - A</option>
+                    <option value="">Ativos</option>
+                    <option value="">Inativos</option>
+                </select>
+
+                <button type="button" class="btn btn-add" onclick="window.location.href='add-cliente.html'">+ Cliente</button>
+            </div>
+        </div>
+
+        <div class="list">
+            <div class="clients-grid">
+                <div class="client-card" data-id="1" data-empresa="Caio Induscar" data-responsavel="João Silva"
+                    data-telefone="(14) 99999-9999" data-email="empresa@email.com" data-pedidos="12 pedidos"
+                    data-ultimo-pedido="02/03/2026">
+
+                    <div class="client-logo">
+                        <img src="../img/caio2.png" alt="Caio Induscar">
+                    </div>
+
+                    <div class="client-footer">
+                        <span class="client-name">Caio Induscar</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="client-card" data-id="2" data-empresa="Irizar" data-responsavel="Maria Souza"
+                    data-telefone="(11) 98888-8888" data-email="beta@email.com" data-pedidos="5 pedidos"
+                    data-ultimo-pedido="10/03/2026">
+
+                    <div class="client-logo">
+                        <img src="../img/IRIZAR3.jpg" alt="Irizar">
+                    </div>
+
+                    <div class="client-footer">
+                        <span class="client-name">Irizar</span>
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="clienteModal" class="modal-overlay">
+        <div class="cliente-modal">
+            <button class="modal-close" type="button" data-modal-close="clienteModal">
+                <span class="material-icons">close</span>
+            </button>
+
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h2 class="modal-title" data-campo="empresa"></h2>
+                    <p class="modal-subtitle">Cliente cadastrado</p>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-info">
+                    <span class="modal-label">Responsável</span>
+                    <p class="modal-value" data-campo="responsavel"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">Telefone</span>
+                    <p class="modal-value" data-campo="telefone"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">E-mail</span>
+                    <p class="modal-value" data-campo="email"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">Pedidos</span>
+                    <p class="modal-value" data-campo="pedidos"></p>
+                </div>
+
+                <div class="modal-info">
+                    <span class="modal-label">Último pedido</span>
+                    <p class="modal-value" data-campo="ultimo-pedido"></p>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-sec" type="button" data-modal-close="clienteModal">Fechar</button>
+                <button class="btn btn-add" type="button" onclick="editarCliente()">Editar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="clienteFormModal" class="modal-overlay">
+        <div class="cliente-form-modal form-modal-shell">
+            <button class="modal-close" type="button" data-modal-close="clienteFormModal">
+                <span class="material-icons">close</span>
+            </button>
+
+            <div class="form-modal-layout">
+                <form class="cadastro1 cliente-form-wrapper form-modal-wrapper form-modal-main" id="clienteForm" autocomplete="off">
+                    <span class="form-modal-kicker">
+                        <span class="material-icons">group_add</span>
+                        Novo cliente
+                    </span>
+                    <h2 class="titulo">Cadastro de Cliente</h2>
+                    <p class="form-modal-intro">Use este formulário para registrar empresas atendidas, definir o responsável principal e manter os contatos organizados.</p>
+
+                    <fieldset>
+                        <div class="secao">
+                            <div class="secao-lado-esquerdo">
+                                <p class="secao-titulo">Dados da Empresa</p>
+                            </div>
+
+                            <div class="secao-lado-direito">
+                                <div class="grid">
+                                    <div class="campo full">
+                                        <label for="nome_empresa">Empresa:</label>
+                                        <input type="text" id="nome_empresa" name="nome_empresa"
+                                            placeholder="Ex: Caio Induscar" required autocomplete="off">
+                                    </div>
+
+                                    <div class="campo full">
+                                        <label for="nome_responsavel">Responsável:</label>
+                                        <input type="text" maxlength="80" name="nome_responsavel" id="nome_responsavel"
+                                            placeholder="Ex: João Silva (RH)" autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="cnpj">CPF / CNPJ:</label>
+                                        <input type="text" maxlength="18" name="cnpj" id="cnpj"
+                                            placeholder="00.000.000/0000-00" autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="telefone">Telefone:</label>
+                                        <input type="tel" name="telefone" id="telefone" placeholder="(11) 99999-9999"
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="campo full">
+                                        <label for="email">E-mail:</label>
+                                        <input type="email" name="email" id="email" placeholder="contato@empresa.com"
+                                            autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="secao">
+                            <div class="secao-lado-esquerdo">
+                                <p class="secao-titulo">Endereço</p>
+                            </div>
+
+                            <div class="secao-lado-direito">
+                                <div class="grid">
+                                    <div class="campo">
+                                        <label for="cep">CEP:</label>
+                                        <input type="text" name="cep" id="cep" placeholder="00000-000"
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="municipio">Município:</label>
+                                        <input type="text" name="cidade" id="municipio" placeholder="Ex: São Paulo"
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="estado">Estado:</label>
+                                        <select name="estado" id="estado"></select>
+                                    </div>
+
+                                    <div class="campo full">
+                                        <label for="rua">Rua:</label>
+                                        <input type="text" name="rua" id="rua" placeholder="Ex: Rua das Flores"
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="campo">
+                                        <label for="numero">Número:</label>
+                                        <input type="number" name="numero" id="numero" placeholder="Ex: 123">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="secao">
+                            <div class="secao-lado-esquerdo">
+                                <p class="secao-titulo">Informações Adicionais</p>
+                            </div>
+
+                            <div class="secao-lado-direito">
+                                <div class="grid">
+                                    <div class="campo full">
+                                        <label for="observacoes">Observações:</label>
+                                        <textarea id="observacoes" placeholder="Ex: Cliente prefere contato por e-mail"></textarea>
+                                    </div>
+
+                                    <div class="campo">
+                                        <p class="label-like">Status:</p>
+                                        <div class="status-toggle">
+                                            <input type="radio" id="cliente_ativo" name="status" value="ativo" checked>
+                                            <label for="cliente_ativo">Ativo</label>
+
+                                            <input type="radio" id="cliente_inativo" name="status" value="inativo">
+                                            <label for="cliente_inativo">Inativo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="botao1_2">
+                        <button type="button" class="btn-sec" data-modal-close="clienteFormModal">Cancelar</button>
+                        <button type="submit" class="btn-prim">Salvar</button>
+                    </div>
+                </form>
+
+                <aside class="form-modal-side">
+                    <h3>Como este cadastro ajuda</h3>
+
+                    <div class="form-modal-side-card">
+                        <strong>Destino</strong>
+                        <p>Este registro entra na base de clientes da confecção.</p>
+                        <span class="form-modal-chip">Lista de Clientes</span>
+                    </div>
+
+                    <div class="form-modal-side-card">
+                        <strong>Uso mais comum</strong>
+                        <p>Cadastros de empresas contratantes, atualização de contato principal e organização para novos pedidos.</p>
+                    </div>
+
+                    <ul class="form-modal-side-list">
+                        <li>Empresa e responsável ajudam na identificação do atendimento.</li>
+                        <li>Contato e endereço reduzem retrabalho no comercial e na entrega.</li>
+                        <li>Status indica se o cliente segue ativo ou ficou inativo.</li>
+                    </ul>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script src="../script/script.js"></script>
+</body>
+
+</html>

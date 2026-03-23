@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="../style/login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <main class="login">
+        <img src="../img/E-threads.png" alt="Logo do sistema" class="logo">
+
+        <div class="login-divisor"></div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)" method="post" novalidate>
+            <p class="login-texto">Acesse sua conta para continuar</p>
+
+            <div class="campo">
+                <input type="text" id="re" name="re" placeholder="Digite seu RE" inputmode="numeric" pattern="[0-9]*"
+                    autocomplete="off" maxlength="6" required>
+            </div>
+
+            <div class="campo senha-wrap">
+                <input type="password" id="senha" name="senha" placeholder="Digite sua senha" autocomplete="off"
+                    maxlength="11" required>
+
+                <button type="button" class="toggle-senha" aria-label="Mostrar senha">
+                    <svg class="icone-olho olho-fechado" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 3L21 21" />
+                        <path
+                            d="M10.58 10.58C10.21 10.95 10 11.45 10 12C10 13.1 10.9 14 12 14C12.55 14 13.05 13.79 13.42 13.42" />
+                        <path
+                            d="M9.88 4.24C10.55 4.08 11.26 4 12 4C17 4 20.73 7.11 22 12C21.62 13.47 20.87 14.81 19.84 15.91M14.12 19.76C13.45 19.92 12.74 20 12 20C7 20 3.27 16.89 2 12C2.6 9.67 4.06 7.7 6.11 6.39" />
+                    </svg>
+
+                    <svg class="icone-olho olho-aberto" viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M2 12C3.27 7.11 7 4 12 4C17 4 20.73 7.11 22 12C20.73 16.89 17 20 12 20C7 20 3.27 16.89 2 12Z" />
+                        <path
+                            d="M12 15.5C10.07 15.5 8.5 13.93 8.5 12C8.5 10.07 10.07 8.5 12 8.5C13.93 8.5 15.5 10.07 15.5 12C15.5 13.93 13.93 15.5 12 15.5Z" />
+                    </svg>
+                </button>
+            </div>
+
+            <p id="loginErro" class="erro-login"></p>
+
+            <button class="bt-entrar" type="submit">Entrar</button>
+        </form>
+
+        <a href="#" class="reset-link">Solicitar redefinição de senha</a>
+    </main>
+
+    <!-- MODAL -->
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Redefinir Senha</h2>
+                <button class="close" aria-label="Fechar" type="button" onclick="closeModal()">×</button>
+            </div>
+
+            <hr class="linha-personalizada">
+
+            <form class="modal-body" onsubmit="enviarSolicitacao(event)">
+                <label for="reReset"></label>
+
+                <input type="text" id="reReset" placeholder="Digite seu RE" inputmode="numeric" pattern="[0-9]*"
+                    autocomplete="off" maxlength="6" required>
+
+                <button type="submit">Enviar</button>
+
+                <p class="modal-help">Sua solicitação será enviada ao administrador.</p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            resetModal.style.display = "flex";
+        }
+
+        function closeModal() {
+            resetModal.style.display = "none";
+        }
+
+        function limitarNumeros(input, maximo) {
+            input.addEventListener("input", function () {
+                this.value = this.value.replace(/\D/g, "").slice(0, maximo);
+            });
+        }
+
+        function enviarSolicitacao(event) {
+            event.preventDefault();
+
+            const re = reResetInput.value.trim();
+
+            if (!re) return;
+
+            alert("Solicitação enviada com sucesso.");
+            closeModal();
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const re = reInput.value.trim();
+            const senha = senhaInput.value.trim();
+
+            loginErro.textContent = "";
+
+            if (!re) {
+                loginErro.textContent = "Digite seu RE.";
+                return;
+            }
+
+            if (re.length !== 6) {
+                loginErro.textContent = "O RE deve ter 6 números.";
+                return;
+            }
+
+            if (!senha) {
+                loginErro.textContent = "Digite sua senha.";
+                return;
+            }
+
+            loginErro.textContent = "RE ou senha inválidos.";
+        }
+
+        const loginForm = document.getElementById("loginForm");
+        const reInput = document.getElementById("re");
+        const senhaInput = document.getElementById("senha");
+        const loginErro = document.getElementById("loginErro");
+
+        const resetModal = document.getElementById("resetModal");
+        const reResetInput = document.getElementById("reReset");
+        const resetLink = document.querySelector(".reset-link");
+
+        const btnToggle = document.querySelector(".toggle-senha");
+        const olhoFechado = document.querySelector(".olho-fechado");
+        const olhoAberto = document.querySelector(".olho-aberto");
+
+        limitarNumeros(reInput, 6);
+        limitarNumeros(reResetInput, 6);
+
+        btnToggle.addEventListener("click", function () {
+            const estaVisivel = senhaInput.type === "text";
+
+            senhaInput.type = estaVisivel ? "password" : "text";
+            olhoFechado.style.display = estaVisivel ? "block" : "none";
+            olhoAberto.style.display = estaVisivel ? "none" : "block";
+
+            btnToggle.setAttribute(
+                "aria-label",
+                estaVisivel ? "Mostrar senha" : "Ocultar senha"
+            );
+        });
+
+        window.addEventListener("click", function (event) {
+            if (event.target === resetModal) {
+                closeModal();
+            }
+        });
+
+        resetLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            openModal();
+        });
+
+        loginForm.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.querySelector(".bt-entrar").click();
+            }
+        });
+
+        reInput.focus();
+    </script>
+</body>
+
+</html>  
