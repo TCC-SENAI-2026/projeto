@@ -100,7 +100,14 @@ function fecharModalCliente() {
     }
 }
 
-// abas
+function fecharModalFuncionario() {
+    const modal = document.getElementById("funcionarioModal");
+    if (modal) {
+        modal.classList.remove("active");
+    }
+}
+
+// abas gerais das páginas
 
 function openTab(tabId, el) {
     const tabs = document.querySelectorAll(".tab-content");
@@ -118,16 +125,15 @@ function openTab(tabId, el) {
         el.classList.add("active");
     }
 
-    // Atualiza contador do estoque
     const contadorEstoque = document.querySelector(".page-count");
     const itensEstoque = document.querySelectorAll(`#${tabId} .estoque-row`);
 
-    if (contadorEstoque && itensEstoque.length >= 0 && document.querySelector(".estoque-row")) {
+    if (contadorEstoque && document.querySelector(".estoque-row")) {
         contadorEstoque.textContent = `(${itensEstoque.length})`;
     }
 }
 
-// contadores 
+// contador
 
 function atualizarContadorPedidos() {
     const pedidos = document.querySelectorAll("#recentes .product");
@@ -156,10 +162,22 @@ function atualizarContadorClientes() {
     }
 }
 
+function atualizarContadorFuncionarios() {
+    const funcionarios = document.querySelectorAll(".funcionario-card");
+    const contador = document.getElementById("funcionario-count");
+
+    if (contador) {
+        contador.textContent = funcionarios.length;
+    }
+}
+
+// variáveis globais
+let clienteSelecionadoId = null;
+let funcionarioSelecionadoId = null;
+
 // inicialização
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Link ativo do menu
     const links = document.querySelectorAll(".menu a, .submenu a");
 
     links.forEach(link => {
@@ -168,25 +186,23 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Contador de pedidos
     if (document.querySelector("#recentes")) {
         atualizarContadorPedidos();
     }
 
-    // Contador de estoque
     if (document.querySelector(".estoque-row")) {
         atualizarContadorEstoque("produtos");
     }
 
-    // Contador de clientes
     if (document.querySelector(".client-card")) {
         atualizarContadorClientes();
     }
 
+    if (document.querySelector(".funcionario-card")) {
+        atualizarContadorFuncionarios();
+    }
+
     // Modal de clientes
-    let clienteSelecionadoId = null;
-
-
     const cards = document.querySelectorAll(".client-card");
     const modal = document.getElementById("clienteModal");
 
@@ -198,29 +214,89 @@ document.addEventListener("DOMContentLoaded", function () {
     const campoUltimoPedido = document.querySelector('[data-campo="ultimo-pedido"]');
 
     if (cards.length > 0 && modal) {
-       cards.forEach(card => {
-    card.addEventListener("click", function () {
-        clienteSelecionadoId = card.dataset.id;
+        cards.forEach(card => {
+            card.addEventListener("click", function () {
+                clienteSelecionadoId = card.dataset.id;
 
-        campoEmpresa.textContent = card.dataset.empresa;
-        campoResponsavel.textContent = card.dataset.responsavel;
-        campoTelefone.textContent = card.dataset.telefone;
-        campoEmail.textContent = card.dataset.email;
-        campoPedidos.textContent = card.dataset.pedidos;
-        campoUltimoPedido.textContent = card.dataset.ultimoPedido;
+                if (campoEmpresa) campoEmpresa.textContent = card.dataset.empresa || "";
+                if (campoResponsavel) campoResponsavel.textContent = card.dataset.responsavel || "";
+                if (campoTelefone) campoTelefone.textContent = card.dataset.telefone || "";
+                if (campoEmail) campoEmail.textContent = card.dataset.email || "";
+                if (campoPedidos) campoPedidos.textContent = card.dataset.pedidos || "";
+                if (campoUltimoPedido) campoUltimoPedido.textContent = card.dataset.ultimoPedido || "";
 
-        modal.classList.add("active");
-    });
-});
+                modal.classList.add("active");
+            });
+        });
+    }
+
+    // Modal de funcionários
+    const cardsFuncionarios = document.querySelectorAll(".funcionario-card");
+    const modalFuncionario = document.getElementById("funcionarioModal");
+
+    const campoNomeFuncionario = document.getElementById("modal-nome");
+    const campoNomeCompletoFuncionario = document.getElementById("modal-nome-completo");
+    const campoReFuncionario = document.getElementById("modal-re");
+    const campoCpfFuncionario = document.getElementById("modal-cpf");
+    const campoDataNascimentoFuncionario = document.getElementById("modal-data-nascimento");
+    const campoTelefoneFuncionario = document.getElementById("modal-telefone");
+    const campoEmailFuncionario = document.getElementById("modal-email");
+    const campoEnderecoFuncionario = document.getElementById("modal-endereco");
+    const campoSetorFuncionario = document.getElementById("modal-setor");
+    const campoContratacaoFuncionario = document.getElementById("modal-contratacao");
+    const campoSalarioFuncionario = document.getElementById("modal-salario");
+    const campoStatusFuncionario = document.getElementById("modal-status");
+
+    if (cardsFuncionarios.length > 0 && modalFuncionario) {
+        cardsFuncionarios.forEach(card => {
+            card.addEventListener("click", function () {
+                funcionarioSelecionadoId = card.dataset.id;
+
+                if (campoNomeFuncionario) campoNomeFuncionario.textContent = card.dataset.nome || "";
+                if (campoNomeCompletoFuncionario) campoNomeCompletoFuncionario.textContent = card.dataset.nome || "";
+                if (campoReFuncionario) campoReFuncionario.textContent = card.dataset.re || "";
+                if (campoCpfFuncionario) campoCpfFuncionario.textContent = card.dataset.cpf || "";
+                if (campoDataNascimentoFuncionario) campoDataNascimentoFuncionario.textContent = card.dataset.dataNascimento || "";
+                if (campoTelefoneFuncionario) campoTelefoneFuncionario.textContent = card.dataset.telefone || "";
+                if (campoEmailFuncionario) campoEmailFuncionario.textContent = card.dataset.email || "";
+                if (campoEnderecoFuncionario) campoEnderecoFuncionario.textContent = card.dataset.endereco || "";
+                if (campoSetorFuncionario) campoSetorFuncionario.textContent = card.dataset.setor || "";
+                if (campoContratacaoFuncionario) campoContratacaoFuncionario.textContent = card.dataset.contratacao || "";
+                if (campoSalarioFuncionario) campoSalarioFuncionario.textContent = card.dataset.salario || "";
+                if (campoStatusFuncionario) campoStatusFuncionario.textContent = card.dataset.status || "";
+
+                // resetar aba ao abrir
+                modalFuncionario.querySelectorAll(".tab-content").forEach(tab => {
+                    tab.classList.remove("active");
+                });
+
+                modalFuncionario.querySelectorAll(".tab-btn").forEach(botao => {
+                    botao.classList.remove("active");
+                });
+
+                const primeiraAba = modalFuncionario.querySelector("#dados");
+                const primeiroBotao = modalFuncionario.querySelector(".tab-btn");
+
+                if (primeiraAba) primeiraAba.classList.add("active");
+                if (primeiroBotao) primeiroBotao.classList.add("active");
+
+                modalFuncionario.classList.add("active");
+            });
+        });
     }
 });
 
 // Fechar modal clicando fora
 window.addEventListener("click", function (event) {
-    const modal = document.getElementById("clienteModal");
+    const modalCliente = document.getElementById("clienteModal");
+    const modalFuncionario = document.getElementById("funcionarioModal");
 
-    if (modal && event.target === modal) {
+    if (modalCliente && event.target === modalCliente) {
         fecharModalCliente();
+    }
+
+    if (modalFuncionario && event.target === modalFuncionario) {
+        fecharModalFuncionario();
     }
 });
 
@@ -229,3 +305,61 @@ function editarCliente() {
 
     window.location.href = `cadastro-cliente.html?id=${clienteSelecionadoId}`;
 }
+
+function editarFuncionario() {
+    if (!funcionarioSelecionadoId) return;
+
+    window.location.href = `form_funcionario.html?id=${funcionarioSelecionadoId}`;
+}
+
+// trocar abas do modal
+function trocarAba(tabId, btn) {
+    const modal = btn.closest(".funcionario-modal");
+
+    modal.querySelectorAll(".tab-content").forEach(tab => {
+        tab.classList.remove("active");
+    });
+
+    modal.querySelectorAll(".modal-tab-btn").forEach(botao => {
+        botao.classList.remove("active");
+    });
+
+    modal.querySelector(`#${tabId}`).classList.add("active");
+    btn.classList.add("active");
+}
+// Sidebar
+// submenu pedidos
+const dropdown = document.querySelector(".menu-dropdown");
+
+if (dropdown) {
+    dropdown.addEventListener("mouseenter", () => {
+        dropdown.setAttribute("open", "");
+    });
+
+    dropdown.addEventListener("mouseleave", () => {
+        dropdown.removeAttribute("open");
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const dropdown = document.querySelector(".menu-dropdown");
+
+    if (dropdown) {
+        dropdown.addEventListener("mouseenter", () => {
+            dropdown.open = true;
+        });
+
+        dropdown.addEventListener("mouseleave", () => {
+            dropdown.open = false;
+        });
+
+        const summary = dropdown.querySelector("summary");
+
+        if (summary) {
+            summary.addEventListener("click", (e) => {
+                e.preventDefault();
+            });
+        }
+    }
+});
+
