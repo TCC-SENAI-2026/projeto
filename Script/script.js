@@ -1,35 +1,5 @@
 // graficos
 
-const producaoCanvas = document.getElementById("producaoChart");
-
-if (producaoCanvas) {
-    new Chart(producaoCanvas, {
-        type: "bar",
-        data: {
-            labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
-            datasets: [{
-                label: "Peças Produzidas",
-                data: [120, 190, 150, 220, 180, 240],
-                backgroundColor: "#2563eb"
-            }]
-        }
-    });
-}
-
-const statusCanvas = document.getElementById("statusChart");
-
-if (statusCanvas) {
-    new Chart(statusCanvas, {
-        type: "doughnut",
-        data: {
-            labels: ["Pendentes", "Produção", "Concluídos"],
-            datasets: [{
-                data: [12, 8, 38],
-                backgroundColor: ["#f59e0b", "#3b82f6", "#16a34a"]
-            }]
-        }
-    });
-}
 
 // pdf
 
@@ -361,5 +331,89 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
+});
+
+
+    // GRÁFICO DE DONUT
+const producaoCanvas = document.getElementById("producaoChart");
+
+if (producaoCanvas) {
+    new Chart(producaoCanvas, {
+        type: "line",
+        data: {
+            labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
+            datasets: [{
+                data: [120, 190, 150, 220, 180, 240],
+                borderColor: "#6366f1",
+                backgroundColor: "rgba(99, 102, 241, 0.1)",
+                tension: 0.4,
+                fill: true,
+                pointRadius: 5,
+                pointBackgroundColor: "#fff",
+                pointBorderColor: "#6366f1",
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: "#9ca3af" }
+                },
+                y: {
+                    grid: { color: "#f1f5f9" },
+                    ticks: { color: "#9ca3af" }
+                }
+            }
+        }
+    });
+}
+document.addEventListener("DOMContentLoaded", () => {
+
+    const statusCanvas = document.getElementById("statusChart");
+
+    if (statusCanvas) {
+        new Chart(statusCanvas, {
+            type: "doughnut",
+            data: {
+                labels: ["Pendentes", "Produção", "Concluídos"],
+                datasets: [{
+                    data: [12, 8, 38],
+                    backgroundColor: [
+                        "#151e31", // roxo principal
+                        "#4400ff", // roxo médio
+                        "#b3c0d75c"  // roxo claro
+                    ],
+                    borderWidth: 0 // remove borda feia
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "68%", // deixa o donut mais fino (moderno)
+                plugins: {
+                    legend: {
+                        position: "right",
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: "circle",
+                            padding: 20,
+                            color: "#374151",
+                            font: {
+                                size: 14
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        });
+    }
+
 });
 

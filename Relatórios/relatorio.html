@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <title>Relatório</title>
 </head>
 
@@ -40,9 +41,9 @@
                 </summary>
 
                 <div class="submenu">
- 
-                        <a href="novo-pedido.html">Criar novo pedido</a>
-                        <a href="/pedidos/pedidos.html">Lista de pedidos</a>
+
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="/pedidos/pedidos.html">Lista de pedidos</a>
 
                 </div>
             </details>
@@ -62,13 +63,13 @@
             </a>
 
             <a href="../Funcionários/funcionario.html">
-                <span class="menu-link-left" class="ativo">
+                <span class="menu-link-left">
                     <span class="material-icons">badge</span>
                     Funcionários
                 </span>
             </a>
 
-            <a href="relatorio.html">
+            <a href="relatorio.html" class="ativo">
                 <span class="menu-link-left">
                     <span class="material-icons">bar_chart</span>
                     Relatórios
@@ -127,51 +128,83 @@
 
         <!-- CARDS RESUMO -->
 
-        <div class="report-cards">
+       <div class="report-cards">
 
-            <div class="report-card">
-                <span>Produção Total</span>
-                <h2>245</h2>
+    <div class="report-card">
+        <div class="card-top">
+            <span>Produção Total</span>
+            <div class="card-icon">
+                <span class="material-icons">insights</span>
             </div>
-
-            <div class="report-card">
-                <span>Pedidos Concluídos</span>
-                <h2>38</h2>
-            </div>
-
-            <div class="report-card">
-                <span>Itens em Estoque Baixo</span>
-                <h2>4</h2>
-            </div>
-
-            <div class="report-card">
-                <span>Pedidos Pendentes</span>
-                <h2>12</h2>
-            </div>
-
         </div>
+        <h2>245</h2>
+    </div>
+
+    <div class="report-card">
+        <div class="card-top">
+            <span>Pedidos Concluídos</span>
+            <div class="card-icon">
+                <span class="material-icons">check_circle</span>
+            </div>
+        </div>
+        <h2>38</h2>
+    </div>
+
+    <div class="report-card-baixo">
+        <div class="card-top">
+            <span>Itens em Estoque Baixo</span>
+            <div class="card-icon-baixo">
+                <span class="material-icons">warning</span>
+            </div>
+        </div>
+        <h2>4</h2>
+    </div>
+
+    <div class="report-card">
+        <div class="card-top">
+            <span>Pedidos Pendentes</span>
+            <div class="card-icon">
+                <span class="material-icons">receipt</span>
+            </div>
+        </div>
+        <h2>12</h2>
+    </div>
+
+</div>
 
         <!-- GRAFICOS -->
 
         <div class="charts">
 
+            <!-- GRÁFICO DE PRODUÇÃO -->
             <div class="chart-box">
                 <h3>Produção por Mês</h3>
-                <canvas id="producaoChart"></canvas>
+
+                <div class="chart-area">
+                    <div class="produc-area" >
+                         <canvas id="producaoChart"></canvas>
+                    </div>
+                   
+                </div>
             </div>
 
+            <!-- DONUT STATUS -->
             <div class="chart-box">
                 <h3>Status dos Pedidos</h3>
-                <canvas id="statusChart"></canvas>
+
+                <div class="chart-area">
+                    <div class="donut-area">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+
+                </div>
             </div>
 
         </div>
 
     </div>
 
-    </div>
-
-    <script src="../script/script.js"></script>
+    <script src="../Script/script.js"></script>
 </body>
 
 </html>
