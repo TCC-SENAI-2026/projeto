@@ -180,11 +180,13 @@ body {
     transform: rotate(180deg);
 }
 
+
 .submenu {
     display: flex;
     flex-direction: column;
     gap: 4px;
     padding-left: 36px;
+    font-size: 15.5px;
 
     max-height: 0;
     opacity: 0;
