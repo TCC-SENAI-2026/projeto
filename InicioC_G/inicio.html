@@ -8,7 +8,10 @@
     <link rel="stylesheet" href="../InicioC_G/inicio.css">
     <link rel="stylesheet" href="../CSS_padrao/responsivo.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <title>Inicio</title>
 </head>
 
@@ -139,17 +142,38 @@
             <div class="dashboard-cards">
 
                 <a href="../pedidos/pedidos.html" class="dashboard-card">
-                    <span>Pedidos Pendentes</span>
+                    <div class="card-top">
+                        <span>Pedidos Pendentes</span>
+                        <div class="card-icon">
+                            <span class="material-icons">receipt</span>
+                        </div>
+
+                    </div>
+
                     <h2>12</h2>
                 </a>
 
                 <a href="estoque.html" class="dashboard-card">
-                    <span>Total em Estoque</span>
+
+                    <div class="card-top">
+                        <span>Total em Estoque</span>
+                        <div class="card-icon">
+                            <span class="material-icons">insights</span>
+                        </div>
+
+                    </div>
+
                     <h2>245</h2>
                 </a>
 
-                <a href="estoque.html" class="dashboard-card">
-                    <span>Estoque Baixo</span>
+                <a href="estoque.html" class="dashboard-card-baixo">
+                    <div class="card-top">
+                        <span>Estoque Baixo</span>
+                        <div class="card-icon-baixo">
+                            <span class="material-icons">warning</span>
+                        </div>
+                    </div>
+
                     <h2>4 itens</h2>
                 </a>
 

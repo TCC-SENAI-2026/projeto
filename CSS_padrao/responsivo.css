@@ -20,6 +20,7 @@
         font-size: 14px;
     }
 
+
     /* CONTAINER */
 
    .container {
@@ -103,5 +104,11 @@
 
     .dashboard-card h2 {
         font-size: 20px;
+    }
+}
+@media (max-width: 768px) {
+    .submenu a {
+        padding-left: 38px;
+        font-size: 13px;
     }
 }

@@ -175,13 +175,13 @@
 }
 
 .status.baixo {
-    background: #fde68a;
+    background: #fde68aab;
     color: #78350f;
 }
 
 .status.saida {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: #6365f146;
+    color: #002ba0;
 }
 
 /* ---------------- AÇÕES ---------------- */

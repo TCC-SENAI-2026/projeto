@@ -33,12 +33,12 @@
 
 .dashboard-cards {
     display: grid;
-    transition:transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     grid-template-columns: repeat(3, minmax(220px, 1fr));
     gap: 20px;
 }
 
-.dashboard-card {
+.dashboard-card, .dashboard-card-baixo {
     position: relative;
     background: white;
     padding: 20px 22px;
@@ -54,27 +54,100 @@
     content: "";
     position: absolute;
     left: 0;
-    top: 0;
+    top: 18px;
     width: 4px;
-    height: 100%;
-    background: #0051ad3e;
+    height: 38px;
+    border-radius: 4px;
+    background: #6366f1;
 }
-
+.dashboard-card-baixo::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: 0;
+    width: 4px;
+    height: 38px;
+    border-radius: 4px;
+    background: #57cdbb;
+}
 .dashboard-card:hover {
-     transform:translateY(-3px);
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.dashboard-card h2{
-    font-size:28px;
-    font-weight:700;
-    margin-top:6px;
+.dashboard-card-baixo:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.dashboard-card span{
-    font-size:14px;
-    color:#64748b;
+.dashboard-card h2 {
+ margin-top: 12px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
 }
+.dashboard-card-baixo h2 {
+     margin-top: 12px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+}
+
+.dashboard-card span {
+  font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+    line-height: 1.35;
+}
+.dashboard-card-baixo span {
+ font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+    line-height: 1.35;
+}
+
+.card-top{
+     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+
+.card-icon,
+.card-icon-baixo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.card-icon {
+    background: #eef2ff;
+}
+
+.card-icon-baixo {
+    background: #e8f8f4;
+}
+
+.card-icon .material-icons {
+    font-size: 18px;
+    color: #6366f1;
+}
+
+.card-icon-baixo .material-icons {
+    font-size: 18px;
+    color: #57cdbb;
+}
+
+
+
+
 
 /*seções*/
 
@@ -97,8 +170,8 @@
     font-size: 18px;
 }
 
-.dashboard-card h2{
-    font-size:32px;
+.dashboard-card h2 {
+    font-size: 32px;
 }
 
 .section-header a {
@@ -113,21 +186,21 @@
 
 /*pedidos*/
 
-.recent-orders{
-    display:flex;
-    flex-direction:column;
+.recent-orders {
+    display: flex;
+    flex-direction: column;
 }
 
-.order-row{
-    display:grid;
-    grid-template-columns:120px 1fr 140px;
-    align-items:center;
-    padding:14px 10px;
-    border-bottom:1px solid #e5e7eb;
+.order-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 140px;
+    align-items: center;
+    padding: 14px 10px;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.order-row:hover{
-    background:#f8fafc;
+.order-row:hover {
+    background: #f8fafc;
 }
 
 
@@ -143,7 +216,7 @@
     background: rgb(255, 255, 255);
     padding: 16px;
     border-radius: 12px;
-       text-align:left;
+    text-align: left;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.171);
     transition: transform 0.18s ease, box-shadow 0.2s ease;
 }
@@ -155,41 +228,41 @@
 
 .stock-card .img {
     margin-bottom: 14px;
-      background:#e5e7eb;
-    border-radius:10px;
+    background: #e5e7eb;
+    border-radius: 10px;
 }
 
 .stock-card span {
     display: block;
     font-size: 16px;
     margin-bottom: 4px;
-     font-weight:600;
+    font-weight: 600;
 }
 
 .stock-card p {
-   font-size:14px;
-    color:#64748b;
+    font-size: 14px;
+    color: #64748b;
 }
 
-.search-box{
-    position:relative;
-    display:flex;
-    align-items:center;
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.search-icon{
-    position:absolute;
-    left:10px;
-    font-size:18px;
-    color:#9ca3af;
+.search-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 18px;
+    color: #9ca3af;
 }
 
-.search{
-    width:280px;
-    padding:11px 14px 11px 36px;
-    border-radius:10px;
-    border:1px solid #d1d5db;
-    background:white;
+.search {
+    width: 280px;
+    padding: 11px 14px 11px 36px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background: white;
 }
 
 .recent-header,
@@ -229,4 +302,3 @@
     background: #f8fafc;
     cursor: pointer;
 }
-

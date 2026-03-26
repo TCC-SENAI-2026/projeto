@@ -382,6 +382,8 @@ document.addEventListener("DOMContentLoaded", () => {
             type: "doughnut",
             data: {
                 labels: ["Pendentes", "Produção", "Concluídos"],
+               
+                
                 datasets: [{
                     data: [12, 8, 38],
                     backgroundColor: [

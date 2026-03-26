@@ -2,16 +2,25 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial;
+
+}
+
+:root {
+    --fs-xs: 12px;
+    --fs-sm: 14px;
+    --fs-md: 16px;
+    --fs-lg: 20px;
+    --fs-xl: 24px;
+    --fs-2xl: 32px;
 }
 
 body {
     display: flex;
-    /* background: #efefef; */
-    /* background: linear-gradient(to bottom right, #ededed, rgba(199, 200, 213, 0.816)); */
     background: #f5f7fb;
     font-size: clamp(14px, 0.9vw, 18px);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Rubik', sans-serif;
+    -webkit-font-smoothing: antialiased;
+
 }
 
 /*Tabs*/
@@ -68,8 +77,8 @@ body {
 
 .status.saida,
 .status.producao {
-    background: #4e8fff51;
-    color: #003091;
+    background: #6365f14b;
+    color: #002267;
     text-align: center;
 }
 
@@ -111,7 +120,7 @@ body {
     display: block;
 }
 
-.sidebar > hr {
+.sidebar>hr {
     border: none;
     height: 1px;
     background: rgba(255, 255, 255, 0.08);
@@ -127,7 +136,7 @@ body {
     padding: 0 12px;
 }
 
-.menu > a,
+.menu>a,
 .menu-dropdown summary {
     display: flex;
     align-items: center;
@@ -140,7 +149,7 @@ body {
     cursor: pointer;
 }
 
-.menu > a:hover,
+.menu>a:hover,
 .menu-dropdown summary:hover {
     background: rgba(255, 255, 255, 0.06);
 }
@@ -173,70 +182,57 @@ body {
 
 .seta {
     font-size: 15px;
-        transition: transform 0.3s ease;
-        opacity: 0.7;
+    transition: transform 0.3s ease;
+    opacity: 0.7;
 }
 
 .menu-dropdown[open] .seta {
     transform: rotate(180deg);
 }
 
-
 .submenu {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding-left: 36px;
-    font-size: 15.5px;
-
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     opacity: 0;
-    overflow: hidden;
-
-    transition: max-height 0.5s ease, opacity 0.25s ease;
+    transition:
+        grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.25s ease;
 }
 
+
+
 .submenu a {
-    padding: 8px 12px;
+      display: block;
+    padding: 8px 12px 8px 36px;
     border-radius: 10px;
     text-decoration: none;
     color: rgba(255, 255, 255, 0.78);
+    font-size: 14px;
+    margin-top: 4px;
+    
 }
 
 .submenu a:hover {
     background: rgba(255, 255, 255, 0.07);
 }
 
-.menu-dropdown{
+.menu-dropdown {
     position: relative;
 }
 
-.menu-dropdown .submenu{
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 0 8px 0 36px;
-
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-
-    transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.2s ease;
+.menu-dropdown[open] .submenu {
+   grid-template-rows: 1fr;
+   opacity: 1;
 }
 
-.menu-dropdown[open] .submenu{
-    max-height: 200px;
-    opacity: 1;
-    padding: 6px 8px 8px 36px;
-}
-
-.menu-dropdown .seta{
+.menu-dropdown .seta {
     transition: transform 0.30s ease;
 }
 
-.menu-dropdown[open] .seta{
+.menu-dropdown[open] .seta {
     transform: rotate(180deg);
 }
+
 /*Footer do Sidebar*/
 
 .sidebar-footer {
@@ -356,12 +352,12 @@ body {
     text-decoration: none;
 }
 
-.menu a.ativo{
+.menu a.ativo {
     background: #525f7d5f;
     color: white;
 }
 
-.menu a.ativo .material-icons{
+.menu a.ativo .material-icons {
     color: white;
 }
 
@@ -369,9 +365,9 @@ body {
 
 .container {
     flex: 1;
-    padding: 25px;
-    max-width: 1500px;
+    padding: 25px 50px;
     margin: 0 auto;
+    gap: 50px;
 }
 
 /*Topo*/
@@ -416,26 +412,26 @@ body {
 }
 
 .search-icon {
-  position:absolute;
-    left:12px;
-    font-size:18px;
-    color:#9ca3af;
-    pointer-events:none;
+    position: absolute;
+    left: 12px;
+    font-size: 18px;
+    color: #9ca3af;
+    pointer-events: none;
 }
 
 .search {
-     width:280px;
-    padding:11px 14px 11px 36px;
-    border-radius:10px;
-    border:1px solid #d1d5db;
-    background:white;
+    width: 280px;
+    padding: 11px 14px 11px 36px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background: white;
     cursor: pointer;
-    
+
 }
 
-.search:focus{
-    border-color:#2563eb;
-    box-shadow:0 0 0 3px rgba(37,99,235,0.12);
+.search:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 /*Lista*/

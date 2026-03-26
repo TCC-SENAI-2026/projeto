@@ -34,6 +34,7 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 20px;
+     transition:transform 0.2s ease, box-shadow 0.2s ease;
     width: 100%;
     margin-bottom: 30px;
 }
@@ -51,6 +52,18 @@
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     overflow: hidden;
+    cursor: pointer;
+     transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.report-card-baixo:hover {
+     transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.report-card:hover{
+     transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
 }
 
 .report-card::before {
@@ -81,6 +94,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+
 }
 
 .report-card span {
@@ -155,6 +169,7 @@
     gap: 20px;
     width: 100%;
     align-items: stretch;
+  
 }
 
 .chart-box {
@@ -190,6 +205,7 @@
     width: 100%;
     height: 340px;
     margin: 0 auto;
+   
 }
 
 /* donut */
@@ -207,6 +223,8 @@
     width: 100% !important;
     height: 100% !important;
     display: block;
+    cursor: pointer;
+   
 }
 
 /* =========================

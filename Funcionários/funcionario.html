@@ -8,7 +8,10 @@
     <link rel="stylesheet" href="../Funcionários/funcionario.css">
     <link rel="stylesheet" href="../CSS_padrao/responsivo.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <title>Funcionários</title>
 </head>
 
@@ -28,7 +31,7 @@
                 </span>
             </a>
 
-            <details class="menu-dropdown" >
+            <details class="menu-dropdown">
                 <summary>
                     <span class="summary-left">
                         <span class="material-icons">receipt_long</span>
@@ -132,10 +135,10 @@
         <div class="list">
             <div class="funcionarios-grid">
 
-                <div class="funcionario-card" data-id="1" data-nome="Ariana Grande" data-re="234567" data-cpf="000.000.000-00"
-                    data-data-nascimento="26/06/1993" data-setor="Produção" data-status="Ativo"
-                    data-telefone="(14) 99999-9999" data-email="ariana@email.com" data-endereco="Rua A, 123"
-                    data-contratacao="15/01/2024" data-salario="R$ 2.500,00">
+                <div class="funcionario-card" data-id="1" data-nome="Ariana Grande" data-re="234567"
+                    data-cpf="000.000.000-00" data-data-nascimento="26/06/1993" data-setor="Produção"
+                    data-status="Ativo" data-telefone="(14) 99999-9999" data-email="ariana@email.com"
+                    data-endereco="Rua A, 123" data-contratacao="15/01/2024" data-salario="R$ 2.500,00">
 
                     <div class="funcionario-foto">
                         <img src="../Imagens/wp9071877.jpg" alt="Ariana Grande">
@@ -147,10 +150,10 @@
                     </div>
                 </div>
 
-                <div class="funcionario-card" data-id="2" data-nome="Leonardo Dicaprio" data-re="134589" data-cpf="111.111.111-11"
-                    data-data-nascimento="20/06/1994" data-setor="Administrador" data-status="Ativo"
-                    data-telefone="(14) 99999-9999" data-email="leonardo@email.com" data-endereco="Rua B, 456"
-                    data-contratacao="30/01/2024" data-salario="R$ 3.000,00">
+                <div class="funcionario-card" data-id="2" data-nome="Leonardo Dicaprio" data-re="134589"
+                    data-cpf="111.111.111-11" data-data-nascimento="20/06/1994" data-setor="Administrador"
+                    data-status="Ativo" data-telefone="(14) 99999-9999" data-email="leonardo@email.com"
+                    data-endereco="Rua B, 456" data-contratacao="30/01/2024" data-salario="R$ 3.000,00">
 
                     <div class="funcionario-foto">
                         <img src="../Imagens/young-leonardo-dicaprio-in-black-shirt-photo-u1.webp"
@@ -183,8 +186,10 @@
             </div>
 
             <div class="modal-tabs">
-                <button type="button" class="modal-tab-btn active" onclick="trocarAba('dados', this)">Dados Pessoais</button>
-                <button type="button" class="modal-tab-btn" onclick="trocarAba('profissional', this)">Profissional</button>
+                <button type="button" class="modal-tab-btn active" onclick="trocarAba('dados', this)">Dados
+                    Pessoais</button>
+                <button type="button" class="modal-tab-btn"
+                    onclick="trocarAba('profissional', this)">Profissional</button>
                 <button type="button" class="modal-tab-btn" onclick="trocarAba('acesso', this)">Acesso</button>
             </div>
 

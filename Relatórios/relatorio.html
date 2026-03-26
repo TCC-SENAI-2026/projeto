@@ -12,7 +12,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <title>Relatório</title>
 </head>
 
@@ -128,49 +131,49 @@
 
         <!-- CARDS RESUMO -->
 
-       <div class="report-cards">
+        <div class="report-cards">
 
-    <div class="report-card">
-        <div class="card-top">
-            <span>Produção Total</span>
-            <div class="card-icon">
-                <span class="material-icons">insights</span>
+            <div class="report-card">
+                <div class="card-top">
+                    <span>Produção Total</span>
+                    <div class="card-icon">
+                        <span class="material-icons">insights</span>
+                    </div>
+                </div>
+                <h2>245</h2>
             </div>
-        </div>
-        <h2>245</h2>
-    </div>
 
-    <div class="report-card">
-        <div class="card-top">
-            <span>Pedidos Concluídos</span>
-            <div class="card-icon">
-                <span class="material-icons">check_circle</span>
+            <div class="report-card">
+                <div class="card-top">
+                    <span>Pedidos Concluídos</span>
+                    <div class="card-icon">
+                        <span class="material-icons">check_circle</span>
+                    </div>
+                </div>
+                <h2>38</h2>
             </div>
-        </div>
-        <h2>38</h2>
-    </div>
 
-    <div class="report-card-baixo">
-        <div class="card-top">
-            <span>Itens em Estoque Baixo</span>
-            <div class="card-icon-baixo">
-                <span class="material-icons">warning</span>
+            <div class="report-card-baixo">
+                <div class="card-top">
+                    <span>Itens em Estoque Baixo</span>
+                    <div class="card-icon-baixo">
+                        <span class="material-icons">warning</span>
+                    </div>
+                </div>
+                <h2>4</h2>
             </div>
-        </div>
-        <h2>4</h2>
-    </div>
 
-    <div class="report-card">
-        <div class="card-top">
-            <span>Pedidos Pendentes</span>
-            <div class="card-icon">
-                <span class="material-icons">receipt</span>
+            <div class="report-card">
+                <div class="card-top">
+                    <span>Pedidos Pendentes</span>
+                    <div class="card-icon">
+                        <span class="material-icons">receipt</span>
+                    </div>
+                </div>
+                <h2>12</h2>
             </div>
-        </div>
-        <h2>12</h2>
-    </div>
 
-</div>
+        </div>
 
         <!-- GRAFICOS -->
 
@@ -181,10 +184,10 @@
                 <h3>Produção por Mês</h3>
 
                 <div class="chart-area">
-                    <div class="produc-area" >
-                         <canvas id="producaoChart"></canvas>
+                    <div class="produc-area">
+                        <canvas id="producaoChart"></canvas>
                     </div>
-                   
+
                 </div>
             </div>
 
