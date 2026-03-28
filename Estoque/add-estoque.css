@@ -8,22 +8,41 @@
     gap: 8px;
 }
 
-.page-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 25px;
-    font-weight: 600;
-    color: #111827;
+
+
+.form-page-intro {
+    color: #64748b;
+    line-height: 1.5;
+    margin: -4px 0 22px;
+    padding: 0 15px;
 }
 
-.page-subtitle {
-    font-size: 15px;
-    color: #6b7280;
-    margin-top: 5px;
+.estoque-teste-page .titulo {
+    margin-left: 15px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    position: relative;
+    text-align: left;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: #535c6a;
+    font-size: clamp(1.2rem, calc(1rem + 1vw), 1.6rem);
 }
 
+.estoque-teste-page .titulo::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 3px;
+    background: #e3e3e3;
+}
 
+h2{
+    color: #535c6a !important ;
+}
 
 .form-badge {
     display: inline-flex;
@@ -42,10 +61,28 @@
     font-weight: 600;
 }
 
+.form-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+}
+
 .form-badge .material-icons {
     font-size: 16px;
 }
 
+form{
+    padding:  15px;
+}
 .estoque-teste-page {
     display: grid;
     grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.9fr);
