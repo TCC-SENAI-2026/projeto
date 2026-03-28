@@ -20,6 +20,7 @@ body {
     font-size: clamp(14px, 0.9vw, 18px);
     font-family: 'Rubik', sans-serif;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 
 }
 
@@ -86,7 +87,12 @@ body {
 
 .sidebar {
     width: 220px;
-    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow: auto;
+    border-right: 1px solid #e5e7eb;
     background: #232534;
     color: white;
     display: flex;
@@ -368,6 +374,10 @@ body {
     padding: 25px 50px;
     margin: 0 auto;
     gap: 50px;
+    margin-left: 220px;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
 }
 
 /*Topo*/

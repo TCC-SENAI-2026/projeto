@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Cliente</title>
+    <link rel="stylesheet" href="../CSS_padrao/padrao.css">
+    <link rel="stylesheet" href="../Clientes/form-page-padrao.css">
+    <link rel="stylesheet" href="../CSS_padrao/responsivo.css">
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="../Imagens/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="inicio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown">
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="estoque.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="cliente.html" class="ativo">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="funcionario.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="relatorio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <details class="user-dropdown">
+                <summary class="user-info">
+                    <div class="user-avatar">GA</div>
+                    <div class="user-text">
+                        <span class="user-name">Gabrielly</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+                    <span class="material-icons user-arrow">unfold_more</span>
+                </summary>
+
+                <div class="user-menu">
+                    <a href="perfil.html" class="user-option">
+                        <span class="material-icons">person</span>
+                        Perfil
+                    </a>
+                    <a href="login.html" class="user-option logout">
+                        <span class="material-icons">exit_to_app</span>
+                        Sair
+                    </a>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="form-page-card">
+            <form autocomplete="off">
+                <span class="form-page-kicker">
+                    <span class="material-icons">group_add</span>
+                    Novo cliente
+                </span>
+                <h2 class="titulo">Cadastro de Cliente</h2>
+                <p class="form-page-intro">Use este formulário para registrar empresas atendidas, definir o responsável principal e manter os contatos organizados.</p>
+
+                <fieldset>
+                    <div class="secao">
+                        <div class="secao-lado-esquerdo">
+                            <p class="secao-titulo">Dados da Empresa</p>
+                        </div>
+
+                        <div class="secao-lado-direito">
+                            <div class="grid">
+                                <div class="campo full">
+                                    <label for="nome_empresa">Empresa:</label>
+                                    <input type="text" id="nome_empresa" name="nome_empresa" placeholder="Ex: Caio Induscar" required autocomplete="off">
+                                </div>
+
+                                <div class="campo full">
+                                    <label for="nome_responsavel">Responsável:</label>
+                                    <input type="text" maxlength="80" name="nome_responsavel" id="nome_responsavel" placeholder="Ex: João Silva (RH)" autocomplete="off">
+                                </div>
+
+                                <div class="campo">
+                                    <label for="cnpj">CPF / CNPJ:</label>
+                                    <input type="text" maxlength="18" name="cnpj" id="cnpj" placeholder="00.000.000/0000-00" autocomplete="off">
+                                </div>
+
+                                <div class="campo">
+                                    <label for="telefone">Telefone:</label>
+                                    <input type="tel" name="telefone" id="telefone" placeholder="(11) 99999-9999" autocomplete="off">
+                                </div>
+
+                                <div class="campo full">
+                                    <label for="email">E-mail:</label>
+                                    <input type="email" name="email" id="email" placeholder="contato@empresa.com" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="secao">
+                        <div class="secao-lado-esquerdo">
+                            <p class="secao-titulo">Endereço</p>
+                        </div>
+
+                        <div class="secao-lado-direito">
+                            <div class="grid">
+                                <div class="campo">
+                                    <label for="cep">CEP:</label>
+                                    <input type="text" name="cep" id="cep" placeholder="00000-000" autocomplete="off">
+                                </div>
+
+                                <div class="campo">
+                                    <label for="municipio">Município:</label>
+                                    <input type="text" name="cidade" id="municipio" placeholder="Ex: São Paulo" autocomplete="off">
+                                </div>
+
+                                <div class="campo">
+                                    <label for="estado">Estado:</label>
+                                    <select name="estado" id="estado"></select>
+                                </div>
+
+                                <div class="campo full">
+                                    <label for="rua">Rua:</label>
+                                    <input type="text" name="rua" id="rua" placeholder="Ex: Rua das Flores" autocomplete="off">
+                                </div>
+
+                                <div class="campo">
+                                    <label for="numero">Número:</label>
+                                    <input type="number" name="numero" id="numero" placeholder="Ex: 123">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="secao">
+                        <div class="secao-lado-esquerdo">
+                            <p class="secao-titulo">Informações Adicionais</p>
+                        </div>
+
+                        <div class="secao-lado-direito">
+                            <div class="grid">
+                                <div class="campo full">
+                                    <label for="observacoes">Observações:</label>
+                                    <textarea id="observacoes" placeholder="Ex: Cliente prefere contato por e-mail"></textarea>
+                                </div>
+
+                                <div class="campo">
+                                    <p class="label-like">Status:</p>
+                                    <div class="status-toggle">
+                                        <input type="radio" id="cliente_ativo_page" name="status" value="ativo" checked>
+                                        <label for="cliente_ativo_page">Ativo</label>
+
+                                        <input type="radio" id="cliente_inativo_page" name="status" value="inativo">
+                                        <label for="cliente_inativo_page">Inativo</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="botao1_2">
+                    <a class="btn-page-sec" href="cliente.html">Cancelar</a>
+                    <button type="submit" class="btn btn-add">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../script/script.js"></script>
+</body>
+
+</html>

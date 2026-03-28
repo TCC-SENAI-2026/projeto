@@ -84,6 +84,14 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
+.btn-add{
+    text-decoration: none;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* ---------------- TABELA ---------------- */
 
 .estoque-header,

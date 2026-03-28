@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar ao Estoque</title>
+    <link rel="stylesheet" href="../CSS_padrao/padrao.css">
+    <link rel="stylesheet" href="../Estoque/add-estoque.css">
+    <link rel="stylesheet" href="../CSS_padrao/responsivo.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-sidebar">
+            <img class="logo-nome" src="../Imagens/E-threads3.png" alt="Logo E-threads">
+        </div>
+        <hr>
+
+        <nav class="menu">
+            <a href="../InicioC_G/inicio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">dashboard</span>
+                    Início
+                </span>
+            </a>
+
+            <details class="menu-dropdown">
+                <summary>
+                    <span class="summary-left">
+                        <span class="material-icons">receipt_long</span>
+                        Pedidos
+                    </span>
+                    <span class="material-icons seta">expand_more</span>
+                </summary>
+
+                <div class="submenu">
+                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="../pedidos/pedidos.html">Lista de pedidos</a>
+                </div>
+            </details>
+
+            <a href="estoque.html" class="ativo">
+                <span class="menu-link-left">
+                    <span class="material-icons">inventory_2</span>
+                    Estoque
+                </span>
+            </a>
+
+            <a href="../Clientes/cliente.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">group</span>
+                    Clientes
+                </span>
+            </a>
+
+            <a href="../Funcionários/funcionario.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">badge</span>
+                    Funcionários
+                </span>
+            </a>
+
+            <a href="../Relatórios/relatorio.html">
+                <span class="menu-link-left">
+                    <span class="material-icons">bar_chart</span>
+                    Relatórios
+                </span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <details class="user-dropdown">
+                <summary class="user-info">
+                    <div class="user-avatar">GA</div>
+
+                    <div class="user-text">
+                        <span class="user-name">Gabrielly</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+
+                    <span class="material-icons user-arrow">unfold_more</span>
+                </summary>
+
+                <div class="user-menu">
+                    <a href="perfil.html" class="user-option">
+                        <span class="material-icons">person</span>
+                        Perfil
+                    </a>
+
+                    <a href="login.html" class="user-option logout">
+                        <span class="material-icons">exit_to_app</span>
+                        Sair
+                    </a>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top">
+            <div class="page-header">
+                <div class="page-title-row">
+                    <h1 class="page-title">Adicionar ao Estoque</h1>
+                </div>
+                <p class="page-subtitle">Cadastre produtos e materiais de forma simples.</p>
+            </div>
+        </div>
+
+        <div class="estoque-teste-page">
+            <main class="estoque-teste-form">
+                <div class="estoque-teste-header">
+                    <div>
+                        <span class="form-badge">
+                            <span class="material-icons" >inventory_2</span>
+                            Movimentação
+
+                        </span>
+                    </div>
+                </div>
+
+                <form autocomplete="off">
+                    <section class="estoque-teste-section">
+                        <h2>Tipo de item</h2>
+                        <p class="section-help">Selecione o tipo que será cadastrado.</p>
+
+                        <div class="type-switch">
+                            <label>
+                                <input type="radio" name="tipo_cadastro" value="produto" checked>
+                                <span class="type-card">
+                                    <strong>Produto</strong>
+                                    <span>Item pronto para venda ou entrega.</span>
+                                </span>
+                            </label>
+
+                            <label>
+                                <input type="radio" name="tipo_cadastro" value="material">
+                                <span class="type-card">
+                                    <strong>Material</strong>
+                                    <span>Matéria-prima ou insumo usado na produção.</span>
+                                </span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <section class="estoque-teste-section">
+                        <h2>Identificação do item</h2>
+                        <p class="section-help">Informe os dados principais do item.</p>
+
+                        <div class="estoque-form-grid">
+                            <div class="estoque-campo full">
+                                <label for="nome_item">Nome do item</label>
+                                <input id="nome_item" type="text" placeholder="Ex.: Camiseta Polo Azul Marinho">
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="categoria_item">Categoria</label>
+                                <select id="categoria_item">
+                                    <option value="">Selecione</option>
+                                    <option>Uniforme</option>
+                                    <option>Malharia</option>
+                                    <option>Tecido</option>
+                                    <option>Aviamento</option>
+                                </select>
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="codigo_item">Código interno</label>
+                                <input id="codigo_item" type="text" placeholder="Ex.: UNI-001">
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="unidade_medida">Unidade de medida</label>
+                                <select id="unidade_medida">
+                                    <option value="">Selecione</option>
+                                    <option>Unidade</option>
+                                    <option>Peça</option>
+                                    <option>Metro</option>
+                                    <option>Quilo</option>
+                                    <option>Rolo</option>
+                                </select>
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="fornecedor_item">Fornecedor</label>
+                                <input id="fornecedor_item" type="text" placeholder="Ex.: Tecidos Brasil">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="estoque-teste-section">
+                        <h2>Controle de estoque</h2>
+                        <p class="section-help">Informe quantidade e valor do item.</p>
+
+                        <div class="estoque-form-grid">
+                            <div class="estoque-campo">
+                                <label for="quantidade_atual">Quantidade atual</label>
+                                <input id="quantidade_atual" type="number" placeholder="0">
+                            </div>
+
+                            <div class="estoque-campo">
+                                <label for="estoque_minimo">Estoque mínimo</label>
+                                <input id="estoque_minimo" type="number" placeholder="Ex.: 20">
+                            </div>
+
+                            <div class="estoque-campo full">
+                                <label for="valor_unitario">Valor unitário</label>
+                                <input id="valor_unitario" type="text" placeholder="Ex.: 39,90">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="estoque-teste-section">
+                        <div class="estoque-form-grid">
+                            <div class="estoque-campo full">
+                                <label for="observacoes_item">Observações gerais</label>
+                                <textarea id="observacoes_item" placeholder="Ex.: item reservado para pedido da empresa X"></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="estoque-teste-actions">
+                        <a class="btn-ghost" href="estoque.html">Cancelar</a>
+                        <button class="btn btn-add" type="submit">Cadastrar item</button>
+                    </div>
+                </form>
+            </main>
+
+            <aside class="estoque-teste-side">
+                <h2 class="side-title">Controle de estoque</h2>
+
+                <div class="side-card">
+            
+
+                    <div class="estoque-campo">
+                        <label for="tipo_mov">Tipo</label>
+                        <select id="tipo_mov">
+                            <option value="entrada">Entrada (compra / produção)</option>
+                            <option value="saida">Saída (venda / uso)</option>
+                        </select>
+                    </div>
+
+                    <div class="estoque-campo">
+                        <label for="qtd_mov">Quantidade</label>
+                        <input type="number" id="qtd_mov" placeholder="Ex.: 50">
+                    </div>
+
+                    <div class="estoque-campo">
+                        <label for="motivo_mov">Motivo</label>
+                        <input type="text" id="motivo_mov" placeholder="Ex.: Compra, Produção, Ajuste manual">
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="../Script/script.js"></script>
+</body>
+
+</html>
