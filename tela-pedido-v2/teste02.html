@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flip Card Dinâmico - TCC</title>
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: #020b69;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* --- ESTRUTURA DO FLIP (GIRAR) --- */
+        .flip-container {
+            perspective: 1000px; /* Cria o efeito 3D */
+            width: 350px;
+            height: 450px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        /* Classe que o JS vai adicionar para girar */
+        .is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* Esconde a parte de trás enquanto gira */
+            border: 3px solid black;
+            border-radius: 12px;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-back {
+            transform: rotateY(180deg); /* O verso começa já virado */
+            background-color: #f8f9fa;
+        }
+
+        /* --- ESTILOS DE IMAGEM E SELECT --- */
+        img { width: 120px; transition: 0.3s; }
+        
+        select {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #36e002;
+            border: 1px solid black;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        /* --- EFEITOS DINÂMICOS (OS MESMOS QUE CRIAMOS ANTES) --- */
+        .efeito-metalico { background: linear-gradient(145deg, #bdc3c7, #fff) !important; }
+        .efeito-neon { 
+            background: #000 !important; color: #00f3ff !important;
+            box-shadow: 0 0 15px #00f3ff; border-color: #00f3ff !important;
+        }
+        .efeito-neon img { filter: drop-shadow(0 0 8px #00f3ff); }
+        .efeito-tie_dye { background: linear-gradient(45deg, #ff0000, #ffff00, #00ff00, #0000ff) !important; }
+
+    </style>
+</head>
+<body>
+
+    <div class="flip-container">
+        <div class="card-inner" id="meuCard">
+            
+            <div class="card-front" id="cardFrente">
+                <h3>FRENTE</h3>
+                <img src="https://cdn-icons-png.flaticon.com/512/3531/3531744.png" alt="Produto">
+                
+                <select id="selectEfeito">
+                    <option value="padrao">Padrão</option>
+                    <option value="metalico">Metálico</option>
+                    <option value="neon">Neon</option>
+                    <option value="tie_dye">Tie-Dye</option>
+                </select>
+
+                <button id="btnGirar">Ver Verso</button>
+            </div>
+
+            <div class="card-back">
+                <h3>VERSO / DETALHES</h3>
+                <p>Aqui você pode colocar informações técnicas ou a estampa das costas.</p>
+                <img src="https://cdn-icons-png.flaticon.com/512/3531/3531744.png" style="transform: scaleX(-1); opacity: 0.5;">
+                
+                <button id="btnDesvirar">Voltar para Frente</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const cardInner = document.getElementById('meuCard');
+        const btnGirar = document.getElementById('btnGirar');
+        const btnDesvirar = document.getElementById('btnDesvirar');
+        const selectEfeito = document.getElementById('selectEfeito');
+        const cardFrente = document.getElementById('cardFrente');
+
+        // 1. Lógica para GIRAR e DESVIRAR
+        btnGirar.addEventListener('click', () => {
+            cardInner.classList.add('is-flipped');
+        });
+
+        btnDesvirar.addEventListener('click', () => {
+            cardInner.classList.remove('is-flipped');
+        });
+
+        // 2. Lógica para MUDAR A COR (Igual ao anterior)
+        selectEfeito.addEventListener('change', function() {
+            // Limpa efeitos antigos
+            cardFrente.classList.remove('efeito-metalico', 'efeito-neon', 'efeito-tie_dye');
+            
+            const escolha = this.value;
+            if (escolha !== 'padrao') {
+                cardFrente.classList.add('efeito-' + escolha);
+            }
+        });
+    </script>
+
+</body>
+</html>

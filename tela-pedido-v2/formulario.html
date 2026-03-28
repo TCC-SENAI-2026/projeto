@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style2.css">
+    <link rel="stylesheet" href="css/formulario.css">
     <title>Ficha Técnica</title>
 </head>
 
@@ -39,23 +39,38 @@
 
     <main>
 
+        <div class="stepper-wrapper">
+            <div class="stepper-item completed">
+                <div class="step-counter">1</div>
+                <div class="step-name">Identificação</div>
+            </div>
+            <div class="stepper-item completed">
+                <div class="step-counter">2</div>
+                <div class="step-name">Produtos</div>
+            </div>
+            <div class="stepper-item active">
+                <div class="step-counter">3</div>
+                <div class="step-name">Finalização</div>
+            </div>
+        </div>
+
         <form id="meuFormulario">
             <div class="container1">
 
                 <h1>Formulario com Informações do pedido</h1>
 
-                <h2>Dados do cliente</h2>
+                <h2>Dados do Cliente</h2>
                 <div class="D-client1">
 
                     <div class="campo1">
-                        <label for=""><strong>Nome:</strong></label>
-                        <input type="text" name="" id="" required placeholder="Digite seu nome">
+                        <label for="nomecliente"><strong>Nome:</strong></label>
+                        <input type="text" name="cliente_nome" id="nomeCliente" required placeholder="Nome do cliente">
 
                     </div>
 
-                    <div class="campo1">
-                        <label for="data-pedido"><strong> Data do Pedido:</strong></label>
-                        <input type="date" name="data-pedido" id="data-pedido" required placeholder="Digite seu nome">
+                    <div clas_s="campo1">
+                        <label for="dataPedido"><strong> Data do Pedido:</strong></label>
+                        <input type="date" name="pedido_data_criacao" id="dataPedido" required>
 
                     </div>
                 </div>
@@ -63,13 +78,13 @@
                 <div class="D-client2">
 
                     <div class="campo2">
-                        <label for=""><strong>Contato:</strong></label>
-                        <input type="tel" name="" id="" required placeholder="(11) 99999-9999">
+                        <label for="telefoneCliente"><strong>Contato:</strong></label>
+                        <input type="tel" name="cliente_telefone" id="telefoneCliente" required placeholder="(11) 99999-9999">
                     </div>
 
                     <div class="campo2">
-                        <label for=""><strong>Emai:</strong></label>
-                        <input type="email" name="" id="" required placeholder="exemplo@dominio.com">
+                        <label for="emailCliente"><strong>Email:</strong></label>
+                        <input type="email" name="cliente_email" id="emailCliente" required placeholder="exemplo@dominio.com">
                     </div>
                 </div>
 
@@ -79,8 +94,8 @@
                 <div class="D-logistic">
 
                     <div class="campo3">
-                        <label for="data-entrega"><strong>Prazo de Entrega:</strong></label>
-                        <input type="date" name="data-entrega" id="data-entrega" required>
+                        <label for="prazoEntrega"><strong>Prazo de Entrega:</strong></label>
+                        <input type="date" name="pedido_prazo" id="prazoEntrega" required>
                     </div>
 
 
@@ -88,19 +103,19 @@
                     <div class="container-prioridade">
 
                         <div class="campo4">
-                            <p for=""><strong>Prioridade:</strong></p>
+                            <p><strong>Prioridade:</strong></p>
                         </div>
 
                         <div class="box-checkbox">
                             <div class="niveis">
                                 <label for="baixa"><strong>Baixa:</strong></label>
-                                <input type="radio" name="prioridade" id="baixa" value="baixa" required>
+                                <input type="radio" name="pedido_prioridade" id="prioridadeBaixa" value="baixa" required>
 
                                 <label for="media"><strong>Média:</strong></label>
-                                <input type="radio" name="prioridade" id="media" value="media">
+                                <input type="radio" name="pedido_prioridade" id="prioridadeMedia" value="media">
 
                                 <label for="alta"><strong>Alta:</strong></label>
-                                <input type="radio" name="prioridade" id="alta" value="alta">
+                                <input type="radio" name="pedido_prioridade" id="prioridadeAlta" value="alta">
                             </div>
                         </div>
                     </div>
@@ -112,9 +127,9 @@
 
                     <div class="container-pesonalizacao">
                         <div class="campo">
-                            <label for="local"><strong>Local da personalização:</strong></label>
+                            <label for="localPersonalizacao"><strong>Local da personalização:</strong></label>
 
-                            <select name="local-1" id="local-1" required>
+                            <select name="prod_local_custom" id="localPersonalizacao" required>
                                 <option value="">Selecione o Local</option>
                                 <option value="Frente">Frente</option>
                                 <option value="Costas">Costas</option>
@@ -126,8 +141,8 @@
                         </div>
 
                         <div class="campo">
-                            <label for=""><strong>Observação de personalização:</strong></label>
-                            <input type="text" name="" id="" placeholder="Informações extras">
+                            <label for="obsPersonalizacao"><strong>Observação de personalização:</strong></label>
+                            <input type="text" name="prod_obs_custom" id="obsPersonalizacao" placeholder="Informações extras  (Opicional.)">
                         </div>
                     </div>
                 </div>
@@ -135,12 +150,14 @@
                 <h2>Observação do Pedido:</h2>
 
                 <div class="obs-pedido">
+
                     <div class="campo">
-                        <label for="">Observação</label>
-                        <textarea name="observacao" id="observacao-pedido"
+
+                        <label for="obsGeralPedido">Observação </label>
+                        <textarea name="pedido_obs_geral" id="obsGeralPedido"
                             placeholder="Digite aqui as observações, detalhes adicionais ou instruções especiais para este pedido....."></textarea>
 
-                        <button type="submit" class="proxima">
+                        <button type="submit" class="proxima" id="btnContinuar">
                             <strong>Continuar</strong>
                         </button>
 
@@ -150,14 +167,14 @@
 
             </div>
 
-            </div>
+            
         </form>
 
 
 
     </main>
 
-    <script src="js/script1.js"></script>
+    <script src="js/formulario.js"></script>
 </body>
 
 </html>

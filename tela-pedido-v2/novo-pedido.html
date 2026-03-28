@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style1.css">
+    <link rel="stylesheet" href="css/novoPedido.css">
     <title>Novo Pedido</title>
 </head>
 
@@ -39,920 +39,1035 @@
     </header>
 
     <main>
-        <div class="container1" id="meuNovo">
+
+        <div class="stepper-wrapper">
+            <div class="stepper-item completed">
+                <div class="step-counter">1</div>
+                <div class="step-name">Identificação</div>
+            </div>
+            <div class="stepper-item completed">
+                <div class="step-counter">2</div>
+                <div class="step-name">Produtos</div>
+            </div>
+            <div class="stepper-item active">
+                <div class="step-counter">3</div>
+                <div class="step-name">Finalização</div>
+            </div>
+        </div>
+
+
+        <form class="container1" id="meuNovo">
             <h2>1. Selecione o modelo</h2>
 
             <div class="grid">
 
-                <div class="card"> <!-- cada .card é uma "caixa" de produtos-->
+                <div class="modelo-card">
+                    <div class="card-inner">
 
-                    <img src="img/camiseta.png" alt="">
+                        <div class="face frente">
+                            <img src="img/camiseta.png" alt="Camiseta">
+                            <h3>Camiseta</h3>
 
-                    <h3>Camiseta</h3>
+                            <select name="camiseta_personalizacao" class="select-cor">
+                                <option value="" selected>Sem personalização</option>
+                                <optgroup label="Básicos">
+                                    <option>Bordado</option>
+                                    <option>Silk Screen (Serigrafia)</option>
+                                    <option>Estampa Digital (DTG)</option>
+                                    <option>Sublimação</option>
+                                    <option>Transfer</option>
+                                    <option>Vinil Termocolante</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option>Relevo (3D Puff)</option>
+                                    <option>Bordado 3D</option>
+                                    <option>Patch (Aplicação)</option>
+                                    <option>Termocolante</option>
+                                    <option>Foil (Metalizado)</option>
+                                    <option>Flocado (Aveludado)</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option>Laser Cut</option>
+                                    <option>Gravação a Laser</option>
+                                    <option>Estampa UV</option>
+                                    <option>Impressão 3D</option>
+                                    <option>Pedraria</option>
+                                    <option>Lantejoulas</option>
+                                </optgroup>
+                                <optgroup label="Efeitos / Estilo">
+                                    <option>Transparente</option>
+                                    <option>Degradê</option>
+                                    <option>Brilho (Glitter)</option>
+                                    <option>Fosco</option>
+                                </optgroup>
+                            </select>
 
-                    <!-- CAMISETA -->
+                            <select name="camiseta_tecido" class="select-cor">
+                                <option value="" selected>Sem tecido definido</option>
+                                <optgroup label="Básicos">
+                                    <option value="algodao">Algodão</option>
+                                    <option value="poliester">Poliéster</option>
+                                    <option value="malha">Malha</option>
+                                    <option value="viscose">Viscose</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="algodao_poliester">Algodão + Poliéster</option>
+                                    <option value="algodao_elastano">Algodão + Elastano</option>
+                                    <option value="poliester_elastano">Poliéster + Elastano</option>
+                                    <option value="viscolycra">Viscolycra</option>
+                                    <option value="dry_fit">Dry Fit</option>
+                                    <option value="piquet">Piquet</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="pima">Algodão Pima</option>
+                                    <option value="egipcio">Algodão Egípcio</option>
+                                    <option value="fleece">Fleece</option>
+                                    <option value="moletom_felpado">Moletom Felpado</option>
+                                    <option value="linho">Linho</option>
+                                    <option value="seda">Seda</option>
+                                </optgroup>
+                                <optgroup label="Sustentáveis">
+                                    <option value="modal">Modal</option>
+                                    <option value="fibra_bambu">Fibra de Bambu</option>
+                                    <option value="pet_reciclado">Poliéster de PET Reciclado</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="jeans">Jeans</option>
+                                    <option value="sarja">Sarja</option>
+                                    <option value="nylon">Nylon</option>
+                                    <option value="helanca">Helanca</option>
+                                    <option value="suplex">Suplex</option>
+                                </optgroup>
+                            </select>
 
-                    <!------------PERSONALIZACAO-------------- -->
-                    <select name="camiseta_personalizacao" id="">
-                        <option value="" selected>Sem personalização</option>
-                        <optgroup label="Básicos">
-                            <option>Bordado</option>
-                            <option>Silk Screen (Serigrafia)</option>
-                            <option>Estampa Digital (DTG)</option>
-                            <option>Sublimação</option>
-                            <option>Transfer</option>
-                            <option>Vinil Termocolante</option>
-                        </optgroup>
+                            <select name="camiseta_cor" class="select-cor">
+                                <option value="" selected>Sem cor definida</option>
+                                <optgroup label="Básicas">
+                                    <option value="branco">Branco</option>
+                                    <option value="preto">Preto</option>
+                                    <option value="cinza">Cinza</option>
+                                    <option value="azul">Azul</option>
+                                    <option value="vermelho">Vermelho</option>
+                                </optgroup>
+                                <optgroup label="Neutras / Sóbrias">
+                                    <option value="off_white">Off-white</option>
+                                    <option value="bege">Bege</option>
+                                    <option value="marrom">Marrom</option>
+                                    <option value="caqui">Caqui</option>
+                                    <option value="grafite">Grafite</option>
+                                </optgroup>
+                                <optgroup label="Intermediárias">
+                                    <option value="azul_marinho">Azul Marinho</option>
+                                    <option value="verde_militar">Verde Militar</option>
+                                    <option value="vinho">Vinho</option>
+                                    <option value="mostarda">Mostarda</option>
+                                    <option value="rosa_claro">Rosa Claro</option>
+                                </optgroup>
+                                <optgroup label="Vibrantes">
+                                    <option value="verde_limao">Verde Limão</option>
+                                    <option value="azul_ciano">Azul Ciano</option>
+                                    <option value="laranja">Laranja</option>
+                                    <option value="pink">Pink</option>
+                                    <option value="roxo">Roxo</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="metalico">Metálico</option>
+                                    <option value="neon">Neon</option>
+                                    <option value="pastel">Pastel</option>
+                                    <option value="tie_dye">Tie-dye</option>
+                                    <option value="estampado">Estampado</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- INTERMEDIÁRIOS -->
-                        <optgroup label="Intermediários">
-                            <option>Relevo (3D Puff)</option>
-                            <option>Bordado 3D</option>
-                            <option>Patch (Aplicação)</option>
-                            <option>Termocolante</option>
-                            <option>Foil (Metalizado)</option>
-                            <option>Flocado (Aveludado)</option>
-                        </optgroup>
+                            <button type="button" class="btn-selecionar" onclick="alternarSelecao(this)">
+                                SELECIONAR
+                            </button>
+                        </div>
 
-                        <!-- AVANÇADOS -->
-                        <optgroup label="Avançados">
-                            <option>Laser Cut</option>
-                            <option>Gravação a Laser</option>
-                            <option>Estampa UV</option>
-                            <option>Impressão 3D</option>
-                            <option>Pedraria</option>
-                            <option>Lantejoulas</option>
-                        </optgroup>
+                        <div class="face verso-selecionado">
+                            <h3>QUANTIDADES</h3>
 
-                        <!-- EFEITOS / ESTILO -->
-                        <optgroup label="Efeitos / Estilo">
-                            <option>Transparente</option>
-                            <option>Degradê</option>
-                            <option>Brilho (Glitter)</option>
-                            <option>Fosco</option>
-                        </optgroup>
+                            <div class="grade-tamanhos-card">
+                                <div class="item-tamanho">
+                                    <label for="camiseta_p">P</label>
+                                    <input type="number" name="camiseta_p" id="camiseta_p" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camiseta_m">M</label>
+                                    <input type="number" name="camiseta_m" id="camiseta_m" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camiseta_g">G</label>
+                                    <input type="number" name="camiseta_g" id="camiseta_g" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camiseta_gg">GG</label>
+                                    <input type="number" name="camiseta_gg" id="camiseta_gg" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camiseta_g1">G1</label>
+                                    <input type="number" name="camiseta_g1" id="camiseta_g1" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camiseta_g2">G2</label>
+                                    <input type="number" name="camiseta_g2" id="camiseta_g2" min="0" value="0">
+                                </div>
+                            </div>
 
-                    </select>
+                            <button type="button" class="btn-desmarcar" onclick="alternarSelecao(this)">
+                                Desmarcar
+                            </button>
+                        </div>
 
-                    <!----------------- TECIDOS--------------->
-
-                    <select name="camiseta_tecido" id="">
-                        <option value="" selected>Sem tecido definido</option>
-                        <!------------ BÁSICOS------------------->
-                        <optgroup label="Básicos">
-                            <option value="algodao">Algodão</option>
-                            <option value="poliester">Poliéster</option>
-                            <option value="malha">Malha</option>
-                            <option value="viscose">Viscose</option>
-                        </optgroup>
-                        <!------------ INTERMEDIÁRIOS------------------->
-                        <optgroup label="Intermediários">
-                            <option value="algodao_poliester">Algodão + Poliéster</option>
-                            <option value="algodao_elastano">Algodão + Elastano</option>
-                            <option value="poliester_elastano">Poliéster + Elastano</option>
-                            <option value="viscolycra">Viscolycra</option>
-                            <option value="dry_fit">Dry Fit</option>
-                            <option value="piquet">Piquet</option>
-                        </optgroup>
-                        <!------------ AVANÇADOS------------------->
-                        <optgroup label="Avançados">
-                            <option value="pima">Algodão Pima</option>
-                            <option value="egipcio">Algodão Egípcio</option>
-                            <option value="fleece">Fleece</option>
-                            <option value="moletom_felpado">Moletom Felpado</option>
-                            <option value="linho">Linho</option>
-                            <option value="seda">Seda</option>
-                        </optgroup>
-                        <!------------ SUSTENTÁVEIS------------------->
-                        <optgroup label="Sustentáveis">
-                            <option value="modal">Modal</option>
-                            <option value="fibra_bambu">Fibra de Bambu</option>
-                            <option value="pet_reciclado">Poliéster de PET Reciclado</option>
-                        </optgroup>
-                        <!------------ ESPECIAIS------------------->
-                        <optgroup label="Especiais">
-                            <option value="jeans">Jeans</option>
-                            <option value="sarja">Sarja</option>
-                            <option value="nylon">Nylon</option>
-                            <option value="helanca">Helanca</option>
-                            <option value="suplex">Suplex</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- CORES---------------------->
-
-                    <select name="camiseta_cor">
-                        <option value="" selected>Sem cor definida</option>
-
-                        <!-- BÁSICAS -->
-                        <optgroup label="Básicas">
-                            <option value="branco">Branco</option>
-                            <option value="preto">Preto</option>
-                            <option value="cinza">Cinza</option>
-                            <option value="azul">Azul</option>
-                            <option value="vermelho">Vermelho</option>
-                        </optgroup>
-
-                        <!-- NEUTRAS / SÓBRIAS -->
-                        <optgroup label="Neutras / Sóbrias">
-                            <option value="off_white">Off-white</option>
-                            <option value="bege">Bege</option>
-                            <option value="marrom">Marrom</option>
-                            <option value="caqui">Caqui</option>
-                            <option value="grafite">Grafite</option>
-                        </optgroup>
-
-                        <!-- INTERMEDIÁRIAS -->
-                        <optgroup label="Intermediárias">
-                            <option value="azul_marinho">Azul Marinho</option>
-                            <option value="verde_militar">Verde Militar</option>
-                            <option value="vinho">Vinho</option>
-                            <option value="mostarda">Mostarda</option>
-                            <option value="rosa_claro">Rosa Claro</option>
-                        </optgroup>
-
-                        <!-- VIBRANTES -->
-                        <optgroup label="Vibrantes">
-                            <option value="verde_limao">Verde Limão</option>
-                            <option value="azul_ciano">Azul Ciano</option>
-                            <option value="laranja">Laranja</option>
-                            <option value="pink">Pink</option>
-                            <option value="roxo">Roxo</option>
-                        </optgroup>
-
-                        <!-- ESPECIAIS -->
-                        <optgroup label="Especiais">
-                            <option value="metalico">Metálico</option>
-                            <option value="neon">Neon</option>
-                            <option value="pastel">Pastel</option>
-                            <option value="tie_dye">Tie-dye</option>
-                            <option value="estampado">Estampado</option>
-                        </optgroup>
-                    </select>
-
+                    </div>
                 </div>
-                <!-------------------- CAMISA-------------->
-                <div class="card"> <!-- cada .card é uma "caixa" de produtos-->
+                <div class="modelo-card">
+                    <div class="card-inner">
 
-                    <img src="img/camisa.png" alt="">
+                        <div class="face frente">
+                            <img src="img/camisa.png" alt="Camisa">
+                            <h3>Camisa</h3>
 
-                    <h3>Camisa</h3>
+                            <select name="camisa_personalizacao" class="select-cor">
+                                <option value="" selected>Sem personalização</option>
+                                <optgroup label="Básicos">
+                                    <option>Bordado</option>
+                                    <option>Silk Screen (Serigrafia)</option>
+                                    <option>Estampa Digital (DTG)</option>
+                                    <option>Sublimação</option>
+                                    <option>Transfer</option>
+                                    <option>Vinil Termocolante</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option>Relevo (3D Puff)</option>
+                                    <option>Bordado 3D</option>
+                                    <option>Patch (Aplicação)</option>
+                                    <option>Termocolante</option>
+                                    <option>Foil (Metalizado)</option>
+                                    <option>Flocado (Aveludado)</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option>Laser Cut</option>
+                                    <option>Gravação a Laser</option>
+                                    <option>Estampa UV</option>
+                                    <option>Impressão 3D</option>
+                                    <option>Pedraria</option>
+                                    <option>Lantejoulas</option>
+                                </optgroup>
+                                <optgroup label="Efeitos / Estilo">
+                                    <option>Transparente</option>
+                                    <option>Degradê</option>
+                                    <option>Brilho (Glitter)</option>
+                                    <option>Fosco</option>
+                                </optgroup>
+                            </select>
 
-                    <!------------PERSONALIZACAO-------------- -->
-                    <select name="camisa_personalizacao" id="">
-                        <option value="" selected>Sem personalização</option>
-                        <optgroup label="Básicos">
-                            <option>Bordado</option>
-                            <option>Silk Screen (Serigrafia)</option>
-                            <option>Estampa Digital (DTG)</option>
-                            <option>Sublimação</option>
-                            <option>Transfer</option>
-                            <option>Vinil Termocolante</option>
-                        </optgroup>
+                            <select name="camisa_tecido" class="select-cor">
+                                <option value="" selected>Sem tecido definido</option>
+                                <optgroup label="Básicos">
+                                    <option value="algodao">Algodão</option>
+                                    <option value="poliester">Poliéster</option>
+                                    <option value="malha">Malha</option>
+                                    <option value="viscose">Viscose</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="algodao_poliester">Algodão + Poliéster</option>
+                                    <option value="algodao_elastano">Algodão + Elastano</option>
+                                    <option value="poliester_elastano">Poliéster + Elastano</option>
+                                    <option value="viscolycra">Viscolycra</option>
+                                    <option value="dry_fit">Dry Fit</option>
+                                    <option value="piquet">Piquet</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="pima">Algodão Pima</option>
+                                    <option value="egipcio">Algodão Egípcio</option>
+                                    <option value="fleece">Fleece</option>
+                                    <option value="moletom_felpado">Moletom Felpado</option>
+                                    <option value="linho">Linho</option>
+                                    <option value="seda">Seda</option>
+                                </optgroup>
+                                <optgroup label="Sustentáveis">
+                                    <option value="modal">Modal</option>
+                                    <option value="fibra_bambu">Fibra de Bambu</option>
+                                    <option value="pet_reciclado">Poliéster de PET Reciclado</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="jeans">Jeans</option>
+                                    <option value="sarja">Sarja</option>
+                                    <option value="nylon">Nylon</option>
+                                    <option value="helanca">Helanca</option>
+                                    <option value="suplex">Suplex</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- INTERMEDIÁRIOS -->
-                        <optgroup label="Intermediários">
-                            <option>Relevo (3D Puff)</option>
-                            <option>Bordado 3D</option>
-                            <option>Patch (Aplicação)</option>
-                            <option>Termocolante</option>
-                            <option>Foil (Metalizado)</option>
-                            <option>Flocado (Aveludado)</option>
-                        </optgroup>
+                            <select name="camisa_cor" class="select-cor">
+                                <option value="" selected>Sem cor definida</option>
+                                <optgroup label="Básicas">
+                                    <option value="branco">Branco</option>
+                                    <option value="preto">Preto</option>
+                                    <option value="cinza">Cinza</option>
+                                    <option value="azul">Azul</option>
+                                    <option value="vermelho">Vermelho</option>
+                                </optgroup>
+                                <optgroup label="Neutras / Sóbrias">
+                                    <option value="off_white">Off-white</option>
+                                    <option value="bege">Bege</option>
+                                    <option value="marrom">Marrom</option>
+                                    <option value="caqui">Caqui</option>
+                                    <option value="grafite">Grafite</option>
+                                </optgroup>
+                                <optgroup label="Intermediárias">
+                                    <option value="azul_marinho">Azul Marinho</option>
+                                    <option value="verde_militar">Verde Militar</option>
+                                    <option value="vinho">Vinho</option>
+                                    <option value="mostarda">Mostarda</option>
+                                    <option value="rosa_claro">Rosa Claro</option>
+                                </optgroup>
+                                <optgroup label="Vibrantes">
+                                    <option value="verde_limao">Verde Limão</option>
+                                    <option value="azul_ciano">Azul Ciano</option>
+                                    <option value="laranja">Laranja</option>
+                                    <option value="pink">Pink</option>
+                                    <option value="roxo">Roxo</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="metalico">Metálico</option>
+                                    <option value="neon">Neon</option>
+                                    <option value="pastel">Pastel</option>
+                                    <option value="tie_dye">Tie-dye</option>
+                                    <option value="estampado">Estampado</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- AVANÇADOS -->
-                        <optgroup label="Avançados">
-                            <option>Laser Cut</option>
-                            <option>Gravação a Laser</option>
-                            <option>Estampa UV</option>
-                            <option>Impressão 3D</option>
-                            <option>Pedraria</option>
-                            <option>Lantejoulas</option>
-                        </optgroup>
+                            <button type="button" class="btn-selecionar" onclick="alternarSelecao(this)">
+                                SELECIONAR
+                            </button>
+                        </div>
 
-                        <!-- EFEITOS / ESTILO -->
-                        <optgroup label="Efeitos / Estilo">
-                            <option>Transparente</option>
-                            <option>Degradê</option>
-                            <option>Brilho (Glitter)</option>
-                            <option>Fosco</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- TECIDOS--------------->
-                    <select name="camisa_tecido" id="">
-                        <option value="" selected>Sem tecido definido</option>
-                        <!------------ BÁSICOS------------------->
-                        <optgroup label="Básicos">
-                            <option value="algodao">Algodão</option>
-                            <option value="poliester">Poliéster</option>
-                            <option value="malha">Malha</option>
-                            <option value="viscose">Viscose</option>
-                        </optgroup>
-                        <!------------ INTERMEDIÁRIOS------------------->
-                        <optgroup label="Intermediários">
-                            <option value="algodao_poliester">Algodão + Poliéster</option>
-                            <option value="algodao_elastano">Algodão + Elastano</option>
-                            <option value="poliester_elastano">Poliéster + Elastano</option>
-                            <option value="viscolycra">Viscolycra</option>
-                            <option value="dry_fit">Dry Fit</option>
-                            <option value="piquet">Piquet</option>
-                        </optgroup>
-                        <!------------ AVANÇADOS------------------->
-                        <optgroup label="Avançados">
-                            <option value="pima">Algodão Pima</option>
-                            <option value="egipcio">Algodão Egípcio</option>
-                            <option value="fleece">Fleece</option>
-                            <option value="moletom_felpado">Moletom Felpado</option>
-                            <option value="linho">Linho</option>
-                            <option value="seda">Seda</option>
-                        </optgroup>
-                        <!------------ SUSTENTÁVEIS------------------->
-                        <optgroup label="Sustentáveis">
-                            <option value="modal">Modal</option>
-                            <option value="fibra_bambu">Fibra de Bambu</option>
-                            <option value="pet_reciclado">Poliéster de PET Reciclado</option>
-                        </optgroup>
-                        <!------------ ESPECIAIS------------------->
-                        <optgroup label="Especiais">
-                            <option value="jeans">Jeans</option>
-                            <option value="sarja">Sarja</option>
-                            <option value="nylon">Nylon</option>
-                            <option value="helanca">Helanca</option>
-                            <option value="suplex">Suplex</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- CORES---------------------->
-                    <select name="camisa_cor">
-                        <option value="" selected>Sem cor definida</option>
-                        <!-- BÁSICAS -->
-                        <optgroup label="Básicas">
-                            <option value="branco">Branco</option>
-                            <option value="preto">Preto</option>
-                            <option value="cinza">Cinza</option>
-                            <option value="azul">Azul</option>
-                            <option value="vermelho">Vermelho</option>
-                        </optgroup>
-                        <!-- NEUTRAS / SÓBRIAS -->
-                        <optgroup label="Neutras / Sóbrias">
-                            <option value="off_white">Off-white</option>
-                            <option value="bege">Bege</option>
-                            <option value="marrom">Marrom</option>
-                            <option value="caqui">Caqui</option>
-                            <option value="grafite">Grafite</option>
-                        </optgroup>
-                        <!-- INTERMEDIÁRIAS -->
-                        <optgroup label="Intermediárias">
-                            <option value="azul_marinho">Azul Marinho</option>
-                            <option value="verde_militar">Verde Militar</option>
-                            <option value="vinho">Vinho</option>
-                            <option value="mostarda">Mostarda</option>
-                            <option value="rosa_claro">Rosa Claro</option>
-                        </optgroup>
-                        <!-- VIBRANTES -->
-                        <optgroup label="Vibrantes">
-                            <option value="verde_limao">Verde Limão</option>
-                            <option value="azul_ciano">Azul Ciano</option>
-                            <option value="laranja">Laranja</option>
-                            <option value="pink">Pink</option>
-                            <option value="roxo">Roxo</option>
-                        </optgroup>
-                        <!-- ESPECIAIS -->
-                        <optgroup label="Especiais">
-                            <option value="metalico">Metálico</option>
-                            <option value="neon">Neon</option>
-                            <option value="pastel">Pastel</option>
-                            <option value="tie_dye">Tie-dye</option>
-                            <option value="estampado">Estampado</option>
-                        </optgroup>
-                    </select>
+                        <div class="face verso-selecionado">
+                            <h3>QUANTIDADES</h3>
 
+                            <div class="grade-tamanhos-card">
+                                <div class="item-tamanho">
+                                    <label for="camisa_p">P</label>
+                                    <input type="number" name="camisa_p" id="camisa_p" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_m">M</label>
+                                    <input type="number" name="camisa_m" id="camisa_m" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_g">G</label>
+                                    <input type="number" name="camisa_g" id="camisa_g" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_gg">GG</label>
+                                    <input type="number" name="camisa_gg" id="camisa_gg" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_g1">G1</label>
+                                    <input type="number" name="camisa_g1" id="camisa_g1" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_g2">G2</label>
+                                    <input type="number" name="camisa_g2" id="camisa_g2" min="0" value="0">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-desmarcar" onclick="alternarSelecao(this)">
+                                Desmarcar
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
-                 <!-------------------- CAMISA LONGA-------------->
-                <div class="card"> <!-- cada .card é uma "caixa" de produtos-->
 
-                    <img src="img/camisa longa.png" alt="">
 
-                    <h3>Camisa Longa</h3>
+                <div class="modelo-card">
+                    <div class="card-inner">
 
-                    <!------------PERSONALIZACAO-------------- -->
-                    <select name="camisa_longa_personalizacao" id="">
-                        <option value="" selected>Sem personalização</option>
-                        <optgroup label="Básicos">
-                            <option>Bordado</option>
-                            <option>Silk Screen (Serigrafia)</option>
-                            <option>Estampa Digital (DTG)</option>
-                            <option>Sublimação</option>
-                            <option>Transfer</option>
-                            <option>Vinil Termocolante</option>
-                        </optgroup>
+                        <div class="face frente">
+                            <img src="img/camisa longa.png" alt="Camisa Longa">
+                            <h3>Camisa Longa</h3>
 
-                        <!-- INTERMEDIÁRIOS -->
-                        <optgroup label="Intermediários">
-                            <option>Relevo (3D Puff)</option>
-                            <option>Bordado 3D</option>
-                            <option>Patch (Aplicação)</option>
-                            <option>Termocolante</option>
-                            <option>Foil (Metalizado)</option>
-                            <option>Flocado (Aveludado)</option>
-                        </optgroup>
+                            <select name="camisa_longa_personalizacao" class="select-cor">
+                                <option value="" selected>Sem personalização</option>
+                                <optgroup label="Básicos">
+                                    <option value="bordado">Bordado</option>
+                                    <option value="silk_screen">Silk Screen (Serigrafia)</option>
+                                    <option value="estampa_digital">Estampa Digital (DTG)</option>
+                                    <option value="sublimacao">Sublimação</option>
+                                    <option value="transfer">Transfer</option>
+                                    <option value="vinil_termocolante">Vinil Termocolante</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="relevo_3d_puff">Relevo (3D Puff)</option>
+                                    <option value="bordado_3d">Bordado 3D</option>
+                                    <option value="patch">Patch (Aplicação)</option>
+                                    <option value="termocolante">Termocolante</option>
+                                    <option value="foil">Foil (Metalizado)</option>
+                                    <option value="flocado">Flocado (Aveludado)</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="laser_cut">Laser Cut</option>
+                                    <option value="gravacao_laser">Gravação a Laser</option>
+                                    <option value="estampa_uv">Estampa UV</option>
+                                    <option value="impressao_3d">Impressão 3D</option>
+                                    <option value="pedraria">Pedraria</option>
+                                    <option value="lantejoulas">Lantejoulas</option>
+                                </optgroup>
+                                <optgroup label="Efeitos / Estilo">
+                                    <option value="transparente">Transparente</option>
+                                    <option value="degrade">Degradê</option>
+                                    <option value="brilho">Brilho (Glitter)</option>
+                                    <option value="fosco">Fosco</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- AVANÇADOS -->
-                        <optgroup label="Avançados">
-                            <option>Laser Cut</option>
-                            <option>Gravação a Laser</option>
-                            <option>Estampa UV</option>
-                            <option>Impressão 3D</option>
-                            <option>Pedraria</option>
-                            <option>Lantejoulas</option>
-                        </optgroup>
+                            <select name="camisa_longa_tecido" class="select-cor">
+                                <option value="" selected>Sem tecido definido</option>
+                                <optgroup label="Básicos">
+                                    <option value="algodao">Algodão</option>
+                                    <option value="poliester">Poliéster</option>
+                                    <option value="malha">Malha</option>
+                                    <option value="viscose">Viscose</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="algodao_poliester">Algodão + Poliéster</option>
+                                    <option value="algodao_elastano">Algodão + Elastano</option>
+                                    <option value="poliester_elastano">Poliéster + Elastano</option>
+                                    <option value="viscolycra">Viscolycra</option>
+                                    <option value="dry_fit">Dry Fit</option>
+                                    <option value="piquet">Piquet</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="pima">Algodão Pima</option>
+                                    <option value="egipcio">Algodão Egípcio</option>
+                                    <option value="fleece">Fleece</option>
+                                    <option value="moletom_felpado">Moletom Felpado</option>
+                                    <option value="linho">Linho</option>
+                                    <option value="seda">Seda</option>
+                                </optgroup>
+                                <optgroup label="Sustentáveis">
+                                    <option value="modal">Modal</option>
+                                    <option value="fibra_bambu">Fibra de Bambu</option>
+                                    <option value="pet_reciclado">Poliéster de PET Reciclado</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="jeans">Jeans</option>
+                                    <option value="sarja">Sarja</option>
+                                    <option value="nylon">Nylon</option>
+                                    <option value="helanca">Helanca</option>
+                                    <option value="suplex">Suplex</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- EFEITOS / ESTILO -->
-                        <optgroup label="Efeitos / Estilo">
-                            <option>Transparente</option>
-                            <option>Degradê</option>
-                            <option>Brilho (Glitter)</option>
-                            <option>Fosco</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- TECIDOS--------------->
-                    <select name="camisa_longa_tecido" id="">
-                        <option value="" selected>Sem tecido definido</option>
-                        <!------------ BÁSICOS------------------->
-                        <optgroup label="Básicos">
-                            <option value="algodao">Algodão</option>
-                            <option value="poliester">Poliéster</option>
-                            <option value="malha">Malha</option>
-                            <option value="viscose">Viscose</option>
-                        </optgroup>
-                        <!------------ INTERMEDIÁRIOS------------------->
-                        <optgroup label="Intermediários">
-                            <option value="algodao_poliester">Algodão + Poliéster</option>
-                            <option value="algodao_elastano">Algodão + Elastano</option>
-                            <option value="poliester_elastano">Poliéster + Elastano</option>
-                            <option value="viscolycra">Viscolycra</option>
-                            <option value="dry_fit">Dry Fit</option>
-                            <option value="piquet">Piquet</option>
-                        </optgroup>
-                        <!------------ AVANÇADOS------------------->
-                        <optgroup label="Avançados">
-                            <option value="pima">Algodão Pima</option>
-                            <option value="egipcio">Algodão Egípcio</option>
-                            <option value="fleece">Fleece</option>
-                            <option value="moletom_felpado">Moletom Felpado</option>
-                            <option value="linho">Linho</option>
-                            <option value="seda">Seda</option>
-                        </optgroup>
-                        <!------------ SUSTENTÁVEIS------------------->
-                        <optgroup label="Sustentáveis">
-                            <option value="modal">Modal</option>
-                            <option value="fibra_bambu">Fibra de Bambu</option>
-                            <option value="pet_reciclado">Poliéster de PET Reciclado</option>
-                        </optgroup>
-                        <!------------ ESPECIAIS------------------->
-                        <optgroup label="Especiais">
-                            <option value="jeans">Jeans</option>
-                            <option value="sarja">Sarja</option>
-                            <option value="nylon">Nylon</option>
-                            <option value="helanca">Helanca</option>
-                            <option value="suplex">Suplex</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- CORES---------------------->
-                    <select name="camisa_longa_cor">
-                        <option value="" selected>Sem cor definida</option>
-                        <!-- BÁSICAS -->
-                        <optgroup label="Básicas">
-                            <option value="branco">Branco</option>
-                            <option value="preto">Preto</option>
-                            <option value="cinza">Cinza</option>
-                            <option value="azul">Azul</option>
-                            <option value="vermelho">Vermelho</option>
-                        </optgroup>
-                        <!-- NEUTRAS / SÓBRIAS -->
-                        <optgroup label="Neutras / Sóbrias">
-                            <option value="off_white">Off-white</option>
-                            <option value="bege">Bege</option>
-                            <option value="marrom">Marrom</option>
-                            <option value="caqui">Caqui</option>
-                            <option value="grafite">Grafite</option>
-                        </optgroup>
-                        <!-- INTERMEDIÁRIAS -->
-                        <optgroup label="Intermediárias">
-                            <option value="azul_marinho">Azul Marinho</option>
-                            <option value="verde_militar">Verde Militar</option>
-                            <option value="vinho">Vinho</option>
-                            <option value="mostarda">Mostarda</option>
-                            <option value="rosa_claro">Rosa Claro</option>
-                        </optgroup>
-                        <!-- VIBRANTES -->
-                        <optgroup label="Vibrantes">
-                            <option value="verde_limao">Verde Limão</option>
-                            <option value="azul_ciano">Azul Ciano</option>
-                            <option value="laranja">Laranja</option>
-                            <option value="pink">Pink</option>
-                            <option value="roxo">Roxo</option>
-                        </optgroup>
-                        <!-- ESPECIAIS -->
-                        <optgroup label="Especiais">
-                            <option value="metalico">Metálico</option>
-                            <option value="neon">Neon</option>
-                            <option value="pastel">Pastel</option>
-                            <option value="tie_dye">Tie-dye</option>
-                            <option value="estampado">Estampado</option>
-                        </optgroup>
-                    </select>
+                            <select name="camisa_longa_cor" class="select-cor">
+                                <option value="" selected>Sem cor definida</option>
+                                <optgroup label="Básicas">
+                                    <option value="branco">Branco</option>
+                                    <option value="preto">Preto</option>
+                                    <option value="cinza">Cinza</option>
+                                    <option value="azul">Azul</option>
+                                    <option value="vermelho">Vermelho</option>
+                                </optgroup>
+                                <optgroup label="Neutras / Sóbrias">
+                                    <option value="off_white">Off-white</option>
+                                    <option value="bege">Bege</option>
+                                    <option value="marrom">Marrom</option>
+                                    <option value="caqui">Caqui</option>
+                                    <option value="grafite">Grafite</option>
+                                </optgroup>
+                                <optgroup label="Intermediárias">
+                                    <option value="azul_marinho">Azul Marinho</option>
+                                    <option value="verde_militar">Verde Militar</option>
+                                    <option value="vinho">Vinho</option>
+                                    <option value="mostarda">Mostarda</option>
+                                    <option value="rosa_claro">Rosa Claro</option>
+                                </optgroup>
+                                <optgroup label="Vibrantes">
+                                    <option value="verde_limao">Verde Limão</option>
+                                    <option value="azul_ciano">Azul Ciano</option>
+                                    <option value="laranja">Laranja</option>
+                                    <option value="pink">Pink</option>
+                                    <option value="roxo">Roxo</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="metalico">Metálico</option>
+                                    <option value="neon">Neon</option>
+                                    <option value="pastel">Pastel</option>
+                                    <option value="tie_dye">Tie-dye</option>
+                                    <option value="estampado">Estampado</option>
+                                </optgroup>
+                            </select>
 
+                            <button type="button" class="btn-selecionar" onclick="alternarSelecao(this)">
+                                SELECIONAR
+                            </button>
+                        </div>
+
+                        <div class="face verso-selecionado">
+                            <h3>QUANTIDADES</h3>
+
+                            <div class="grade-tamanhos-card">
+                                <div class="item-tamanho">
+                                    <label for="camisa_longa_p">P</label>
+                                    <input type="number" name="camisa_longa_p" id="camisa_longa_p" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_longa_m">M</label>
+                                    <input type="number" name="camisa_longa_m" id="camisa_longa_m" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_longa_g">G</label>
+                                    <input type="number" name="camisa_longa_g" id="camisa_longa_g" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_longa_gg">GG</label>
+                                    <input type="number" name="camisa_longa_gg" id="camisa_longa_gg" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_longa_g1">G1</label>
+                                    <input type="number" name="camisa_longa_g1" id="camisa_longa_g1" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="camisa_longa_g2">G2</label>
+                                    <input type="number" name="camisa_longa_g2" id="camisa_longa_g2" min="0" value="0">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-desmarcar" onclick="alternarSelecao(this)">
+                                Desmarcar
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
-                 <!--------------------BLUSA C/CAPUZ -------------->
-                <div class="card"> <!-- cada .card é uma "caixa" de produtos-->
+                <div class="modelo-card">
+                    <div class="card-inner">
 
-                    <img src="img/blusa capuz.png" alt="">
+                        <div class="face frente">
+                            <img src="img/blusa capuz.png" alt="Blusa c/ Capuz">
+                            <h3>Blusa c/ Capuz</h3>
 
-                    <h3>Blusa c/ Capuz</h3>
+                            <select name="blusa_capuz_personalizacao" class="select-cor">
+                                <option value="" selected>Sem personalização</option>
+                                <optgroup label="Básicos">
+                                    <option value="bordado">Bordado</option>
+                                    <option value="silk_screen">Silk Screen (Serigrafia)</option>
+                                    <option value="estampa_digital">Estampa Digital (DTG)</option>
+                                    <option value="sublimacao">Sublimação</option>
+                                    <option value="transfer">Transfer</option>
+                                    <option value="vinil_termocolante">Vinil Termocolante</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="relevo_3d_puff">Relevo (3D Puff)</option>
+                                    <option value="bordado_3d">Bordado 3D</option>
+                                    <option value="patch">Patch (Aplicação)</option>
+                                    <option value="termocolante">Termocolante</option>
+                                    <option value="foil">Foil (Metalizado)</option>
+                                    <option value="flocado">Flocado (Aveludado)</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="laser_cut">Laser Cut</option>
+                                    <option value="gravacao_laser">Gravação a Laser</option>
+                                    <option value="estampa_uv">Estampa UV</option>
+                                    <option value="impressao_3d">Impressão 3D</option>
+                                    <option value="pedraria">Pedraria</option>
+                                    <option value="lantejoulas">Lantejoulas</option>
+                                </optgroup>
+                                <optgroup label="Efeitos / Estilo">
+                                    <option value="transparente">Transparente</option>
+                                    <option value="degrade">Degradê</option>
+                                    <option value="brilho">Brilho (Glitter)</option>
+                                    <option value="fosco">Fosco</option>
+                                </optgroup>
+                            </select>
 
-                    <!------------PERSONALIZACAO-------------- -->
-                    <select name="blusa_capuz_personalizacao" id="">
-                        <option value="" selected>Sem personalização</option>
-                        <optgroup label="Básicos">
-                            <option>Bordado</option>
-                            <option>Silk Screen (Serigrafia)</option>
-                            <option>Estampa Digital (DTG)</option>
-                            <option>Sublimação</option>
-                            <option>Transfer</option>
-                            <option>Vinil Termocolante</option>
-                        </optgroup>
+                            <select name="blusa_capuz_tecido" class="select-cor">
+                                <option value="" selected>Sem tecido definido</option>
+                                <optgroup label="Básicos">
+                                    <option value="algodao">Algodão</option>
+                                    <option value="poliester">Poliéster</option>
+                                    <option value="malha">Malha</option>
+                                    <option value="viscose">Viscose</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="algodao_poliester">Algodão + Poliéster</option>
+                                    <option value="algodao_elastano">Algodão + Elastano</option>
+                                    <option value="poliester_elastano">Poliéster + Elastano</option>
+                                    <option value="viscolycra">Viscolycra</option>
+                                    <option value="dry_fit">Dry Fit</option>
+                                    <option value="piquet">Piquet</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="pima">Algodão Pima</option>
+                                    <option value="egipcio">Algodão Egípcio</option>
+                                    <option value="fleece">Fleece</option>
+                                    <option value="moletom_felpado">Moletom Felpado</option>
+                                    <option value="linho">Linho</option>
+                                    <option value="seda">Seda</option>
+                                </optgroup>
+                                <optgroup label="Sustentáveis">
+                                    <option value="modal">Modal</option>
+                                    <option value="fibra_bambu">Fibra de Bambu</option>
+                                    <option value="pet_reciclado">Poliéster de PET Reciclado</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="jeans">Jeans</option>
+                                    <option value="sarja">Sarja</option>
+                                    <option value="nylon">Nylon</option>
+                                    <option value="helanca">Helanca</option>
+                                    <option value="suplex">Suplex</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- INTERMEDIÁRIOS -->
-                        <optgroup label="Intermediários">
-                            <option>Relevo (3D Puff)</option>
-                            <option>Bordado 3D</option>
-                            <option>Patch (Aplicação)</option>
-                            <option>Termocolante</option>
-                            <option>Foil (Metalizado)</option>
-                            <option>Flocado (Aveludado)</option>
-                        </optgroup>
+                            <select name="blusa_capuz_cor" class="select-cor">
+                                <option value="" selected>Sem cor definida</option>
+                                <optgroup label="Básicas">
+                                    <option value="branco">Branco</option>
+                                    <option value="preto">Preto</option>
+                                    <option value="cinza">Cinza</option>
+                                    <option value="azul">Azul</option>
+                                    <option value="vermelho">Vermelho</option>
+                                </optgroup>
+                                <optgroup label="Neutras / Sóbrias">
+                                    <option value="off_white">Off-white</option>
+                                    <option value="bege">Bege</option>
+                                    <option value="marrom">Marrom</option>
+                                    <option value="caqui">Caqui</option>
+                                    <option value="grafite">Grafite</option>
+                                </optgroup>
+                                <optgroup label="Intermediárias">
+                                    <option value="azul_marinho">Azul Marinho</option>
+                                    <option value="verde_militar">Verde Militar</option>
+                                    <option value="vinho">Vinho</option>
+                                    <option value="mostarda">Mostarda</option>
+                                    <option value="rosa_claro">Rosa Claro</option>
+                                </optgroup>
+                                <optgroup label="Vibrantes">
+                                    <option value="verde_limao">Verde Limão</option>
+                                    <option value="azul_ciano">Azul Ciano</option>
+                                    <option value="laranja">Laranja</option>
+                                    <option value="pink">Pink</option>
+                                    <option value="roxo">Roxo</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="metalico">Metálico</option>
+                                    <option value="neon">Neon</option>
+                                    <option value="pastel">Pastel</option>
+                                    <option value="tie_dye">Tie-dye</option>
+                                    <option value="estampado">Estampado</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- AVANÇADOS -->
-                        <optgroup label="Avançados">
-                            <option>Laser Cut</option>
-                            <option>Gravação a Laser</option>
-                            <option>Estampa UV</option>
-                            <option>Impressão 3D</option>
-                            <option>Pedraria</option>
-                            <option>Lantejoulas</option>
-                        </optgroup>
+                            <button type="button" class="btn-selecionar" onclick="alternarSelecao(this)">
+                                SELECIONAR
+                            </button>
+                        </div>
 
-                        <!-- EFEITOS / ESTILO -->
-                        <optgroup label="Efeitos / Estilo">
-                            <option>Transparente</option>
-                            <option>Degradê</option>
-                            <option>Brilho (Glitter)</option>
-                            <option>Fosco</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- TECIDOS--------------->
-                    <select name="blusa_capuz_tecido" id="">
-                        <option value="" selected>Sem tecido definido</option>
-                        <!------------ BÁSICOS------------------->
-                        <optgroup label="Básicos">
-                            <option value="algodao">Algodão</option>
-                            <option value="poliester">Poliéster</option>
-                            <option value="malha">Malha</option>
-                            <option value="viscose">Viscose</option>
-                        </optgroup>
-                        <!------------ INTERMEDIÁRIOS------------------->
-                        <optgroup label="Intermediários">
-                            <option value="algodao_poliester">Algodão + Poliéster</option>
-                            <option value="algodao_elastano">Algodão + Elastano</option>
-                            <option value="poliester_elastano">Poliéster + Elastano</option>
-                            <option value="viscolycra">Viscolycra</option>
-                            <option value="dry_fit">Dry Fit</option>
-                            <option value="piquet">Piquet</option>
-                        </optgroup>
-                        <!------------ AVANÇADOS------------------->
-                        <optgroup label="Avançados">
-                            <option value="pima">Algodão Pima</option>
-                            <option value="egipcio">Algodão Egípcio</option>
-                            <option value="fleece">Fleece</option>
-                            <option value="moletom_felpado">Moletom Felpado</option>
-                            <option value="linho">Linho</option>
-                            <option value="seda">Seda</option>
-                        </optgroup>
-                        <!------------ SUSTENTÁVEIS------------------->
-                        <optgroup label="Sustentáveis">
-                            <option value="modal">Modal</option>
-                            <option value="fibra_bambu">Fibra de Bambu</option>
-                            <option value="pet_reciclado">Poliéster de PET Reciclado</option>
-                        </optgroup>
-                        <!------------ ESPECIAIS------------------->
-                        <optgroup label="Especiais">
-                            <option value="jeans">Jeans</option>
-                            <option value="sarja">Sarja</option>
-                            <option value="nylon">Nylon</option>
-                            <option value="helanca">Helanca</option>
-                            <option value="suplex">Suplex</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- CORES---------------------->
-                    <select name="blusa_capuz_cor">
-                        <option value="" selected>Sem cor definida</option>
-                        <!-- BÁSICAS -->
-                        <optgroup label="Básicas">
-                            <option value="branco">Branco</option>
-                            <option value="preto">Preto</option>
-                            <option value="cinza">Cinza</option>
-                            <option value="azul">Azul</option>
-                            <option value="vermelho">Vermelho</option>
-                        </optgroup>
-                        <!-- NEUTRAS / SÓBRIAS -->
-                        <optgroup label="Neutras / Sóbrias">
-                            <option value="off_white">Off-white</option>
-                            <option value="bege">Bege</option>
-                            <option value="marrom">Marrom</option>
-                            <option value="caqui">Caqui</option>
-                            <option value="grafite">Grafite</option>
-                        </optgroup>
-                        <!-- INTERMEDIÁRIAS -->
-                        <optgroup label="Intermediárias">
-                            <option value="azul_marinho">Azul Marinho</option>
-                            <option value="verde_militar">Verde Militar</option>
-                            <option value="vinho">Vinho</option>
-                            <option value="mostarda">Mostarda</option>
-                            <option value="rosa_claro">Rosa Claro</option>
-                        </optgroup>
-                        <!-- VIBRANTES -->
-                        <optgroup label="Vibrantes">
-                            <option value="verde_limao">Verde Limão</option>
-                            <option value="azul_ciano">Azul Ciano</option>
-                            <option value="laranja">Laranja</option>
-                            <option value="pink">Pink</option>
-                            <option value="roxo">Roxo</option>
-                        </optgroup>
-                        <!-- ESPECIAIS -->
-                        <optgroup label="Especiais">
-                            <option value="metalico">Metálico</option>
-                            <option value="neon">Neon</option>
-                            <option value="pastel">Pastel</option>
-                            <option value="tie_dye">Tie-dye</option>
-                            <option value="estampado">Estampado</option>
-                        </optgroup>
-                    </select>
+                        <div class="face verso-selecionado">
+                            <h3>QUANTIDADES</h3>
+
+                            <div class="grade-tamanhos-card">
+                                <div class="item-tamanho">
+                                    <label for="blusa_capuz_p">P</label>
+                                    <input type="number" name="blusa_capuz_p" id="blusa_capuz_p" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="blusa_capuz_m">M</label>
+                                    <input type="number" name="blusa_capuz_m" id="blusa_capuz_m" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="blusa_capuz_g">G</label>
+                                    <input type="number" name="blusa_capuz_g" id="blusa_capuz_g" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="blusa_capuz_gg">GG</label>
+                                    <input type="number" name="blusa_capuz_gg" id="blusa_capuz_gg" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="blusa_capuz_g1">G1</label>
+                                    <input type="number" name="blusa_capuz_g1" id="blusa_capuz_g1" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="blusa_capuz_g2">G2</label>
+                                    <input type="number" name="blusa_capuz_g2" id="blusa_capuz_g2" min="0" value="0">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-desmarcar" onclick="alternarSelecao(this)">
+                                Desmarcar
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
-                 <!--------------------MOLETOM C/ CAPUZ -------------->
-                <div class="card"> <!-- cada .card é uma "caixa" de produtos-->
 
-                    <img src="img/moletom.png" alt="">
+                <div class="modelo-card">
+                    <div class="card-inner">
 
-                    <h3>Moletom c/ Capuz</h3>
+                        <div class="face frente">
+                            <img src="img/moletom.png" alt="Moletom c/ Capuz">
+                            <h3>Moletom c/ Capuz</h3>
 
-                    <!------------PERSONALIZACAO-------------- -->
-                    <select name="moletom_capuz_personalizacao" id="">
-                        <option value="" selected>Sem personalização</option>
-                        <optgroup label="Básicos">
-                            <option>Bordado</option>
-                            <option>Silk Screen (Serigrafia)</option>
-                            <option>Estampa Digital (DTG)</option>
-                            <option>Sublimação</option>
-                            <option>Transfer</option>
-                            <option>Vinil Termocolante</option>
-                        </optgroup>
+                            <select name="moletom_capuz_personalizacao" class="select-cor">
+                                <option value="" selected>Sem personalização</option>
+                                <optgroup label="Básicos">
+                                    <option value="bordado">Bordado</option>
+                                    <option value="silk_screen">Silk Screen (Serigrafia)</option>
+                                    <option value="estampa_digital">Estampa Digital (DTG)</option>
+                                    <option value="sublimacao">Sublimação</option>
+                                    <option value="transfer">Transfer</option>
+                                    <option value="vinil_termocolante">Vinil Termocolante</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="relevo_3d_puff">Relevo (3D Puff)</option>
+                                    <option value="bordado_3d">Bordado 3D</option>
+                                    <option value="patch">Patch (Aplicação)</option>
+                                    <option value="termocolante">Termocolante</option>
+                                    <option value="foil">Foil (Metalizado)</option>
+                                    <option value="flocado">Flocado (Aveludado)</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="laser_cut">Laser Cut</option>
+                                    <option value="gravacao_laser">Gravação a Laser</option>
+                                    <option value="estampa_uv">Estampa UV</option>
+                                    <option value="impressao_3d">Impressão 3D</option>
+                                    <option value="pedraria">Pedraria</option>
+                                    <option value="lantejoulas">Lantejoulas</option>
+                                </optgroup>
+                                <optgroup label="Efeitos / Estilo">
+                                    <option value="transparente">Transparente</option>
+                                    <option value="degrade">Degradê</option>
+                                    <option value="brilho">Brilho (Glitter)</option>
+                                    <option value="fosco">Fosco</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- INTERMEDIÁRIOS -->
-                        <optgroup label="Intermediários">
-                            <option>Relevo (3D Puff)</option>
-                            <option>Bordado 3D</option>
-                            <option>Patch (Aplicação)</option>
-                            <option>Termocolante</option>
-                            <option>Foil (Metalizado)</option>
-                            <option>Flocado (Aveludado)</option>
-                        </optgroup>
+                            <select name="moletom_capuz_tecido" class="select-cor">
+                                <option value="" selected>Sem tecido definido</option>
+                                <optgroup label="Básicos">
+                                    <option value="algodao">Algodão</option>
+                                    <option value="poliester">Poliéster</option>
+                                    <option value="malha">Malha</option>
+                                    <option value="viscose">Viscose</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="algodao_poliester">Algodão + Poliéster</option>
+                                    <option value="algodao_elastano">Algodão + Elastano</option>
+                                    <option value="poliester_elastano">Poliéster + Elastano</option>
+                                    <option value="viscolycra">Viscolycra</option>
+                                    <option value="dry_fit">Dry Fit</option>
+                                    <option value="piquet">Piquet</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="pima">Algodão Pima</option>
+                                    <option value="egipcio">Algodão Egípcio</option>
+                                    <option value="fleece">Fleece</option>
+                                    <option value="moletom_felpado">Moletom Felpado</option>
+                                    <option value="linho">Linho</option>
+                                    <option value="seda">Seda</option>
+                                </optgroup>
+                                <optgroup label="Sustentáveis">
+                                    <option value="modal">Modal</option>
+                                    <option value="fibra_bambu">Fibra de Bambu</option>
+                                    <option value="pet_reciclado">Poliéster de PET Reciclado</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="jeans">Jeans</option>
+                                    <option value="sarja">Sarja</option>
+                                    <option value="nylon">Nylon</option>
+                                    <option value="helanca">Helanca</option>
+                                    <option value="suplex">Suplex</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- AVANÇADOS -->
-                        <optgroup label="Avançados">
-                            <option>Laser Cut</option>
-                            <option>Gravação a Laser</option>
-                            <option>Estampa UV</option>
-                            <option>Impressão 3D</option>
-                            <option>Pedraria</option>
-                            <option>Lantejoulas</option>
-                        </optgroup>
+                            <select name="moletom_capuz_cor" class="select-cor">
+                                <option value="" selected>Sem cor definida</option>
+                                <optgroup label="Básicas">
+                                    <option value="branco">Branco</option>
+                                    <option value="preto">Preto</option>
+                                    <option value="cinza">Cinza</option>
+                                    <option value="azul">Azul</option>
+                                    <option value="vermelho">Vermelho</option>
+                                </optgroup>
+                                <optgroup label="Neutras / Sóbrias">
+                                    <option value="off_white">Off-white</option>
+                                    <option value="bege">Bege</option>
+                                    <option value="marrom">Marrom</option>
+                                    <option value="caqui">Caqui</option>
+                                    <option value="grafite">Grafite</option>
+                                </optgroup>
+                                <optgroup label="Intermediárias">
+                                    <option value="azul_marinho">Azul Marinho</option>
+                                    <option value="verde_militar">Verde Militar</option>
+                                    <option value="vinho">Vinho</option>
+                                    <option value="mostarda">Mostarda</option>
+                                    <option value="rosa_claro">Rosa Claro</option>
+                                </optgroup>
+                                <optgroup label="Vibrantes">
+                                    <option value="verde_limao">Verde Limão</option>
+                                    <option value="azul_ciano">Azul Ciano</option>
+                                    <option value="laranja">Laranja</option>
+                                    <option value="pink">Pink</option>
+                                    <option value="roxo">Roxo</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="metalico">Metálico</option>
+                                    <option value="neon">Neon</option>
+                                    <option value="pastel">Pastel</option>
+                                    <option value="tie_dye">Tie-dye</option>
+                                    <option value="estampado">Estampado</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- EFEITOS / ESTILO -->
-                        <optgroup label="Efeitos / Estilo">
-                            <option>Transparente</option>
-                            <option>Degradê</option>
-                            <option>Brilho (Glitter)</option>
-                            <option>Fosco</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- TECIDOS--------------->
-                    <select name="moletom_capuz_tecido" id="">
-                        <option value="" selected>Sem tecido definido</option>
-                        <!------------ BÁSICOS------------------->
-                        <optgroup label="Básicos">
-                            <option value="algodao">Algodão</option>
-                            <option value="poliester">Poliéster</option>
-                            <option value="malha">Malha</option>
-                            <option value="viscose">Viscose</option>
-                        </optgroup>
-                        <!------------ INTERMEDIÁRIOS------------------->
-                        <optgroup label="Intermediários">
-                            <option value="algodao_poliester">Algodão + Poliéster</option>
-                            <option value="algodao_elastano">Algodão + Elastano</option>
-                            <option value="poliester_elastano">Poliéster + Elastano</option>
-                            <option value="viscolycra">Viscolycra</option>
-                            <option value="dry_fit">Dry Fit</option>
-                            <option value="piquet">Piquet</option>
-                        </optgroup>
-                        <!------------ AVANÇADOS------------------->
-                        <optgroup label="Avançados">
-                            <option value="pima">Algodão Pima</option>
-                            <option value="egipcio">Algodão Egípcio</option>
-                            <option value="fleece">Fleece</option>
-                            <option value="moletom_felpado">Moletom Felpado</option>
-                            <option value="linho">Linho</option>
-                            <option value="seda">Seda</option>
-                        </optgroup>
-                        <!------------ SUSTENTÁVEIS------------------->
-                        <optgroup label="Sustentáveis">
-                            <option value="modal">Modal</option>
-                            <option value="fibra_bambu">Fibra de Bambu</option>
-                            <option value="pet_reciclado">Poliéster de PET Reciclado</option>
-                        </optgroup>
-                        <!------------ ESPECIAIS------------------->
-                        <optgroup label="Especiais">
-                            <option value="jeans">Jeans</option>
-                            <option value="sarja">Sarja</option>
-                            <option value="nylon">Nylon</option>
-                            <option value="helanca">Helanca</option>
-                            <option value="suplex">Suplex</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- CORES---------------------->
-                    <select name="moletom_capuz_cor">
-                        <option value="" selected>Sem cor definida</option>
-                        <!-- BÁSICAS -->
-                        <optgroup label="Básicas">
-                            <option value="branco">Branco</option>
-                            <option value="preto">Preto</option>
-                            <option value="cinza">Cinza</option>
-                            <option value="azul">Azul</option>
-                            <option value="vermelho">Vermelho</option>
-                        </optgroup>
-                        <!-- NEUTRAS / SÓBRIAS -->
-                        <optgroup label="Neutras / Sóbrias">
-                            <option value="off_white">Off-white</option>
-                            <option value="bege">Bege</option>
-                            <option value="marrom">Marrom</option>
-                            <option value="caqui">Caqui</option>
-                            <option value="grafite">Grafite</option>
-                        </optgroup>
-                        <!-- INTERMEDIÁRIAS -->
-                        <optgroup label="Intermediárias">
-                            <option value="azul_marinho">Azul Marinho</option>
-                            <option value="verde_militar">Verde Militar</option>
-                            <option value="vinho">Vinho</option>
-                            <option value="mostarda">Mostarda</option>
-                            <option value="rosa_claro">Rosa Claro</option>
-                        </optgroup>
-                        <!-- VIBRANTES -->
-                        <optgroup label="Vibrantes">
-                            <option value="verde_limao">Verde Limão</option>
-                            <option value="azul_ciano">Azul Ciano</option>
-                            <option value="laranja">Laranja</option>
-                            <option value="pink">Pink</option>
-                            <option value="roxo">Roxo</option>
-                        </optgroup>
-                        <!-- ESPECIAIS -->
-                        <optgroup label="Especiais">
-                            <option value="metalico">Metálico</option>
-                            <option value="neon">Neon</option>
-                            <option value="pastel">Pastel</option>
-                            <option value="tie_dye">Tie-dye</option>
-                            <option value="estampado">Estampado</option>
-                        </optgroup>
-                    </select>
+                            <button type="button" class="btn-selecionar" onclick="alternarSelecao(this)">
+                                SELECIONAR
+                            </button>
+                        </div>
+
+                        <div class="face verso-selecionado">
+                            <h3>QUANTIDADES</h3>
+
+                            <div class="grade-tamanhos-card">
+                                <div class="item-tamanho">
+                                    <label for="moletom_capuz_p">P</label>
+                                    <input type="number" name="moletom_capuz_p" id="moletom_capuz_p" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="moletom_capuz_m">M</label>
+                                    <input type="number" name="moletom_capuz_m" id="moletom_capuz_m" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="moletom_capuz_g">G</label>
+                                    <input type="number" name="moletom_capuz_g" id="moletom_capuz_g" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="moletom_capuz_gg">GG</label>
+                                    <input type="number" name="moletom_capuz_gg" id="moletom_capuz_gg" min="0"
+                                        value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="moletom_capuz_g1">G1</label>
+                                    <input type="number" name="moletom_capuz_g1" id="moletom_capuz_g1" min="0"
+                                        value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="moletom_capuz_g2">G2</label>
+                                    <input type="number" name="moletom_capuz_g2" id="moletom_capuz_g2" min="0"
+                                        value="0">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-desmarcar" onclick="alternarSelecao(this)">
+                                Desmarcar
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
-                 <!--------------------CALÇA -------------->
-                <div class="card"> <!-- cada .card é uma "caixa" de produtos-->
+                <div class="modelo-card">
+                    <div class="card-inner">
 
-                    <img src="img/calça.png" alt="">
+                        <div class="face frente">
+                            <img src="img/calça.png" alt="Calça">
+                            <h3>Calça</h3>
 
-                    <h3>Calça</h3>
+                            <select name="calca_personalizacao" class="select-cor">
+                                <option value="" selected>Sem personalização</option>
+                                <optgroup label="Básicos">
+                                    <option value="bordado">Bordado</option>
+                                    <option value="silk_screen">Silk Screen (Serigrafia)</option>
+                                    <option value="estampa_digital">Estampa Digital (DTG)</option>
+                                    <option value="sublimacao">Sublimação</option>
+                                    <option value="transfer">Transfer</option>
+                                    <option value="vinil_termocolante">Vinil Termocolante</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="relevo_3d_puff">Relevo (3D Puff)</option>
+                                    <option value="bordado_3d">Bordado 3D</option>
+                                    <option value="patch">Patch (Aplicação)</option>
+                                    <option value="termocolante">Termocolante</option>
+                                    <option value="foil">Foil (Metalizado)</option>
+                                    <option value="flocado">Flocado (Aveludado)</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="laser_cut">Laser Cut</option>
+                                    <option value="gravacao_laser">Gravação a Laser</option>
+                                    <option value="estampa_uv">Estampa UV</option>
+                                    <option value="impressao_3d">Impressão 3D</option>
+                                    <option value="pedraria">Pedraria</option>
+                                    <option value="lantejoulas">Lantejoulas</option>
+                                </optgroup>
+                                <optgroup label="Efeitos / Estilo">
+                                    <option value="transparente">Transparente</option>
+                                    <option value="degrade">Degradê</option>
+                                    <option value="brilho">Brilho (Glitter)</option>
+                                    <option value="fosco">Fosco</option>
+                                </optgroup>
+                            </select>
 
-                    <!------------PERSONALIZACAO-------------- -->
-                    <select name="calca_personalizacao" id="">
-                        <option value="" selected>Sem personalização</option>
-                        <optgroup label="Básicos">
-                            <option>Bordado</option>
-                            <option>Silk Screen (Serigrafia)</option>
-                            <option>Estampa Digital (DTG)</option>
-                            <option>Sublimação</option>
-                            <option>Transfer</option>
-                            <option>Vinil Termocolante</option>
-                        </optgroup>
+                            <select name="calca_tecido" class="select-cor">
+                                <option value="" selected>Sem tecido definido</option>
+                                <optgroup label="Básicos">
+                                    <option value="algodao">Algodão</option>
+                                    <option value="poliester">Poliéster</option>
+                                    <option value="malha">Malha</option>
+                                    <option value="viscose">Viscose</option>
+                                </optgroup>
+                                <optgroup label="Intermediários">
+                                    <option value="algodao_poliester">Algodão + Poliéster</option>
+                                    <option value="algodao_elastano">Algodão + Elastano</option>
+                                    <option value="poliester_elastano">Poliéster + Elastano</option>
+                                    <option value="viscolycra">Viscolycra</option>
+                                    <option value="dry_fit">Dry Fit</option>
+                                    <option value="piquet">Piquet</option>
+                                </optgroup>
+                                <optgroup label="Avançados">
+                                    <option value="pima">Algodão Pima</option>
+                                    <option value="egipcio">Algodão Egípcio</option>
+                                    <option value="fleece">Fleece</option>
+                                    <option value="moletom_felpado">Moletom Felpado</option>
+                                    <option value="linho">Linho</option>
+                                    <option value="seda">Seda</option>
+                                </optgroup>
+                                <optgroup label="Sustentáveis">
+                                    <option value="modal">Modal</option>
+                                    <option value="fibra_bambu">Fibra de Bambu</option>
+                                    <option value="pet_reciclado">Poliéster de PET Reciclado</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="jeans">Jeans</option>
+                                    <option value="sarja">Sarja</option>
+                                    <option value="nylon">Nylon</option>
+                                    <option value="helanca">Helanca</option>
+                                    <option value="suplex">Suplex</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- INTERMEDIÁRIOS -->
-                        <optgroup label="Intermediários">
-                            <option>Relevo (3D Puff)</option>
-                            <option>Bordado 3D</option>
-                            <option>Patch (Aplicação)</option>
-                            <option>Termocolante</option>
-                            <option>Foil (Metalizado)</option>
-                            <option>Flocado (Aveludado)</option>
-                        </optgroup>
+                            <select name="calca_cor" class="select-cor">
+                                <option value="" selected>Sem cor definida</option>
+                                <optgroup label="Básicas">
+                                    <option value="branco">Branco</option>
+                                    <option value="preto">Preto</option>
+                                    <option value="cinza">Cinza</option>
+                                    <option value="azul">Azul</option>
+                                    <option value="vermelho">Vermelho</option>
+                                </optgroup>
+                                <optgroup label="Neutras / Sóbrias">
+                                    <option value="off_white">Off-white</option>
+                                    <option value="bege">Bege</option>
+                                    <option value="marrom">Marrom</option>
+                                    <option value="caqui">Caqui</option>
+                                    <option value="grafite">Grafite</option>
+                                </optgroup>
+                                <optgroup label="Intermediárias">
+                                    <option value="azul_marinho">Azul Marinho</option>
+                                    <option value="verde_militar">Verde Militar</option>
+                                    <option value="vinho">Vinho</option>
+                                    <option value="mostarda">Mostarda</option>
+                                    <option value="rosa_claro">Rosa Claro</option>
+                                </optgroup>
+                                <optgroup label="Vibrantes">
+                                    <option value="verde_limao">Verde Limão</option>
+                                    <option value="azul_ciano">Azul Ciano</option>
+                                    <option value="laranja">Laranja</option>
+                                    <option value="pink">Pink</option>
+                                    <option value="roxo">Roxo</option>
+                                </optgroup>
+                                <optgroup label="Especiais">
+                                    <option value="metalico">Metálico</option>
+                                    <option value="neon">Neon</option>
+                                    <option value="pastel">Pastel</option>
+                                    <option value="tie_dye">Tie-dye</option>
+                                    <option value="estampado">Estampado</option>
+                                </optgroup>
+                            </select>
 
-                        <!-- AVANÇADOS -->
-                        <optgroup label="Avançados">
-                            <option>Laser Cut</option>
-                            <option>Gravação a Laser</option>
-                            <option>Estampa UV</option>
-                            <option>Impressão 3D</option>
-                            <option>Pedraria</option>
-                            <option>Lantejoulas</option>
-                        </optgroup>
+                            <button type="button" class="btn-selecionar" onclick="alternarSelecao(this)">
+                                SELECIONAR
+                            </button>
+                        </div>
 
-                        <!-- EFEITOS / ESTILO -->
-                        <optgroup label="Efeitos / Estilo">
-                            <option>Transparente</option>
-                            <option>Degradê</option>
-                            <option>Brilho (Glitter)</option>
-                            <option>Fosco</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- TECIDOS--------------->
-                    <select name="calca_tecido" id="">
-                        <option value="" selected>Sem tecido definido</option>
-                        <!------------ BÁSICOS------------------->
-                        <optgroup label="Básicos">
-                            <option value="algodao">Algodão</option>
-                            <option value="poliester">Poliéster</option>
-                            <option value="malha">Malha</option>
-                            <option value="viscose">Viscose</option>
-                        </optgroup>
-                        <!------------ INTERMEDIÁRIOS------------------->
-                        <optgroup label="Intermediários">
-                            <option value="algodao_poliester">Algodão + Poliéster</option>
-                            <option value="algodao_elastano">Algodão + Elastano</option>
-                            <option value="poliester_elastano">Poliéster + Elastano</option>
-                            <option value="viscolycra">Viscolycra</option>
-                            <option value="dry_fit">Dry Fit</option>
-                            <option value="piquet">Piquet</option>
-                        </optgroup>
-                        <!------------ AVANÇADOS------------------->
-                        <optgroup label="Avançados">
-                            <option value="pima">Algodão Pima</option>
-                            <option value="egipcio">Algodão Egípcio</option>
-                            <option value="fleece">Fleece</option>
-                            <option value="moletom_felpado">Moletom Felpado</option>
-                            <option value="linho">Linho</option>
-                            <option value="seda">Seda</option>
-                        </optgroup>
-                        <!------------ SUSTENTÁVEIS------------------->
-                        <optgroup label="Sustentáveis">
-                            <option value="modal">Modal</option>
-                            <option value="fibra_bambu">Fibra de Bambu</option>
-                            <option value="pet_reciclado">Poliéster de PET Reciclado</option>
-                        </optgroup>
-                        <!------------ ESPECIAIS------------------->
-                        <optgroup label="Especiais">
-                            <option value="jeans">Jeans</option>
-                            <option value="sarja">Sarja</option>
-                            <option value="nylon">Nylon</option>
-                            <option value="helanca">Helanca</option>
-                            <option value="suplex">Suplex</option>
-                        </optgroup>
-                    </select>
-                    <!----------------- CORES---------------------->
-                    <select name="calca_cor">
-                        <option value="" selected>Sem cor definida</option>
-                        <!-- BÁSICAS -->
-                        <optgroup label="Básicas">
-                            <option value="branco">Branco</option>
-                            <option value="preto">Preto</option>
-                            <option value="cinza">Cinza</option>
-                            <option value="azul">Azul</option>
-                            <option value="vermelho">Vermelho</option>
-                        </optgroup>
-                        <!-- NEUTRAS / SÓBRIAS -->
-                        <optgroup label="Neutras / Sóbrias">
-                            <option value="off_white">Off-white</option>
-                            <option value="bege">Bege</option>
-                            <option value="marrom">Marrom</option>
-                            <option value="caqui">Caqui</option>
-                            <option value="grafite">Grafite</option>
-                        </optgroup>
-                        <!-- INTERMEDIÁRIAS -->
-                        <optgroup label="Intermediárias">
-                            <option value="azul_marinho">Azul Marinho</option>
-                            <option value="verde_militar">Verde Militar</option>
-                            <option value="vinho">Vinho</option>
-                            <option value="mostarda">Mostarda</option>
-                            <option value="rosa_claro">Rosa Claro</option>
-                        </optgroup>
-                        <!-- VIBRANTES -->
-                        <optgroup label="Vibrantes">
-                            <option value="verde_limao">Verde Limão</option>
-                            <option value="azul_ciano">Azul Ciano</option>
-                            <option value="laranja">Laranja</option>
-                            <option value="pink">Pink</option>
-                            <option value="roxo">Roxo</option>
-                        </optgroup>
-                        <!-- ESPECIAIS -->
-                        <optgroup label="Especiais">
-                            <option value="metalico">Metálico</option>
-                            <option value="neon">Neon</option>
-                            <option value="pastel">Pastel</option>
-                            <option value="tie_dye">Tie-dye</option>
-                            <option value="estampado">Estampado</option>
-                        </optgroup>
-                    </select>
+                        <div class="face verso-selecionado">
+                            <h3>QUANTIDADES</h3>
+
+                            <div class="grade-tamanhos-card">
+                                <div class="item-tamanho">
+                                    <label for="calca_p">P</label>
+                                    <input type="number" name="calca_p" id="calca_p" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="calca_m">M</label>
+                                    <input type="number" name="calca_m" id="calca_m" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="calca_g">G</label>
+                                    <input type="number" name="calca_g" id="calca_g" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="calca_gg">GG</label>
+                                    <input type="number" name="calca_gg" id="calca_gg" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="calca_g1">G1</label>
+                                    <input type="number" name="calca_g1" id="calca_g1" min="0" value="0">
+                                </div>
+                                <div class="item-tamanho">
+                                    <label for="calca_g2">G2</label>
+                                    <input type="number" name="calca_g2" id="calca_g2" min="0" value="0">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-desmarcar" onclick="alternarSelecao(this)">
+                                Desmarcar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="boas-vindas">
+                    <p>Pedido para o cliente: <span id="clienteNomeDisplay">Aguardando...</span></p>
+                </div>
+
+                <div class="boas-vindas">
+                    <p>Pedido para o cliente: <span id="clienteNomeDisplay1">Aguardando...</span></p>
                 </div>
 
             </div>
 
+            <!-- ------------------------------CONTAINER 3--------------------------------->
 
-        </div>
+            <div class="container03">
+                <h3>3. Upload da Imagem</h3>
 
-        <!-- ------------------------------CONTAINER 3--------------------------------->
+                <div class="upload-img" onclick="document.getElementById('input-arte').click()">
+                    <input type="file" id="input-arte" name="arte_cliente" accept=".png, .ai, .pdf"
+                        style="display: none;">
 
-        <div class="container03">
-            <h3>3. Upload da Imagem</h3>
-
-            <div class="upload-img">
-
-                <p class="upload-texto-principal">
-                    <strong>Arraste sua arte aqui</strong> <a href="">ou clique para enviar</a>
-                </p>
-                <p class="upload-legendas">Formatos aceitos: PNG, AI e PDF.</p>
-            </div>
-
-            <p class="move">Quantidade e Tamanho:</p>
-
-            <div class="seletor-tamanhos">
-
-                <div class="opcoes-tamanhos">
-
-                    <div class="tamanho-grupo">
-                        <input type="checkbox" name="tamanho[]" id="p" value="p">
-                        <label for="p">P</label>
-                        <input type="number" name="qtd-p" class="input-qtd" min="0" value="0">
-                    </div>
-
-                    <div class="tamanho-grupo">
-                        <input type="checkbox" name="tamanho[]" id="m" value="m">
-                        <label for="m">M</label>
-                        <input type="number" name="qtd-m" class="input-qtd" min="0" value="0">
-                    </div>
-
-                    <div class="tamanho-grupo">
-                        <input type="checkbox" name="tamanho[]" id="g" value="g">
-                        <label for="g">G</label>
-                        <input type="number" name="qtd-g" class="input-qtd" min="0" value="0">
-                    </div>
-
-                    <div class="tamanho-grupo">
-                        <input type="checkbox" name="tamanho[]" id="gg" value="gg">
-                        <label for="gg">GG</label>
-                        <input type="number" name="qtd-gg" class="input-qtd" min="0" value="0">
-                    </div>
-
-                    <div class="tamanho-grupo">
-                        <input type="checkbox" name="tamanho[]" id="g1" value="g1">
-                        <label for="g1">G1</label>
-                        <input type="number" name="qtd-g1" class="input-qtd" min="0" value="0">
-                    </div>
-
-                    <div class="tamanho-grupo">
-                        <input type="checkbox" name="tamanho" id="g2" value="g2">
-                        <label for="g2">G2</label>
-                        <input type="number" name="qtd-g2" class="input-qtd" min="0" value="0">
-                    </div>
-
-                    <div class="tamanho-grupo">
-                        <input type="checkbox" name="tamanho" id="g3" value="g3">
-                        <label for="g3">G3</label>
-                        <input type="number" name="qtd-g3" class="input-qtd" min="0" value="0">
-                    </div>
+                    <p class="upload-texto-principal">
+                        <strong>Arraste sua arte aqui</strong>
+                        <span style="color: blue; text-decoration: underline; cursor: pointer;">ou clique para
+                            enviar</span>
+                    </p>
+                    <p class="upload-legendas">Formatos aceitos: PNG, AI e PDF.</p>
                 </div>
 
+                <div class="botoes">
+                    <button class="open" id="botao-voltar-form" type="button">
+                        <b>Voltar</b>
+                    </button>
+
+                    <button class="next" id="botao-continuar-ficha" type="button">
+                        <b>Revisar ficha técnica</b>
+                    </button>
+                </div>
             </div>
 
-
-            <div class="botoes">
-
-                <button class="open" id="botao-voltar-form" type="reset">
-                    <b>Voltar</b>
-                </button>
-
-                <button class="next" id="botao-continuar-modal">
-                    <b>Revisar ficha técnica</b>
-                </button>
-
-            </div>
-
-        </div>
-
-        <script src="js/script1.js"></script>
+            <script src="js/novoPedido.js"></script>
+        </form>
+    </main>
 </body>
 
 </html>

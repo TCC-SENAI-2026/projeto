@@ -1,257 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <title>Sistema E-Threads - Seleção</title>
+    <style>
+        /* --- Cores e Variáveis --- */
+        :root {
+            --azul-primario: #001f3f;
+            --azul-claro: #007bff;
+            --verde-sucesso: #2ecc71;
+            --branco-gelo: #f8f9fa;
+            --sombra: 0 10px 20px rgba(0,0,0,0.3);
+        }
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(#0a0a2a, #1a1a4a);
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            gap: 20px; /* Espaço entre as caixas */
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: radial-gradient(circle, #001f3f 0%, #00001a 100%);
+            margin: 0;
+        }
 
-    .container {
-      background: #eee;
-      margin: 40px auto;
-      padding: 20px;
-      width: 90%;
-      max-width: 1100px;
-      border-radius: 12px;
-    }
+        /* 1. O Container - Aqui acontece o "Aumentar" */
+        .cartao-container {
+            width: 250px;
+            height: 350px;
+            perspective: 1000px;
+            transition: transform 0.3s ease; /* Transição suave para o zoom */
+        }
 
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+        /* Efeito de aumentar quando passa o mouse */
+        .cartao-container:hover {
+            transform: scale(1.08); /* Aumenta 8% do tamanho original */
+            z-index: 10; /* Garante que ela fique na frente das outras ao aumentar */
+        }
 
-    /* GRID */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
+        /* 2. O Corpo que gira */
+        .cartao-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
 
-    /* CARD */
-    .card {
-      background: #f5f5f5;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      padding: 15px;
-      text-align: center;
-      transition: 0.3s;
-    }
+        .cartao-inner.selecionado {
+            transform: rotateY(180deg);
+        }
 
-    .card:hover {
-      transform: scale(1.03);
-      border-color: #00c853;
-    }
+        /* 3. Estilo das Faces */
+        .face-frente, .face-verso {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: var(--sombra);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    /* IMAGEM */
-    .card img {
-      width: 80px;
-      margin-bottom: 10px;
-    }
+        /* Face da Frente - Estilo Limpo */
+        .face-frente {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            color: var(--azul-primario);
+        }
 
-    /* TITULO */
-    .card h3 {
-      margin-bottom: 10px;
-    }
+        .img-produto {
+            width: 130px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+            margin-bottom: 15px;
+        }
 
-    /* SELECT */
-    .card select {
-      width: 100%;
-      margin: 5px 0;
-      padding: 6px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      cursor: pointer;
-    }
-  table {
-    border-collapse: collapse;
-    width: 50%;
-  }
+        .btn-selecionar {
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 2px solid var(--azul-claro);
+            background: transparent;
+            color: var(--azul-claro);
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
 
-  th, td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: left;
-  }
+        .btn-selecionar:hover {
+            background: var(--azul-claro);
+            color: white;
+        }
 
-  th {
-    background-color: #f2f2f2;
-  }
-</style>
-  </style>
+        /* Face do Verso - Estilo Sucesso */
+        .face-verso {
+            background: linear-gradient(145deg, #27ae60, #2ecc71);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .icon-check {
+            font-size: 90px;
+            margin-bottom: 10px;
+        }
+
+        .btn-voltar {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <h2>1. Selecione o modelo</h2>
 
-    <div class="grid">
-
-      <!-- Card -->
-      <div class="card">
-        <img src="https://cdn-icons-png.flaticon.com/512/892/892458.png">
-        <h3>Camiseta</h3>
-
-        <select>
-          <option value="Selecione a personalização"></option>
-        </select>
-
-        <select>
-          <option>Tecido</option>
-          <option>Algodão</option>
-          <option>Poliéster</option>
-        </select>
-
-        <select>
-          <option>Cor</option>
-          <option>Branco</option>
-          <option>Preto</option>
-        </select>
-      </div>
-
-      <div class="card">
-        <img src="https://cdn-icons-png.flaticon.com/512/892/892463.png">
-        <h3>Camisa/Longa</h3>
-
-        <select>
-          <option>Personalização</option>
-          <option>Bordado</option>
-          <option>Transparente</option>
-        </select>
-
-        <select>
-          <option>Tecido</option>
-          <option>Algodão</option>
-          <option>Poliéster</option>
-        </select>
-
-        <select>
-          <option>Cor</option>
-          <option>Branco</option>
-          <option>Preto</option>
-        </select>
-      </div>
-
-      <div class="card">
-        <img src="https://cdn-icons-png.flaticon.com/512/892/892472.png">
-        <h3>Blusa</h3>
-
-        <select>
-          <option>Personalização</option>
-          <option>Bordado</option>
-          <option>Transparente</option>
-        </select>
-
-        <select>
-          <option>Tecido</option>
-          <option>Algodão</option>
-          <option>Poliéster</option>
-        </select>
-
-        <select>
-          <option>Cor</option>
-          <option>Branco</option>
-          <option>Preto</option>
-        </select>
-      </div>
-
-      <div class="card">
-        <img src="https://cdn-icons-png.flaticon.com/512/892/892458.png">
-        <h3>Camisa</h3>
-
-        <select>
-          <option>Personalização</option>
-          <option>Bordado</option>
-          <option>Transparente</option>
-        </select>
-
-        <select>
-          <option>Tecido</option>
-          <option>Algodão</option>
-          <option>Poliéster</option>
-        </select>
-
-        <select>
-          <option>Cor</option>
-          <option>Branco</option>
-          <option>Preto</option>
-        </select>
-      </div>
-
-      <div class="card">
-        <img src="https://cdn-icons-png.flaticon.com/512/892/892479.png">
-        <h3>Moletom</h3>
-
-        <select>
-          <option>Personalização</option>
-          <option>Bordado</option>
-          <option>Transparente</option>
-        </select>
-
-        <select>
-          <option>Tecido</option>
-          <option>Algodão</option>
-          <option>Poliéster</option>
-        </select>
-
-        <select>
-          <option>Cor</option>
-          <option>Branco</option>
-          <option>Preto</option>
-        </select>
-      </div>
-
-      <div class="card">
-        <img src="https://cdn-icons-png.flaticon.com/512/892/892488.png">
-        <h3>Calça</h3>
-
-        <select>
-          <option>Personalização</option>
-          <option>Bordado</option>
-          <option>Transparente</option>
-        </select>
-
-        <select>
-          <option>Tecido</option>
-          <option>Algodão</option>
-          <option>Poliéster</option>
-        </select>
-
-        <select>
-          <option>Cor</option>
-          <option>Branco</option>
-          <option>Preto</option>
-        </select>
-      </div>
-
+    <div class="cartao-container">
+        <div class="cartao-inner">
+            <div class="face-frente">
+                <img src="https://cdn-icons-png.flaticon.com/512/2503/2503380.png" class="img-produto">
+                <h3>Camiseta</h3>
+                <button class="btn-selecionar">Selecionar</button>
+            </div>
+            <div class="face-verso">
+                <div class="icon-check">✓</div>
+                <strong>SELECIONADO</strong>
+                <p>Tamanho: M | Cor: Azul</p>
+                <button class="btn-voltar">Desmarcar</button>
+            </div>
+        </div>
     </div>
-  </div>
-  <table>
-    <tr>
-      <th>Nome</th>
-      <th>Idade</th>
-      <th>Cidade</th>
-    </tr>
 
-    <tr>
-      <td>João</td>
-      <td>25</td>
-      <td>São Paulo</td>
-    </tr>
+    <div class="cartao-container">
+        <div class="cartao-inner">
+            <div class="face-frente">
+                <img src="https://cdn-icons-png.flaticon.com/512/3124/3124373.png" class="img-produto">
+                <h3>Calça Jeans</h3>
+                <button class="btn-selecionar">Selecionar</button>
+            </div>
+            <div class="face-verso">
+                <div class="icon-check">✓</div>
+                <strong>SELECIONADO</strong>
+                <p>Tamanho: 42 | Cor: Preta</p>
+                <button class="btn-voltar">Desmarcar</button>
+            </div>
+        </div>
+    </div>
 
-    <tr>
-      <td>Maria</td>
-      <td>30</td>
-      <td>Rio de Janeiro</td>
-    </tr>
-  </table>
+    <script>
+      // 1. Pegamos todos os botões de "Selecionar" e de "Voltar"
+const botoesGirar = document.querySelectorAll('.btn-selecionar, .btn-voltar');
+
+// 2. Para cada um desses botões...
+botoesGirar.forEach(function(botao) {
+    
+    // 3. Adicionamos o evento de clique
+    botao.addEventListener('click', function(event) {
+        
+        // Lembra do preventDefault? 
+        // Aqui ele garante que o botão não tente "enviar" nada, apenas execute o JS.
+        event.preventDefault();
+
+        // 4. A MÁGICA: O comando .closest('.cartao-inner') 
+        // Ele funciona como um GPS: "A partir deste botão, suba no HTML até encontrar 
+        // o elemento pai que tenha a classe .cartao-inner".
+        const cartaoParaGirar = botao.closest('.cartao-inner');
+
+        // 5. Agora sim, giramos apenas o cartão que é "dono" desse botão
+        cartaoParaGirar.classList.toggle('selecionado');
+        
+        // Pequeno truque: usamos stopPropagation para o clique 
+        // não "vazar" para outros elementos.
+        event.stopPropagation();
+    });
+    
+});
+    </script>
 
 </body>
-
 </html>
