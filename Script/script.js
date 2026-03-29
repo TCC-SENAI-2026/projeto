@@ -1,5 +1,3 @@
-// graficos
-
 
 // pdf
 
@@ -77,6 +75,31 @@ function fecharModalFuncionario() {
     }
 }
 
+
+
+// função genérica para abrir qualquer modal pelo id
+function abrirModal(idModal) {
+    const modal = document.getElementById(idModal);
+
+    if (modal) {
+        modal.classList.add("active");
+    }
+}
+
+// função genérica para fechar qualquer modal pelo id
+function fecharModal(idModal) {
+    const modal = document.getElementById(idModal);
+
+    if (!modal) return;
+
+    modal.classList.remove("active");
+
+    const form = modal.querySelector("form");
+    if (form) {
+        form.reset();
+    }
+}
+
 // abas gerais das páginas
 
 function openTab(tabId, el) {
@@ -100,6 +123,12 @@ function openTab(tabId, el) {
 
     if (contadorEstoque && document.querySelector(".estoque-row")) {
         contadorEstoque.textContent = `(${itensEstoque.length})`;
+    }
+
+    // ACRESCENTADO: muda texto do botão do estoque automaticamente
+    const botaoAcaoEstoque = document.getElementById("estoqueActionButton");
+    if (botaoAcaoEstoque) {
+        botaoAcaoEstoque.textContent = tabId === "movimentacoes" ? "+ Movimentação" : "+ Item";
     }
 }
 
@@ -141,9 +170,156 @@ function atualizarContadorFuncionarios() {
     }
 }
 
+// contador genérico
+function atualizarContadorLista(seletorItens, seletorContador) {
+    const itens = document.querySelectorAll(seletorItens);
+    const contador = document.querySelector(seletorContador);
+
+    if (contador) {
+        contador.textContent = itens.length;
+    }
+}
+
 // variáveis globais
 let clienteSelecionadoId = null;
 let funcionarioSelecionadoId = null;
+
+
+
+function inicializarAberturaDeModal() {
+    document.querySelectorAll("[data-modal-open]").forEach(botao => {
+        botao.addEventListener("click", () => abrirModal(botao.dataset.modalOpen));
+    });
+}
+
+function inicializarFechamentoDeModal() {
+    document.querySelectorAll("[data-modal-close]").forEach(botao => {
+        botao.addEventListener("click", () => fecharModal(botao.dataset.modalClose));
+    });
+}
+
+function inicializarFechamentoAoClicarFora() {
+    document.querySelectorAll(".modal-overlay").forEach(modal => {
+        modal.addEventListener("click", event => {
+            if (event.target === modal && modal.id) {
+                fecharModal(modal.id);
+            }
+        });
+    });
+}
+
+function inicializarFormularioModal(formId, modalId) {
+    const form = document.getElementById(formId);
+
+    if (form) {
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+            fecharModal(modalId);
+        });
+    }
+}
+
+function inicializarEstados() {
+    const selectEstado = document.getElementById("estado");
+
+    if (!selectEstado) {
+        return;
+    }
+
+    fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
+        .then(res => res.json())
+        .then(estados => {
+            estados.sort((a, b) => a.nome.localeCompare(b.nome));
+
+            selectEstado.innerHTML = '<option value="">Selecione</option>';
+
+            estados.forEach(estado => {
+                const option = document.createElement("option");
+                option.value = estado.sigla;
+                option.textContent = estado.sigla;
+                selectEstado.appendChild(option);
+            });
+        })
+        .catch(() => {
+            selectEstado.innerHTML = '<option value="">Não foi possível carregar</option>';
+        });
+}
+
+function inicializarBuscaCep() {
+    const inputCep = document.getElementById("cep");
+    const selectEstado = document.getElementById("estado");
+
+    if (!inputCep) {
+        return;
+    }
+
+    inputCep.addEventListener("blur", () => {
+        const cep = inputCep.value.replace(/\D/g, "");
+
+        if (cep.length !== 8) {
+            return;
+        }
+
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(res => res.json())
+            .then(dados => {
+                if (dados.erro) {
+                    alert("CEP não encontrado.");
+                    return;
+                }
+
+                const municipio = document.getElementById("municipio");
+                const rua = document.getElementById("rua");
+
+                if (municipio) {
+                    municipio.value = dados.localidade || "";
+                }
+
+                if (rua) {
+                    rua.value = dados.logradouro || "";
+                }
+
+                if (selectEstado) {
+                    selectEstado.value = dados.uf || "";
+                }
+            })
+            .catch(() => {
+                alert("Não foi possível buscar o CEP.");
+            });
+    });
+}
+
+function inicializarMascaraSalario() {
+    const salario = document.getElementById("salario");
+
+    if (!salario) {
+        return;
+    }
+
+    salario.addEventListener("input", function () {
+        let valor = this.value.replace(/\D/g, "");
+
+        if (!valor) {
+            this.value = "";
+            return;
+        }
+
+        valor = (parseInt(valor, 10) / 100).toFixed(2);
+        valor = valor.replace(".", ",");
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+        this.value = valor;
+    });
+}
+
+function inicializarDropdownSidebar() {
+    document.querySelectorAll(".menu-dropdown").forEach(dropdown => {
+        const links = dropdown.querySelectorAll(".submenu a");
+        const possuiLinkAtivo = Array.from(links).some(link => link.href === window.location.href);
+
+        dropdown.open = possuiLinkAtivo;
+    });
+}
 
 // inicialização
 
@@ -171,6 +347,16 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.querySelector(".funcionario-card")) {
         atualizarContadorFuncionarios();
     }
+
+    inicializarDropdownSidebar();
+    inicializarAberturaDeModal();
+    inicializarFechamentoDeModal();
+    inicializarFechamentoAoClicarFora();
+    inicializarFormularioModal("clienteForm", "clienteFormModal");
+    inicializarFormularioModal("funcionarioForm", "funcionarioFormModal");
+    inicializarEstados();
+    inicializarBuscaCep();
+    inicializarMascaraSalario();
 
     // Modal de clientes
     const cards = document.querySelectorAll(".client-card");
@@ -240,12 +426,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     tab.classList.remove("active");
                 });
 
-                modalFuncionario.querySelectorAll(".tab-btn").forEach(botao => {
+                modalFuncionario.querySelectorAll(".tab-btn, .modal-tab-btn").forEach(botao => {
                     botao.classList.remove("active");
                 });
 
                 const primeiraAba = modalFuncionario.querySelector("#dados");
-                const primeiroBotao = modalFuncionario.querySelector(".tab-btn");
+                const primeiroBotao = modalFuncionario.querySelector(".tab-btn, .modal-tab-btn");
 
                 if (primeiraAba) primeiraAba.classList.add("active");
                 if (primeiroBotao) primeiroBotao.classList.add("active");
@@ -284,19 +470,26 @@ function editarFuncionario() {
 
 // trocar abas do modal
 function trocarAba(tabId, btn) {
-    const modal = btn.closest(".funcionario-modal");
+    const modal = btn.closest(".funcionario-modal, .modal, .modal-overlay");
+
+    if (!modal) return;
 
     modal.querySelectorAll(".tab-content").forEach(tab => {
         tab.classList.remove("active");
     });
 
-    modal.querySelectorAll(".modal-tab-btn").forEach(botao => {
+    modal.querySelectorAll(".modal-tab-btn, .tab-btn").forEach(botao => {
         botao.classList.remove("active");
     });
 
-    modal.querySelector(`#${tabId}`).classList.add("active");
+    const aba = modal.querySelector(`#${tabId}`);
+    if (aba) {
+        aba.classList.add("active");
+    }
+
     btn.classList.add("active");
 }
+
 // Sidebar
 // submenu pedidos
 const dropdown = document.querySelector(".menu-dropdown");
@@ -334,7 +527,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-    // GRÁFICO DE DONUT
+// GRÁFICO DE LINHA
 const producaoCanvas = document.getElementById("producaoChart");
 
 if (producaoCanvas) {
@@ -373,8 +566,8 @@ if (producaoCanvas) {
         }
     });
 }
-document.addEventListener("DOMContentLoaded", () => {
 
+document.addEventListener("DOMContentLoaded", () => {
     const statusCanvas = document.getElementById("statusChart");
 
     if (statusCanvas) {
@@ -382,22 +575,20 @@ document.addEventListener("DOMContentLoaded", () => {
             type: "doughnut",
             data: {
                 labels: ["Pendentes", "Produção", "Concluídos"],
-               
-                
                 datasets: [{
                     data: [12, 8, 38],
                     backgroundColor: [
-                        "#151e31", // roxo principal
-                        "#4400ff", // roxo médio
-                        "#b3c0d75c"  // roxo claro
+                        "#151e31",
+                        "#4400ff",
+                        "#b3c0d75c"
                     ],
-                    borderWidth: 0 // remove borda feia
+                    borderWidth: 0
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: "68%", // deixa o donut mais fino (moderno)
+                cutout: "68%",
                 plugins: {
                     legend: {
                         position: "right",
@@ -409,17 +600,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             font: {
                                 size: 14
                             }
-                            
                         }
                     }
                 }
             }
         });
     }
-
 });
 
-// tela de add item
-
-// aside
-
+// Tela de clientes

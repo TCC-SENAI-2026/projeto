@@ -1,9 +1,18 @@
+
 .form-page-card {
-    background: #ffffff;
+   background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 20px;
     box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
     padding: 28px;
+    width: 100%;
+    max-width: 1090px;
+}
+
+.form-inner {
+    max-width: 1000px;
+    width: 100%;
+    padding: 0 50px;
 }
 
 .form-page-kicker {
