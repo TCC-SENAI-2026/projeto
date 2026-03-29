@@ -24,7 +24,6 @@ body {
 }
 
 /* HEADER */
-
 header {
     background-color: rgb(11, 46, 110);
     color: white;
@@ -36,10 +35,6 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
-}
-
-nav {
-    align-content: center;
 }
 
 nav ul {
@@ -57,6 +52,7 @@ nav ul li {
 nav ul li a {
     text-decoration: none;
     display: block;
+    color: white;
 }
 
 nav ul li a:hover {
@@ -71,7 +67,6 @@ nav ul li a:hover {
     left: 0;
     padding: 10px;
     border-radius: 0 0 5px 5px;
-    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
     flex-direction: column;
     min-width: 180px;
     gap: 20px;
@@ -83,170 +78,146 @@ nav ul li:hover > .submenu {
 
 .logo {
     max-width: 150px;
-    width: 100%;
-    height: auto;
-    padding: 10px;
 }
 
-header a {
-    color: white;
-    text-decoration: none;
-    font: bold 17px Arial, Helvetica, sans-serif;
-    cursor: pointer;
-}
+/* ========================================================== */
+/* FORM */
+/* ========================================================== */
 
-header p {
-    font: normal 15px Arial, Helvetica, sans-serif;
-}
-
-/* MAIN */
-/* ==========================================================
-   1. ESTRUTURA GLOBAL E FORMULÁRIO
-   ========================================================== */
 form {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
     padding: 40px 15px;
 }
 
 .container1 {
     background-color: aliceblue;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
     border: 3px solid black;
+    border-radius: 15px;
     width: 95%;
     max-width: 1400px;
-    padding: 40px; /* Padding para os inputs não colarem na borda */
-    box-sizing: border-box;
+    padding: 40px;
 }
 
-h1 { 
-    text-align: center; 
-    font-size: 40px; 
-    margin-bottom: 20px; 
+h1 {
+    text-align: center;
+    font-size: 40px;
 }
 
 h2 {
     text-align: center;
-    font-size: 38px;
-    margin: 40px 0 20px 0;
-    border-top: 3px solid rgb(68, 68, 73);
-    border-bottom: 3px solid rgb(68, 68, 73);
-    padding: 15px 0;
+    font-size: 32px;
+    margin: 30px 0 20px;
+    border-top: 3px solid #444;
+    border-bottom: 3px solid #444;
+    padding: 10px;
 }
 
-/* ==========================================================
-   2. CAMPOS DE ENTRADA (NOME, DATA, CONTATO, ETC)
-   ========================================================== */
+/* ========================================================== */
+/* LAYOUT CAMPOS */
+/* ========================================================== */
+
 .D-client1, .D-client2, .D-logistic, .D-personalizacao {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    gap: 20px;
     flex-wrap: wrap;
-    gap: 30px;
-    margin-bottom: 15px;
 }
 
 .campo1, .campo2, .campo3, .campo {
+    flex: 1;
+    min-width: 280px;
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-width: 300px;
 }
 
-input[type="text"], input[type="date"], input[type="tel"], 
-input[type="email"], select, textarea {
-    font-size: 25px;
-    height: 50px;
-    width: 100%;
+input, select, textarea {
+    font-size: 18px;
+    height: 45px;
     border-radius: 8px;
-    margin-top: 8px;
-    padding: 10px;
     border: 2px solid black;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    padding: 8px;
+    margin-top: 5px;
 }
 
-label { font-size: 25px; font-weight: bold; }
+textarea {
+    height: 120px;
+}
 
-/* ==========================================================
-   3. ESTILIZAÇÃO DA CAIXA DE PRIORIDADES (MELHORADA)
-   ========================================================== */
+label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* ========================================================== */
+/* 🔥 PRIORIDADE (CORRIGIDO AQUI) */
+/* ========================================================== */
+
 .container-prioridade {
+    flex: 1;
+    min-width: 280px;
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-width: 300px;
 }
 
+/* caixa branca visível */
 .niveis {
     border: 2px solid black;
-    height: 60px; /* Um pouco mais alto para destacar */
-    width: 100%;
-    max-width: 500px;
     border-radius: 10px;
-    display: flex;
-    justify-content: space-around; 
-    align-items: center;
+    padding: 10px;
     margin-top: 8px;
-    background-color: white; /* Fundo branco para limpar o visual */
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    background-color: white;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap; /* 🔥 evita sumir em telas menores */
 }
 
+/* texto + radio juntos */
 .niveis label {
-    font-size: 22px; /* Ajuste leve para caber bem na caixa */
-    cursor: pointer;
+    font-size: 16px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 5px;
 }
 
-/* Estilo customizado para o Radio Button dentro da caixa */
+/* radio visível */
 input[type="radio"] {
-    height: 22px;
-    width: 22px;
-    accent-color: #36e002; /* Cor verde para combinar com o botão */
+    width: 18px;
+    height: 18px;
+    accent-color: #36e002;
     cursor: pointer;
 }
 
-/* ==========================================================
-   4. BOTÃO CONTINUAR (ZOOM SUAVE 1.03)
-   ========================================================== */
+/* ========================================================== */
+/* BOTÃO */
+/* ========================================================== */
+
 .proxima {
-    height: 65px;
+    height: 60px;
     width: 200px;
     background: #36e002;
-    color: #000;
     border-radius: 10px;
     border: 2px solid #000;
-    cursor: pointer;         
     font-weight: bold;
-    font-size: 22px;
-    margin-top: 30px;
-    display: block;
-    margin-left: auto; /* Alinhado à direita */
-    transition: all 0.2s ease-in-out;
+    font-size: 18px;
+    margin-top: 20px;
+    margin-left: auto;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .proxima:hover {
-    transform: scale(1.03); /* Aumento suave de 3% conforme solicitado */
-    background-color: #2ebc02;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    transform: scale(1.03);
 }
 
-.proxima:active {
-    transform: scale(0.97);
-}
+/* ========================================================== */
+/* RESPONSIVO */
+/* ========================================================== */
 
-/* ==========================================================
-   5. RESPONSIVIDADE
-   ========================================================== */
 @media (max-width: 900px) {
-    .container1 { padding: 20px; }
-    h1 { font-size: 30px; }
-    h2 { font-size: 28px; }
-    label, p { font-size: 20px; }
-    .proxima { width: 100%; margin-left: 0; }
+    .proxima {
+        width: 100%;
+        margin-left: 0;
+    }
 }

@@ -1,94 +1,133 @@
+// =========================
+// FICHATECNICA.JS
+// =========================
 document.addEventListener('DOMContentLoaded', () => {
+
     const detalhesPedido = JSON.parse(localStorage.getItem("detalhesPedido"));
     const dadosFicha = JSON.parse(localStorage.getItem("dadosFicha"));
     const mainContainer = document.getElementById('lista-produtos-container');
 
     if (!detalhesPedido || !detalhesPedido.produtos || detalhesPedido.produtos.length === 0) {
-        if (mainContainer) {
-            mainContainer.innerHTML = "<h2 style='color:white; text-align:center; margin-top:50px;'>Nenhum produto selecionado para revisão.</h2>";
-        }
+        mainContainer.innerHTML = "<h2 style='color:white; text-align:center;'>Nenhum produto encontrado.</h2>";
         return;
     }
 
     mainContainer.innerHTML = "";
 
     detalhesPedido.produtos.forEach((produto, index) => {
-        const sessaoProduto = document.createElement('div');
-        sessaoProduto.classList.add('container2');
-        sessaoProduto.style.marginBottom = "20px"; 
 
-        let linhasTabela = "";
-        Object.entries(produto.grade).forEach(([tamanho, quantidade]) => {
-            if (quantidade > 0) {
-                linhasTabela += `
-                    <tr>
-                        <td><strong>${tamanho}</strong></td>
-                        <td><strong>${quantidade}</strong></td>
-                        <td><strong>${produto.detalhes.tecido}</strong></td>
-                        <td><strong>${produto.detalhes.personalizacao}</strong></td>
-                        <td><strong>${produto.detalhes.cor}</strong></td>
-                    </tr>`;
-            }
+        const div = document.createElement('div');
+        div.classList.add('container2');
+
+        // =========================
+        // TABELA
+        // =========================
+        let linhas = "";
+
+        Object.entries(produto.grade).forEach(([tam, qtd]) => {
+            linhas += `
+                <tr>
+                    <td>${tam}</td>
+                    <td>${qtd}</td>
+                    <td>${produto.detalhes.tecido}</td>
+                    <td>${produto.detalhes.personalizacao}</td>
+                    <td>${produto.detalhes.cor}</td>
+                    <td>${dadosFicha?.local || produto.detalhes.local}</td>
+                </tr>
+            `;
         });
 
-        sessaoProduto.innerHTML = `
+        // =========================
+        // HTML DO CARD
+        // =========================
+        div.innerHTML = `
             <div class="infoproduto">
                 <h2>Item #${index + 1}</h2>
-                <h2>Cliente: <strong>${dadosFicha ? dadosFicha.cliente : 'Não informado'}</strong></h2>
+
+                <h2>Cliente: <strong>${dadosFicha?.cliente || '-'}</strong></h2>
+                <h2>Contato: <strong>${dadosFicha?.contato || '-'}</strong></h2>
+                <h2>Email: <strong>${dadosFicha?.email || '-'}</strong></h2>
+
+                <h2>Prazo: <strong>${dadosFicha?.entrega || '-'}</strong></h2>
+                <h2>Prioridade: <strong>${dadosFicha?.prioridade || '-'}</strong></h2> <!-- Corrigido -->
+
                 <h2>Tipo: <strong>${produto.item}</strong></h2>
                 <h2>Tecido: <strong>${produto.detalhes.tecido}</strong></h2>
                 <h2>Cor: <strong>${produto.detalhes.cor}</strong></h2>
-                <h2>Entrega: <strong>30/04/2026</strong></h2>
+
+                <h2>Local da arte: <strong>${dadosFicha?.local || produto.detalhes.local}</strong></h2>
+                <h2>Obs. Personalização: <strong>${dadosFicha?.personalizacao || '-'}</strong></h2>
+
+                <h2>Obs. Pedido: <strong>${dadosFicha?.observacao || '-'}</strong></h2>
             </div>
+
             <div class="boxprincipal">
+
                 <div class="boxtabela">
-                    <div class="card-visual-ficha" style="background-color: ${produto.detalhes.cor};">
-                        <img src="img/${produto.item.toLowerCase()}.png" onerror="this.src='img/produto.png'">
+
+                    <div class="card-visual-ficha">
+                        <img src="img/${produto.item.toLowerCase()}.png" 
+                        onerror="this.src='img/produto.png'">
                     </div>
+
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
                                     <th>T</th>
-                                    <th>Quant</th>
+                                    <th>Qtd</th>
                                     <th>Tecido</th>
                                     <th>Pers.</th>
                                     <th>Cor</th>
+                                    <th>Local</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${linhasTabela}
+                                ${linhas}
                             </tbody>
                         </table>
                     </div>
+
                 </div>
+
+                <!-- 🔥 IMAGEM DA ARTE -->
+                ${detalhesPedido.arte ? `
+                    <div style="margin-top:20px;">
+                        <h3>Arte enviada:</h3>
+                        <img src="${detalhesPedido.arte}" 
+                        style="max-width:200px; border:2px solid black; border-radius:10px;">
+                    </div>
+                ` : ""}
+
             </div>
         `;
-        mainContainer.appendChild(sessaoProduto);
+
+        mainContainer.appendChild(div);
     });
+
 });
 
-/* --- LÓGICA DO MODAL E REDIRECIONAMENTOS --- */
 
-// Usamos arrow functions para garantir que o escopo global as reconheça prontamente
-window.finalizarPedido = function() {
+// =========================
+// BOTÕES
+// =========================
+window.finalizarPedido = function () {
+
     const modal = document.getElementById('modalSucesso');
-    
+
     if (modal) {
-        modal.style.display = 'flex'; // Força o display flex para o modal aparecer
+        modal.style.display = 'flex';
+
         localStorage.removeItem("detalhesPedido");
-        // Opcional: localStorage.removeItem("dadosFicha"); 
-    } else {
-        alert("Pedido enviado para a produção com sucesso!");
-        window.location.href = "index.html";
+        // opcional:
+        // localStorage.removeItem("dadosFicha");
     }
 };
 
-window.fecharModalESair = function() {
+window.fecharModalESair = function () {
     window.location.href = "index.html";
 };
 
-window.voltarParaPedido = function() {
-    // Certifique-se que o arquivo no VS Code é novo-pedido.html
+window.voltarParaSelecao = function () {
     window.location.href = "novo-pedido.html";
 };

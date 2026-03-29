@@ -1,180 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/formulario.css">
-    <title>Ficha Técnica</title>
+    <title>Formulario</title>
 </head>
 
 <body>
-    <header>
 
-        <img class="logo" src="img/E-threads (3) (1).png" alt="logo">
-        <nav>
-            <ul>
-                <li><a>Inicio</a></li>
-                <li><a>Clientes</a></li>
-                <li><a>Estoque</a></li>
-                <li>
-                    <a onmouseover="menuPedidos()">Pedidos</a>
-                    <ul class="submenu">
-                        <li><a>Historico de Pedidos</a></li>
-                        <li><a>Novo Pedido</a></li>
-                        <li><a>Sair</a></li>
-                    </ul>
-                </li>
-                <li><a>Relatorios</a></li>
-            </ul>
-        </nav>
+<header>
 
+    <img class="logo" src="img/E-threads (3) (1).png" alt="logo">
 
+    <nav>
+        <ul>
+            <li><a>Inicio</a></li>
+            <li><a>Clientes</a></li>
+            <li><a>Estoque</a></li>
+            <li>
+                <a>Pedidos</a>
+                <ul class="submenu">
+                    <li><a>Historico de Pedidos</a></li>
+                    <li><a>Novo Pedido</a></li>
+                    <li><a>Sair</a></li>
+                </ul>
+            </li>
+            <li><a>Relatorios</a></li>
+        </ul>
+    </nav>
 
+    <div class="conta">
+        <p class="ola-nome">Olá, nome</p>
+    </div>
 
-        <div onclick="loginMenu()" class="conta">
-            <p class="ola-nome">Ola, nome</p>
+</header>
+
+<main>
+
+    <!-- ✅ STEPPER (BARRA DE PROGRESSO MANTIDA) -->
+    <div class="stepper-wrapper">
+        <div class="stepper-item completed">
+            <div class="step-counter">1</div>
+            <div class="step-name">Identificação</div>
         </div>
-    </header>
+        <div class="stepper-item completed">
+            <div class="step-counter">2</div>
+            <div class="step-name">Produtos</div>
+        </div>
+        <div class="stepper-item active">
+            <div class="step-counter">3</div>
+            <div class="step-name">Finalização</div>
+        </div>
+    </div>
 
-    <main>
+    <form id="meuFormulario">
 
-        <div class="stepper-wrapper">
-            <div class="stepper-item completed">
-                <div class="step-counter">1</div>
-                <div class="step-name">Identificação</div>
+        <div class="container1">
+
+            <h1>Formulário com Informações do Pedido</h1>
+
+            <!-- CLIENTE -->
+            <h2>Dados do Cliente</h2>
+
+            <div class="D-client1">
+                <div class="campo1">
+                    <label for="nomeCliente"><strong>Nome:</strong></label>
+                    <input type="text" id="nomeCliente" required placeholder="Nome do cliente">
+                </div>
+
+                <div class="campo1">
+                    <label for="dataPedido"><strong>Data do Pedido:</strong></label>
+                    <input type="date" id="dataPedido" required>
+                </div>
             </div>
-            <div class="stepper-item completed">
-                <div class="step-counter">2</div>
-                <div class="step-name">Produtos</div>
+
+            <div class="D-client2">
+                <div class="campo2">
+                    <label for="telefoneCliente"><strong>Contato:</strong></label>
+                    <input type="tel" id="telefoneCliente" required placeholder="(11) 99999-9999">
+                </div>
+
+                <div class="campo2">
+                    <label for="emailCliente"><strong>Email:</strong></label>
+                    <input type="email" id="emailCliente" required placeholder="exemplo@dominio.com">
+                </div>
             </div>
-            <div class="stepper-item active">
-                <div class="step-counter">3</div>
-                <div class="step-name">Finalização</div>
+
+            <!-- LOGISTICA -->
+            <h2>Detalhes Logísticos</h2>
+
+            <div class="D-logistic">
+
+                <div class="campo3">
+                    <label for="prazoEntrega"><strong>Prazo de Entrega:</strong></label>
+                    <input type="date" id="prazoEntrega" required>
+                </div>
+
+                <!-- ✅ PRIORIDADE CORRIGIDA -->
+                <div class="container-prioridade">
+
+                    <p><strong>Prioridade:</strong></p>
+
+                    <div class="niveis">
+
+                        <label>
+                            <input type="radio" name="pedido_prioridade" value="baixa" required>
+                            Baixa
+                        </label>
+
+                        <label>
+                            <input type="radio" name="pedido_prioridade" value="media">
+                            Média
+                        </label>
+
+                        <label>
+                            <input type="radio" name="pedido_prioridade" value="alta">
+                            Alta
+                        </label>
+
+                    </div>
+
+                </div>
+
             </div>
+
+            <!-- PERSONALIZAÇÃO -->
+            <h2>Personalização</h2>
+
+            <div class="D-personalizacao">
+
+                <div class="campo">
+                    <label for="localPersonalizacao"><strong>Local da personalização:</strong></label>
+
+                    <select id="localPersonalizacao" required>
+                        <option value="">Selecione</option>
+                        <option value="Frente">Frente</option>
+                        <option value="Costas">Costas</option>
+                        <option value="Manga direita">Manga direita</option>
+                        <option value="Manga esquerda">Manga esquerda</option>
+                        <option value="Peito">Peito</option>
+                        <option value="Gola">Gola</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="obsPersonalizacao"><strong>Observação:</strong></label>
+                    <input type="text" id="obsPersonalizacao" placeholder="Opcional">
+                </div>
+
+            </div>
+
+            <!-- OBS -->
+            <h2>Observação do Pedido</h2>
+
+            <div class="campo">
+                <textarea id="obsGeralPedido" placeholder="Detalhes adicionais..."></textarea>
+            </div>
+
+            <button type="submit" class="proxima" id="btnContinuar">
+                <strong>Continuar</strong>
+            </button>
+
         </div>
 
-        <form id="meuFormulario">
-            <div class="container1">
+    </form>
 
-                <h1>Formulario com Informações do pedido</h1>
+</main>
 
-                <h2>Dados do Cliente</h2>
-                <div class="D-client1">
+<script src="js/formulario.js"></script>
 
-                    <div class="campo1">
-                        <label for="nomecliente"><strong>Nome:</strong></label>
-                        <input type="text" name="cliente_nome" id="nomeCliente" required placeholder="Nome do cliente">
-
-                    </div>
-
-                    <div clas_s="campo1">
-                        <label for="dataPedido"><strong> Data do Pedido:</strong></label>
-                        <input type="date" name="pedido_data_criacao" id="dataPedido" required>
-
-                    </div>
-                </div>
-
-                <div class="D-client2">
-
-                    <div class="campo2">
-                        <label for="telefoneCliente"><strong>Contato:</strong></label>
-                        <input type="tel" name="cliente_telefone" id="telefoneCliente" required placeholder="(11) 99999-9999">
-                    </div>
-
-                    <div class="campo2">
-                        <label for="emailCliente"><strong>Email:</strong></label>
-                        <input type="email" name="cliente_email" id="emailCliente" required placeholder="exemplo@dominio.com">
-                    </div>
-                </div>
-
-
-                <h2>Detalhes Logísticos e Prioridades</h2>
-
-                <div class="D-logistic">
-
-                    <div class="campo3">
-                        <label for="prazoEntrega"><strong>Prazo de Entrega:</strong></label>
-                        <input type="date" name="pedido_prazo" id="prazoEntrega" required>
-                    </div>
-
-
-
-                    <div class="container-prioridade">
-
-                        <div class="campo4">
-                            <p><strong>Prioridade:</strong></p>
-                        </div>
-
-                        <div class="box-checkbox">
-                            <div class="niveis">
-                                <label for="baixa"><strong>Baixa:</strong></label>
-                                <input type="radio" name="pedido_prioridade" id="prioridadeBaixa" value="baixa" required>
-
-                                <label for="media"><strong>Média:</strong></label>
-                                <input type="radio" name="pedido_prioridade" id="prioridadeMedia" value="media">
-
-                                <label for="alta"><strong>Alta:</strong></label>
-                                <input type="radio" name="pedido_prioridade" id="prioridadeAlta" value="alta">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <h2>Informações de Personalização</h2>
-
-                <div class="D-personalizacao">
-
-                    <div class="container-pesonalizacao">
-                        <div class="campo">
-                            <label for="localPersonalizacao"><strong>Local da personalização:</strong></label>
-
-                            <select name="prod_local_custom" id="localPersonalizacao" required>
-                                <option value="">Selecione o Local</option>
-                                <option value="Frente">Frente</option>
-                                <option value="Costas">Costas</option>
-                                <option value="Manga direita">Manga direita</option>
-                                <option value="Manga esquerda">Manga esquerda</option>
-                                <option value="Peito">Peito</option>
-                                <option value="Gola">Gola</option>
-                            </select>
-                        </div>
-
-                        <div class="campo">
-                            <label for="obsPersonalizacao"><strong>Observação de personalização:</strong></label>
-                            <input type="text" name="prod_obs_custom" id="obsPersonalizacao" placeholder="Informações extras  (Opicional.)">
-                        </div>
-                    </div>
-                </div>
-
-                <h2>Observação do Pedido:</h2>
-
-                <div class="obs-pedido">
-
-                    <div class="campo">
-
-                        <label for="obsGeralPedido">Observação </label>
-                        <textarea name="pedido_obs_geral" id="obsGeralPedido"
-                            placeholder="Digite aqui as observações, detalhes adicionais ou instruções especiais para este pedido....."></textarea>
-
-                        <button type="submit" class="proxima" id="btnContinuar">
-                            <strong>Continuar</strong>
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            
-        </form>
-
-
-
-    </main>
-
-    <script src="js/formulario.js"></script>
 </body>
-
 </html>

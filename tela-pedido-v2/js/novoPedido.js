@@ -1,8 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. EXIBIR NOME DO CLIENTE (Resolve o problema dos IDs diferentes)
+
+    // =========================
+    // NOME DO CLIENTE
+    // =========================
     const clienteNome = localStorage.getItem('clienteSelecionado');
     const idsDisplay = ['clienteNomeDisplay', 'clienteNomeDisplay1'];
-    
+
     idsDisplay.forEach(id => {
         const elemento = document.getElementById(id);
         if (elemento) {
@@ -10,141 +13,188 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. CONFIGURAÇÃO DO UPLOAD (Click e Feedback visual)
+    // =========================
+    // UPLOAD COM PREVIEW
+    // =========================
     const inputArte = document.getElementById('input-arte');
     const areaUpload = document.querySelector('.upload-img');
 
-    if (inputArte) {
-        inputArte.addEventListener('change', function() {
+    if (inputArte && areaUpload) {
+        inputArte.addEventListener('change', function () {
+
             if (this.files && this.files[0]) {
-                const nomeArquivo = this.files[0].name;
-                areaUpload.querySelector('.upload-texto-principal strong').textContent = "Arquivo selecionado:";
-                areaUpload.querySelector('.upload-texto-principal span').textContent = nomeArquivo;
-                areaUpload.style.borderColor = "#28a745"; // Feedback verde
+                const file = this.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    areaUpload.innerHTML = `
+                        <img src="${e.target.result}" 
+                        style="max-width:100%; max-height:100%; border-radius:10px;">
+                    `;
+
+                    // SALVA IMAGEM
+                    localStorage.setItem("artePedido", e.target.result);
+                };
+
+                reader.readAsDataURL(file);
+
+                areaUpload.style.borderColor = "#28a745";
             }
         });
     }
 
-    // 3. BOTÃO REVISAR (Chama a validação)
+    // =========================
+    // TROCAR COR DO CARD 🔥
+    // =========================
+    const selectsCor = document.querySelectorAll('select[name*="_cor"]');
+
+    selectsCor.forEach(select => {
+        select.addEventListener('change', function () {
+
+            const card = this.closest('.modelo-card');
+
+            // REMOVE TODAS AS CORES ANTIGAS
+            card.classList.forEach(classe => {
+                if (classe.startsWith('cor-')) {
+                    card.classList.remove(classe);
+                }
+            });
+
+            // ADICIONA NOVA COR
+            if (this.value) {
+                card.classList.add(`cor-${this.value}`);
+            }
+        });
+    });
+
+    // =========================
+    // BOTÕES
+    // =========================
     const btnRevisar = document.getElementById('botao-continuar-ficha');
     if (btnRevisar) {
         btnRevisar.addEventListener('click', finalizarPedido);
     }
 
-    // 4. BOTÃO VOLTAR
     const btnVoltar = document.getElementById('botao-voltar-form');
     if (btnVoltar) {
         btnVoltar.addEventListener('click', () => {
-            window.history.back();
+            // VOLTAR DIRETO PARA O FORMULÁRIO
+            window.location.href = "formulario.html";
         });
     }
+
 });
 
-/**
- * Lógica para virar o card e marcar como selecionado
- */
+
+// =========================
+// VIRAR CARD 🔥
+// =========================
 function alternarSelecao(btn) {
-    const cardInner = btn.closest('.card-inner');
-    const cardPai = btn.closest('.modelo-card');
-    
-    if (cardPai.classList.contains('selecionado')) {
-        // Desmarcar e voltar à posição original
-        cardPai.classList.remove('selecionado');
-        cardInner.style.transform = "rotateY(0deg)";
-        // Zera quantidades ao desmarcar
-        cardPai.querySelectorAll('input[type="number"]').forEach(input => input.value = 0);
+    const card = btn.closest('.modelo-card');
+
+    if (card.classList.contains('selecionado')) {
+
+        card.classList.remove('selecionado');
+
+        // ZERA QUANTIDADES
+        card.querySelectorAll('input[type="number"]').forEach(input => {
+            input.value = 0;
+        });
+
     } else {
-        // Selecionar e virar para o verso
-        cardPai.classList.add('selecionado');
-        cardInner.style.transform = "rotateY(180deg)";
+        card.classList.add('selecionado');
     }
 }
 
-/**
- * Validação de dados antes de avançar
-/* FUNÇÃO: finalizarPedido
-   OBJETIVO: Validar os produtos selecionados, capturar a grade de tamanhos, 
-   cores e salvar tudo no localStorage para a Ficha Técnica.
-*/
+
+// =========================
+// FINALIZAR PEDIDO 🔥
+// =========================
 function finalizarPedido() {
+
     const selecionados = document.querySelectorAll('.modelo-card.selecionado');
-    
-    // 1. Validação inicial: Verificando se algum card foi marcado
+
     if (selecionados.length === 0) {
-        alert("Por favor, selecione ao menos um produto (Camiseta, Moletom ou Calça).");
+        alert("Selecione pelo menos um produto.");
         return;
     }
 
+    let listaProdutos = [];
     let erroQtd = false;
-    let listaProdutos = []; // Esta é a lista que o script da Ficha Técnica vai ler
 
-    // 2. Percorre apenas os cards que possuem a classe 'selecionado'
     selecionados.forEach(card => {
+
         const nomeModelo = card.querySelector('h3').textContent;
-        // Captura a cor selecionada no <select> do card
-        const selectCor = card.querySelector('select');
-        const corSelecionada = selectCor ? selectCor.value : "Não definida";
-        
-        let gradeDesteModelo = {};
-        let totalDesteModelo = 0;
-        
-        // Mapeia cada input de tamanho (P, M, G...) e sua respectiva quantidade
+
+        // SELECTS
+        const selectPersonalizacao = card.querySelector('select[name*="personalizacao"]');
+        const selectTecido = card.querySelector('select[name*="tecido"]');
+        const selectCor = card.querySelector('select[name*="cor"]');
+        const selectLocal = card.querySelector('select[name*="local"]');
+
+        const personalizacao = selectPersonalizacao?.value || "Não definido";
+        const tecido = selectTecido?.value || "Não definido";
+        const cor = selectCor?.value || "Não definida";
+        const local = selectLocal?.value || "Não definido";
+
+        let grade = {};
+        let total = 0;
+
         const inputs = card.querySelectorAll('.grade-tamanhos-card input');
+
         inputs.forEach(input => {
             const qtd = parseInt(input.value) || 0;
+
             if (qtd > 0) {
-                // Captura o texto do Label (P, M, G...) que está imediatamente antes do input
-                const labelTamanho = input.previousElementSibling.textContent.replace(':', '').trim();
-                gradeDesteModelo[labelTamanho] = qtd;
-                totalDesteModelo += qtd;
+                const tamanho = input.previousElementSibling.textContent.trim();
+                grade[tamanho] = qtd;
+                total += qtd;
             }
         });
 
-        // Se o card está selecionado mas a soma das quantidades é zero, gera erro
-        if (totalDesteModelo === 0) {
+        if (total === 0) {
             erroQtd = true;
         } else {
-            // Monta o objeto no formato exato que o seu script da FICHA espera
             listaProdutos.push({
                 item: nomeModelo,
-                grade: gradeDesteModelo,
+                grade: grade,
                 detalhes: {
-                    tecido: "Padrão TCC", 
-                    cor: corSelecionada,
-                    personalizacao: "Silk Screen/Bordado"
+                    tecido,
+                    cor,
+                    personalizacao,
+                    local
                 }
             });
         }
     });
 
-    // Se algum modelo selecionado estiver sem quantidade, para o processo
     if (erroQtd) {
-        alert("Você selecionou um modelo, mas não informou a quantidade nos tamanhos (verso do card).");
+        alert("Preencha as quantidades dos tamanhos.");
         return;
     }
 
-    // 3. Validação de Arte (Verifica se o input de arquivo tem algo)
-    const inputArte = document.getElementById('input-arte');
-    if (inputArte && inputArte.files.length === 0) {
-        if(!confirm("Nenhuma arte foi enviada. Deseja continuar o pedido sem o arquivo da estampa?")) {
+    // =========================
+    // ARTE
+    // =========================
+    const arteSalva = localStorage.getItem("artePedido");
+
+    if (!arteSalva) {
+        if (!confirm("Nenhuma arte enviada. Deseja continuar?")) {
             return;
         }
     }
 
-    // 4. SALVAMENTO E TRANSIÇÃO DE TELA
-    // Salva a lista de produtos convertida em string JSON
-    localStorage.setItem("detalhesPedido", JSON.stringify({ produtos: listaProdutos }));
-    
-    // Captura o nome do cliente que foi selecionado na tela inicial
-    const nomeCliente = localStorage.getItem('clienteSelecionado') || "Consumidor Final";
-    
-    // Salva os dados do cabeçalho da ficha
-    localStorage.setItem("dadosFicha", JSON.stringify({ 
-        cliente: nomeCliente,
-        dataEntrega: "30/04/2026" 
+    // =========================
+    // SALVAR TUDO
+    // =========================
+    localStorage.setItem("detalhesPedido", JSON.stringify({
+        produtos: listaProdutos,
+        arte: arteSalva || null
     }));
 
-    // Feedback ao usuário e redirecionamento
-    alert("Pedido validado com sucesso! Redirecionando para a Ficha Técnica...");
-    window.location.href = "fichaTecnica.html"; 
+    // =========================
+    // REDIRECIONAR
+    // =========================
+    alert("Pedido salvo! Indo para ficha técnica...");
+    window.location.href = "fichaTecnica.html";
 }
