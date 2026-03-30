@@ -1,41 +1,51 @@
-* {
-    box-sizing: border-box;
+
+.form-page-card {
+   background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    padding: 28px;
+    width: 100%;
+    max-width: 1300px;
+    margin: auto;
+}
+
+.form-inner {
+    max-width: 1400px;
+    width: 100%;
+    padding: 0 50px;
+}
+
+.form-page-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+}
+
+.form-page-intro {
+    color: #64748b;
+    line-height: 1.5;
+    margin: -4px 0 22px;
+    padding: 0 15px;
+}
+
+.form-page-card fieldset {
+    border: 0;
+    padding: 18px;
     margin: 0;
-    padding: 0;
+    border-radius: 16px;
 }
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #151e31;
-    padding: clamp(12px, 3vh, 40px) clamp(12px, 2vw, 20px);
-    display: flex;
-    justify-content: center;
-}
-
-main {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.cadastro {
-    width: 100%;
-    max-width: 720px;
-    margin: 0 auto;
-}
-
-form.cadastro1 {
-    width: 100%;
-    padding: 22px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.874);
-    border: 1px solid rgba(183, 183, 183, 0.284);
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-
-.titulo {
+.form-page-card .titulo {
     margin-left: 15px;
     margin-bottom: 24px;
     padding-bottom: 20px;
@@ -47,7 +57,7 @@ form.cadastro1 {
     font-size: clamp(1.2rem, calc(1rem + 1vw), 1.6rem);
 }
 
-.titulo::after {
+.form-page-card .titulo::after {
     content: "";
     position: absolute;
     bottom: 0;
@@ -58,30 +68,23 @@ form.cadastro1 {
     background: #e3e3e3;
 }
 
-fieldset {
-    border: 0;
-    padding: 18px;
-    margin: 0;
-    border-radius: 16px;
-}
-
-.secao {
+.form-page-card .secao {
     display: grid;
     grid-template-columns: 140px 1fr;
     column-gap: 18px;
     align-items: start;
     gap: 16px;
-    padding: 20px 0;
-    margin-bottom: 28px;
+    padding: 12px 0;
+    margin-bottom: 16px;
 }
 
-.secao + .secao {
+.form-page-card .secao + .secao {
     position: relative;
     padding-top: 24px;
     margin-top: 19px;
 }
 
-.secao + .secao::before {
+.form-page-card .secao + .secao::before {
     content: "";
     position: absolute;
     top: 0;
@@ -91,15 +94,7 @@ fieldset {
     background: #e3e3e3;
 }
 
-.secao:first-child {
-    padding-top: 0;
-}
-
-.secao:last-child {
-    padding-bottom: 0;
-}
-
-.secao-titulo {
+.form-page-card .secao-titulo {
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 1px;
@@ -109,36 +104,18 @@ fieldset {
     line-height: 1.2;
 }
 
-.secao-lado-direito .grid {
+.form-page-card .secao-lado-direito .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px 16px;
 }
 
-.input-money {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-money span {
-    position: absolute;
-    left: 12px;
-    color: #555;
-    font-size: 14px;
-}
-
-.input-money input {
-    width: 100%;
-    padding-left: 42px;
-}
-
-.campo.full {
+.form-page-card .campo.full {
     grid-column: 1 / -1;
 }
 
-.campo label,
-.label-like {
+.form-page-card .campo label,
+.form-page-card .label-like {
     display: block;
     margin-bottom: 6px;
     font-size: 14px;
@@ -146,57 +123,47 @@ fieldset {
     color: #374151;
 }
 
-input,
-select,
-textarea {
+.form-page-card input,
+.form-page-card select,
+.form-page-card textarea {
     width: 100%;
-    height: 30px;
+    min-height: 44px;
     padding: 10px 12px;
     font-size: 14px;
     border: 1px solid rgba(194, 194, 194, 0.933);
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.826);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.775);
+    background: rgba(255, 255, 255, 0.92);
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-select {
-    height: 32px;
-    padding: 4px 30px 4px 10px;
+.form-page-card textarea {
+    min-height: 90px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.4;
 }
 
-input::placeholder,
-textarea::placeholder {
-    color: rgba(107, 114, 128, 0.9);
-}
-
-input:hover,
-select:hover,
-textarea:hover {
-    border-color: rgba(156, 163, 175, 0.95);
-}
-
-input:focus,
-select:focus,
-textarea:focus {
+.form-page-card input:focus,
+.form-page-card select:focus,
+.form-page-card textarea:focus {
     outline: none;
     border-color: rgba(37, 99, 235, 0.75);
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.98);
 }
 
-.status-toggle {
+.form-page-card .status-toggle {
     display: inline-flex;
     gap: 8px;
 }
 
-.status-toggle input {
+.form-page-card .status-toggle input {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-.status-toggle label {
+.form-page-card .status-toggle label {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -211,35 +178,50 @@ textarea:focus {
     transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.status-toggle label:hover {
-    background: rgba(243, 244, 246, 0.9);
-}
-
-#ativo:checked + label {
+.form-page-card .status-toggle input[value="ativo"]:checked + label {
     background: rgba(37, 99, 235, 0.1);
     border-color: rgba(37, 99, 235, 0.65);
     color: #2563eb;
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
-#inativo:checked + label {
+.form-page-card .status-toggle input[value="inativo"]:checked + label {
     background: rgba(148, 163, 184, 0.18);
     border-color: rgba(100, 116, 139, 0.45);
     color: #334155;
     box-shadow: 0 0 0 4px rgba(100, 116, 139, 0.1);
 }
 
-.botao1_2 {
+.form-page-card .input-money {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-page-card .input-money span {
+    position: absolute;
+    left: 12px;
+    color: #555;
+    font-size: 14px;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.form-page-card .input-money input {
+    padding-left: 42px;
+}
+
+.form-page-card .botao1_2 {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
     flex-wrap: wrap;
     position: relative;
     margin-top: 10px;
-    padding-top: 25px;
+    padding-top: 16px;
 }
 
-.botao1_2::before {
+.form-page-card .botao1_2::before {
     content: "";
     position: absolute;
     top: 0;
@@ -250,61 +232,48 @@ textarea:focus {
     background: #e3e3e3;
 }
 
-.botao1_2 button {
+.form-page-card .botao1_2 button,
+.form-page-card .botao1_2 a {
     min-width: 140px;
-    height: 40px;
+    min-height: 42px;
     padding: 10px 16px;
     font-size: 14px;
     font-weight: 700;
     border-radius: 12px;
-    cursor: pointer;
-    transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
-.btn-sec {
+.btn-page-sec {
     background: rgba(106, 116, 130, 0.18);
     border: 1px solid rgba(148, 163, 184, 0.35);
     color: #334155;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-sec:hover {
-    background: rgba(112, 123, 137, 0.28);
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
-    transform: translateY(-1px);
-}
-
-.btn-prim {
-    border: 1px solid rgba(37, 99, 235, 0.25);
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.92), rgba(59, 130, 246, 0.92));
-    color: #fff;
-    box-shadow: 0 12px 26px rgba(37, 99, 235, 0.22);
-}
-
-.btn-prim:hover {
-    box-shadow: 0 16px 34px rgba(37, 99, 235, 0.3);
-    transform: translateY(-1px);
-}
-
-.btn-sec:active,
-.btn-prim:active {
-    transform: translateY(0);
-}
-
-@media (max-width: 640px) {
-    .secao {
+@media (max-width: 920px) {
+    .form-page-card .secao {
         grid-template-columns: 1fr;
         row-gap: 10px;
     }
 
-    .secao-lado-direito .grid {
+    .form-page-card .secao-lado-direito .grid {
         grid-template-columns: 1fr;
     }
+}
 
-    .botao1_2 {
+@media (max-width: 640px) {
+    .form-page-card {
+        padding: 20px;
+    }
+
+    .form-page-card .botao1_2 {
         justify-content: center;
     }
 
-    .botao1_2 button {
+    .form-page-card .botao1_2 button,
+    .form-page-card .botao1_2 a {
         width: 100%;
         min-width: 0;
     }
