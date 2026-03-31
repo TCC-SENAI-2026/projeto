@@ -130,23 +130,56 @@ h1, p{
 }
 
 .Container1 {
-    height: 400px;
-    width: 600;
-    border: 3px solid rgb(152, 148, 148);
+    height: 200px;
+    min-width: 100%;
+    max-width: 700px;
     border-radius: 10px;
-    background-color: rgba(3, 28, 64, 0.1);
+    background-color: rgb(255, 255, 255);
+    padding: 25px;
     
 }
 label {
-    color: white;
+    color: rgb(0, 0, 0);
+    display: flex;
+    margin-bottom: 5px;
 }
-input {
-    height: 25px;
-    width: 200px;
-    border: 2px solid black;
-
-    color: white;
+input{
+    height: 50px;
+    min-width: 50%;
+    border: 2px solid rgb(79, 72, 213);
+    border-radius: 15px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
 }
-.box1 {
+input[type="text"]::placeholder {
+    color: rgb(96, 95, 95);
+}
+.btn1, .btn2 {
+    height: 45px;
+    width: 90px; /* aumentei um pouco */
+    border-radius: 10px;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s; /* animação suave */
+}
 
+/* Botão principal */
+.btn1 {
+    background-color: rgb(59, 112, 247);
+}
+
+/* Botão secundário */
+.btn2 {
+    background-color: rgb(205, 206, 207);
+    margin-left: 20px;
+    border: 1px solid rgb(136, 133, 133);
+}
+
+/* Efeito ao passar o mouse */
+.btn1:hover, .btn2:hover {
+    transform: scale(1.05);
 }
