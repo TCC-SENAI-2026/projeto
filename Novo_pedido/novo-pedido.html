@@ -26,7 +26,7 @@
         <hr>
 
         <nav class="menu">
-            <a href="/InicioC_G/inicio.html">
+            <a href="../InicioC_G/inicio.html">
                 <span class="menu-link-left">
                     <span class="material-icons">dashboard</span>
                     Início
@@ -43,7 +43,7 @@
                 </summary>
 
                 <div class="submenu">
-                    <a href="novo-pedido.html">Criar novo pedido</a>
+                    <a href="../Novo_pedido/novo-pedido.html">Criar novo pedido</a>
                     <a href="/pedidos/pedidos.html">Lista de pedidos</a>
                 </div>
             </details>
@@ -108,7 +108,35 @@
 
     <main>
 
-        <div class="container0">
+        <div class="container0"> 
+
+            <div class="top">
+                <div class="page-header">
+                    <div class="page-title-row">
+                        <h1 class="page-title">Clientes</h1>
+                        <span id="client-count" class="page-count">0</span>
+                    </div>
+                    <p class="page-subtitle">Gerenciamento de clientes cadastrados no sistema</p>
+                </div>
+
+                <div class="top-right">
+                    <div class="search-box">
+                        <span class="material-icons search-icon">search</span>
+                        <input class="search" placeholder="Pesquisar cliente">
+                    </div>
+
+                    <select class="btn btn-filter">
+                        <option value="">Todos os Clientes</option>
+                        <option value="">A - Z</option>
+                        <option value="">Z - A</option>
+                        <option value="">Ativos</option>
+                        <option value="">Inativos</option>
+                    </select>
+
+                    <a href="add-cliente.html" class="btn btn-add">+ Cliente</a>
+
+                </div>
+            </div>
 
             <div class="stepper-wrapper">
 
@@ -125,9 +153,10 @@
                     <div class="step-name">Finalização</div>
                 </div>
             </div>
-
-            <div class="form-inner">
-                <form class="container1" id="meuNovo">
+            <div class="layout-pedido" >
+                <div class="grid">
+                    <div class="form-inner">
+                <form id="meuNovo">
                     <h2>1. Selecione o modelo</h2>
 
                     <div class="grid">
@@ -1122,10 +1151,14 @@
                         </div>
 
                     </div>
+                </div>
+            </div>
+
+            
 
                     <!-- ------------------------------CONTAINER 3--------------------------------->
 
-                    <div class="container03">
+                    <div class="lado-direito">
                         <h3>3. Upload da Imagem</h3>
 
                         <div class="upload-img" onclick="document.getElementById('input-arte').click()">
@@ -1156,7 +1189,7 @@
 
 
             </div>
-
+        </div>
 
     </main>
     <script src="novoPedido.js"></script>
