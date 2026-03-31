@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Noto+Sans+KR:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(-45deg, rgb(2, 11, 105), rgb(2, 1, 50), rgb(4, 2, 70), rgba(0, 21, 255, 0.856));
+    background-size: 400% 400%;
+    animation: degradeLento 10s ease infinite;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes degradeLento {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* HEADER */
+header {
+    background-color: rgb(11, 46, 110);
+    color: white;
+    width: 100%;
+    padding: 10px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 4vw;
+    flex-wrap: wrap;
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
+    text-decoration: none;
+    display: block;
+    color: white;
+}
+
+nav ul li a:hover {
+    color: orange;
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    background-color: rgb(11, 46, 110);
+    top: 100%;
+    left: 0;
+    padding: 10px;
+    border-radius: 0 0 5px 5px;
+    flex-direction: column;
+    min-width: 180px;
+    gap: 20px;
+}
+
+nav ul li:hover > .submenu {
+    display: flex;
+}
+
+.logo {
+    max-width: 150px;
+}
+
+/* ========================================================== */
+/* FORM */
+/* ========================================================== */
+
+form {
+    display: flex;
+    justify-content: center;
+    padding: 40px 15px;
+}
+
+.container1 {
+    background-color: aliceblue;
+    border: 3px solid black;
+    border-radius: 15px;
+    width: 95%;
+    max-width: 1400px;
+    padding: 40px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 40px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 32px;
+    margin: 30px 0 20px;
+    border-top: 3px solid #444;
+    border-bottom: 3px solid #444;
+    padding: 10px;
+}
+
+/* ========================================================== */
+/* LAYOUT CAMPOS */
+/* ========================================================== */
+
+.D-client1, .D-client2, .D-logistic, .D-personalizacao {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.campo1, .campo2, .campo3, .campo {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+input, select, textarea {
+    font-size: 18px;
+    height: 45px;
+    border-radius: 8px;
+    border: 2px solid black;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+textarea {
+    height: 120px;
+}
+
+label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* ========================================================== */
+/* 🔥 PRIORIDADE (CORRIGIDO AQUI) */
+/* ========================================================== */
+
+.container-prioridade {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* caixa branca visível */
+.niveis {
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 8px;
+    background-color: white;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap; /* 🔥 evita sumir em telas menores */
+}
+
+/* texto + radio juntos */
+.niveis label {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* radio visível */
+input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #36e002;
+    cursor: pointer;
+}
+
+/* ========================================================== */
+/* BOTÃO */
+/* ========================================================== */
+
+.proxima {
+    height: 60px;
+    width: 200px;
+    background: #36e002;
+    border-radius: 10px;
+    border: 2px solid #000;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 20px;
+    margin-left: auto;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.proxima:hover {
+    transform: scale(1.03);
+}
+
+/* ========================================================== */
+/* RESPONSIVO */
+/* ========================================================== */
+
+@media (max-width: 900px) {
+    .proxima {
+        width: 100%;
+        margin-left: 0;
+    }
+}

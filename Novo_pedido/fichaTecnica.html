@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/ficha.css">
+    <title>Revisar Ficha Técnica - E-Threads</title>
+</head>
+
+<body>
+
+    <header>
+        <img class="logo" src="img/E-threads (3) (1).png" alt="logo">
+        <nav>
+            <ul>
+                <li><a>Inicio</a></li>
+                <li><a>Clientes</a></li>
+                <li><a>Estoque</a></li>
+                <li>
+                    <a onmouseover="menuPedidos()">Pedidos</a>
+                    <ul class="submenu">
+                        <li><a>Historico de Pedidos</a></li>
+                        <li><a>Novo Pedido</a></li>
+                        <li><a>Sair</a></li>
+                    </ul>
+                </li>
+                <li><a>Relatorios</a></li>
+            </ul>
+        </nav>
+        <div onclick="loginMenu()" class="conta">
+            <p class="ola-nome">Ola, nome</p>
+        </div>
+    </header>
+
+    <main id="fichaTecnica">
+        <div class="stepper-wrapper">
+            <div class="stepper-item completed">
+                <div class="step-counter">1</div>
+                <div class="step-name">Identificação</div>
+            </div>
+            <div class="stepper-item completed">
+                <div class="step-counter">2</div>
+                <div class="step-name">Produtos</div>
+            </div>
+            <div class="stepper-item active">
+                <div class="step-counter">3</div>
+                <div class="step-name">Finalização</div>
+            </div>
+        </div>
+
+        <div class="titulo">
+            <h1><strong>Revisar Ficha Técnica</strong></h1>
+        </div>
+
+        <section class="container1" id="lista-produtos-container">
+        </section>
+
+        <div class="area-botoes-fixa">
+            <button onclick="voltarParaSelecao()" class="btn-voltar">Voltar</button>
+            <button onclick="finalizarPedido()" class="btn-continuar">Finalizar Pedido</button>
+        </div>
+    </main>
+
+    <div id="modalSucesso" class="modal-overlay">
+        <div class="modal-content">
+            <div class="icon-check">
+                <svg viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+            <h2>Pedido enviado com sucesso!</h2>
+            <p>Os itens já estão na fila de produção.</p>
+            <button onclick="fecharModalESair()" class="btn-modal">OK</button>
+        </div>
+    </div>
+
+    <script src="js/fichaTecnica.js"></script>
+</body>
+
+</html>
