@@ -1,28 +1,50 @@
 
 // pdf
-
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    doc.setFontSize(20);
-    doc.text("Relatório de Produção", 20, 20);
+    // --- Configurações de cores ---
+    const primaryColor = "#1f4e79"; // azul escuro
+    const secondaryColor = "#f2f2f2"; // cinza claro para cabeçalho de tabela
 
+    // --- Cabeçalho ---
+    doc.setFillColor(primaryColor);
+    doc.rect(0, 0, 210, 30, 'F'); // retângulo preenchido
+    doc.setTextColor("#ffffff");
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Relatório de Produção", 105, 18, { align: "center" });
+
+    // --- Subtítulo / Data ---
     doc.setFontSize(10);
-    doc.text("Gerado em: " + new Date().toLocaleDateString(), 20, 28);
+    doc.setFont("helvetica", "normal");
+    doc.text("Gerado em: " + new Date().toLocaleDateString(), 105, 28, { align: "center" });
 
+    // --- Resumo Geral ---
+    doc.setTextColor("#000000");
     doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
     doc.text("Resumo Geral", 20, 45);
 
     doc.setFontSize(11);
-    doc.text("Produção Total: 245 peças", 20, 55);
-    doc.text("Pedidos Concluídos: 38", 20, 62);
-    doc.text("Pedidos Pendentes: 12", 20, 69);
-    doc.text("Itens com Estoque Baixo: 4", 20, 76);
+    doc.setFont("helvetica", "normal");
+    const resumo = [
+        "Produção Total: 245 peças",
+        "Pedidos Concluídos: 38",
+        "Pedidos Pendentes: 12",
+        "Itens com Estoque Baixo: 4"
+    ];
 
+    resumo.forEach((linha, i) => {
+        doc.text(linha, 20, 55 + i * 7);
+    });
+
+    // --- Tabela com estilo ---
     doc.autoTable({
         startY: 90,
-        head: [["Mês", "Produção"]],
+        head: [[{ content: "Mês", styles: { fillColor: primaryColor, textColor: 255 } },
+        { content: "Produção", styles: { fillColor: primaryColor, textColor: 255 } }]],
         body: [
             ["Janeiro", 120],
             ["Fevereiro", 190],
@@ -30,13 +52,22 @@ function downloadPDF() {
             ["Abril", 220],
             ["Maio", 180],
             ["Junho", 240]
-        ]
+        ],
+        styles: { font: "helvetica", fontSize: 11, cellPadding: 4 },
+        alternateRowStyles: { fillColor: secondaryColor }, // <-- aqui usamos
+        headStyles: { halign: "center" },
+        bodyStyles: { halign: "center" }
     });
 
+    // --- Rodapé ---
+    const pageHeight = doc.internal.pageSize.height;
+    doc.setFontSize(9);
+    doc.setTextColor("#888888");
+    doc.text("© 2026 Empresa XYZ - Todos os direitos reservados", 105, pageHeight - 10, { align: "center" });
+
+    // --- Salvar PDF ---
     doc.save("relatorio-producao.pdf");
 }
-
-// funcoes gerais
 
 function abrirPedido(id) {
     window.location.href = `pedido-detalhe.html?id=${id}`;
