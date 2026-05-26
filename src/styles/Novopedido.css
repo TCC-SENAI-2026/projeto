@@ -1,0 +1,393 @@
+/* =========================
+   STEPPER
+========================= */
+
+.pedido-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 28px 0 32px;
+}
+
+.pedido-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.pedido-step span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.pedido-step.active span {
+    color: #2563eb;
+}
+
+.pedido-step.completed span {
+    color: #16a34a;
+}
+
+.step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.pedido-step.active .step-circle {
+    background: #2563eb;
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+.pedido-step.completed .step-circle {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.pedido-step-line {
+    flex: 1;
+    height: 2px;
+    background: #e5e7eb;
+    margin: 0 8px;
+    margin-bottom: 22px;
+    border-radius: 2px;
+}
+
+.pedido-step-line.completed {
+    background: #bbf7d0;
+}
+
+/* =========================
+   PRIORIDADE — cores do toggle
+========================= */
+
+#prio_baixa:checked + label {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+}
+
+#prio_media:checked + label {
+    background: #fef9c3;
+    color: #854d0e;
+    border-color: #fde68a;
+}
+
+#prio_alta:checked + label {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+/* =========================
+   GRID DE MODELOS
+========================= */
+
+.modelos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 4px;
+}
+
+.modelo-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modelo-card.selecionado {
+    border-color: #2563eb;
+    background: #eff6ff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+}
+
+.modelo-frente,
+.modelo-verso {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.modelo-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #e0e7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.modelo-icon .material-icons {
+    font-size: 28px;
+    color: #2563eb;
+}
+
+.modelo-nome {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.modelo-selects {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modelo-btn {
+    margin-top: auto;
+    width: 100%;
+    justify-content: center;
+}
+
+/* =========================
+   GRADE DE TAMANHOS
+========================= */
+
+.grade-tamanhos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.item-tamanho {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.item-tamanho label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+}
+
+.item-tamanho input {
+    width: 100%;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+    background: #fff;
+    transition: border-color 0.2s ease;
+}
+
+.item-tamanho input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* =========================
+   TAGS DE DETALHE
+========================= */
+
+.tag-detalhe {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #e0e7ff;
+    color: #3730a3;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+    margin-bottom: 4px;
+}
+
+/* =========================
+   UPLOAD DE ARTE
+========================= */
+
+.upload-arte {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 36px 24px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    text-align: center;
+}
+
+.upload-arte:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+.upload-arte .material-icons {
+    font-size: 36px;
+    color: #94a3b8;
+}
+
+.upload-arte strong {
+    font-size: 15px;
+    color: #334155;
+}
+
+.upload-arte span {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+/* =========================
+   FICHA TÉCNICA — INFO GRID
+========================= */
+
+.ficha-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 24px;
+    margin-top: 4px;
+}
+
+.ficha-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ficha-info-full {
+    grid-column: 1 / -1;
+}
+
+.ficha-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+}
+
+.ficha-value {
+    font-size: 15px;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+/* =========================
+   FICHA TÉCNICA — TABELA
+========================= */
+
+.ficha-tabela-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-top: 8px;
+}
+
+.ficha-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.ficha-tabela thead tr {
+    background: #f1f5f9;
+}
+
+.ficha-tabela th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.ficha-tabela td {
+    padding: 12px 16px;
+    color: #334155;
+    border-top: 1px solid #f1f5f9;
+}
+
+.ficha-tabela tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* =========================
+   MODAL DE SUCESSO
+========================= */
+
+.modal-sucesso {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px 32px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.modal-sucesso-icon .material-icons {
+    font-size: 64px;
+    color: #16a34a;
+}
+
+.modal-sucesso h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.modal-sucesso p {
+    font-size: 14px;
+    color: #64748b;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 760px) {
+    .modelos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ficha-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pedido-stepper {
+        gap: 0;
+    }
+
+    .pedido-step span {
+        display: none;
+    }
+}
