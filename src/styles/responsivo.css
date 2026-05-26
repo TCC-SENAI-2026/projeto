@@ -1,0 +1,978 @@
+/* @media (max-width: 1400px) {
+    .container {
+        padding: 22px;
+    }
+
+    .dashboard-cards,
+    .stock-grid,
+    .report-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .charts {
+        grid-template-columns: 1fr;
+    }
+
+    .top {
+        gap: 18px;
+    }
+
+    .top-right {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 1180px) {
+    .sidebar {
+        width: 208px;
+    }
+
+    .container {
+        width: calc(100% - 208px);
+        margin-left: 208px;
+        padding: 20px;
+    }
+
+    .top-right {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .search-box {
+        flex: 0 1 280px;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+    .report-top {
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-cards,
+    .stock-grid,
+    .charts,
+    .report-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-header,
+    .order-row {
+        grid-template-columns: 110px 1fr 120px;
+    }
+
+    .report-header {
+        align-items: center;
+    }
+
+    .top {
+        gap: 8px;
+    }
+
+    .top-right-inline {
+        flex-wrap: nowrap;
+    }
+
+    .top-right-inline .search-box {
+        flex: 0 0 220px;
+    }
+}
+
+@media (max-width: 920px) {
+    .top {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .top-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .top-right-inline {
+        margin-left: 0;
+        flex-wrap: wrap;
+    }
+
+    .top-right-inline .search-box {
+        flex: 1 1 260px;
+    }
+
+    .search-box {
+        flex: 1 1 260px;
+    }
+
+    .report-header {
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 768px) {
+    .mobile-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 68px;
+        display: grid;
+        grid-template-columns: 52px 1fr 52px;
+        align-items: center;
+        padding: 0 14px;
+        background: #151e31;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        z-index: 1200;
+    }
+
+    .mobile-menu-toggle,
+    .mobile-topbar-spacer {
+        width: 44px;
+        height: 44px;
+    }
+
+    .mobile-menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+        cursor: pointer;
+    }
+
+    .mobile-menu-toggle .material-icons {
+        font-size: 24px;
+    }
+
+    .mobile-brand {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .mobile-brand .logo-nome {
+        width: 118px;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 68px 0 0;
+        border: none;
+        background: rgba(15, 23, 42, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1090;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .sidebar {
+        top: 76px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        height: auto;
+        max-height: calc(100vh - 88px);
+        border-radius: 22px;
+        padding: 14px 0 16px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+        transform: translateY(-12px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s ease, transform 0.22s ease;
+        overflow-y: auto;
+        z-index: 1100;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .logo-sidebar {
+        justify-content: center;
+        padding: 2px 16px 14px;
+    }
+
+    .logo-sidebar .logo-nome {
+        width: 118px;
+    }
+
+    .sidebar > hr {
+        margin-bottom: 12px;
+    }
+
+    .menu {
+        gap: 8px;
+        padding: 0 10px;
+    }
+
+    .menu > a,
+    .menu > button,
+    .menu-dropdown summary {
+        padding: 12px 14px;
+    }
+
+    .submenu {
+        padding-left: 18px;
+    }
+
+    .container {
+        width: 100%;
+        margin-left: 0;
+        padding: 58px 14px 12px !important;
+    }
+
+    .top {
+        gap: 2px !important;
+        margin-bottom: 2px !important;
+    }
+
+    .top > .page-header {
+        margin-bottom: 2px !important;
+    }
+
+    .page-title {
+        font-size: 22px;
+        line-height: 1.1;
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+    }
+
+    .top-right,
+    .report-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px !important;
+        margin-top: 0 !important;
+    }
+
+    .top-right-inline {
+        margin-left: 0;
+    }
+
+    .search-box,
+    .btn,
+    .btn-filter,
+    .btn-add,
+    .btn-sec {
+        width: 100%;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+    .list,
+    .dashboard-section,
+    .form-page-card,
+    .chart-box,
+    .report-card {
+        border-radius: 18px;
+    }
+
+    .list,
+    .dashboard-section {
+        padding: 14px;
+    }
+
+    .tabs {
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .tab-btn {
+        white-space: nowrap;
+    }
+
+    .dashboard-cards,
+    .stock-grid,
+    .clients-grid,
+    .funcionario-grid,
+    .charts,
+    .report-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-header,
+    .table-header,
+    .estoque-header {
+        display: none;
+    }
+
+    .order-row,
+    .product,
+    .estoque-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 14px;
+        padding: 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        margin-bottom: 8px;
+        background: #ffffff;
+    }
+
+    .produto,
+    .item-info {
+        grid-column: 1 / -1;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .mobile-field-label {
+        display: inline-block;
+    }
+
+    .pedido-main,
+    .estoque-main,
+    .info-block {
+        gap: 6px;
+    }
+
+    .empresa,
+    .categoria,
+    .quantidade,
+    .status-col {
+        align-self: start;
+        min-height: 48px;
+    }
+
+    .empresa,
+    .categoria,
+    .quantidade,
+    .status-col,
+    .actions {
+        padding-left: 0;
+    }
+
+    .status-col,
+    .actions {
+        justify-content: flex-start;
+    }
+
+    .actions {
+        flex-wrap: wrap;
+        grid-column: 1 / -1;
+        align-items: flex-start;
+    }
+
+    .charts {
+        gap: 16px;
+    }
+
+    .chart-box canvas {
+        max-height: 260px;
+    }
+
+    .modal-overlay {
+        padding: 14px;
+    }
+
+    .cliente-modal,
+    .funcionario-modal {
+        padding: 20px 16px;
+        border-radius: 18px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-actions .btn,
+    .modal-actions .btn-sec {
+        width: 100%;
+    }
+}
+
+@media (max-width: 560px) {
+    .mobile-topbar {
+        padding: 0 10px;
+    }
+
+    .mobile-brand .logo-nome {
+        width: 104px;
+    }
+
+    .container {
+        padding: 56px 10px 10px !important;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+
+    .page-count {
+        min-width: 24px;
+        height: 22px;
+        font-size: 14px;
+    }
+
+    .list,
+    .dashboard-section,
+    .form-page-card,
+    .chart-box,
+    .report-card {
+        padding: 14px;
+    }
+
+    .produto,
+    .item-info {
+        align-items: flex-start;
+    }
+
+    .order-row,
+    .product,
+    .estoque-row {
+        grid-template-columns: 1fr;
+    }
+
+    .empresa,
+    .categoria,
+    .quantidade,
+    .status-col,
+    .actions {
+        padding-left: 0;
+    }
+
+    .product,
+    .estoque-row,
+    .order-row {
+        padding: 10px;
+    }
+
+    .dashboard-card h2,
+    .report-card h2 {
+        font-size: 24px;
+    }
+
+    .report-card {
+        padding: 16px;
+    }
+
+    .chart-head h3 {
+        font-size: 16px;
+    }
+
+    .chart-head p {
+        font-size: 13px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .form-page-card .status-toggle {
+        flex-wrap: wrap;
+    }
+} */
+
+
+
+
+
+
+/* STYLE NOVO CLAUDE!!!!!!! */
+@media (max-width: 1400px) {
+    .container {
+        padding: 22px;
+    }
+
+    .dashboard-cards,
+    .stock-grid,
+    .report-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .charts {
+        grid-template-columns: 1fr;
+    }
+
+    .top {
+        gap: 18px;
+    }
+
+    .top-right {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 1180px) {
+    .sidebar {
+        width: 208px;
+    }
+
+    .container {
+        width: calc(100% - 208px);
+        margin-left: 208px;
+        padding: 20px;
+    }
+
+    .top-right {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .search-box {
+        flex: 0 1 280px;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+    .report-top {
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-cards,
+    .stock-grid,
+    .charts,
+    .report-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-header,
+    .order-row {
+        grid-template-columns: 110px 1fr 120px;
+    }
+
+    .report-header {
+        align-items: center;
+    }
+
+    .top {
+        gap: 8px;
+    }
+
+    .top-right-inline {
+        flex-wrap: nowrap;
+    }
+
+    .top-right-inline .search-box {
+        flex: 0 0 220px;
+    }
+}
+
+@media (max-width: 920px) {
+    .top {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .top-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .top-right-inline {
+        margin-left: 0;
+        flex-wrap: wrap;
+    }
+
+    .top-right-inline .search-box {
+        flex: 1 1 260px;
+    }
+
+    .search-box {
+        flex: 1 1 260px;
+    }
+
+    .report-header {
+        align-items: stretch;
+    }
+}
+
+/* ============================================================
+   MOBILE — ponto de quebra principal
+   Aqui a sidebar vira drawer e o layout muda por completo.
+   NENHUM outro arquivo deve ter @media 768px ou 560px.
+   ============================================================ */
+@media (max-width: 768px) {
+
+    /* ── TOPBAR FIXA ── */
+    .mobile-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 68px;           /* <- valor de referência para tudo abaixo */
+        display: grid;
+        grid-template-columns: 52px 1fr 52px;
+        align-items: center;
+        padding: 0 14px;
+        background: #151e31;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        z-index: 1200;
+    }
+
+    .mobile-menu-toggle,
+    .mobile-topbar-spacer {
+        width: 44px;
+        height: 44px;
+    }
+
+    .mobile-menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+        cursor: pointer;
+    }
+
+    .mobile-menu-toggle .material-icons {
+        font-size: 24px;
+    }
+
+    .mobile-brand {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .mobile-brand .logo-nome {
+        width: 118px;
+    }
+
+    /* ── OVERLAY (fundo escuro ao abrir menu) ── */
+    .sidebar-overlay {
+        position: fixed;
+        inset: 68px 0 0 0;
+        border: none;
+        background: rgba(15, 23, 42, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1090;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* ── SIDEBAR (drawer) ── */
+    .sidebar {
+        top: 76px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        height: auto;
+        max-height: calc(100vh - 88px);
+        border-radius: 22px;
+        padding: 14px 0 16px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+        transform: translateY(-12px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s ease, transform 0.22s ease;
+        overflow-y: auto;
+        z-index: 1100;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .logo-sidebar {
+        justify-content: center;
+        padding: 2px 16px 14px;
+    }
+
+    .logo-sidebar .logo-nome {
+        width: 118px;
+    }
+
+    .sidebar > hr {
+        margin-bottom: 12px;
+    }
+
+    .menu {
+        gap: 8px;
+        padding: 0 10px;
+    }
+
+    .menu > a,
+    .menu > button,
+    .menu-dropdown summary {
+        padding: 12px 14px;
+    }
+
+    .submenu {
+        padding-left: 18px;
+    }
+
+    /* ── CONTAINER ──
+       68px (topbar) + 16px (respiro) = 84px de padding-top.
+       Isso garante que o título nunca some atrás da barra.
+    */
+    .container {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 84px 14px 20px !important;
+    }
+
+    /* ── TOPO DA PÁGINA ── */
+    .top {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 10px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .top > .page-header {
+        margin-bottom: 0 !important;
+    }
+
+    .page-title {
+        font-size: 22px;
+        line-height: 1.2;
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+        margin-top: 2px;
+    }
+
+    /* ── CONTROLES DO TOPO ── */
+    .top-right,
+    .top-right-inline,
+    .report-top {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    .search-box {
+        width: 100% !important;
+        flex: unset !important;
+    }
+
+    .search,
+    .btn,
+    .btn-filter,
+    .btn-add,
+    .btn-sec {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* ── LISTAS E SEÇÕES ── */
+    .list,
+    .dashboard-section,
+    .form-page-card,
+    .chart-box,
+    .report-card {
+        border-radius: 18px;
+    }
+
+    .list,
+    .dashboard-section {
+        padding: 14px;
+        min-height: unset;
+    }
+
+    /* ── ABAS ── */
+    .tabs {
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .tab-btn {
+        white-space: nowrap;
+    }
+
+    /* ── GRIDS ── */
+    .dashboard-cards,
+    .stock-grid,
+    .clients-grid,
+    .funcionario-grid,
+    .charts,
+    .report-cards {
+        grid-template-columns: 1fr;
+    }
+
+    /* ── CABEÇALHOS DE TABELA: ocultos no mobile ── */
+    .recent-header,
+    .table-header,
+    .estoque-header {
+        display: none;
+    }
+
+    /* ── CARDS DE PEDIDO E ESTOQUE ──
+       Flex em coluna — cada campo empilha label + valor.
+       O !important garante que o grid do pedido.css
+       não sobrescreva este layout.
+    */
+    .order-row,
+    .product,
+    .estoque-row {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        padding: 14px !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 16px !important;
+        margin-bottom: 10px !important;
+        background: #ffffff;
+        cursor: pointer;
+    }
+
+    /* Linha do topo: imagem + nome em linha */
+    .produto,
+    .item-info {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 12px !important;
+        width: 100%;
+    }
+
+    /* Blocos de campo */
+    .pedido-main,
+    .estoque-main,
+    .info-block,
+    .empresa,
+    .categoria,
+    .quantidade,
+    .status-col {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 3px !important;
+        align-self: auto !important;
+        min-height: unset !important;
+        padding-left: 0 !important;
+    }
+
+    /* Ações em linha no rodapé */
+    .actions {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: flex-start !important;
+        flex-wrap: wrap;
+        gap: 8px !important;
+        padding-left: 0 !important;
+    }
+
+    /* Labels visíveis só no mobile */
+    .mobile-field-label {
+        display: block !important;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94a3b8;
+        margin-bottom: 1px;
+    }
+
+    /* ── CHARTS ── */
+    .charts {
+        gap: 16px;
+    }
+
+    .chart-box canvas {
+        max-height: 260px;
+    }
+
+    /* ── MODAIS ── */
+    .modal-overlay {
+        padding: 14px;
+    }
+
+    .cliente-modal,
+    .funcionario-modal {
+        padding: 20px 16px;
+        border-radius: 18px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 8px;
+    }
+
+    .modal-actions .btn,
+    .modal-actions .btn-sec {
+        width: 100%;
+    }
+}
+
+@media (max-width: 560px) {
+    .mobile-topbar {
+        padding: 0 10px;
+    }
+
+    .mobile-brand .logo-nome {
+        width: 104px;
+    }
+
+    /* Mantém os mesmos 84px — topbar não muda de altura */
+    .container {
+        padding: 84px 10px 16px !important;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+
+    .page-count {
+        min-width: 24px;
+        height: 22px;
+        font-size: 14px;
+    }
+
+    .dashboard-card h2,
+    .report-card h2 {
+        font-size: 24px;
+    }
+
+    .report-card {
+        padding: 16px;
+    }
+
+    .chart-head h3 {
+        font-size: 16px;
+    }
+
+    .chart-head p {
+        font-size: 13px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .form-page-card .status-toggle {
+        flex-wrap: wrap;
+    }
+}
