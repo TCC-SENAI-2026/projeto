@@ -1,0 +1,12 @@
+http://localhost:5173/pedidos/novo/produtos - 
+adicionar um select para puxar artes de clientes cadastrados,
+tirando a necessidade de fazer um upload de uma arte nova a cada pedido
+arrumar o upload da imagem tbm
+
+
+http://localhost:5173/pedidos -
+criar a ficha dos pedidos, contendo as informacoes dos itens puxando do estoque
+deve ter um qrcode tbm, que ao ser lido abrirá a imagem do item
+
+http://localhost:5173/add-estoque -
+adicionar um campo de upload de foto, que sera puxada na ficha dos pedidos
