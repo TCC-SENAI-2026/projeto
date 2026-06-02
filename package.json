@@ -3,15 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-"scripts": {
-  "dev": "vite",
-  "start": "concurrently \"python3 ./backend/app.py\" \"vite\""
-},
+  "scripts": {
+    "dev": "vite",
+    "start": "concurrently \"python3 ./backend/app.py\" \"vite\""
+  },
   "dependencies": {
     "axios": "^1.14.0",
     "chart.js": "^4.5.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
+    "qrcode.react": "^4.2.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.2"

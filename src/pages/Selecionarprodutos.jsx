@@ -30,12 +30,20 @@ const CORES = [
     { group: "Especiais", options: ["Metálico", "Neon", "Pastel", "Tie-dye", "Estampado"] },
 ];
 
+// NOVO: locais possíveis de personalização
+const LOCAIS = [
+    { group: "Frente", options: ["Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito", "Frente — Abaixo do Peito"] },
+    { group: "Costas", options: ["Costas — Centro Alto", "Costas — Centro Baixo", "Costas — Full Back"] },
+    { group: "Mangas", options: ["Manga Esquerda", "Manga Direita", "Ambas as Mangas"] },
+    { group: "Outros", options: ["Gola", "Bolso", "Barra", "Capuz"] },
+];
+
 const MODELOS = [
-    { id: "camiseta",     label: "Camiseta",       icon: "checkroom" },
-    { id: "camisa",       label: "Camisa",          icon: "checkroom" },
-    { id: "camisa_longa", label: "Camisa Longa",    icon: "checkroom" },
-    { id: "moletom",      label: "Moletom c/ Capuz",icon: "checkroom" },
-    { id: "calca",        label: "Calça",           icon: "checkroom" },
+    { id: "camiseta",     label: "Camiseta",        icon: "checkroom" },
+    { id: "camisa",       label: "Camisa",           icon: "checkroom" },
+    { id: "camisa_longa", label: "Camisa Longa",     icon: "checkroom" },
+    { id: "moletom",      label: "Moletom c/ Capuz", icon: "checkroom" },
+    { id: "calca",        label: "Calça",            icon: "checkroom" },
 ];
 
 function SelectOpcoes({ label, groups, value, onChange }) {
@@ -60,7 +68,7 @@ function ModeloCard({ modelo, dados, onChange, selecionado, onToggle }) {
     return (
         <div className={`modelo-card ${selecionado ? "selecionado" : ""}`}>
 
-            {/* FRENTE */}
+            {/* FRENTE — configuração */}
             {!selecionado && (
                 <div className="modelo-frente">
                     <div className="modelo-icon">
@@ -88,6 +96,32 @@ function ModeloCard({ modelo, dados, onChange, selecionado, onToggle }) {
                             value={dados.cor}
                             onChange={e => onChange("cor", e.target.value)}
                         />
+                        {/* NOVO: local da arte por item */}
+                        <SelectOpcoes
+                            label="Local da Arte"
+                            groups={LOCAIS}
+                            value={dados.local}
+                            onChange={e => onChange("local", e.target.value)}
+                        />
+                        {/* NOVO: observação por item */}
+                        <div className="form-field">
+                            <label>Observações deste item</label>
+                            <textarea
+                                rows={2}
+                                placeholder="Ex: bordado em linha branca, repetir no bolso..."
+                                value={dados.observacao}
+                                onChange={e => onChange("observacao", e.target.value)}
+                                style={{
+                                    width: "100%",
+                                    borderRadius: 10,
+                                    border: "1px solid #e2e8f0",
+                                    padding: "8px 12px",
+                                    fontSize: 13,
+                                    resize: "vertical",
+                                    fontFamily: "inherit",
+                                }}
+                            />
+                        </div>
                     </div>
 
                     <button
@@ -100,15 +134,20 @@ function ModeloCard({ modelo, dados, onChange, selecionado, onToggle }) {
                 </div>
             )}
 
-            {/* VERSO — quantidades */}
+            {/* VERSO — quantidades por tamanho */}
             {selecionado && (
                 <div className="modelo-verso">
                     <h3 className="modelo-nome">{modelo.label}</h3>
 
                     <p className="section-help" style={{ marginBottom: 16 }}>
-                        {dados.cor && <span className="tag-detalhe">{dados.cor}</span>}
-                        {dados.tecido && <span className="tag-detalhe">{dados.tecido}</span>}
+                        {dados.cor          && <span className="tag-detalhe">{dados.cor}</span>}
+                        {dados.tecido       && <span className="tag-detalhe">{dados.tecido}</span>}
                         {dados.personalizacao && <span className="tag-detalhe">{dados.personalizacao}</span>}
+                        {dados.local        && (
+                            <span className="tag-detalhe" style={{ background: "#f3e8ff", color: "#6b21a8" }}>
+                                {dados.local}
+                            </span>
+                        )}
                     </p>
 
                     <div className="grade-tamanhos">
@@ -124,6 +163,20 @@ function ModeloCard({ modelo, dados, onChange, selecionado, onToggle }) {
                             </div>
                         ))}
                     </div>
+
+                    {dados.observacao && (
+                        <p style={{
+                            marginTop: 12,
+                            fontSize: 12,
+                            color: "#64748b",
+                            background: "#f8fafc",
+                            border: "1px solid #e2e8f0",
+                            borderRadius: 8,
+                            padding: "8px 12px",
+                        }}>
+                            <strong>Obs.:</strong> {dados.observacao}
+                        </p>
+                    )}
 
                     <button
                         type="button"
@@ -145,9 +198,21 @@ function SelecionarProdutos() {
     const [modelos, setModelos] = useState(() =>
         Object.fromEntries(MODELOS.map(m => [
             m.id,
-            { personalizacao: "", tecido: "", cor: "", quantidades: {}, selecionado: false }
+            {
+                personalizacao: "",
+                tecido: "",
+                cor: "",
+                local: "",        // NOVO
+                observacao: "",   // NOVO
+                quantidades: {},
+                selecionado: false,
+            }
         ]))
     );
+
+    // CORREÇÃO: guarda a arte em state próprio, separado dos produtos
+    const [artePreview, setArtePreview] = useState(null);
+    const [arteBase64, setArteBase64] = useState(null);
 
     function handleChange(modeloId, campo, valor) {
         setModelos(prev => {
@@ -170,9 +235,22 @@ function SelecionarProdutos() {
             [modeloId]: {
                 ...prev[modeloId],
                 selecionado: !prev[modeloId].selecionado,
-                quantidades: !prev[modeloId].selecionado ? prev[modeloId].quantidades : {},
+                quantidades: !prev[modeloId].selecionado
+                    ? prev[modeloId].quantidades
+                    : {},
             }
         }));
+    }
+
+    function handleArte(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            setArteBase64(ev.target.result);
+            setArtePreview(ev.target.result);
+        };
+        reader.readAsDataURL(file);
     }
 
     function handleContinuar() {
@@ -183,7 +261,17 @@ function SelecionarProdutos() {
                 const grade = Object.fromEntries(
                     Object.entries(d.quantidades).filter(([, v]) => v > 0)
                 );
-                return { item: m.label, grade, detalhes: { tecido: d.tecido, cor: d.cor, personalizacao: d.personalizacao } };
+                return {
+                    item: m.label,
+                    grade,
+                    detalhes: {
+                        tecido:        d.tecido,
+                        cor:           d.cor,
+                        personalizacao: d.personalizacao,
+                        local:         d.local,         // NOVO
+                        observacao:    d.observacao,    // NOVO
+                    },
+                };
             });
 
         if (selecionados.length === 0) {
@@ -197,7 +285,12 @@ function SelecionarProdutos() {
             return;
         }
 
-        localStorage.setItem("detalhesPedido", JSON.stringify({ produtos: selecionados, arte: null }));
+        // CORREÇÃO: arte salva junto aos produtos, sem sobrescrever
+        localStorage.setItem(
+            "detalhesPedido",
+            JSON.stringify({ produtos: selecionados, arte: arteBase64 })
+        );
+
         navigate("/pedidos/novo/ficha");
     }
 
@@ -215,7 +308,7 @@ function SelecionarProdutos() {
                         </span>
                         <h1 className="form-title">Selecionar Produtos</h1>
                         <p className="form-subtitle">
-                            Escolha os modelos, configure cor, tecido e personalização de cada um.
+                            Escolha os modelos, configure cor, tecido, técnica e local da arte de cada um.
                         </p>
                     </div>
 
@@ -240,7 +333,8 @@ function SelecionarProdutos() {
                     <section className="form-section">
                         <h2>Modelos disponíveis</h2>
                         <p className="section-help">
-                            Clique em "Selecionar" para escolher um modelo e definir as quantidades por tamanho.
+                            Configure cada modelo individualmente — técnica, tecido, cor, local da arte e observações.
+                            Depois clique em "Selecionar" para definir as quantidades por tamanho.
                         </p>
 
                         <div className="modelos-grid">
@@ -257,10 +351,13 @@ function SelecionarProdutos() {
                         </div>
                     </section>
 
-                    {/* UPLOAD DE ARTE */}
+                    {/* UPLOAD DE ARTE — agora com preview e state próprio */}
                     <section className="form-section">
                         <h2>Arte do Cliente</h2>
-                        <p className="section-help">Envie a arte para personalização. Formatos aceitos: PNG, AI, PDF.</p>
+                        <p className="section-help">
+                            Envie a arte para personalização. Ela será aplicada nos itens conforme a técnica
+                            de cada um. Formatos aceitos: PNG, AI, PDF.
+                        </p>
 
                         <label className="upload-arte" htmlFor="input-arte">
                             <span className="material-icons">upload_file</span>
@@ -269,20 +366,42 @@ function SelecionarProdutos() {
                             <input
                                 id="input-arte"
                                 type="file"
-                                accept=".png,.ai,.pdf"
+                                accept=".png,.ai,.pdf,image/*"
                                 style={{ display: "none" }}
-                                onChange={e => {
-                                    const file = e.target.files[0];
-                                    if (!file) return;
-                                    const reader = new FileReader();
-                                    reader.onload = ev => {
-                                        const prev = JSON.parse(localStorage.getItem("detalhesPedido") || "{}");
-                                        localStorage.setItem("detalhesPedido", JSON.stringify({ ...prev, arte: ev.target.result }));
-                                    };
-                                    reader.readAsDataURL(file);
-                                }}
+                                onChange={handleArte}
                             />
                         </label>
+
+                        {/* Preview da arte após upload */}
+                        {artePreview && (
+                            <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 16 }}>
+                                <img
+                                    src={artePreview}
+                                    alt="Preview da arte"
+                                    style={{
+                                        width: 100,
+                                        height: 100,
+                                        objectFit: "contain",
+                                        borderRadius: 10,
+                                        border: "1px solid #e2e8f0",
+                                        background: "#f8fafc",
+                                    }}
+                                />
+                                <div>
+                                    <p style={{ fontSize: 13, color: "#166534", fontWeight: 600 }}>
+                                        ✓ Arte carregada com sucesso
+                                    </p>
+                                    <button
+                                        type="button"
+                                        className="btn-page-sec"
+                                        style={{ marginTop: 6, fontSize: 12 }}
+                                        onClick={() => { setArtePreview(null); setArteBase64(null); }}
+                                    >
+                                        Remover arte
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </section>
 
                     <div className="form-actions">
