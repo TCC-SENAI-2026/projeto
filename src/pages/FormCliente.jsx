@@ -1,17 +1,30 @@
 import Sidebar from "../components/Sidebar"
 import { useNavigate } from "react-router-dom"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import "../styles/padrao.css"
 import "../styles/formulario.css"
 
 function FormCliente() {
 
     const navigate = useNavigate()
+    const [artePreview, setArtePreview] = useState(null);
+    const [arteBase64, setArteBase64] = useState(null);
 
     function handleSubmit(e) {
         e.preventDefault()
         alert("Cliente salvo!")
         navigate("/clientes")
+    }
+
+    function handleArte(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            setArteBase64(ev.target.result);
+            setArtePreview(ev.target.result);
+        };
+        reader.readAsDataURL(file);
     }
 
     useEffect(() => {
@@ -156,6 +169,58 @@ function FormCliente() {
                             </div>
 
                         </section>
+
+
+                        <h2>Arte do Cliente</h2>
+                        <p className="section-help">
+                            Envie a arte para personalização. Ela será aplicada nos itens conforme a técnica
+                            de cada um. Formatos aceitos: PNG, AI, PDF.
+                        </p>
+
+                        <label className="upload-arte" htmlFor="input-arte">
+                            <span className="material-icons">upload_file</span>
+                            <strong>Arraste sua arte aqui</strong>
+                            <span>ou clique para enviar — PNG, AI, PDF</span>
+                            <input
+                                id="input-arte"
+                                type="file"
+                                accept=".png,.ai,.pdf,image/*"
+                                style={{ display: "none" }}
+                                onChange={handleArte}
+                            />
+                        </label>
+
+                         {/* Preview da arte após upload */}
+                        {artePreview && (
+                            <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 16 }}>
+                                <img
+                                    src={artePreview}
+                                    alt="Preview da arte"
+                                    style={{
+                                        width: 100,
+                                        height: 100,
+                                        objectFit: "contain",
+                                        borderRadius: 10,
+                                        border: "1px solid #e2e8f0",
+                                        background: "#f8fafc",
+                                    }}
+                                />
+                                <div>
+                                    <p style={{ fontSize: 13, color: "#166534", fontWeight: 600 }}>
+                                        ✓ Arte carregada com sucesso
+                                    </p>
+                                    <button
+                                        type="button"
+                                        className="btn-page-sec"
+                                        style={{ marginTop: 6, fontSize: 12 }}
+                                        onClick={() => { setArtePreview(null); setArteBase64(null); }}
+                                    >
+                                        Remover arte
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
 
                         {/* EXTRA */}
                         <section className="form-section">
