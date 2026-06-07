@@ -1,19 +1,25 @@
 import Modal from "../components/Modal"
 import Sidebar from "../components/Sidebar"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import '../styles/padrao.css'
 import '../styles/cliente.css'
-
 
 function Clientes() {
 
     const navigate = useNavigate();
     const [modalAberto, setModalAberto] = useState(false);
     const [clienteSelecionado, setClienteSelecionado] = useState(null);
+    const [clientes, setClientes] = useState([]);
+
+    // Busca os clientes do banco ao carregar a página
+    useEffect(() => {
+        fetch('http://localhost:5000/listar-clientes')
+            .then(res => res.json())
+            .then(dados => setClientes(dados))
+    }, [])
 
     function abrirCliente(cliente) {
-        console.log('clicou', cliente);
         setClienteSelecionado(cliente)
         setModalAberto(true)
     }
@@ -29,7 +35,7 @@ function Clientes() {
                     <div className="page-header">
                         <div className="page-title-row">
                             <h1 className="page-title">Clientes Cadastrados</h1>
-                            <span className="page-count">(2)</span>
+                            <span className="page-count">({clientes.length})</span>
                         </div>
                         <p className="page-subtitle">
                             Gerenciamento de clientes cadastrados no sistema
@@ -55,46 +61,28 @@ function Clientes() {
                 <div className="list">
                     <div className="clients-grid">
 
-                        {/* CLIENTE 1 */}
-                        <div className="client-card"
-                            onClick={() =>
-                                abrirCliente({
-                                    empresa: 'Caio Induscar',
-                                    responsavel: 'Joao Silva',
-                                    telefone: '(14)99999-9999',
-                                    email: 'empresa@email.com',
-                                    pedidos: '12 pedidos',
-                                    ultimoPedido: '02/03/2026'
-                                })
-                            }
-                        >
-                            <div className="client-logo"></div>
-                            <div className="client-footer">
-                                <span className="client-name">Caio Induscar</span>
-                                <div className="status-dot"></div>
+                        {clientes.map((cliente, index) => (
+                            <div
+                                key={index}
+                                className="client-card"
+                                onClick={() => abrirCliente(cliente)}
+                            >
+                                <div className="client-logo">
+                                    {cliente[11] && (
+                                        <img
+                                            src={`http://localhost:5000/static/uploads/${cliente[11]}`}
+                                            alt="logo"
+                                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                        />
+                                    )}
+                                </div>
+                                <div className="client-footer">
+                                    <span className="client-name">{cliente[0]}</span>
+                                    <div className={`status-dot ${cliente[12] ? 'ativo' : 'inativo'}`}></div>
+                                </div>
                             </div>
-                        </div>
+                        ))}
 
-
-                        {/* CLIENTE 2 */}
-                        <div className="client-card"
-                            onClick={() =>
-                                abrirCliente({
-                                    empresa: 'Irizar',
-                                    responsavel: 'Maria Souza',
-                                    telefone: '(14)99999-9999',
-                                    email: 'beta@email.com',
-                                    pedidos: '5 pedidos',
-                                    ultimoPedido: '10/03/2026'
-                                })
-                            }
-                        >
-                            <div className="client-logo"></div>
-                            <div className="client-footer">
-                                <span className="client-name">Irizar</span>
-                                <div className="status-dot"></div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -102,7 +90,7 @@ function Clientes() {
 
                     <div className="modal-header">
                         <div className="modal-title-group">
-                            <h2 className="modal-title">{clienteSelecionado?.empresa}</h2>
+                            <h2 className="modal-title">{clienteSelecionado?.[0]}</h2>
                             <p className="modal-subtitle">Cliente cadastrado</p>
                         </div>
                     </div>
@@ -110,27 +98,17 @@ function Clientes() {
                     <div className="modal-body">
                         <div className="modal-info">
                             <span className="modal-label">Responsável</span>
-                            <p className="modal-value">{clienteSelecionado?.responsavel}</p>
+                            <p className="modal-value">{clienteSelecionado?.[1]}</p>
                         </div>
 
                         <div className="modal-info">
                             <span className="modal-label">Telefone</span>
-                            <p className="modal-value">{clienteSelecionado?.telefone}</p>
+                            <p className="modal-value">{clienteSelecionado?.[3]}</p>
                         </div>
 
                         <div className="modal-info">
                             <span className="modal-label">E-mail</span>
-                            <p className="modal-value">{clienteSelecionado?.email}</p>
-                        </div>
-
-                        <div className="modal-info">
-                            <span className="modal-label">Pedidos</span>
-                            <p className="modal-value">{clienteSelecionado?.pedidos}</p>
-                        </div>
-
-                        <div className="modal-info">
-                            <span className="modal-label">Último pedido</span>
-                            <p className="modal-value">{clienteSelecionado?.ultimoPedido}</p>
+                            <p className="modal-value">{clienteSelecionado?.[4]}</p>
                         </div>
                     </div>
 
@@ -138,12 +116,12 @@ function Clientes() {
                         <button className="btn-sec" onClick={() => setModalAberto(false)}>
                             Fechar
                         </button>
-
                         <button 
-                            className="btn btn-add" 
-                            onClick={() => alert('Editar')}
-                            //onCick={() => navigate('/formCliente', { state: clienteSelecionado })} 
-                        >
+                        className="btn btn-add" 
+                        onClick={() => {
+                            setModalAberto(false)
+                            navigate('/formCliente', { state: clienteSelecionado })
+                        }}>
                             Editar
                         </button>
                     </div>
@@ -153,4 +131,5 @@ function Clientes() {
         </>
     );
 }
+
 export default Clientes
