@@ -1,7 +1,8 @@
-from flask import Blueprint, request, jsonify
-import mysql.connector
-from resources.database_connection import open_connection
+from flask import Blueprint, request, jsonify, redirect, url_for
+import os 
 import resources.database_connection as database_connection
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 
 colaboradores_bp = Blueprint('colaboradores', __name__)
 
@@ -9,7 +10,7 @@ colaboradores_bp = Blueprint('colaboradores', __name__)
 ##POST insere
 
 ##GET para buscar os colaboradores cadastrados no banco de dados
-@colaboradores_bp.route('/colaboradores', methods=['POST'])
+@colaboradores_bp.route('/cadastrar-colaboradores', methods=['GET', 'POST'])
 def cadastro_colaboradores():
     if request.method == 'POST':
 
@@ -48,7 +49,7 @@ def cadastro_colaboradores():
         connection.close()
 
         return jsonify({'message': 'Colaborador cadastrado com sucesso!'})
-    return render_template('../pages/Equipe.jsx')
+    return render_template('../../pages/Equipe.jsx')
 
 
 @colaboradores_bp.route('/listar_colaboradores', methods=['GET'])
