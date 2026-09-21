@@ -1,1 +1,191 @@
-/* Estilos especificos da pagina de clientes */
+/* Estilos específicos da página de clientes */
+
+.modal-title {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: #172033;
+}
+
+.modal-subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #7a8494;
+}
+
+
+
+/* Cabeçalho */
+
+.cliente-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.cliente-modal-identidade {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+
+/* Logo */
+
+.cliente-modal-logo {
+    width: 58px;
+    height: 58px;
+    border-radius: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+    border: 1px solid #e6e9ee;
+
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.cliente-modal-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cliente-modal-logo .material-icons {
+    font-size: 27px;
+    color: #8a94a6;
+}
+
+
+/* Status */
+
+.cliente-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #4b5563;
+}
+
+.cliente-status.ativo {
+    color: #16803c;
+}
+
+.cliente-status.inativo {
+    color: #9a3412;
+}
+
+.cliente-status .status-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+    background: currentColor;
+}
+
+
+/* Seções de informações */
+
+.cliente-info-section {
+    padding: 20px 0;
+    border-bottom: 1px solid #e8ebef;
+}
+
+.cliente-info-section:last-child {
+    border-bottom: none;
+}
+
+.cliente-info-section h3 {
+    margin: 0 0 15px;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    color: #687386;
+}
+
+
+/* Grid */
+
+.cliente-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 28px;
+}
+
+
+/* Informações */
+
+.modal-info {
+    min-width: 0;
+}
+
+.modal-label {
+    display: block;
+    margin-bottom: 5px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    color: #98a1af;
+}
+
+.modal-value {
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.45;
+
+    color: #263244;
+
+    word-break: break-word;
+}
+
+
+/* Observações */
+
+.cliente-observacoes {
+    margin: 0;
+    padding: 13px 14px;
+
+    border: 1px solid #e7eaf0;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    font-size: 14px;
+    line-height: 1.55;
+
+    color: #536071;
+}
+
+
+/* Botões */
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 10px;
+
+    padding-top: 20px;
+}
+
+.cliente-modal {
+    background: #fcf8f8;
+    border-radius: 18px;
+}

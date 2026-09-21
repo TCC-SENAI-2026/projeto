@@ -1,19 +1,32 @@
+import { createPortal } from "react-dom";
+
 function Modal({ aberto, onClose, children }) {
+
     if (!aberto) return null;
 
-    return (
-        <div className={`modal-overlay ${aberto ? `active` : ''}`}
-            onClick={onClose}>
-            <div 
-                className="cliente-modal"
+    return createPortal(
+        <div
+            className="modal-overlay active"
+            onClick={onClose}
+        >
+            <div
+                className="modal-content"
                 onClick={(e) => e.stopPropagation()}
             >
-                <button className="modal-close" onClick={onClose}>
+                <button
+                    className="modal-close"
+                    onClick={onClose}
+                    type="button"
+                >
                     <span className="material-icons">close</span>
                 </button>
+
                 {children}
+
             </div>
-        </div>
+        </div>,
+
+        document.body
     );
 }
 
