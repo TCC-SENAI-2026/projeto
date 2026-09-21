@@ -203,7 +203,14 @@ function FormCliente() {
 
                                 <div className="form-field">
                                     <label htmlFor="estado">Estado</label>
-                                    <select id="estado"></select>
+                                    <select id="estado">
+                                        <option value="">Selecione o Estado</option>
+                                        {estados.map(estado => (
+                                            <option key={estado.sigla} value={estado.sigla}>
+                                                {estado.nome}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <div className="form-field full">
