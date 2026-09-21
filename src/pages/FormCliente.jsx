@@ -1,6 +1,6 @@
 import Sidebar from "../components/Sidebar"
 import { useNavigate, useLocation } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import "../styles/padrao.css"
 import "../styles/formulario.css"
 
@@ -11,6 +11,7 @@ function FormCliente() {
     const clienteEditar = location.state
     const [artePreview, setArtePreview] = useState(null);
     const [arteBase64, setArteBase64] = useState(null);
+    const [estados, setEstados] = useState([]);
 
     // function handleSubmit(e) {
     //     e.preventDefault()
@@ -94,25 +95,38 @@ function FormCliente() {
         }
     }, [clienteEditar])
 
+    //JEITO ANTIGO DE BUSCAR CEP
+    // useEffect(() => {
+    //     const inputCep = document.getElementById("cep")
+    //     if (!inputCep) return
+    //     inputCep.addEventListener("blur", () => {
+    //         const cep = inputCep.value.replace(/\D/g, "")
+    //         if (cep.length !== 8) return
+    //         fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    //             .then(res => res.json())
+    //             .then(dados => {
+    //                 if (dados.erro) { alert("CEP não encontrado."); return }
+    //                 const municipio = document.getElementById("municipio")
+    //                 const rua = document.getElementById("rua")
+    //                 const estado = document.getElementById("estado")
+    //                 if (municipio) municipio.value = dados.localidade || ""
+    //                 if (rua) rua.value = dados.logradouro || ""
+    //                 if (estado) estado.value = dados.uf || ""
+    //             })
+    //     })
+    // }, [])
+
     useEffect(() => {
-        const inputCep = document.getElementById("cep")
-        if (!inputCep) return
-        inputCep.addEventListener("blur", () => {
-            const cep = inputCep.value.replace(/\D/g, "")
-            if (cep.length !== 8) return
-            fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                .then(res => res.json())
-                .then(dados => {
-                    if (dados.erro) { alert("CEP não encontrado."); return }
-                    const municipio = document.getElementById("municipio")
-                    const rua = document.getElementById("rua")
-                    const estado = document.getElementById("estado")
-                    if (municipio) municipio.value = dados.localidade || ""
-                    if (rua) rua.value = dados.logradouro || ""
-                    if (estado) estado.value = dados.uf || ""
-                })
-        })
-    }, [])
+        fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
+            .then(res => res.json())
+            .then(dados => {
+                dados.sort((a, b) => a.nome.localeCompare(b.nome));
+                setEstados(dados);
+            })
+            .catch(erro => {
+                console.error("Erro ao buscar estados:", erro)
+            });
+    }, []);
 
     return (
         <>
