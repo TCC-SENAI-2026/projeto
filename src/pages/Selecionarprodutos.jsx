@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
-import "../styles/novoPedido.css";
+import "../styles/Novopedido.css";
 
 const TAMANHOS = ["P", "M", "G", "GG", "G1", "G2"];
 

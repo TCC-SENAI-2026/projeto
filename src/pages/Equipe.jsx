@@ -1,6 +1,6 @@
 import Sidebar from "../components/Sidebar";
 import { useNavigate } from "react-router-dom";
-import '../styles/equipe.css';
+import '../styles/Equipe.css';
 import '../styles/padrao.css';
 
 function Equipe() {

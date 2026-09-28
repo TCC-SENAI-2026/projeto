@@ -1,7 +1,5 @@
 import "../styles/padrao.css";
-import "../styles/inicio.css";
-
-// ⚠️ depois vamos separar isso em componente
+import "../styles/Inicio.css";
 import Sidebar from "../components/Sidebar";
 
 function Inicio() {
@@ -38,26 +36,6 @@ function Inicio() {
         </div>
 
         <div className="dashboard">
-
-          {/* CARDS  ANTES DA ALTERACAO DO GPT */}
-          {/* <div className="dashboard-cards">
-
-            <a href="#" className="dashboard-card">
-              <span>Pedidos Pendentes</span>
-              <h2>12</h2>
-            </a>
-
-            <a href="#" className="dashboard-card">
-              <span>Total em Estoque</span>
-              <h2>245</h2>
-            </a>
-
-            <a href="#" className="dashboard-card">
-              <span>Estoque Baixo</span>
-              <h2>4 itens</h2>
-            </a>
-
-          </div> */}
 
           {/* CARDS APÓS A ALTERAÇÃO DO GPT */}
           <div className="dashboard-cards">

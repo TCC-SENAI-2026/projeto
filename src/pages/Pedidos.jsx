@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
-import "../styles/pedido.css";
+import "../styles/Pedidos.css";
 
 function Pedidos() {
     const [tab, setTab] = useState("recentes");

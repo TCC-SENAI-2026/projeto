@@ -4,7 +4,7 @@ import { jsPDF } from "jspdf";
 import autotable from "jspdf-autotable";
 import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
-import "../styles/relatorio.css";
+import "../styles/Relatorio.css";
 
 function Relatorio() {
     const producaoRef = useRef(null);

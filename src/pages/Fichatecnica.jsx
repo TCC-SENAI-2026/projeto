@@ -4,7 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
-import "../styles/novoPedido.css";
+import "../styles/Novopedido.css";
 
 // Mapeamento de cores para cada técnica de personalização
 const TECNICA_CORES = {

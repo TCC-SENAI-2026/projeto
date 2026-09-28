@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
-import "../styles/estoque.css";
+import "../styles/Estoque.css";
 
 function Estoque() {
     const [tab, setTab] = useState("produtos");
