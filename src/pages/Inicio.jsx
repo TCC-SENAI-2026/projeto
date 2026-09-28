@@ -1,5 +1,6 @@
 import "../styles/padrao.css";
 import "../styles/inicio.css";
+import { Link } from "react-router-dom";
 
 // ⚠️ depois vamos separar isso em componente
 import Sidebar from "../components/Sidebar";
@@ -62,7 +63,7 @@ function Inicio() {
           {/* CARDS APÓS A ALTERAÇÃO DO GPT */}
           <div className="dashboard-cards">
 
-            <div className="dashboard-card">
+            <Link to="/pedidos" className="dashboard-card dashboard-card-link">
               <div className="card-top">
                 <span>Pedidos Pendentes</span>
 
@@ -72,9 +73,9 @@ function Inicio() {
               </div>
 
               <h2>12</h2>
-            </div>
+            </Link>
 
-            <div className="dashboard-card">
+            <Link to="/estoque" className="dashboard-card dashboard-card-link">
               <div className="card-top">
                 <span>Total em Estoque</span>
 
@@ -84,7 +85,7 @@ function Inicio() {
               </div>
 
               <h2>245</h2>
-            </div>
+            </Link>
 
             <div className="dashboard-card-baixo">
               <div className="card-top">

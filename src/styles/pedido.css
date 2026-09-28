@@ -301,3 +301,72 @@
     letter-spacing: 0.08em;
     color: #94a3b8;
 }
+
+.modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.ficha-modal-body {
+    display: block;
+}
+
+/* Ajuste de Largura para Modal de Ficha Técnica */
+/* =========================================================
+   CORREÇÃO DE LARGURA E PROPORÇÃO DO MODAL DA FICHA
+   ========================================================= */
+
+/* Força o overlay a centralizar corretamente */
+.modal-overlay {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+}
+
+/* Corrige o container do Modal para ter largura ampla */
+.modal-overlay .modal-container,
+.modal-overlay .cliente-modal,
+.modal-overlay .modal-content {
+    width: 95% !important;
+    max-width: 960px !important; /* Evita que fique fino e comprido */
+    min-width: 320px;
+    max-height: 90vh !important; /* Limita a altura para scroll interno */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important; /* Evita estouro de bordas */
+    border-radius: 12px;
+}
+
+/* Área interna do modal onde fica a ficha técnica */
+.ficha-modal-body,
+.modal-body {
+    flex: 1;
+    overflow-y: auto !important; /* Scroll suave apenas na vertical se necessário */
+    padding: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Força a Ficha a ocupar 100% da largura do Modal */
+.ficha-confeccao-wrapper,
+.ficha-confeccao-grid {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Mantém as proporções da prancha no Desktop */
+@media (min-width: 768px) {
+    .ficha-confeccao-grid {
+        display: grid !important;
+        grid-template-columns: 60% 40% !important; /* Proportion 60/40 perfeita */
+        grid-template-rows: auto auto auto !important;
+    }
+}

@@ -399,7 +399,7 @@
   font-size: 14px;
   font-weight: var(--w-semibold);
 
-  background: rgba(136, 155, 210, 0.18);
+
 
   color: rgba(255, 255, 255, 0.92);
 
@@ -446,7 +446,7 @@
   border: none;
   border-radius: 10px;
 
-  background: linear-gradient(135deg, #4575b8, #2d4365);
+  /* background: linear-gradient(135deg, #4575b8, #2d4365); */
 
   color: white;
 
@@ -464,6 +464,95 @@
   color: rgba(255, 255, 255, 0.82);
 
   text-align: center;
+}
+
+/* =========================================================
+   AJUSTE DE TAMANHO E VISUAL DO MODAL REDEFINIR SENHA
+   ========================================================= */
+
+/* Remove a largura esticada de 960px apenas para este modal */
+.modal-overlay:has(.modal-redefinir-senha) .modal-container,
+.modal-overlay:has(.modal-redefinir-senha) .modal-content,
+div:has(> .modal-redefinir-senha) {
+    width: 350px !important;
+    max-width: 90vw !important;
+    min-width: unset !important;
+    background: transparent !important; /* Mantém o overlay/fundo escuro da tela */
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Caixa principal do Modal de Redefinir Senha (estilo idêntico à imagem original) */
+.modal-redefinir-senha {
+    width: 100% !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 18px !important;
+    padding: 24px 20px !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Título */
+.modal-redefinir-senha .modal-header h2 {
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    margin: 0 0 18px 0 !important;
+    text-align: left !important;
+}
+
+/* Corpo do Modal */
+.modal-redefinir-senha .modal-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 0 !important;
+}
+
+/* Campo "Digite seu RE" */
+.modal-redefinir-senha input {
+    width: 100% !important;
+    height: 42px !important;
+    background: #f1f5f9 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0 14px !important;
+    font-size: 14px !important;
+    color: #1e293b !important;
+    box-sizing: border-box !important;
+}
+
+.modal-redefinir-senha input::placeholder {
+    color: #64748b !important;
+}
+
+/* Botão Enviar */
+.modal-redefinir-senha button {
+    width: 100% !important;
+    height: 42px !important;
+    background: #3b82f6 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: background 0.2s ease !important;
+}
+
+.modal-redefinir-senha button:hover {
+    background: #2563eb !important;
+}
+
+/* Texto de ajuda */
+.modal-redefinir-senha .modal-help {
+    color: #cbd5e1 !important;
+    font-size: 12px !important;
+    text-align: center !important;
+    margin: 6px 0 0 0 !important;
 }
 
 /* ANIMAÇÃO */

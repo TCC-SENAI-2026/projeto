@@ -1,21 +1,55 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import Modal from "../components/Modal";
+import FichaConteudo from "../components/FichaConteudo";
 import "../styles/padrao.css";
+import "../styles/formulario.css";
+import "../styles/novoPedido.css";
 import "../styles/pedido.css";
 
 function Pedidos() {
     const [tab, setTab] = useState("recentes");
+    const [modalAberto, setModalAberto] = useState(false);
+    const [dadosFicha, setDadosFicha] = useState(null);
     const navigate = useNavigate();
 
     function abrirPedido(id) {
-        alert("Abrir pedido " + id);
+        setDadosFicha({
+            ficha: {
+                cliente: id === 1023 ? "Empresa X" : "Empresa Y",
+                contato: "(14) 99999-9999",
+                email: "contato@empresa.com",
+                dataPedido: "28/09/2026",
+                entrega: "20/10/2026",
+                prioridade: "alta",
+                observacao: "Cliente pediu urgência na entrega.",
+            },
+            pedido: {
+                arte: null,
+                produtos: [
+                    {
+                        item: "Camiseta Polo",
+                        grade: { P: 10, M: 20, G: 15, GG: 5 },
+                        fotoUrl: "https://exemplo.com/foto-polo.jpg",
+                        detalhes: {
+                            tecido: "Piquet",
+                            cor: "Azul marinho",
+                            personalizacao: "Bordado",
+                            local: "Frente — Peito Esquerdo",
+                            observacao: "Bordar logo com linha branca de alta densidade.",
+                        },
+                    },
+                ],
+            },
+        });
+        setModalAberto(true);
     }
 
     function confirmarExclusao(id) {
         const confirmar = window.confirm(`Deseja excluir #${id}?`);
         if (confirmar) {
-            alert("Pedido excluido com sucesso");
+            alert("Pedido excluído com sucesso");
         }
     }
 
@@ -28,7 +62,7 @@ function Pedidos() {
                     <div className="page-header">
                         <div className="page-title-row">
                             <h1 className="page-title">
-                                Pedidos <span className="page-count">(0)</span>
+                                Pedidos <span className="page-count">(2)</span>
                             </h1>
                         </div>
                     </div>
@@ -43,11 +77,10 @@ function Pedidos() {
                             <option value="">Todos os pedidos</option>
                             <option value="pendente">Pendentes</option>
                             <option value="finalizado">Finalizados</option>
-                            <option value="producao">Em producao</option>
+                            <option value="producao">Em produção</option>
                         </select>
 
-                        <button className="btn btn-add" type="button"
-                            onClick={() => navigate("/pedidos/novo")}>
+                        <button className="btn btn-add" type="button" onClick={() => navigate("/pedidos/novo")}>
                             + Pedido
                         </button>
                     </div>
@@ -66,7 +99,7 @@ function Pedidos() {
                             className={`tab-btn ${tab === "historico" ? "active" : ""}`}
                             onClick={() => setTab("historico")}
                         >
-                            Historico de Pedidos
+                            Histórico de Pedidos
                         </button>
                     </div>
 
@@ -92,7 +125,7 @@ function Pedidos() {
                                 </div>
 
                                 <div className="actions">
-                                    <span className="mobile-field-label">Acoes</span>
+                                    <span className="mobile-field-label">Ações</span>
                                     <button
                                         className="action-btn edit-btn"
                                         onClick={(e) => {
@@ -139,7 +172,7 @@ function Pedidos() {
                                 </div>
 
                                 <div className="actions">
-                                    <span className="mobile-field-label">Acoes</span>
+                                    <span className="mobile-field-label">Ações</span>
                                     <button
                                         className="action-btn edit-btn"
                                         onClick={(e) => {
@@ -164,6 +197,33 @@ function Pedidos() {
                         </div>
                     )}
                 </div>
+
+                <Modal aberto={modalAberto} onClose={() => setModalAberto(false)}>
+                    <div className="modal-header">
+                        <h2 className="modal-title">Ficha Técnica do Pedido</h2>
+                    </div>
+
+                    <div className="ficha-modal-body" style={{ padding: "16px 0" }}>
+                        {dadosFicha && (
+                            <FichaConteudo pedido={dadosFicha.pedido} ficha={dadosFicha.ficha} />
+                        )}
+                    </div>
+
+                    <div className="modal-actions">
+                        <button 
+                            type="button" 
+                            className="btn-page-sec" 
+                            onClick={() => window.print()} 
+                            style={{ marginRight: "auto" }}
+                        >
+                            <span className="material-icons" style={{ fontSize: 18, marginRight: 4 }}>print</span>
+                            Imprimir
+                        </button>
+                        <button type="button" className="btn-sec" onClick={() => setModalAberto(false)}>
+                            Fechar
+                        </button>
+                    </div>
+                </Modal>
             </div>
         </>
     );

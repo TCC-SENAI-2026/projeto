@@ -4,53 +4,6 @@
     gap: 30px;
 }
 
-/*CARDS ANTES DA ALTERACAO DO GPT*/
-/* .dashboard-cards {
-    display: grid;
-    transition:transform 0.2s ease, box-shadow 0.2s ease;
-    grid-template-columns: repeat(3, minmax(220px, 1fr));
-    gap: 20px;
-}
-
-.dashboard-card {
-    position: relative;
-    background: white;
-    padding: 20px 22px;
-    border-radius: 10px;
-    text-decoration: none;
-    color: #111827;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: border-color 0.2s ease, transform 0.15s ease;
-}
-
-.dashboard-card::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 4px;
-    height: 100%;
-    background: #0051ad3e;
-}
-
-.dashboard-card:hover {
-     transform:translateY(-3px);
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
-}
-
-.dashboard-card h2{
-    font-size:28px;
-    font-weight:700;
-    margin-top:6px;
-}
-
-.dashboard-card span{
-    font-size:14px;
-    color:#64748b;
-} */
-
-
 /* CARDS APÓS A ALTERAÇÃO DO GPT */
 .dashboard-cards {
     display: grid;
@@ -97,6 +50,13 @@
 
     box-shadow:
         0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
 }
 
 .card-top {
