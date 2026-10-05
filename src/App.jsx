@@ -13,6 +13,7 @@ import AddEstoque from './pages/AddEstoque'
 import NovoPedido from './pages/Novopedido'
 import SelecionarProdutos from './pages/Selecionarprodutos'
 import FichaTecnica from './pages/Fichatecnica'
+import PainelAdm from './pages/PainelAdm'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Route path="/formUsuario"            element={<FormUsuario />} />
       <Route path="/perfil"                 element={<Perfil />} />
       <Route path="/equipe"                 element={<Equipe />} />
+      <Route path="/painel-adm"                 element={<PainelAdm />} />
       <Route path="/add-estoque"            element={<AddEstoque />} />
       <Route path="/pedidos/novo"           element={<NovoPedido />} />
       <Route path="/pedidos/novo/produtos"  element={<SelecionarProdutos />} />

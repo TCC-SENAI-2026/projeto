@@ -123,6 +123,12 @@ function Sidebar() {
                             Relatorios
                         </span>
                     </button>
+                     <button type="button" onClick={() => irPara("/painel-adm")}>
+                        <span className="menu-link-left">
+                            <span className="material-icons">security</span>
+                            Painel Adm
+                        </span>
+                    </button>
                 </nav>
 
                 <div className="sidebar-footer">
