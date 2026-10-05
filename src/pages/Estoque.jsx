@@ -388,5 +388,4 @@ function Estoque() {
     );
 }
 
-
 export default Estoque;
