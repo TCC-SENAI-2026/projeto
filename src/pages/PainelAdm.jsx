@@ -333,13 +333,6 @@ function PainelAdm() {
                                     </span>
                                 )}
 
-                                <button
-                                    className="btn-ver-todas"
-                                    onClick={() => setMostrarTodas(true)}
-                                >
-                                    Ver todas
-                                </button>
-
                             </div>
 
                         </article>
