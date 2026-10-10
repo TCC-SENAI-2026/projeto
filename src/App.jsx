@@ -13,6 +13,7 @@ import AddEstoque from './pages/AddEstoque'
 import NovoPedido from './pages/Novopedido'
 import SelecionarProdutos from './pages/Selecionarprodutos'
 import FichaTecnica from './pages/Fichatecnica'
+import DefinirSenha from './pages/DefinirSenha'
 
 import PainelAdm from './pages/PainelAdm'
 
@@ -40,6 +41,7 @@ function App() {
       <Route path="/novo-pedido/produtos"   element={<Navigate to="/pedidos/novo/produtos" replace />} />
       <Route path="/novo-pedido/ficha"      element={<Navigate to="/pedidos/novo/ficha" replace />} />
       <Route path="/editar-estoque/:id"     element={<EditarEstoque />}/>
+      <Route path="/definir-senha"          element={<DefinirSenha />} />
     </Routes>
   );
 }
