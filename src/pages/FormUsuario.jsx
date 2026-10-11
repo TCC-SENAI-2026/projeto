@@ -1,30 +1,151 @@
 import Sidebar from "../components/Sidebar";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
+
+const API_URL = "http://localhost:5000";
+
+const FORM_VAZIO = {
+    nome: "", re: "", cpf: "", dataNascimento: "",
+    telefone: "", email: "", endereco: "",
+    nivelAcesso: "", dataContrato: "", salario: "",
+    preferenciaNotificacoes: "email", status: "ativo"
+};
 
 function FormUsuario() {
 
     const navigate = useNavigate();
+    const { id } = useParams();          // vem de /formUsuario/:id (só existe na edição)
+    const editando = Boolean(id);
 
-    const [form, setForm] = useState({
-        nome: "", re: "", cpf: "", dataNascimento: "",
-        telefone: "", email: "", endereco: "",
-        setor: "", dataContrato: "", salario: "",
-        senha: "", status: "ativo"
-    });
+    const [form, setForm] = useState(FORM_VAZIO);
+    const [enviando, setEnviando] = useState(false);
+    const [carregando, setCarregando] = useState(editando);
+    const [senhaDefinida, setSenhaDefinida] = useState(true);
+
+    // Na edição, busca o colaborador e preenche o formulário
+    useEffect(() => {
+        if (!editando) return;
+
+        async function carregarColaborador() {
+            try {
+                const resposta = await fetch(`${API_URL}/editar-colaborador/${id}`);
+                if (!resposta.ok) throw new Error();
+                const c = await resposta.json();
+
+                setForm({
+                    nome: c.nome_completo || "",
+                    re: c.re || "",
+                    cpf: c.cpf || "",
+                    dataNascimento: c.data_nascimento || "",
+                    telefone: c.telefone || "",
+                    email: c.email || "",
+                    endereco: c.endereco || "",
+                    nivelAcesso: c.nivel_acesso || "",
+                    dataContrato: c.data_contratacao || "",
+                    salario: c.salario || "",
+                    preferenciaNotificacoes: c.preferencia_notificacoes || "email",
+                    status: c.ativo ? "ativo" : "inativo"
+                });
+                setSenhaDefinida(Boolean(c.senha_definida));
+            } catch {
+                alert("Não foi possível carregar o colaborador.");
+                navigate("/equipe");
+            } finally {
+                setCarregando(false);
+            }
+        }
+
+        carregarColaborador();
+    }, [id, editando, navigate]);
 
     function handleChange(e) {
         const { name, value } = e.target;
         setForm({ ...form, [name]: value });
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
-        console.log(form);
-        alert("Colaborador cadastrado!");
-        navigate("/colaborador");
+        setEnviando(true);
+
+        const dados = new FormData();
+        dados.append("nome_completo", form.nome);
+        dados.append("re", form.re);
+        dados.append("cpf", form.cpf);
+        dados.append("data_nascimento", form.dataNascimento);
+        dados.append("telefone", form.telefone);
+        dados.append("email", form.email);
+        dados.append("endereco", form.endereco);
+        dados.append("nivel_acesso", form.nivelAcesso);
+        dados.append("data_contratacao", form.dataContrato);
+        dados.append("salario", form.salario);
+        dados.append("preferencia_notificacoes", form.preferenciaNotificacoes);
+        dados.append("status", form.status);
+
+        const url = editando
+            ? `${API_URL}/editar-colaborador/${id}`
+            : `${API_URL}/cadastrar-colaborador`;
+
+        try {
+            const resposta = await fetch(url, { method: "POST", body: dados });
+            const resultado = await resposta.json().catch(() => ({}));
+
+            if (!resposta.ok) {
+                alert(resultado.msg || "Erro ao salvar colaborador.");
+                return;
+            }
+
+            alert(
+                editando
+                    ? "Colaborador atualizado!"
+                    : resultado.aviso || "Colaborador cadastrado! O link para definir a senha foi enviado."
+            );
+            navigate("/equipe");
+        } catch {
+            alert("Não foi possível conectar ao servidor.");
+        } finally {
+            setEnviando(false);
+        }
+    }
+
+    async function excluir() {
+        if (!window.confirm(`Deseja excluir ${form.nome}?`)) return;
+        try {
+            const resposta = await fetch(`${API_URL}/excluir-colaborador/${id}`, { method: "POST" });
+            if (!resposta.ok) throw new Error();
+            navigate("/equipe");
+        } catch {
+            alert("Erro ao excluir o colaborador.");
+        }
+    }
+
+    async function reenviarLink() {
+        try {
+            const resposta = await fetch(`${API_URL}/reenviar-link/${id}`, { method: "POST" });
+            const resultado = await resposta.json().catch(() => ({}));
+
+            if (!resposta.ok) {
+                alert(resultado.msg || "Não foi possível reenviar o link.");
+                return;
+            }
+            alert("Link reenviado!");
+        } catch {
+            alert("Não foi possível conectar ao servidor.");
+        }
+    }
+
+    if (carregando) {
+        return (
+            <>
+                <Sidebar />
+                <div className="container">
+                    <div className="form-page-card">
+                        <p className="form-subtitle">Carregando colaborador...</p>
+                    </div>
+                </div>
+            </>
+        );
     }
 
     return (
@@ -37,9 +158,11 @@ function FormUsuario() {
                         <div className="form-header">
                             <span className="form-badge">
                                 <span className="material-icons">badge</span>
-                                Novo Colaborador
+                                {editando ? "Editar Colaborador" : "Novo Colaborador"}
                             </span>
-                            <h1 className="form-title">Cadastro de Colaborador</h1>
+                            <h1 className="form-title">
+                                {editando ? "Edição de Colaborador" : "Cadastro de Colaborador"}
+                            </h1>
                             <p className="form-subtitle">
                                 Centralize os dados pessoais, profissionais e de acesso do colaborador.
                             </p>
@@ -77,7 +200,7 @@ function FormUsuario() {
 
                                 <div className="form-field full">
                                     <label htmlFor="email">E-mail</label>
-                                    <input id="email" name="email" placeholder="colaborador@empresa.com" value={form.email} onChange={handleChange} />
+                                    <input id="email" type="email" name="email" placeholder="colaborador@empresa.com" value={form.email} onChange={handleChange} />
                                 </div>
 
                                 <div className="form-field full">
@@ -90,15 +213,15 @@ function FormUsuario() {
 
                         <section className="form-section">
                             <h2>Dados Profissionais</h2>
-                            <p className="section-help">Setor, vínculo e remuneração do colaborador.</p>
+                            <p className="section-help">Nível de Acesso, vínculo e remuneração do colaborador.</p>
                             <div className="form-grid">
 
                                 <div className="form-field full">
-                                    <label htmlFor="setor">Setor</label>
-                                    <select id="setor" name="setor" value={form.setor} onChange={handleChange}>
+                                    <label htmlFor="nivelAcesso">Nível de Acesso</label>
+                                    <select id="nivelAcesso" name="nivelAcesso" value={form.nivelAcesso} onChange={handleChange}>
                                         <option value="">Selecione</option>
-                                        <option value="Administração">Administração</option>
-                                        <option value="Produção">Produção</option>
+                                        <option value="administrativo">Administrativo</option>
+                                        <option value="padrao">Padrão</option>
                                     </select>
                                 </div>
 
@@ -117,13 +240,14 @@ function FormUsuario() {
 
                         <section className="form-section">
                             <h2>Acesso ao Sistema</h2>
-                            <p className="section-help">Credenciais e status de acesso do colaborador.</p>
+                            <p className="section-help">
+                                {!editando
+                                    ? "O colaborador receberá um link para definir a própria senha, válido por 24 horas."
+                                    : senhaDefinida
+                                        ? "O colaborador já definiu a própria senha."
+                                        : "O colaborador ainda não definiu a senha. Use \"Reenviar link\" para mandar um novo link."}
+                            </p>
                             <div className="form-grid">
-
-                                <div className="form-field">
-                                    <label htmlFor="senha">Senha</label>
-                                    <input id="senha" type="password" name="senha" placeholder="••••••••" value={form.senha} onChange={handleChange} />
-                                </div>
 
                                 <div className="form-field">
                                     <p className="form-label-like">Status</p>
@@ -135,12 +259,38 @@ function FormUsuario() {
                                     </div>
                                 </div>
 
+                                <div className="form-field">
+                                    <label htmlFor="preferenciaNotificacoes">
+                                        {editando ? "Preferência de notificação" : "Enviar link por"}
+                                    </label>
+                                    <select id="preferenciaNotificacoes" name="preferenciaNotificacoes"
+                                            value={form.preferenciaNotificacoes} onChange={handleChange}>
+                                        <option value="email">E-mail</option>
+                                        <option value="sms">SMS</option>
+                                        <option value="ambos">E-mail e SMS</option>
+                                    </select>
+                                </div>
+
                             </div>
                         </section>
 
                         <div className="form-actions">
+                            {editando && (
+                                <button type="button" className="btn-page-sec"
+                                        style={{ color: "#dc2626", marginRight: "auto" }}
+                                        onClick={excluir}>
+                                    Excluir
+                                </button>
+                            )}
+                            {editando && !senhaDefinida && (
+                                <button type="button" className="btn-page-sec" onClick={reenviarLink}>
+                                    Reenviar link
+                                </button>
+                            )}
                             <button type="button" className="btn-page-sec" onClick={() => navigate("/equipe")}>Cancelar</button>
-                            <button type="submit" className="btn btn-add">Salvar</button>
+                            <button type="submit" className="btn btn-add" disabled={enviando}>
+                                {enviando ? "Salvando..." : "Salvar"}
+                            </button>
                         </div>
 
                     </form>

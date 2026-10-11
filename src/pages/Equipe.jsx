@@ -1,12 +1,51 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import { useNavigate } from "react-router-dom";
 import '../styles/Equipe.css';
 import '../styles/padrao.css';
 
+const API_URL = "http://localhost:5000";
+
+const NIVEIS = {
+    administrativo: "Administrativo",
+    padrao: "Padrão"
+};
+
 function Equipe() {
-    const usuarios = []; // futuramente virá do backend via axios
     const navigate = useNavigate();
-    const administradorPrincipalId = null;
+
+    const [usuarios, setUsuarios] = useState([]);
+    const [carregando, setCarregando] = useState(true);
+    const [erro, setErro] = useState("");
+    const [busca, setBusca] = useState("");
+
+    useEffect(() => {
+        async function carregarColaboradores() {
+            try {
+                const { data } = await axios.get(`${API_URL}/listar-colaboradores`);
+
+                // Formato antigo do back (lista de valores, sem nome de campo): o Flask não foi reiniciado
+                if (!Array.isArray(data) || data.some((d) => Array.isArray(d))) {
+                    setErro("O servidor respondeu no formato antigo. Reinicie o Flask com o colaboradores.py atualizado.");
+                    return;
+                }
+
+                setUsuarios(data);
+            } catch {
+                setErro("Não foi possível carregar os colaboradores. O servidor está rodando?");
+            } finally {
+                setCarregando(false);
+            }
+        }
+        carregarColaboradores();
+    }, []);
+
+    const termo = busca.trim().toLowerCase();
+    const filtrados = usuarios.filter((u) =>
+        !termo ||
+        [u.nome_completo, u.re, u.email].some((v) => v && v.toLowerCase().includes(termo))
+    );
 
     return (
         <div className="equipe-container">
@@ -14,11 +53,11 @@ function Equipe() {
 
             <main className="equipe-conteudo">
 
-<div className="top">
+                <div className="top">
                     <div className="page-header">
                         <div className="page-title-row">
                             <h1 className="page-title">Colaboradores</h1>
-                            <span className="page-count">(2)</span>
+                            <span className="page-count">({usuarios.length})</span>
                         </div>
                         <p className="page-subtitle">
                             Gerenciamento de membros da equipe
@@ -28,7 +67,12 @@ function Equipe() {
                     <div className="top-right">
                         <div className="search-box">
                             <span className="material-icons search-icon">search</span>
-                            <input className="search" placeholder="Pesquisar cliente" />
+                            <input
+                                className="search"
+                                placeholder="Pesquisar colaborador"
+                                value={busca}
+                                onChange={(e) => setBusca(e.target.value)}
+                            />
                         </div>
 
                         <select className="btn btn-filter">
@@ -43,7 +87,6 @@ function Equipe() {
 
                 <div className="equipe-grid">
 
-                    {/* Tabela de usuários */}
                     <div className="equipe-card">
                         <div className="equipe-card-header">
                             <div>
@@ -59,45 +102,33 @@ function Equipe() {
                             <thead>
                                 <tr>
                                     <th>Nome</th>
-                                    <th>Usuário</th>
-                                    <th>Perfil</th>
+                                    <th>RE</th>
+                                    <th>Nível de acesso</th>
                                     <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {usuarios.length === 0 ? (
+                                {carregando || erro || filtrados.length === 0 ? (
                                     <tr>
                                         <td colSpan="5">
                                             <div className="equipe-vazio">
-                                                Nenhum usuário vinculado.
+                                                {carregando
+                                                    ? "Carregando colaboradores..."
+                                                    : erro
+                                                        ? erro
+                                                        : usuarios.length === 0
+                                                            ? "Nenhum usuário vinculado."
+                                                            : "Nenhum colaborador encontrado para essa busca."}
                                             </div>
                                         </td>
                                     </tr>
                                 ) : (
-                                    usuarios.map((item) => (
-                                        <tr key={item.id}>
-                                            <td>
-                                                {item.nome}
-                                                {administradorPrincipalId === item.id && (
-                                                    <div className="equipe-admin-label">
-                                                        Administrador principal
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td>{item.username}</td>
-                                            <td>
-                                                <select
-                                                    className="equipe-select"
-                                                    defaultValue={item.perfil}
-                                                    disabled={administradorPrincipalId === item.id}
-                                                >
-                                                    <option value="ADMIN">Administrador</option>
-                                                    <option value="GERENTE">Gerente</option>
-                                                    <option value="ATENDENTE">Atendente</option>
-                                                    <option value="MECANICO">Operador</option>
-                                                </select>
-                                            </td>
+                                    filtrados.map((item) => (
+                                        <tr key={item.id_colaborador}>
+                                            <td>{item.nome_completo}</td>
+                                            <td>{item.re || "—"}</td>
+                                            <td>{NIVEIS[item.nivel_acesso] || item.nivel_acesso}</td>
                                             <td>
                                                 <span className={`equipe-status ${item.ativo ? "ativo" : "inativo"}`}>
                                                     {item.ativo ? "Ativo" : "Inativo"}
@@ -107,29 +138,10 @@ function Equipe() {
                                                 <div className="equipe-acoes">
                                                     <button
                                                         className="btn-salvar"
-                                                        disabled={administradorPrincipalId === item.id}
-                                                        onClick={() => {
-                                                            // futuramente: axios para salvar perfil
-                                                        }}
+                                                        onClick={() => navigate(`/formUsuario/${item.id_colaborador}`)}
                                                     >
-                                                        Salvar
+                                                        Editar
                                                     </button>
-                                                    {administradorPrincipalId === item.id ? (
-                                                        <button className="btn-protegido" disabled>
-                                                            Protegido
-                                                        </button>
-                                                    ) : (
-                                                        <button
-                                                            className="btn-excluir"
-                                                            onClick={() => {
-                                                                if (confirm("Deseja excluir este usuário?")) {
-                                                                    // futuramente: axios para deletar
-                                                                }
-                                                            }}
-                                                        >
-                                                            Excluir
-                                                        </button>
-                                                    )}
                                                 </div>
                                             </td>
                                         </tr>
@@ -138,44 +150,6 @@ function Equipe() {
                             </tbody>
                         </table>
                     </div>
-
-                    {/* Formulário de adicionar usuário */}
-                    {/* <div className="equipe-card equipe-form">
-                        <h3>Adicionar usuário</h3>
-                        <form onSubmit={(e) => {
-                            e.preventDefault();
-                            // futuramente: axios para salvar novo usuário
-                        }}>
-                            <div className="equipe-campo">
-                                <label>Nome</label>
-                                <input type="text" placeholder="Nome completo" />
-                            </div>
-                            <div className="equipe-campo">
-                                <label>Username</label>
-                                <input type="text" placeholder="Username" />
-                            </div>
-                            <div className="equipe-campo">
-                                <label>Email</label>
-                                <input type="email" placeholder="Email" />
-                            </div>
-                            <div className="equipe-campo">
-                                <label>Senha</label>
-                                <input type="password" placeholder="Senha" />
-                            </div>
-                            <div className="equipe-campo">
-                                <label>Perfil</label>
-                                <select>
-                                    <option value="ADMIN">Administrador</option>
-                                    <option value="GERENTE">Gerente</option>
-                                    <option value="ATENDENTE">Atendente</option>
-                                    <option value="MECANICO">Operador</option>
-                                </select>
-                            </div>
-                            <button type="submit" className="btn-salvar-usuario">
-                                Salvar usuário
-                            </button>
-                        </form>
-                    </div> */}
 
                 </div>
             </main>

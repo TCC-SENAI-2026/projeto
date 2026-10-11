@@ -1,0 +1,256 @@
+/* =========================================================
+   FICHA TÉCNICA (folha industrial) — components/FichaConteudo.jsx
+   Tudo prefixado com fc- para não conflitar com o resto do sistema.
+   ========================================================= */
+
+/* Caixa com rolagem na tela */
+.fc-scroll {
+    max-height: 65vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+.fc-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.fc-scroll::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.fc-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.fc-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.fc-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+/* Uma folha por item: grade de 2 colunas (60% / 40%) */
+.fc-ficha {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 2px solid #000000;
+    color: #000000;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Cabeçalho */
+.fc-titulo,
+.fc-ref {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    box-sizing: border-box;
+    border-bottom: 2px solid #000000;
+}
+
+.fc-titulo {
+    justify-content: center;
+    border-right: 2px solid #000000;
+}
+
+.fc-titulo-texto {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.fc-ref-texto {
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+/* Ilustração */
+.fc-arte {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 260px;
+    padding: 16px;
+    box-sizing: border-box;
+    border-right: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+}
+
+.fc-arte-img {
+    max-width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+}
+
+.fc-arte-vazia {
+    text-align: center;
+    color: #a1a1aa;
+}
+
+.fc-arte-vazia .material-icons {
+    font-size: 56px;
+}
+
+.fc-arte-vazia p {
+    margin: 6px 0 0;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.fc-qr {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.fc-qr span {
+    font-size: 7px;
+    font-weight: 700;
+}
+
+/* Informações (coluna direita) */
+.fc-info {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    border-bottom: 2px solid #000000;
+    font-size: 11px;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+.fc-info-bloco {
+    padding: 8px 12px;
+}
+
+.fc-info-bloco + .fc-info-bloco {
+    border-top: 1px solid #000000;
+}
+
+.fc-linha {
+    margin: 2px 0;
+}
+
+.fc-info-titulo {
+    margin: 0 0 4px;
+    font-weight: 900;
+}
+
+/* Aviamentos (rodapé esquerdo) */
+.fc-aviamentos {
+    box-sizing: border-box;
+    border-right: 2px solid #000000;
+}
+
+.fc-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 10px;
+    color: #000000;
+}
+
+.fc-tabela th,
+.fc-tabela td {
+    height: 22px;
+    padding: 4px 6px;
+    box-sizing: border-box;
+    text-align: center;
+    border: none;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+}
+
+.fc-tabela th {
+    font-weight: 800;
+}
+
+.fc-tabela th:first-child,
+.fc-tabela td:first-child {
+    text-align: left;
+    font-weight: 700;
+}
+
+.fc-tabela th:last-child,
+.fc-tabela td:last-child {
+    border-right: none;
+}
+
+.fc-tabela tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Observações (rodapé direito) */
+.fc-obs {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    font-size: 10px;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.fc-obs p {
+    margin: 0;
+}
+
+/* Celular: empilha as colunas */
+@media (max-width: 760px) {
+    .fc-ficha {
+        grid-template-columns: 1fr;
+    }
+
+    .fc-titulo,
+    .fc-arte,
+    .fc-aviamentos {
+        border-right: none;
+    }
+}
+
+/* Impressão: sem rolagem, sem menu/botões, uma folha por item */
+@media print {
+    .sidebar,
+    .sidebar-overlay,
+    .pedido-stepper,
+    .no-print {
+        display: none !important;
+    }
+
+    .container {
+        margin-left: 0;
+        width: 100%;
+        padding: 0;
+    }
+
+    .fc-scroll {
+        max-height: none;
+        overflow: visible;
+        padding: 0;
+        border: none;
+    }
+
+    .fc-ficha {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
