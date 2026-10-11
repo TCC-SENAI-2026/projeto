@@ -4,6 +4,6 @@ def open_connection():
     return mysql.connector.connect(
         host='localhost',
         user='root',
-        password='dev@2025',
+        password='1234',
         database='ethreads_db'
         )
