@@ -78,7 +78,7 @@
     font-size: 15px;
 }
 
-.form-section + .form-section {
+.form-section+.form-section {
     margin-top: 28px;
     padding-top: 28px;
     border-top: 1px solid #e5e7eb;
@@ -198,7 +198,7 @@
     color: #64748b;
 }
 
-.type-switch input:checked + .type-card {
+.type-switch input:checked+.type-card {
     border-color: #2563eb;
     background: #eff6ff;
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
@@ -239,6 +239,7 @@
 }
 
 @media (max-width: 760px) {
+
     .form-grid,
     .type-switch {
         grid-template-columns: 1fr;
@@ -275,19 +276,6 @@
     border-color: #94a3b8;
 }
 
-#cliente_ativo_page:checked + label,
-#func_ativo_page:checked + label {
-    background: #dcfce7;
-    color: #166534;
-    border-color: #bbf7d0;
-}
-
-#cliente_inativo_page:checked + label,
-#func_inativo_page:checked + label {
-    background: #e5e7eb;
-    color: #374151;
-    border-color: #d1d5db;
-}
 /* =========================
    STATUS TOGGLE (radio estilizado)
    Usado em: ativo/inativo, notificações
@@ -324,29 +312,43 @@
     background: #f1f5f9;
 }
 
-/* Ativo / inativo — FormCliente e FormUsuario */
-#cliente_ativo_page:checked + label,
-#func_ativo_page:checked + label {
+/* Estado marcado: azul por padrão; a cor vem da classe do label */
+.status-toggle input[type="radio"]:checked + label {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+}
+
+.status-toggle input:checked + label.tg-verde {
     background: #dcfce7;
     color: #166534;
     border-color: #bbf7d0;
 }
 
-#cliente_inativo_page:checked + label,
-#func_inativo_page:checked + label {
+.status-toggle input:checked + label.tg-amarelo {
+    background: #fef9c3;
+    color: #854d0e;
+    border-color: #fde68a;
+}
+
+.status-toggle input:checked + label.tg-vermelho {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+.status-toggle input:checked + label.tg-cinza {
     background: #e5e7eb;
     color: #374151;
     border-color: #d1d5db;
 }
 
-/* Notificações — Perfil */
-#notif_email:checked + label,
-#notif_sistema:checked + label,
-#notif_ambos:checked + label {
-    background: #eff6ff;
-    color: #1d4ed8;
-    border-color: #bfdbfe;
+.status-toggle input[type="radio"]:focus-visible + label {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
 }
+
+
 
 /* =========================
    AVATAR UPLOAD — Perfil

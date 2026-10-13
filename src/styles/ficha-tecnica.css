@@ -176,7 +176,7 @@
 
 .fc-tamanhos {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .fc-tamanhos>div {
@@ -229,7 +229,7 @@
     border-right: 2px solid #111;
 }
 
-.fc-campos > .fc-campo {
+.fc-campos>.fc-campo {
     border-right: 0;
 }
 
@@ -629,5 +629,147 @@
 
     .fc-observacoes>p {
         min-height: 20px;
+    }
+}
+
+/* ----- Resumo do pedido no modal ----- */
+.fc-resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px 18px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.fc-resumo>div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+}
+
+.fc-resumo strong {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+}
+
+.fc-resumo-obs {
+    grid-column: 1 / -1;
+}
+
+/* Prazo em destaque */
+.fc-prazo {
+    font-weight: 700;
+}
+
+.fc-prazo.urgente {
+    color: #b45309;
+}
+
+.fc-prazo.atrasado {
+    color: #dc2626;
+}
+
+/* Botões do cabeçalho do modal */
+.fc-modal-acoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fc-modal-imprimir {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.fc-modal-imprimir:hover {
+    background: #f1f5f9;
+}
+
+.fc-modal-imprimir .material-icons {
+    font-size: 18px;
+}
+
+/* O resumo ocupa espaço, então a rolagem das fichas precisa de menos altura */
+.fc-modal-body .fc-scroll {
+    max-height: calc(92vh - 230px);
+}
+
+/* Trava a rolagem da página enquanto o modal está aberto */
+body.imprimindo-modal {
+    overflow: hidden;
+}
+
+/* ----- Modal da ficha: o corpo inteiro rola ----- */
+.fc-modal .fc-modal-body {
+    overflow-y: auto;
+}
+
+/* o .fc-scroll deixa de limitar a altura; só rola na horizontal (ficha de 900px) */
+.fc-modal .fc-modal-body .fc-scroll {
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/* ----- Impressão do modal: só as fichas ----- */
+@media print {
+    body.imprimindo-modal {
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Tira o app inteiro do fluxo, só quando o modal está aberto */
+    body.imprimindo-modal #root {
+        display: none;
+    }
+
+    body.imprimindo-modal .fc-modal-overlay {
+        position: static;
+        display: block;
+        height: auto;
+        padding: 0;
+        overflow: visible;
+        background: none;
+    }
+
+    body.imprimindo-modal .fc-modal {
+        position: static;
+        display: block;
+        width: 100%;
+        max-width: none;
+        max-height: none;
+        overflow: visible;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    body.imprimindo-modal .fc-modal-body {
+        padding: 0;
+        overflow: visible;
+    }
+
+    body.imprimindo-modal .fc-modal-body .fc-scroll {
+        max-height: none;
+        overflow: visible;
+    }
+
+    body.imprimindo-modal .no-print {
+        display: none;
     }
 }
