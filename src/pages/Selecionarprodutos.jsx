@@ -39,11 +39,11 @@ const LOCAIS = [
 ];
 
 const MODELOS = [
-    { id: "camiseta",     label: "Camiseta",        icon: "checkroom" },
-    { id: "camisa",       label: "Camisa",           icon: "checkroom" },
-    { id: "camisa_longa", label: "Camisa Longa",     icon: "checkroom" },
-    { id: "moletom",      label: "Moletom c/ Capuz", icon: "checkroom" },
-    { id: "calca",        label: "Calça",            icon: "checkroom" },
+    { id: "camiseta", label: "Camiseta", icon: "checkroom" },
+    { id: "camisa", label: "Camisa", icon: "checkroom" },
+    { id: "camisa_longa", label: "Camisa Longa", icon: "checkroom" },
+    { id: "moletom", label: "Moletom c/ Capuz", icon: "checkroom" },
+    { id: "calca", label: "Calça", icon: "checkroom" },
 ];
 
 function SelectOpcoes({ label, groups, value, onChange }) {
@@ -140,10 +140,10 @@ function ModeloCard({ modelo, dados, onChange, selecionado, onToggle }) {
                     <h3 className="modelo-nome">{modelo.label}</h3>
 
                     <p className="section-help" style={{ marginBottom: 16 }}>
-                        {dados.cor          && <span className="tag-detalhe">{dados.cor}</span>}
-                        {dados.tecido       && <span className="tag-detalhe">{dados.tecido}</span>}
+                        {dados.cor && <span className="tag-detalhe">{dados.cor}</span>}
+                        {dados.tecido && <span className="tag-detalhe">{dados.tecido}</span>}
                         {dados.personalizacao && <span className="tag-detalhe">{dados.personalizacao}</span>}
-                        {dados.local        && (
+                        {dados.local && (
                             <span className="tag-detalhe" style={{ background: "#f3e8ff", color: "#6b21a8" }}>
                                 {dados.local}
                             </span>
@@ -245,6 +245,11 @@ function SelecionarProdutos() {
     function handleArte(e) {
         const file = e.target.files[0];
         if (!file) return;
+
+        // TODO(BACK): hoje a arte é guardada como base64 dentro do pedido
+        // (arteBase64 → detalhesPedido → pedidosService.salvarPedido).
+        // Com back: enviar o arquivo por upload (multipart/form-data), receber a URL
+        // e guardar só a URL no lugar do base64. <img src> funciona com os dois.
         const reader = new FileReader();
         reader.onload = ev => {
             setArteBase64(ev.target.result);
@@ -265,11 +270,11 @@ function SelecionarProdutos() {
                     item: m.label,
                     grade,
                     detalhes: {
-                        tecido:        d.tecido,
-                        cor:           d.cor,
+                        tecido: d.tecido,
+                        cor: d.cor,
                         personalizacao: d.personalizacao,
-                        local:         d.local,         // NOVO
-                        observacao:    d.observacao,    // NOVO
+                        local: d.local,         // NOVO
+                        observacao: d.observacao,    // NOVO
                     },
                 };
             });

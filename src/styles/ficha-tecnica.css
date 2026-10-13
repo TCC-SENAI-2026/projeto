@@ -1,256 +1,633 @@
-/* =========================================================
-   FICHA TÉCNICA (folha industrial) — components/FichaConteudo.jsx
-   Tudo prefixado com fc- para não conflitar com o resto do sistema.
-   ========================================================= */
+/* ==================================================
+   FICHA TÉCNICA INDUSTRIAL
+   ================================================== */
 
-/* Caixa com rolagem na tela */
 .fc-scroll {
+    width: 100%;
     max-height: 65vh;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: auto;
     padding: 12px;
     box-sizing: border-box;
-    background: #ffffff;
+    background: #f1f5f9;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
 }
 
 .fc-scroll::-webkit-scrollbar {
-    width: 8px;
+    width: 9px;
+    height: 9px;
 }
 
 .fc-scroll::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 4px;
+    background: #e2e8f0;
 }
 
 .fc-scroll::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-}
-
-.fc-scroll::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
 }
 
 .fc-lista {
     display: flex;
     flex-direction: column;
     gap: 24px;
-    width: 100%;
+    min-width: 0;
 }
 
-/* Uma folha por item: grade de 2 colunas (60% / 40%) */
+/* Cada ficha conserva o formato industrial horizontal. */
+
 .fc-ficha {
     display: grid;
-    grid-template-columns: 60% 40%;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-auto-flow: row;
+    width: 100%;
+    min-width: 900px;
     box-sizing: border-box;
-    background: #ffffff;
-    border: 2px solid #000000;
-    color: #000000;
+    background: #fff;
+    color: #000;
+    border: 2px solid #111;
     font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Cabeçalho */
-.fc-titulo,
-.fc-ref {
-    display: flex;
-    align-items: center;
-    padding: 10px 14px;
-    box-sizing: border-box;
-    border-bottom: 2px solid #000000;
-}
-
-.fc-titulo {
-    justify-content: center;
-    border-right: 2px solid #000000;
-}
-
-.fc-titulo-texto {
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: 2px;
-}
-
-.fc-ref-texto {
-    font-size: 14px;
-    font-weight: 900;
+    font-size: 11px;
+    line-height: 1.35;
     text-transform: uppercase;
 }
 
-/* Ilustração */
-.fc-arte {
-    position: relative;
+.fc-ficha *,
+.fc-ficha *::before,
+.fc-ficha *::after {
+    box-sizing: border-box;
+}
+
+.fc-ficha h3 {
+    margin: 0;
+    padding: 7px 9px;
+    border-bottom: 1px solid #111;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
+}
+
+/* Cabeçalho */
+
+.fc-cabecalho {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    border-bottom: 2px solid #111;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.fc-cabecalho>span {
+    padding: 10px;
+}
+
+.fc-identificacao-ficha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 7px 10px;
+    background: #f1f5f9;
+    border-top: 1px solid #111;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+
+.fc-numero-ficha {
+    flex-shrink: 0;
+    color: #111;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.fc-produto-identificacao {
+    min-width: 0;
+    color: #333;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.fc-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: start;
+}
+
+.fc-campo {
+    display: grid;
+    grid-template-columns: minmax(85px, 38%) minmax(0, 1fr);
+    min-width: 0;
+    border-right: 1px solid #111;
+    border-bottom: 1px solid #111;
+}
+
+.fc-campo>strong {
+    display: flex;
+    align-items: center;
+    padding: 7px;
+    overflow-wrap: anywhere;
+    border-right: 1px solid #111;
+    font-size: 10px;
+}
+
+.fc-campo-valor {
+    min-width: 0;
+    min-height: 30px;
+    padding: 7px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.fc-campos>.fc-campo:first-child {
+    grid-column: 1 / -1;
+}
+
+.fc-grade {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-width: 0;
+}
+
+.fc-grade-conteudo {
+    display: grid;
+    grid-template-columns: 75px minmax(0, 1fr);
+    min-height: 55px;
+    border-bottom: 1px solid #111;
+}
+
+.fc-grade-titulo {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 260px;
-    padding: 16px;
-    box-sizing: border-box;
-    border-right: 2px solid #000000;
-    border-bottom: 2px solid #000000;
+    padding: 6px;
+    border-right: 1px solid #111;
 }
 
-.fc-arte-img {
+.fc-tamanhos {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.fc-tamanhos>div {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    text-align: center;
+    border-right: 1px solid #111;
+}
+
+.fc-tamanhos>div:last-child {
+    border-right: 0;
+}
+
+.fc-tamanhos>div>strong {
+    padding: 5px 2px;
+    border-bottom: 1px solid #111;
+}
+
+.fc-tamanhos>div>span {
+    min-height: 25px;
+    padding: 5px 2px;
+    overflow-wrap: anywhere;
+}
+
+.fc-variantes {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    text-align: center;
+}
+
+.fc-variantes>strong {
+    padding: 6px;
+    border-bottom: 1px solid #111;
+}
+
+.fc-variantes>span {
+    padding: 9px;
+    overflow-wrap: anywhere;
+}
+
+.fc-identificacao {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: stretch;
+    border-bottom: 2px solid #111;
+}
+
+.fc-campos {
+    border-right: 2px solid #111;
+}
+
+.fc-campos > .fc-campo {
+    border-right: 0;
+}
+
+/* Ilustração e informações */
+
+.fc-area-central {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: stretch;
+    border-bottom: 2px solid #111;
+}
+
+.fc-ilustracao {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 370px;
+    border-right: 2px solid #111;
+}
+
+.fc-rotulo {
+    padding: 8px;
+    border-bottom: 1px solid #111;
+    text-align: center;
+    font-size: 10px;
+}
+
+.fc-ilustracao-conteudo {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    padding: 22px 95px 22px 18px;
+}
+
+.fc-ilustracao-conteudo img {
+    display: block;
     max-width: 100%;
-    max-height: 250px;
+    max-height: 410px;
     object-fit: contain;
 }
 
 .fc-arte-vazia {
+    color: #737373;
     text-align: center;
-    color: #a1a1aa;
-}
-
-.fc-arte-vazia .material-icons {
-    font-size: 56px;
-}
-
-.fc-arte-vazia p {
-    margin: 6px 0 0;
     font-size: 11px;
-    font-weight: 800;
 }
 
 .fc-qr {
     position: absolute;
-    right: 8px;
-    bottom: 8px;
+    right: 10px;
+    bottom: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    justify-content: center;
+    gap: 4px;
+    width: 88px;
+    min-height: 100px;
+    padding: 5px;
+    background: #fff;
+    border: 1px solid #777;
 }
 
-.fc-qr span {
-    font-size: 7px;
-    font-weight: 700;
+.fc-qr svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
 }
 
-/* Informações (coluna direita) */
-.fc-info {
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    border-bottom: 2px solid #000000;
-    font-size: 11px;
-    line-height: 1.5;
-    text-transform: uppercase;
+.fc-qr>span {
+    font-size: 8px;
+    font-weight: 800;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
-.fc-info-bloco {
-    padding: 8px 12px;
-}
-
-.fc-info-bloco + .fc-info-bloco {
-    border-top: 1px solid #000000;
-}
-
-.fc-linha {
-    margin: 2px 0;
-}
-
-.fc-info-titulo {
-    margin: 0 0 4px;
+.fc-qr-vazio {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    border: 1px dashed #777;
+    color: #555;
+    font-size: 15px;
     font-weight: 900;
 }
 
-/* Aviamentos (rodapé esquerdo) */
+.fc-detalhes {
+    min-width: 0;
+}
+
+.fc-detalhes h3:not(:first-child) {
+    border-top: 2px solid #111;
+}
+
+.fc-detalhes .fc-campo {
+    grid-template-columns: minmax(95px, 42%) minmax(0, 1fr);
+    border-right: 0;
+}
+
+.fc-detalhes .fc-campo>strong {
+    border-right: 1px solid #111;
+}
+
+/* Tabelas */
+
+.fc-tabela-secao {
+    min-width: 0;
+    align-self: start;
+    border-bottom: 2px solid #111;
+}
+
 .fc-aviamentos {
-    box-sizing: border-box;
-    border-right: 2px solid #000000;
+    grid-column: 1 / -1;
+}
+
+.fc-tabela-secao>h3 {
+    border-bottom: 1px solid #111;
 }
 
 .fc-tabela {
     width: 100%;
     border-collapse: collapse;
-    border-spacing: 0;
-    font-size: 10px;
-    color: #000000;
+    table-layout: fixed;
+    font-size: 9px;
+    line-height: 1.25;
+    text-transform: uppercase;
 }
 
 .fc-tabela th,
 .fc-tabela td {
-    height: 22px;
-    padding: 4px 6px;
-    box-sizing: border-box;
+    height: 29px;
+    padding: 5px 4px;
+    border-right: 1px solid #111;
+    border-bottom: 1px solid #111;
+    overflow-wrap: anywhere;
     text-align: center;
-    border: none;
-    border-right: 1px solid #000000;
-    border-bottom: 1px solid #000000;
+    vertical-align: middle;
 }
 
 .fc-tabela th {
+    height: 48px;
     font-weight: 800;
+}
+
+.fc-tabela th:last-child,
+.fc-tabela td:last-child {
+    border-right: 0;
+}
+
+.fc-tabela tbody tr:last-child td {
+    border-bottom: 0;
 }
 
 .fc-tabela th:first-child,
 .fc-tabela td:first-child {
     text-align: left;
-    font-weight: 700;
 }
 
-.fc-tabela th:last-child,
-.fc-tabela td:last-child {
-    border-right: none;
+.fc-aviamentos .fc-tabela th:first-child {
+    width: 32%;
 }
 
-.fc-tabela tbody tr:last-child td {
-    border-bottom: none;
+.fc-aviamentos .fc-tabela th:not(:first-child) {
+    width: 17%;
 }
 
-/* Observações (rodapé direito) */
-.fc-obs {
-    display: flex;
-    flex-direction: column;
-    padding: 8px 10px;
-    box-sizing: border-box;
-    font-size: 10px;
-    line-height: 1.4;
-    text-transform: uppercase;
+.fc-materiais {
+    grid-column: 1;
+    border-right: 2px solid #111;
 }
 
-.fc-obs p {
+.fc-processos {
+    grid-column: 2;
+}
+
+.fc-materiais .fc-tabela th,
+.fc-processos .fc-tabela th {
+    height: 58px;
+}
+
+.fc-tabela tfoot td {
+    height: 30px;
+    border-top: 1px solid #111;
+    font-weight: 800;
+}
+
+.fc-tabela tfoot td:first-child {
+    text-align: right;
+}
+
+/* Observações */
+
+.fc-observacoes {
+    grid-column: 1 / -1;
+    min-height: 80px;
+    border-bottom: 0;
+}
+
+.fc-observacoes>strong {
+    display: block;
+    padding: 8px;
+    border-bottom: 1px solid #111;
+}
+
+.fc-observacoes>p {
+    min-height: 45px;
     margin: 0;
+    padding: 8px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
 }
 
-/* Celular: empilha as colunas */
+.fc-sem-produtos {
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    text-align: center;
+}
+
+/* Rolagem: a ficha mantém o formato industrial na tela pequena. */
+
 @media (max-width: 760px) {
-    .fc-ficha {
-        grid-template-columns: 1fr;
+    .fc-scroll {
+        max-height: 65vh;
+        padding: 6px;
     }
 
-    .fc-titulo,
-    .fc-arte,
-    .fc-aviamentos {
-        border-right: none;
+    .fc-ficha {
+        min-width: 900px;
     }
 }
 
-/* Impressão: sem rolagem, sem menu/botões, uma folha por item */
+
+/* IMPRESSÃO — A4 HORIZONTAL*/
+
+@page {
+    size: A4 landscape;
+    margin: 8mm;
+}
+
 @media print {
+
+    /* Header/topbar do app (barra azul-marinho com logo e menu) */
+    .topbar,
+    .app-header,
+    .mobile-header,
+    header {
+        position: static !important;
+    }
+
+    html,
+    body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
     .sidebar,
     .sidebar-overlay,
     .pedido-stepper,
-    .no-print {
+    .no-print,
+    .form-actions {
         display: none !important;
     }
 
-    .container {
-        margin-left: 0;
-        width: 100%;
-        padding: 0;
+    .container,
+    .form-page-card {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
     }
 
     .fc-scroll {
-        max-height: none;
-        overflow: visible;
-        padding: 0;
-        border: none;
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        border: 0 !important;
+        background: #fff !important;
+    }
+
+    .fc-lista {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0 !important;
+        width: 100% !important;
     }
 
     .fc-ficha {
-        break-inside: avoid;
-        page-break-inside: avoid;
+        display: grid !important;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr) !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        font-size: 8px !important;
+
+        /* Permite que a ficha continue na página seguinte */
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+
+        break-after: page;
+        page-break-after: always;
+    }
+
+    .fc-ficha:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    .fc-cabecalho {
+        grid-column: 1 / -1;
+        display: flex !important;
+        flex-direction: column !important;
+        height: auto !important;
+        padding: 8px !important;
+        font-size: 16px !important;
+        text-align: center;
+    }
+
+    .fc-identificacao-ficha {
+        grid-column: 1 / -1;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 8px 10px !important;
+        background: #f1f5f9 !important;
+        border-left: 4px solid #334155 !important;
+        border-bottom: 2px solid #111 !important;
+        border-radius: 0 !important;
+        box-sizing: border-box !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .fc-numero-ficha,
+    .fc-produto-identificacao {
+        display: block !important;
+        color: #111 !important;
+    }
+
+    .fc-ilustracao {
+        min-height: 160px;
+    }
+
+    .fc-ilustracao-conteudo {
+        min-height: 140px;
+        padding: 8px 75px 8px 8px;
+    }
+
+    .fc-ilustracao-conteudo img {
+        max-width: 100%;
+        max-height: 170px;
+        object-fit: contain;
+    }
+
+    .fc-qr {
+        background: #fff !important;
+    }
+
+    .fc-tabela {
+        font-size: 7px !important;
+    }
+
+    .fc-tabela th,
+    .fc-tabela td {
+        height: auto;
+        padding: 2px;
+        overflow-wrap: anywhere;
+    }
+
+    .fc-tabela th {
+        height: 30px;
+    }
+
+    .fc-materiais .fc-tabela th,
+    .fc-processos .fc-tabela th {
+        height: 32px;
+    }
+
+    .fc-observacoes {
+        min-height: 35px;
+    }
+
+    .fc-observacoes>p {
+        min-height: 20px;
     }
 }

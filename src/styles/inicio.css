@@ -10,11 +10,13 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(220px, 1fr));
     gap: 20px;
+    
 }
 
 .dashboard-card,
 .dashboard-card-baixo {
     position: relative;
+    
     background: white;
     padding: 20px 22px;
     border-radius: 10px;
@@ -214,4 +216,11 @@
 .order-row:hover {
     background: #f8fafc;
     cursor: pointer;
+}
+
+
+.dashboard-card.clicavel:focus-visible,
+.dashboard-card-baixo.clicavel:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
 }

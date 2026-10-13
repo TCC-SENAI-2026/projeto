@@ -1,153 +1,415 @@
 import { QRCodeSVG } from "qrcode.react";
 import "../styles/ficha-tecnica.css";
 
-// Campos que o fluxo de pedido ainda NÃO coleta (modelo, segmento, fornecedor,
-// composição e aviamentos). Enquanto isso, a ficha mostra estes valores de exemplo.
-// Quando esses dados passarem a vir do pedido, é só apagar este bloco.
+// TODO(BACK): remover o EXEMPLO. Estes valores são fictícios e aparecem
+// quando o pedido não traz o campo. O back deve devolver modelo, segmento,
+// fornecedor, composicao e aviamentos dentro de produto.detalhes.
+
 const EXEMPLO = {
     modelo: "CAMISA",
     segmento: "MASCULINO",
     fornecedor: "CATAGUASES",
     composicao: "100% ALGODÃO",
     aviamentos: [
-        { nome: "BOT. 4 FUROS POLIÉSTER", qtd: "09", v1: "CRU",   v2: "AZUL CLARO", v3: "" },
-        { nome: "ETIQUETA INT. DE GOLA",  qtd: "01", v1: "CRU",   v2: "MARINHO",    v3: "" },
-        { nome: "ETIQ. DE COMPOSIÇÃO",    qtd: "01", v1: "ÚNICA", v2: "ÚNICA",      v3: "" },
-        { nome: "ETIQUETA EXTERNA",       qtd: "01", v1: "CÁQUI", v2: "MARINHO",    v3: "" },
+        {
+            nome: "BOT. 4 FUROS POLIÉSTER",
+            qtd: "09",
+            v1: "CRU",
+            v2: "AZUL CLARO",
+            v3: "",
+        },
+        {
+            nome: "ETIQUETA INT. DE GOLA",
+            qtd: "01",
+            v1: "CRU",
+            v2: "MARINHO",
+            v3: "",
+        },
+        {
+            nome: "ETIQ. DE COMPOSIÇÃO",
+            qtd: "01",
+            v1: "ÚNICA",
+            v2: "ÚNICA",
+            v3: "",
+        },
+        {
+            nome: "ETIQUETA EXTERNA",
+            qtd: "01",
+            v1: "CÁQUI",
+            v2: "MARINHO",
+            v3: "",
+        },
     ],
 };
 
-const PREFIXO_REFERENCIA = "INV";
-
-// Ex.: { P: 2, M: 0, G: 3 } -> { texto: "P(2) G(3)", total: 5 }
 function formatarGrade(grade = {}) {
-    const itens = Object.entries(grade).filter(([, qtd]) => Number(qtd) > 0);
-    const total = itens.reduce((acc, [, qtd]) => acc + Number(qtd), 0);
-    const texto = itens.map(([tam, qtd]) => `${tam}(${qtd})`).join(" ");
-    return { texto: texto || "—", total };
+    const itens = Object.entries(grade || {}).filter(
+        ([, quantidade]) => Number(quantidade) > 0
+    );
+
+    const total = itens.reduce(
+        (soma, [, quantidade]) => soma + Number(quantidade),
+        0
+    );
+
+    return {
+        texto:
+            itens
+                .map(([tamanho, quantidade]) => `${tamanho} (${quantidade})`)
+                .join(" ") || "—",
+        total,
+    };
+}
+
+function Campo({ rotulo, children, className = "" }) {
+    return (
+        <div className={`fc-campo ${className}`}>
+            <strong>{rotulo}</strong>
+            <div className="fc-campo-valor">{children || "—"}</div>
+        </div>
+    );
+}
+
+function TabelaVazia({ tipo, colunas, linhas = 4, total = false }) {
+    return (
+        <section className={`fc-tabela-secao fc-${tipo}`}>
+            <h3>{tipo === "materiais" ? "MATERIAIS" : "PROCESSOS"}</h3>
+
+            <table className="fc-tabela">
+                <thead>
+                    <tr>
+                        {colunas.map((coluna) => (
+                            <th key={coluna}>{coluna}</th>
+                        ))}
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {Array.from({ length: linhas }, (_, linha) => (
+                        <tr key={linha}>
+                            {colunas.map((coluna) => (
+                                <td key={coluna}>&nbsp;</td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+
+                {total && (
+                    <tfoot>
+                        <tr>
+                            <td colSpan={colunas.length - 1}>
+                                Total R$
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </tfoot>
+                )}
+            </table>
+        </section>
+    );
 }
 
 function FichaConteudo({ pedido, ficha }) {
     if (!pedido || !ficha) return null;
 
+    const produtos = Array.isArray(pedido.produtos)
+        ? pedido.produtos
+        : [];
+
+    const totalFichas = produtos.length;
     const arteGeral = pedido.arte || null;
     const ano = new Date().getFullYear();
 
     return (
         <div className="fc-scroll">
             <div className="fc-lista">
-                {pedido.produtos?.map((produto, idx) => {
-                    const d = produto.detalhes || {};
-                    const { texto: gradeTexto, total } = formatarGrade(produto.grade);
-                    const arteItem = produto.arte || arteGeral || null;
-                    const aviamentos = d.aviamentos || EXEMPLO.aviamentos;
+                {produtos.map((produto, idx) => {
+                    const detalhes = produto.detalhes || {};
+                    const grade = produto.grade || {};
+                    const { total } = formatarGrade(grade);
 
-                    // QR só quando a foto é uma URL (uma imagem em base64 é grande demais para um QR)
-                    const qrValue =
-                        produto.fotoUrl && !produto.fotoUrl.startsWith("data:")
-                            ? produto.fotoUrl
-                            : null;
+                    const arteItem = produto.arte || arteGeral;
+
+                    // TODO(BACK): detalhes.aviamentos deve vir do pedido (nome, qtd, v1, v2, v3)
+
+                    const aviamentos = Array.isArray(
+                        detalhes.aviamentos
+                    )
+                        ? detalhes.aviamentos
+                        : EXEMPLO.aviamentos;
+
+                    // TODO(BACK): fotoUrl deve ser uma URL http(s) devolvida pelo upload (gera o QR Code)
+                    const fotoUrl =
+                        typeof produto.fotoUrl === "string"
+                            ? produto.fotoUrl.trim()
+                            : "";
+
+                    const qrValue = /^https?:\/\//i.test(fotoUrl)
+                        ? fotoUrl
+                        : null;
+
+
+                    // TODO(BACK): o back deve gerar e guardar ficha.referencia
+                    // (hoje cai em "INV {ano atual}/{nº}", que muda a cada ano)
+                    const referencia =
+                        ficha.referencia || `INV ${ano}/${idx + 1}`;
+
+                    const nomeProduto =
+                        produto.item || `Produto ${idx + 1}`;
 
                     return (
-                        <div key={idx} className="fc-ficha">
 
-                            {/* 1. CABEÇALHO */}
-                            <div className="fc-titulo">
-                                <span className="fc-titulo-texto">FICHA TÉCNICA</span>
-                            </div>
-                            <div className="fc-ref">
-                                <span className="fc-ref-texto">
-                                    REFERÊNCIA: {ficha.referencia || `${PREFIXO_REFERENCIA} ${ano}/${idx + 1}`}
-                                </span>
-                            </div>
+                        <article
+                            className="fc-ficha"
+                            key={produto.id ?? idx}
+                        >
+                            {/* CABEÇALHO DA FICHA */}
+                            <header className="fc-cabecalho">
+                                <span>FICHA TÉCNICA</span>
 
-                            {/* 2. ILUSTRAÇÃO / ARTE */}
-                            <div className="fc-arte">
-                                {arteItem ? (
-                                    <img className="fc-arte-img" src={arteItem} alt="Arte do item" />
-                                ) : (
-                                    <div className="fc-arte-vazia">
-                                        <span className="material-icons">draw</span>
-                                        <p>ILUSTRAÇÃO / CROQUI DA PEÇA</p>
+                                <div className={`fc-identificacao-ficha ${idx === 0 ? "fc-primeira-identificacao" : "fc-outra-identificacao"}`}>
+                                    <span className="fc-numero-ficha">
+                                        FICHA {idx + 1} DE {totalFichas}
+                                    </span>
+
+                                    <span className="fc-produto-identificacao">
+                                        {nomeProduto}
+                                    </span>
+                                </div>
+                            </header>
+
+
+
+                            {/* IDENTIFICAÇÃO E GRADE */}
+                            <section className="fc-identificacao">
+                                <div className="fc-campos">
+                                    <Campo rotulo="Descrição">
+                                        {nomeProduto}
+                                    </Campo>
+
+                                    <Campo rotulo="Referência">
+                                        {referencia}
+                                    </Campo>
+
+                                    <Campo rotulo="Coleção">
+                                        {detalhes.colecao}
+                                    </Campo>
+
+                                    <Campo rotulo="Responsável">
+                                        {detalhes.responsavel}
+                                    </Campo>
+
+                                    <Campo rotulo="Data">
+                                        {ficha.dataPedido || detalhes.data}
+                                    </Campo>
+                                </div>
+
+                                <div className="fc-grade">
+                                    <div className="fc-grade-conteudo">
+                                        <strong className="fc-grade-titulo">
+                                            GRADE
+                                        </strong>
+
+                                        <div className="fc-tamanhos">
+                                            {["P", "M", "G", "GG"].map(
+                                                (tamanho) => (
+                                                    <div key={tamanho}>
+                                                        <strong>
+                                                            {tamanho}
+                                                        </strong>
+
+                                                        <span>
+                                                            {grade[tamanho] ?? ""}
+                                                        </span>
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
                                     </div>
-                                )}
 
-                                {qrValue && (
+                                    <div className="fc-variantes">
+                                        <strong>VARIANTES</strong>
+                                        <span>{detalhes.cor || "—"}</span>
+                                    </div>
+                                </div>
+                            </section>
+
+                            {/* ILUSTRAÇÃO E INFORMAÇÕES */}
+                            <section className="fc-area-central">
+                                <div className="fc-ilustracao">
+                                    <strong className="fc-rotulo">
+                                        ILUSTRAÇÃO / CROQUI DA PEÇA
+                                    </strong>
+
+                                    <div className="fc-ilustracao-conteudo">
+                                        {arteItem ? (
+                                            <img
+                                                src={arteItem}
+                                                alt={`Arte de ${nomeProduto}`}
+                                            />
+                                        ) : (
+                                            <span className="fc-arte-vazia">
+                                                Área reservada para a ilustração
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* QR CODE */}
                                     <div className="fc-qr">
-                                        <QRCodeSVG value={qrValue} size={56} bgColor="#ffffff" fgColor="#000000" level="M" />
-                                        <span>FOTO DA PEÇA</span>
+                                        {qrValue ? (
+                                            <QRCodeSVG
+                                                value={qrValue}
+                                                size={76}
+                                                bgColor="#ffffff"
+                                                fgColor="#000000"
+                                                level="M"
+                                                marginSize={1}
+                                            />
+                                        ) : (
+                                            <div
+                                                className="fc-qr-vazio"
+                                                aria-label="QR Code indisponível"
+                                            >
+                                                <span>QR</span>
+                                            </div>
+                                        )}
+
+                                        <span>
+                                            {qrValue
+                                                ? "FOTO DA PEÇA"
+                                                : "FOTO SEM URL"}
+                                        </span>
                                     </div>
-                                )}
-                            </div>
-
-                            {/* 3. INFORMAÇÕES */}
-                            <div className="fc-info">
-                                <div className="fc-info-bloco">
-                                    <p className="fc-linha"><strong>NOME DO PRODUTO:</strong> {produto.item || "—"}</p>
-                                    <p className="fc-linha"><strong>MODELO:</strong> {d.modelo || EXEMPLO.modelo}</p>
-                                    <p className="fc-linha"><strong>SEGMENTO:</strong> {d.segmento || EXEMPLO.segmento}</p>
-                                    <p className="fc-linha"><strong>GRADE:</strong> {gradeTexto}</p>
-                                    {total > 0 && (
-                                        <p className="fc-linha"><strong>TOTAL:</strong> {total} PEÇAS</p>
-                                    )}
-                                    <p className="fc-linha"><strong>VARIANTES:</strong> {d.cor || "—"}</p>
-                                    {d.personalizacao && (
-                                        <p className="fc-linha"><strong>PERSONALIZAÇÃO:</strong> {d.personalizacao}</p>
-                                    )}
-                                    {d.local && (
-                                        <p className="fc-linha"><strong>LOCAL DA ARTE:</strong> {d.local}</p>
-                                    )}
                                 </div>
 
-                                <div className="fc-info-bloco">
-                                    <p className="fc-info-titulo">TECIDOS:</p>
-                                    <p className="fc-linha"><strong>NOME:</strong> {d.tecido || "—"}</p>
-                                    <p className="fc-linha"><strong>FORNECEDOR:</strong> {d.fornecedor || EXEMPLO.fornecedor}</p>
-                                    <p className="fc-linha"><strong>COMPOSIÇÃO:</strong> {d.composicao || EXEMPLO.composicao}</p>
-                                </div>
+                                <div className="fc-detalhes">
+                                    <h3>INFORMAÇÕES DO PRODUTO</h3>
 
-                                <div className="fc-info-bloco">
-                                    <p className="fc-linha"><strong>NOME:</strong> ENTRE TELA</p>
-                                    <p className="fc-linha"><strong>FORNECEDOR:</strong> —</p>
-                                    <p className="fc-linha"><strong>COMPOSIÇÃO:</strong> —</p>
-                                </div>
-                            </div>
+                                    <Campo rotulo="Nome do produto">
+                                        {nomeProduto}
+                                    </Campo>
 
-                            {/* 4. AVIAMENTOS */}
-                            <div className="fc-aviamentos">
+                                    <Campo rotulo="Modelo">
+                                        {detalhes.modelo || EXEMPLO.modelo}
+                                    </Campo>
+
+                                    <Campo rotulo="Segmento">
+                                        {detalhes.segmento || EXEMPLO.segmento}
+                                    </Campo>
+
+                                    <Campo rotulo="Quantidade total">
+                                        {total > 0 ? `${total} peças` : "—"}
+                                    </Campo>
+
+                                    <Campo rotulo="Personalização">
+                                        {detalhes.personalizacao}
+                                    </Campo>
+
+                                    <Campo rotulo="Local da arte">
+                                        {detalhes.local}
+                                    </Campo>
+
+                                    <h3>TECIDOS</h3>
+
+                                    <Campo rotulo="Nome">
+                                        {detalhes.tecido}
+                                    </Campo>
+
+                                    <Campo rotulo="Fornecedor">
+                                        {detalhes.fornecedor ||
+                                            EXEMPLO.fornecedor}
+                                    </Campo>
+
+                                    <Campo rotulo="Composição">
+                                        {detalhes.composicao ||
+                                            EXEMPLO.composicao}
+                                    </Campo>
+                                </div>
+                            </section>
+
+                            {/* AVIAMENTOS */}
+                            <section className="fc-tabela-secao fc-aviamentos">
+                                <h3>AVIAMENTOS</h3>
+
                                 <table className="fc-tabela">
                                     <thead>
                                         <tr>
-                                            <th>AVIAMENTOS:</th>
-                                            <th>QUANT.</th>
-                                            <th>VARIANTE 1</th>
-                                            <th>VARIANTE 2</th>
-                                            <th>VARIANTE 3</th>
+                                            <th>Descrição</th>
+                                            <th>Quantidade</th>
+                                            <th>Variante 1</th>
+                                            <th>Variante 2</th>
+                                            <th>Variante 3</th>
                                         </tr>
                                     </thead>
+
                                     <tbody>
-                                        {aviamentos.map((a, i) => (
+                                        {aviamentos.map((aviamento, i) => (
                                             <tr key={i}>
-                                                <td>{a.nome}</td>
-                                                <td>{a.qtd}</td>
-                                                <td>{a.v1}</td>
-                                                <td>{a.v2}</td>
-                                                <td>{a.v3}</td>
+                                                <td>{aviamento.nome}</td>
+                                                <td>{aviamento.qtd}</td>
+                                                <td>{aviamento.v1}</td>
+                                                <td>{aviamento.v2}</td>
+                                                <td>{aviamento.v3}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>
+                            </section>
 
-                            {/* 5. OBSERVAÇÕES */}
-                            <div className="fc-obs">
-                                <p className="fc-info-titulo">OBSERVAÇÕES:</p>
-                                <p>{d.observacao || ficha.observacao || "—"}</p>
-                            </div>
+                            {/* TODO(BACK): materiais[] com custos (hoje é tabela em branco) */}
 
-                        </div>
+                            {/* MATERIAIS */}
+                            <TabelaVazia
+                                tipo="materiais"
+                                colunas={[
+                                    "Referência",
+                                    "Descrição",
+                                    "Responsável",
+                                    "Observação",
+                                    "Quantidade",
+                                    "UM",
+                                    "Custo unitário",
+                                    "Custo de produção",
+                                ]}
+                                linhas={4}
+                                total
+                            />
+
+
+                            {/* TODO(BACK): processos[] com custos (hoje é tabela em branco) */}
+                           
+                            {/* PROCESSOS */}
+                            <TabelaVazia
+                                tipo="processos"
+                                colunas={[
+                                    "Referência",
+                                    "Descrição",
+                                    "Responsável",
+                                    "Custo de produção",
+                                ]}
+                                linhas={4}
+                                total
+                            />
+
+                            {/* OBSERVAÇÕES */}
+                            <section className="fc-observacoes">
+                                <strong>OBSERVAÇÕES</strong>
+
+                                <p>
+                                    {detalhes.observacao ||
+                                        ficha.observacao ||
+                                        "—"}
+                                </p>
+                            </section>
+                        </article>
                     );
                 })}
+
+                {produtos.length === 0 && (
+                    <p className="fc-sem-produtos">
+                        Nenhum produto foi encontrado neste pedido.
+                    </p>
+                )}
             </div>
         </div>
     );
