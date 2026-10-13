@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import FichaModal from "../components/FichaModal";
-import { listarPedidos, buscarPedido, excluirPedido } from "../services/pedidosService";
+import EditarPedidoModal from "../components/EditarPedidoModal";
+import { listarPedidos, buscarPedido, excluirPedido, atualizarPedido } from "../services/pedidosService";
 import { infoStatus } from "../utils/status";
+import { infoPrioridade } from "../utils/prioridade";
 import "../styles/padrao.css";
 import "../styles/Pedidos.css";
 import "../styles/ficha-tecnica.css";
@@ -16,6 +18,7 @@ function Pedidos() {
     const [tab, setTab] = useState(filtro === "finalizado" ? "historico" : "recentes");
     const [pedidos, setPedidos] = useState([]);
     const [fichaAberta, setFichaAberta] = useState(null);
+    const [pedidoEditando, setPedidoEditando] = useState(null);
     const emHistorico = tab === "historico";
     const navigate = useNavigate();
 
@@ -36,6 +39,17 @@ function Pedidos() {
 
     function fecharFicha() {
         setFichaAberta(null);
+    }
+
+    async function abrirEdicao(id) {
+        setPedidoEditando(await buscarPedido(id));
+    }
+
+    async function salvarEdicao(atualizado) {
+        // TODO(BACK): PUT /api/pedidos/:id
+        await atualizarPedido(atualizado.id, atualizado);
+        setPedidos(await listarPedidos());
+        setPedidoEditando(null);
     }
 
     async function confirmarExclusao(id) {
@@ -128,7 +142,7 @@ function Pedidos() {
 
                     {/* CABEÇALHO DA TABELA */}
                     <div className="pedidos-header">
-                        <span>Pedido</span>
+                        <span>Pedido / Prioridade</span>
                         <span>Empresa</span>
                         <span>Status</span>
                         <span>Ações</span>
@@ -143,6 +157,7 @@ function Pedidos() {
 
                         {visiveis.map((p) => {
                             const st = infoStatus(p);
+                            const prio = infoPrioridade(p);
 
                             return (
                                 <div
@@ -154,7 +169,10 @@ function Pedidos() {
                                         <div className="img"></div>
                                         <div className="pedido-main">
                                             <span className="mobile-field-label">Pedido</span>
-                                            <p>#{p.id}</p>
+                                            <p>#{p.id}
+                                                {prio && <span className={`prio-selo ${prio.classe}`}>{prio.texto}</span>}
+                                            </p>
+
                                         </div>
                                     </div>
 
@@ -174,7 +192,7 @@ function Pedidos() {
                                         {/* TODO(BACK): PUT /api/pedidos/:id (editar pedido) */}
                                         <button
                                             className="action-btn edit-btn"
-                                            onClick={(e) => { e.stopPropagation(); alert("Editar"); }}
+                                            onClick={(e) => { e.stopPropagation(); abrirEdicao(p.id); }}
                                         >
                                             <span className="material-icons">edit</span>
                                         </button>
@@ -198,6 +216,14 @@ function Pedidos() {
 
             {fichaAberta && (
                 <FichaModal ficha={fichaAberta} onFechar={fecharFicha} />
+            )}
+            
+            {pedidoEditando && (
+                <EditarPedidoModal
+                    pedido={pedidoEditando}
+                    onFechar={() => setPedidoEditando(null)}
+                    onSalvar={salvarEdicao}
+                />
             )}
         </>
     );

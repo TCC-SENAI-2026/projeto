@@ -104,13 +104,31 @@ export async function excluirPedido(id) {
     gravar(ler().filter((p) => String(p.id) !== String(id)));
 }
 
-// TODO(BACK): ainda não existem no front, mas vão ser necessárias:
-//   PATCH /api/pedidos/:id  -> mudar o status do pedido
-//   PUT   /api/pedidos/:id  -> editar o pedido
+// TODO(BACK): PUT /api/pedidos/:id  (editar pedido)
+export async function atualizarPedido(id, dados) {
+    // const res = await fetch(`${API}/pedidos/${id}`, {
+    //     method: "PUT",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(dados),
+    // });
+    // return res.json();
+
+    const lista = ler();
+    const i = lista.findIndex((p) => String(p.id) === String(id));
+    if (i === -1) throw new Error("Pedido não encontrado.");
+
+    // id e criadoEm nunca mudam numa edição
+    lista[i] = { ...lista[i], ...dados, id: lista[i].id, criadoEm: lista[i].criadoEm };
+
+    gravar(lista); // lança erro se o localStorage estiver cheio
+    return lista[i];
+}
+
+// TODO(BACK): PATCH /api/pedidos/:id  -> mudar só o status (ainda não existe no front)
 /* ----------------------------------------------------------------------
    COMO É UM PEDIDO (para consulta)
 
-   {
+   {  
      id, status, criadoEm,
      ficha:  { cliente, contato, email, dataPedido, entrega,
                prioridade, local, personalizacao, observacao, referencia },
