@@ -1,68 +1,72 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import SelectOpcoes from "../components/SelectOpcoes";
+import { TAMANHOS, PERSONALIZACOES, TECIDOS, CORES, LOCAIS, MODELOS } from "../utils/opcoesProduto";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
 import "../styles/Novopedido.css";
 
-const TAMANHOS = ["P", "M", "G", "GG", "G1", "G2"];
+// const TAMANHOS = ["P", "M", "G", "GG", "G1", "G2"];
 
-const PERSONALIZACOES = [
-    { group: "Básicos", options: ["Bordado", "Silk Screen (Serigrafia)", "Estampa Digital (DTG)", "Sublimação", "Transfer", "Vinil Termocolante"] },
-    { group: "Intermediários", options: ["Relevo (3D Puff)", "Bordado 3D", "Patch (Aplicação)", "Termocolante", "Foil (Metalizado)", "Flocado (Aveludado)"] },
-    { group: "Avançados", options: ["Laser Cut", "Gravação a Laser", "Estampa UV", "Impressão 3D", "Pedraria", "Lantejoulas"] },
-    { group: "Efeitos / Estilo", options: ["Transparente", "Degradê", "Brilho (Glitter)", "Fosco"] },
-];
+// const PERSONALIZACOES = [
+//     { group: "Básicos", options: ["Bordado", "Silk Screen (Serigrafia)", "Estampa Digital (DTG)", "Sublimação", "Transfer", "Vinil Termocolante"] },
+//     { group: "Intermediários", options: ["Relevo (3D Puff)", "Bordado 3D", "Patch (Aplicação)", "Termocolante", "Foil (Metalizado)", "Flocado (Aveludado)"] },
+//     { group: "Avançados", options: ["Laser Cut", "Gravação a Laser", "Estampa UV", "Impressão 3D", "Pedraria", "Lantejoulas"] },
+//     { group: "Efeitos / Estilo", options: ["Transparente", "Degradê", "Brilho (Glitter)", "Fosco"] },
+// ];
 
-const TECIDOS = [
-    { group: "Básicos", options: ["Algodão", "Poliéster", "Malha", "Viscose"] },
-    { group: "Intermediários", options: ["Algodão + Poliéster", "Algodão + Elastano", "Poliéster + Elastano", "Viscolycra", "Dry Fit", "Piquet"] },
-    { group: "Avançados", options: ["Algodão Pima", "Algodão Egípcio", "Fleece", "Moletom Felpado", "Linho", "Seda"] },
-    { group: "Sustentáveis", options: ["Modal", "Fibra de Bambu", "Poliéster de PET Reciclado"] },
-    { group: "Especiais", options: ["Jeans", "Sarja", "Nylon", "Helanca", "Suplex"] },
-];
+// const TECIDOS = [
+//     { group: "Básicos", options: ["Algodão", "Poliéster", "Malha", "Viscose"] },
+//     { group: "Intermediários", options: ["Algodão + Poliéster", "Algodão + Elastano", "Poliéster + Elastano", "Viscolycra", "Dry Fit", "Piquet"] },
+//     { group: "Avançados", options: ["Algodão Pima", "Algodão Egípcio", "Fleece", "Moletom Felpado", "Linho", "Seda"] },
+//     { group: "Sustentáveis", options: ["Modal", "Fibra de Bambu", "Poliéster de PET Reciclado"] },
+//     { group: "Especiais", options: ["Jeans", "Sarja", "Nylon", "Helanca", "Suplex"] },
+// ];
 
-const CORES = [
-    { group: "Básicas", options: ["Branco", "Preto", "Cinza", "Azul", "Vermelho"] },
-    { group: "Neutras / Sóbrias", options: ["Off-white", "Bege", "Marrom", "Caqui", "Grafite"] },
-    { group: "Intermediárias", options: ["Azul Marinho", "Verde Militar", "Vinho", "Mostarda", "Rosa Claro"] },
-    { group: "Vibrantes", options: ["Verde Limão", "Azul Ciano", "Laranja", "Pink", "Roxo"] },
-    { group: "Especiais", options: ["Metálico", "Neon", "Pastel", "Tie-dye", "Estampado"] },
-];
+// const CORES = [
+//     { group: "Básicas", options: ["Branco", "Preto", "Cinza", "Azul", "Vermelho"] },
+//     { group: "Neutras / Sóbrias", options: ["Off-white", "Bege", "Marrom", "Caqui", "Grafite"] },
+//     { group: "Intermediárias", options: ["Azul Marinho", "Verde Militar", "Vinho", "Mostarda", "Rosa Claro"] },
+//     { group: "Vibrantes", options: ["Verde Limão", "Azul Ciano", "Laranja", "Pink", "Roxo"] },
+//     { group: "Especiais", options: ["Metálico", "Neon", "Pastel", "Tie-dye", "Estampado"] },
+// ];
 
-// NOVO: locais possíveis de personalização
-const LOCAIS = [
-    { group: "Frente", options: ["Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito", "Frente — Abaixo do Peito"] },
-    { group: "Costas", options: ["Costas — Centro Alto", "Costas — Centro Baixo", "Costas — Full Back"] },
-    { group: "Mangas", options: ["Manga Esquerda", "Manga Direita", "Ambas as Mangas"] },
-    { group: "Outros", options: ["Gola", "Bolso", "Barra", "Capuz"] },
-];
+// // NOVO: locais possíveis de personalização
+// const LOCAIS = [
+//     { group: "Frente", options: ["Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito", "Frente — Abaixo do Peito"] },
+//     { group: "Costas", options: ["Costas — Centro Alto", "Costas — Centro Baixo", "Costas — Full Back"] },
+//     { group: "Mangas", options: ["Manga Esquerda", "Manga Direita", "Ambas as Mangas"] },
+//     { group: "Outros", options: ["Gola", "Bolso", "Barra", "Capuz"] },
+// ];
 
-const MODELOS = [
-    { id: "camiseta", label: "Camiseta", icon: "checkroom" },
-    { id: "camisa", label: "Camisa", icon: "checkroom" },
-    { id: "camisa_longa", label: "Camisa Longa", icon: "checkroom" },
-    { id: "moletom", label: "Moletom c/ Capuz", icon: "checkroom" },
-    { id: "calca", label: "Calça", icon: "checkroom" },
-];
+// const MODELOS = [
+//     { id: "camiseta", label: "Camiseta", icon: "checkroom" },
+//     { id: "camisa", label: "Camisa", icon: "checkroom" },
+//     { id: "camisa_longa", label: "Camisa Longa", icon: "checkroom" },
+//     { id: "moletom", label: "Moletom c/ Capuz", icon: "checkroom" },
+//     { id: "calca", label: "Calça", icon: "checkroom" },
+// ];
 
-function SelectOpcoes({ label, groups, value, onChange }) {
-    return (
-        <div className="form-field">
-            <label>{label}</label>
-            <select value={value} onChange={onChange}>
-                <option value="">Selecione</option>
-                {groups.map(g => (
-                    <optgroup key={g.group} label={g.group}>
-                        {g.options.map(o => (
-                            <option key={o} value={o}>{o}</option>
-                        ))}
-                    </optgroup>
-                ))}
-            </select>
-        </div>
-    );
-}
+// function SelectOpcoes({ label, groups, value, onChange }) {
+//     return (
+//         <div className="form-field">
+//             <label>{label}</label>
+//             <select value={value} onChange={onChange}>
+//                 <option value="">Selecione</option>
+//                 {groups.map(g => (
+//                     <optgroup key={g.group} label={g.group}>
+//                         {g.options.map(o => (
+//                             <option key={o} value={o}>{o}</option>
+//                         ))}
+//                     </optgroup>
+//                 ))}
+//             </select>
+//         </div>
+//     );
+// }
+
+
 
 function ModeloCard({ modelo, dados, onChange, selecionado, onToggle }) {
     return (

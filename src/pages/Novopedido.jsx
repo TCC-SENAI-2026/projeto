@@ -177,7 +177,7 @@ function NovoPedido() {
                                             checked={form.prioridade === "baixa"}
                                             onChange={handleChange}
                                         />
-                                        <label htmlFor="prio_baixa">Baixa</label>
+                                        <label htmlFor="prio_baixa" className="tg-verde">Baixa</label>
 
                                         <input
                                             type="radio"
@@ -187,7 +187,7 @@ function NovoPedido() {
                                             checked={form.prioridade === "media"}
                                             onChange={handleChange}
                                         />
-                                        <label htmlFor="prio_media">Média</label>
+                                        <label htmlFor="prio_media" className="tg-amarelo">Média</label>
 
                                         <input
                                             type="radio"
@@ -197,7 +197,7 @@ function NovoPedido() {
                                             checked={form.prioridade === "alta"}
                                             onChange={handleChange}
                                         />
-                                        <label htmlFor="prio_alta">Alta</label>
+                                        <label htmlFor="prio_alta" className="tg-vermelho">Alta</label>
 
                                     </div>
                                 </div>
