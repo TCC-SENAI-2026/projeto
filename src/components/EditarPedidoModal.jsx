@@ -1,18 +1,33 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import SelectOpcoes from "./SelectOpcoes";
+import CampoEditavel from "./CampoEditavel";
+import { gerarAlteracoes } from "../utils/alteracoes";
 import {
     TAMANHOS, PERSONALIZACOES, TECIDOS, CORES, LOCAIS, MODELOS, DETALHES_VAZIOS,
 } from "../utils/opcoesProduto";
 
-function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
-    const [ficha, setFicha] = useState({ ...(pedido.ficha || {}) });
+
+const PRIORIDADES = [
+    { value: "baixa", label: "Baixa" },
+    { value: "media", label: "Média" },
+    { value: "alta", label: "Alta" },
+];
+
+const LOCAIS_PERSONALIZACAO = ["Frente", "Costas", "Manga direita", "Manga esquerda", "Peito", "Gola"]
+    .map((o) => ({ value: o, label: o }));
+
+function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
+    const original = pedido.ficha || {};
+
+    const [ficha, setFicha] = useState({ ...original });
     const [produtos, setProdutos] = useState(
         structuredClone(pedido.pedido?.produtos || [])
     );
     const [arte, setArte] = useState(pedido.pedido?.arte || null);
     const [novoModelo, setNovoModelo] = useState("");
-    const [salvando, setSalvando] = useState(false);
+    const [enviando, setEnviando] = useState(false);
+    const [erro, setErro] = useState("");
 
     useEffect(() => {
         const onKey = (e) => e.key === "Escape" && onFechar();
@@ -66,9 +81,10 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
         reader.readAsDataURL(file);
     }
 
-    // ---------- salvar ----------
+    // ---------- enviar solicitação ----------
     async function handleSubmit(e) {
         e.preventDefault();
+        setErro("");
 
         const faltando = [];
         if (!ficha.cliente) faltando.push("Nome do cliente");
@@ -78,41 +94,58 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
         if (!ficha.entrega) faltando.push("Prazo de entrega");
 
         if (faltando.length > 0) {
-            alert(`Preencha: ${faltando.join(", ")}`);
+            setErro(`Preencha: ${faltando.join(", ")}`);
             return;
         }
 
         if (produtos.length === 0) {
-            alert("O pedido precisa ter pelo menos um produto.");
+            setErro("O pedido precisa ter pelo menos um produto.");
             return;
         }
 
-
-
         const limpos = produtos.map(p => ({
             ...p,
-            grade: Object.fromEntries(Object.entries(p.grade).filter(([, v]) => v > 0)),
+            grade: Object.fromEntries(Object.entries(p.grade || {}).filter(([, v]) => v > 0)),
         }));
 
         const semQtd = limpos.filter(p => Object.keys(p.grade).length === 0);
         if (semQtd.length > 0) {
-            alert(`Preencha as quantidades de: ${semQtd.map(p => p.item).join(", ")}`);
+            setErro(`Preencha as quantidades de: ${semQtd.map(p => p.item).join(", ")}`);
             return;
         }
 
-        setSalvando(true);
+        const alteracoes = gerarAlteracoes(pedido, { ficha, produtos: limpos, arte });
+        if (alteracoes.length === 0) {
+            setErro("Você ainda não alterou nada.");
+            return;
+        }
+
+        setEnviando(true);
         try {
-            await onSalvar({
-                ...pedido,
-                ficha,
-                pedido: { ...(pedido.pedido || {}), produtos: limpos, arte },
+            await onSolicitar({
+                pedidoId: pedido.id,
+                alteracoes,
+                pedidoNovo: {
+                    ficha,
+                    pedido: { ...(pedido.pedido || {}), produtos: limpos, arte },
+                },
             });
-        } catch (erro) {
-            alert(erro.message || "Não foi possível salvar as alterações.");
-        } finally {
-            setSalvando(false);
+            // Sucesso: quem chamou fecha o modal e mostra a mensagem no topo
+        } catch (e2) {
+            setErro(e2.message || "Não foi possível enviar a solicitação. Tente novamente.");
+            setEnviando(false);
         }
     }
+
+    // Props que se repetem em todo CampoEditavel dos dados gerais
+    const campo = (name, extra = {}) => ({
+        id: `e_${name}`,
+        name,
+        valorOriginal: original[name],
+        valor: ficha[name],
+        onChange: handleFicha,
+        ...extra,
+    });
 
     return createPortal(
         <div className="fc-modal-overlay" onClick={onFechar}>
@@ -135,22 +168,18 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
                     <div className="fc-modal-body fc-body-editar">
 
 
+                        <p className="fc-ajuda-edicao">
+                            Clique em um campo para alterá-lo. As mudanças só valem depois que o
+                            administrador aprovar.
+                        </p>
+
                         {/* DADOS DO CLIENTE */}
                         <section className="form-section">
                             <h2>Dados do Cliente</h2>
                             <div className="form-grid">
-                                <div className="form-field full">
-                                    <label htmlFor="e_cliente">Nome do Cliente</label>
-                                    <input id="e_cliente" name="cliente" value={ficha.cliente || ""} onChange={handleFicha} required />
-                                </div>
-                                <div className="form-field">
-                                    <label htmlFor="e_contato">Telefone</label>
-                                    <input id="e_contato" name="contato" value={ficha.contato || ""} onChange={handleFicha} required />
-                                </div>
-                                <div className="form-field">
-                                    <label htmlFor="e_email">E-mail</label>
-                                    <input id="e_email" name="email" type="email" value={ficha.email || ""} onChange={handleFicha} required />
-                                </div>
+                                <CampoEditavel {...campo("cliente", { rotulo: "Nome do Cliente", full: true })} />
+                                <CampoEditavel {...campo("contato", { rotulo: "Telefone" })} />
+                                <CampoEditavel {...campo("email", { rotulo: "E-mail", tipo: "email" })} />
                             </div>
                         </section>
 
@@ -158,31 +187,14 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
                         <section className="form-section">
                             <h2>Detalhes Logísticos</h2>
                             <div className="form-grid">
-                                <div className="form-field">
-                                    <label htmlFor="e_dataPedido">Data do Pedido</label>
-                                    <input id="e_dataPedido" name="dataPedido" type="date" value={ficha.dataPedido || ""} onChange={handleFicha} required />
-                                </div>
-                                <div className="form-field">
-                                    <label htmlFor="e_entrega">Prazo de Entrega</label>
-                                    <input id="e_entrega" name="entrega" type="date" value={ficha.entrega || ""} onChange={handleFicha} required />
-                                </div>
-                                <div className="form-field full">
-                                    <p className="form-label-like">Prioridade</p>
-                                    <div className="status-toggle">
-                                        {[["baixa", "Baixa", "tg-verde"], ["media", "Média", "tg-amarelo"], ["alta", "Alta", "tg-vermelho"]].map(([v, t, cor]) => (
-                                            <Fragment key={v}>
-                                                <input type="radio" id={`e_prio_${v}`} name="prioridade" value={v}
-                                                    checked={ficha.prioridade === v} onChange={handleFicha} />
-                                                <label htmlFor={`e_prio_${v}`} className={cor}>{t}</label>
-                                            </Fragment>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="form-field full">
-                                    <label htmlFor="e_referencia">Referência</label>
-                                    <input id="e_referencia" name="referencia" placeholder="Ex: INV 2026/12"
-                                        value={ficha.referencia || ""} onChange={handleFicha} />
-                                </div>
+                                <CampoEditavel {...campo("dataPedido", { rotulo: "Data do Pedido", tipo: "date" })} />
+                                <CampoEditavel {...campo("entrega", { rotulo: "Prazo de Entrega", tipo: "date" })} />
+                                <CampoEditavel {...campo("prioridade", {
+                                    rotulo: "Prioridade", tipo: "select", opcoes: PRIORIDADES, full: true,
+                                })} />
+                                <CampoEditavel {...campo("referencia", {
+                                    rotulo: "Referência", full: true, placeholder: "Ex: INV 2026/12",
+                                })} />
                             </div>
                         </section>
 
@@ -190,24 +202,15 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
                         <section className="form-section">
                             <h2>Personalização</h2>
                             <div className="form-grid">
-                                <div className="form-field">
-                                    <label htmlFor="e_local">Local da Personalização</label>
-                                    <select id="e_local" name="local" value={ficha.local || ""} onChange={handleFicha} required>
-                                        <option value="">Selecione</option>
-                                        {["Frente", "Costas", "Manga direita", "Manga esquerda", "Peito", "Gola"].map(o => (
-                                            <option key={o} value={o}>{o}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="form-field">
-                                    <label htmlFor="e_personalizacao">Observação da Personalização</label>
-                                    <input id="e_personalizacao" name="personalizacao" placeholder="Opcional"
-                                        value={ficha.personalizacao || ""} onChange={handleFicha} />
-                                </div>
-                                <div className="form-field full">
-                                    <label htmlFor="e_obs">Observações Gerais</label>
-                                    <textarea id="e_obs" name="observacao" value={ficha.observacao || ""} onChange={handleFicha} />
-                                </div>
+                                <CampoEditavel {...campo("local", {
+                                    rotulo: "Local da Personalização", tipo: "select", opcoes: LOCAIS_PERSONALIZACAO,
+                                })} />
+                                <CampoEditavel {...campo("personalizacao", {
+                                    rotulo: "Observação da Personalização", placeholder: "Opcional",
+                                })} />
+                                <CampoEditavel {...campo("observacao", {
+                                    rotulo: "Observações Gerais", tipo: "textarea", full: true,
+                                })} />
                             </div>
                         </section>
 
@@ -305,10 +308,13 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
                         </section>
                     </div>
 
+                    {erro && <div className="fc-erro-form" role="alert">{erro}</div>}
+
                     <div className="form-actions">
                         <button type="button" className="btn-page-sec" onClick={onFechar}>Cancelar</button>
-                        <button type="submit" className="btn btn-add" disabled={salvando}>
-                            {salvando ? "Salvando..." : "Salvar alterações"}
+                        <button type="submit" className="btn btn-add" disabled={enviando}>
+                            <span className="material-icons" style={{ fontSize: 18, marginRight: 6 }}>send</span>
+                            {enviando ? "Enviando..." : "Solicitar aprovação"}
                         </button>
                     </div>
                 </form>

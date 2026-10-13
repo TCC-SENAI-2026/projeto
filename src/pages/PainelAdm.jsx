@@ -1,85 +1,120 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
+import {
+    listarSolicitacoes,
+    decidirSolicitacao,
+} from "../services/solicitacoesService";
 import "../styles/padrao.css";
 import "../styles/PainelAdm.css";
+import "../styles/solicitacoes.css";
 
-const solicitacoesIniciais = [
-    {
-        tipo: "Exclusão de pedido",
+// Status do service ("pendente") -> status que o painel usa nos filtros ("Pendentes")
+const STATUS_PAINEL = {
+    pendente: "Pendentes",
+    aprovada: "Aprovadas",
+    recusada: "Recusadas",
+};
+
+
+// "2026-10-13T12:00:00.000Z" -> "13/10/2026 · 09:00"
+function formatarDataHora(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const data = d.toLocaleDateString("pt-BR");
+    const hora = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return `${data} · ${hora}`;
+}
+
+// Converte uma solicitação do service para o formato dos cards do painel
+function paraCard(s) {
+    const exclusao = s.tipo === "exclusao";
+
+    return {
+        id: s.id,
+        origem: exclusao ? "exclusao-pedido" : "edicao-pedido",
+        tipo: exclusao ? "Exclusão de pedido" : "Alteração de pedido",
         categoria: "Pedidos",
-        status: "Pendentes",
-        icone: "delete",
-        classe: "exclusao",
-        identificacao: "Pedido #1024",
-        pessoa: "João Silva",
-        detalhe: "Empresa XPTO",
-        data: "05/10/2026 · 13:42",
-        visualizar: "Visualizar",
+        status: STATUS_PAINEL[s.status],
+        icone: exclusao ? "delete" : "edit",
+        classe: exclusao ? "exclusao" : "alteracao",
+        identificacao: `Pedido #${s.pedidoId}`,
+        pessoa: s.solicitante,
+        detalhe: exclusao
+            ? s.resumo || "Sem identificação"
+            : `${s.alteracoes.length} campo(s) alterado(s)`,
+        data: formatarDataHora(s.criadoEm),
+        visualizar: exclusao ? "Visualizar" : "Ver alteração",
         autorizar: "Autorizar",
-    },
+        alteracoes: exclusao ? undefined : s.alteracoes,
+        motivo: s.motivo,
+        justificativa: s.justificativa,
+    };
+}
 
-    {
-        tipo: "Alteração de estoque",
-        categoria: "Estoque",
-        status: "Pendentes",
-        icone: "edit",
-        classe: "alteracao",
-        identificacao: "Camiseta Polo",
-        pessoa: "Maria Souza",
-        detalhe: "Quantidade: 120 → 150",
-        data: "",
-        visualizar: "Ver alteração",
-        autorizar: "Autorizar",
-    },
-
-];
-
+function rotuloStatus(status) {
+    if (status === "Pendentes") return "PENDENTE";
+    if (status === "Aprovadas") return "APROVADA";
+    return "RECUSADA";
+}
 
 function PainelAdm() {
 
     const [filtroTipo, setFiltroTipo] = useState("Todas");
     const [filtroStatus, setFiltroStatus] = useState("Pendentes");
 
-    const [solicitacoes, setSolicitacoes] = useState(solicitacoesIniciais);
-    const [mostrarTodas, setMostrarTodas] = useState(false);
+    const [reais, setReais] = useState([]);
 
-    const [solicitacaoSelecionada, setSolicitacaoSelecionada] = useState(null);
+    const [selecionadaId, setSelecionadaId] = useState(null);
     const [modalAcao, setModalAcao] = useState(null);
     const [modalVisualizacao, setModalVisualizacao] = useState(false);
+    const [motivo, setMotivo] = useState("");
+    const [erroAcao, setErroAcao] = useState("");
+    const [processando, setProcessando] = useState(false);
 
-    const solicitacoesFiltradas = solicitacoes.filter((solicitacao) => {
+    const carregar = useCallback(async () => {
+        setReais(await listarSolicitacoes());
+    }, []);
 
+    useEffect(() => {
+        carregar();
+    }, [carregar]);
+
+    const todas = reais.map(paraCard);
+    const solicitacaoSelecionada = todas.find((s) => s.id === selecionadaId) || null;
+    const totalPendentes = todas.filter((s) => s.status === "Pendentes").length;
+
+    const solicitacoesFiltradas = todas.filter((solicitacao) => {
         const correspondeTipo =
-            filtroTipo === "Todas" ||
-            solicitacao.categoria === filtroTipo;
-
-        const correspondeStatus =
-            solicitacao.status === filtroStatus;
-
+            filtroTipo === "Todas" || solicitacao.categoria === filtroTipo;
+        const correspondeStatus = solicitacao.status === filtroStatus;
         return correspondeTipo && correspondeStatus;
     });
 
-    
-
-    const confirmarAcao = () => {
-        if (!solicitacaoSelecionada || !modalAcao) return;
-
-        setSolicitacoes((solicitacoesAtuais) =>
-            solicitacoesAtuais.map((solicitacao) =>
-                solicitacao === solicitacaoSelecionada
-                    ? {
-                        ...solicitacao,
-                        status:
-                            modalAcao === "autorizar"
-                                ? "Aprovadas"
-                                : "Recusadas",
-                    }
-                    : solicitacao
-            )
-        );
-
-        setSolicitacaoSelecionada(null);
+    function fecharModais() {
+        setSelecionadaId(null);
         setModalAcao(null);
+        setModalVisualizacao(false);
+        setMotivo("");
+        setErroAcao("");
+    }
+
+    const confirmarAcao = async () => {
+        if (!solicitacaoSelecionada || !modalAcao || processando) return;
+
+        const decisao = modalAcao === "autorizar" ? "aprovada" : "recusada";
+        setProcessando(true);
+        setErroAcao("");
+
+        try {
+            // TODO(BACK): PATCH /api/solicitacoes/:id (ver solicitacoesService.js)
+            await decidirSolicitacao(solicitacaoSelecionada.id, decisao, motivo);
+            await carregar();
+            fecharModais();
+        } catch (erro) {
+            setErroAcao(erro.message || "Não foi possível registrar a decisão.");
+        } finally {
+            setProcessando(false);
+        }
     };
 
     return (
@@ -119,7 +154,7 @@ function PainelAdm() {
                     </div>
 
                     <div>
-                        <strong>5</strong>
+                        <strong>{totalPendentes}</strong>
                         <span>Solicitações pendentes</span>
                     </div>
 
@@ -185,7 +220,7 @@ function PainelAdm() {
 
                     <h2>Solicitações recentes</h2>
 
-                    <button className="ver-todas">
+                    <button className="ver-todas" onClick={() => setFiltroTipo("Todas")}>
                         Ver todas
                         <span>→</span>
                     </button>
@@ -193,14 +228,16 @@ function PainelAdm() {
                 </div>
 
 
+
+
                 {/* SOLICITAÇÕES */}
                 <section className="solicitacoes-lista">
 
-                    {solicitacoesFiltradas.map((solicitacao, index) => (
+                    {solicitacoesFiltradas.map((solicitacao) => (
 
                         <article
                             className="solicitacao"
-                            key={index}
+                            key={solicitacao.id}
                         >
 
                             <div
@@ -221,11 +258,7 @@ function PainelAdm() {
                                     </h3>
 
                                     <span className={`status-${solicitacao.status.toLowerCase()}`}>
-                                        {solicitacao.status === "Pendentes"
-                                            ? "PENDENTE"
-                                            : solicitacao.status === "Aprovadas"
-                                                ? "APROVADA"
-                                                : "RECUSADA"}
+                                        {rotuloStatus(solicitacao.status)}
                                     </span>
 
                                 </div>
@@ -272,7 +305,7 @@ function PainelAdm() {
                                 <button
                                     className="btn-visualizar"
                                     onClick={() => {
-                                        setSolicitacaoSelecionada(solicitacao);
+                                        setSelecionadaId(solicitacao.id);
                                         setModalVisualizacao(true);
                                     }}
                                 >
@@ -287,7 +320,7 @@ function PainelAdm() {
                                         <button
                                             className="btn-recusar"
                                             onClick={() => {
-                                                setSolicitacaoSelecionada(solicitacao);
+                                                setSelecionadaId(solicitacao.id);
                                                 setModalAcao("recusar");
                                             }}
                                         >
@@ -303,7 +336,7 @@ function PainelAdm() {
                                                 : ""
                                                 }`}
                                             onClick={() => {
-                                                setSolicitacaoSelecionada(solicitacao);
+                                                setSelecionadaId(solicitacao.id);
                                                 setModalAcao("autorizar");
                                             }}
                                         >
@@ -339,7 +372,14 @@ function PainelAdm() {
 
                     ))}
 
+                    {solicitacoesFiltradas.length === 0 && (
+                        <p style={{ color: "#64748b", textAlign: "center", padding: "24px 0" }}>
+                            Nenhuma solicitação por aqui.
+                        </p>
+                    )}
+
                 </section>
+
 
                 {modalAcao && solicitacaoSelecionada && (
                     <div className="modal-overlay">
@@ -359,13 +399,36 @@ function PainelAdm() {
                                 esta solicitação?
                             </p>
 
+                            {solicitacaoSelecionada.justificativa && (
+                                <p>
+                                    <strong>Motivo informado:</strong>{" "}
+                                    {solicitacaoSelecionada.justificativa}
+                                </p>
+                            )}
+
+                            {modalAcao === "autorizar" &&
+                                solicitacaoSelecionada.origem === "exclusao-pedido" && (
+                                    <p>O pedido será excluído e não poderá ser recuperado.</p>
+                                )}
+
+                            {/* Motivo opcional, só para recusa de alteração de pedido */}
+                            {modalAcao === "recusar" && (
+                                <textarea
+                                    className="campo-motivo"
+                                    rows={3}
+                                    placeholder="Motivo da recusa (opcional)"
+                                    value={motivo}
+                                    onChange={(e) => setMotivo(e.target.value)}
+                                />
+                            )}
+
+                            {erroAcao && <p className="erro-acao" role="alert">{erroAcao}</p>}
+
                             <div className="modal-acoes">
                                 <button
                                     className="btn-cancelar"
-                                    onClick={() => {
-                                        setSolicitacaoSelecionada(null);
-                                        setModalAcao(null);
-                                    }}
+                                    onClick={fecharModais}
+                                    disabled={processando}
                                 >
                                     Cancelar
                                 </button>
@@ -377,10 +440,13 @@ function PainelAdm() {
                                             : "btn-confirmar recusar"
                                     }
                                     onClick={confirmarAcao}
+                                    disabled={processando}
                                 >
-                                    {modalAcao === "autorizar"
-                                        ? "Autorizar"
-                                        : "Recusar"}
+                                    {processando
+                                        ? "Aguarde..."
+                                        : modalAcao === "autorizar"
+                                            ? "Autorizar"
+                                            : "Recusar"}
                                 </button>
                             </div>
 
@@ -406,11 +472,7 @@ function PainelAdm() {
                                     <span
                                         className={`status-${solicitacaoSelecionada.status.toLowerCase()}`}
                                     >
-                                        {solicitacaoSelecionada.status === "Pendentes"
-                                            ? "PENDENTE"
-                                            : solicitacaoSelecionada.status === "Aprovadas"
-                                                ? "APROVADA"
-                                                : "RECUSADA"}
+                                        {rotuloStatus(solicitacaoSelecionada.status)}
                                     </span>
                                 </div>
                             </div>
@@ -431,12 +493,14 @@ function PainelAdm() {
                                     </strong>
                                 </div>
 
-                                <div className="detalhe-item">
-                                    <span>Detalhes</span>
-                                    <strong>
-                                        {solicitacaoSelecionada.detalhe}
-                                    </strong>
-                                </div>
+                                {solicitacaoSelecionada.origem !== "edicao-pedido" && (
+                                    <div className="detalhe-item">
+                                        <span>Detalhes</span>
+                                        <strong>
+                                            {solicitacaoSelecionada.detalhe}
+                                        </strong>
+                                    </div>
+                                )}
 
                                 {solicitacaoSelecionada.data && (
                                     <div className="detalhe-item">
@@ -447,15 +511,42 @@ function PainelAdm() {
                                     </div>
                                 )}
 
+                                {solicitacaoSelecionada.justificativa && (
+                                    <div className="detalhe-item">
+                                        <span>Motivo da exclusão</span>
+                                        <strong>{solicitacaoSelecionada.justificativa}</strong>
+                                    </div>
+                                )}
+
+                                {solicitacaoSelecionada.motivo && (
+                                    <div className="detalhe-item">
+                                        <span>Motivo da recusa</span>
+                                        <strong>{solicitacaoSelecionada.motivo}</strong>
+                                    </div>
+                                )}
+
+                                {/* ANTES → DEPOIS */}
+                                {solicitacaoSelecionada.alteracoes && (
+                                    <div className="lista-alteracoes">
+                                        {solicitacaoSelecionada.alteracoes.map((a) => (
+                                            <div className="alteracao-item" key={a.campo}>
+                                                <span>{a.rotulo}</span>
+                                                <div className="alteracao-valores">
+                                                    <span className="alteracao-antigo">{a.antigo}</span>
+                                                    <span>→</span>
+                                                    <span className="alteracao-novo">{a.novo}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
                             </div>
 
                             <div className="modal-acoes">
                                 <button
                                     className="btn-cancelar"
-                                    onClick={() => {
-                                        setSolicitacaoSelecionada(null);
-                                        setModalVisualizacao(false);
-                                    }}
+                                    onClick={fecharModais}
                                 >
                                     Fechar
                                 </button>
@@ -464,6 +555,7 @@ function PainelAdm() {
                         </div>
                     </div>
                 )}
+
 
             </main>
 

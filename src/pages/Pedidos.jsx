@@ -3,7 +3,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import FichaModal from "../components/FichaModal";
 import EditarPedidoModal from "../components/EditarPedidoModal";
-import { listarPedidos, buscarPedido, excluirPedido, atualizarPedido } from "../services/pedidosService";
+import { listarPedidos, buscarPedido } from "../services/pedidosService";
+import AvisoTopo from "../components/AvisoTopo";
+import useSolicitacoesPedido from "../hooks/useSolicitacoesPedido";
+import "../styles/solicitacoes.css";
 import { infoStatus } from "../utils/status";
 import { infoPrioridade } from "../utils/prioridade";
 import "../styles/padrao.css";
@@ -21,6 +24,8 @@ function Pedidos() {
     const [pedidoEditando, setPedidoEditando] = useState(null);
     const emHistorico = tab === "historico";
     const navigate = useNavigate();
+    const { mensagem, resultados, temPendente, solicitar, fecharResultado } =
+        useSolicitacoesPedido();
 
     function voltar() {
         setSearchParams({}); // limpa o filtro, senão "?status=finalizado" deixaria a lista vazia
@@ -42,22 +47,42 @@ function Pedidos() {
     }
 
     async function abrirEdicao(id) {
+        // Enquanto houver solicitação pendente, o botão fica bloqueado (checagem extra de segurança)
+        if (temPendente(id)) return;
         setPedidoEditando(await buscarPedido(id));
     }
 
-    async function salvarEdicao(atualizado) {
-        // TODO(BACK): PUT /api/pedidos/:id
-        await atualizarPedido(atualizado.id, atualizado);
-        setPedidos(await listarPedidos());
-        setPedidoEditando(null);
+    // O funcionário não salva direto: envia uma solicitação para o adm aprovar.
+    // Se der erro, a exceção sobe para o modal, que continua aberto com a mensagem.
+    async function enviarSolicitacao(dados) {
+        // TODO(BACK): POST /api/solicitacoes (ver solicitacoesService.js)
+        await solicitar(dados);
+        setPedidoEditando(null); // sucesso: fecha o modal e a mensagem aparece no topo
     }
 
-    async function confirmarExclusao(id) {
-        if (!window.confirm(`Deseja excluir #${id}?`)) return;
 
-        // TODO(BACK): DELETE /api/pedidos/:id (via excluirPedido no service)
-        await excluirPedido(id);
-        setPedidos(await listarPedidos());
+    // O funcionário não exclui direto: envia uma solicitação, com o motivo, para o adm aprovar.
+    async function pedirExclusao(p) {
+        if (temPendente(p.id)) return;
+
+        const justificativa = window.prompt(
+            `Por que você quer excluir o pedido #${p.id}?\n` +
+            "O administrador vai ler sua resposta antes de decidir."
+        );
+        if (justificativa === null) return; // clicou em Cancelar
+
+        try {
+            // TODO(BACK): POST /api/solicitacoes com tipo "exclusao" (ver solicitacoesService.js)
+            await solicitar({
+                tipo: "exclusao",
+                pedidoId: p.id,
+                resumo: p.ficha?.cliente || "",
+                justificativa,
+            });
+        } catch (erro) {
+            // Ex.: motivo curto demais ("Explique o motivo da exclusão...")
+            alert(erro.message || "Não foi possível enviar a solicitação.");
+        }
     }
 
     function mudarFiltro(e) {
@@ -86,6 +111,14 @@ function Pedidos() {
             <Sidebar />
 
             <div className="container">
+
+                {/* AVISOS NO TOPO DA SEÇÃO */}
+
+                <AvisoTopo
+                    mensagem={mensagem}
+                    resultados={resultados}
+                    onFecharResultado={fecharResultado}
+                />
                 <div className="top top-compact">
                     <div className="page-header">
                         <h1 className="page-title">
@@ -158,6 +191,7 @@ function Pedidos() {
                         {visiveis.map((p) => {
                             const st = infoStatus(p);
                             const prio = infoPrioridade(p);
+                            const aguardando = temPendente(p.id);
 
                             return (
                                 <div
@@ -189,9 +223,12 @@ function Pedidos() {
                                     <div className="actions">
                                         <span className="mobile-field-label">Acoes</span>
 
-                                        {/* TODO(BACK): PUT /api/pedidos/:id (editar pedido) */}
+                                        {/* Bloqueado enquanto houver solicitação pendente de aprovação */}
                                         <button
                                             className="action-btn edit-btn"
+                                            disabled={aguardando}
+                                            title={aguardando ? "Aguardando aprovação do administrador" : "Editar pedido"}
+                                            aria-label={aguardando ? "Edição bloqueada: aguardando aprovação do administrador" : "Editar pedido"}
                                             onClick={(e) => { e.stopPropagation(); abrirEdicao(p.id); }}
                                         >
                                             <span className="material-icons">edit</span>
@@ -199,9 +236,12 @@ function Pedidos() {
 
                                         <button
                                             className="action-btn delete-btn"
+                                            disabled={aguardando}
+                                            title={aguardando ? "Aguardando aprovação do administrador" : "Excluir pedido"}
+                                            aria-label={aguardando ? "Exclusão bloqueada: aguardando aprovação do administrador" : "Excluir pedido"}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                confirmarExclusao(p.id);
+                                                pedirExclusao(p);
                                             }}
                                         >
                                             <span className="material-icons">delete</span>
@@ -217,12 +257,12 @@ function Pedidos() {
             {fichaAberta && (
                 <FichaModal ficha={fichaAberta} onFechar={fecharFicha} />
             )}
-            
+
             {pedidoEditando && (
                 <EditarPedidoModal
                     pedido={pedidoEditando}
                     onFechar={() => setPedidoEditando(null)}
-                    onSalvar={salvarEdicao}
+                    onSolicitar={enviarSolicitacao}
                 />
             )}
         </>

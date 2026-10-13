@@ -1,0 +1,208 @@
+/* ===== Campo editável (modal de edição) ===== */
+.campo-atual {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #0f172a;
+    font: inherit;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.campo-atual:hover {
+    border-color: #94a3b8;
+}
+
+.campo-atual .material-icons {
+    font-size: 18px;
+    color: #64748b;
+}
+
+/* valor antigo, esmaecido enquanto o usuário digita o novo */
+.campo-atual-baixo {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.campo-novo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+    animation: campo-entrada 0.2s ease;
+}
+
+.campo-novo input,
+.campo-novo select,
+.campo-novo textarea {
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.campo-ok {
+    color: #16a34a;
+    font-size: 24px;
+}
+
+.campo-desfazer {
+    border: 0;
+    background: none;
+    color: #64748b;
+    font: inherit;
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.campo-desfazer:hover {
+    color: #0f172a;
+}
+
+@keyframes campo-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Avisos no topo da seção ===== */
+.aviso-topo-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.aviso-topo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid;
+    font-size: 14px;
+}
+
+.aviso-topo .aviso-texto {
+    flex: 1;
+}
+
+.aviso-topo > span:nth-child(2) {
+    flex: 1;
+}
+
+.aviso-sucesso {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #166534;
+}
+
+.aviso-erro {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+.aviso-fechar {
+    display: flex;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+/* ===== Mensagem de erro dentro do modal ===== */
+.fc-erro-form {
+    margin: 0 24px 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 13px;
+}
+
+.fc-ajuda-edicao {
+    margin: 0 0 8px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* ===== Antes → depois (Painel Adm) ===== */
+.lista-alteracoes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.alteracao-item {
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.alteracao-item > span {
+    display: block;
+    margin-bottom: 4px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.alteracao-valores {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.alteracao-antigo {
+    color: #991b1b;
+    text-decoration: line-through;
+}
+
+.alteracao-novo {
+    color: #166534;
+    font-weight: 600;
+}
+
+.campo-motivo {
+    width: 100%;
+    margin-top: 12px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 13px;
+    resize: vertical;
+}
+
+.erro-acao {
+    margin-top: 8px;
+    color: #991b1b;
+    font-size: 13px;
+}
+
+/* ===== Botão Editar bloqueado (aguardando aprovação) ===== */
+.action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
