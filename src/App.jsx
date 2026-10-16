@@ -18,30 +18,43 @@ import DefinirSenha from './pages/DefinirSenha'
 import PainelAdm from './pages/PainelAdm'
 
 import EditarEstoque from "./pages/EditarEstoque";
+import ProtectedRoute from './auth/ProtectedRoute';
+import SessionStatus from './auth/SessionStatus';
+import { useAuth } from './auth/useAuth';
 
 function App() {
+  const { status } = useAuth();
+
+  // Nenhuma tela protegida é montada enquanto o backend confirma a sessão.
+  if (status === 'loading' || status === 'error') return <SessionStatus />;
+
   return (
     <Routes>
       <Route path="/"                       element={<Login />} />
-      <Route path="/home"                   element={<Inicio />} />
-      <Route path="/pedidos"                element={<Pedidos />} />
-      <Route path="/estoque"                element={<Estoque />} />
-      <Route path="/clientes"               element={<Clientes />} />
-      <Route path="/relatorio"              element={<Relatorio />} />
-      <Route path="/formCliente"            element={<FormCliente />} />
-      <Route path="/formUsuario"            element={<FormUsuario />} />
-      <Route path="/perfil"                 element={<Perfil />} />
-      <Route path="/equipe"                 element={<Equipe />} />
-      <Route path="/painel-adm"                 element={<PainelAdm />} />
-      <Route path="/add-estoque"            element={<AddEstoque />} />
-      <Route path="/pedidos/novo"           element={<NovoPedido />} />
-      <Route path="/pedidos/novo/produtos"  element={<SelecionarProdutos />} />
-      <Route path="/pedidos/novo/ficha"     element={<FichaTecnica />} />
-      <Route path="/novo-pedido"            element={<Navigate to="/pedidos/novo" replace />} />
-      <Route path="/novo-pedido/produtos"   element={<Navigate to="/pedidos/novo/produtos" replace />} />
-      <Route path="/novo-pedido/ficha"      element={<Navigate to="/pedidos/novo/ficha" replace />} />
-      <Route path="/editar-estoque/:id"     element={<EditarEstoque />}/>
+      <Route element={<ProtectedRoute />}>
+        <Route path="/home"                   element={<Inicio />} />
+        <Route path="/pedidos"                element={<Pedidos />} />
+        <Route path="/estoque"                element={<Estoque />} />
+        <Route path="/clientes"               element={<Clientes />} />
+        <Route path="/formCliente"            element={<FormCliente />} />
+        <Route path="/add-estoque"            element={<AddEstoque />} />
+        <Route path="/pedidos/novo"           element={<NovoPedido />} />
+        <Route path="/pedidos/novo/produtos"  element={<SelecionarProdutos />} />
+        <Route path="/pedidos/novo/ficha"     element={<FichaTecnica />} />
+        <Route path="/novo-pedido"            element={<Navigate to="/pedidos/novo" replace />} />
+        <Route path="/novo-pedido/produtos"   element={<Navigate to="/pedidos/novo/produtos" replace />} />
+        <Route path="/novo-pedido/ficha"      element={<Navigate to="/pedidos/novo/ficha" replace />} />
+        <Route path="/editar-estoque/:id"     element={<EditarEstoque />}/>
+      </Route>
+      <Route element={<ProtectedRoute adminOnly />}>
+        <Route path="/relatorio" element={<Relatorio />} />
+        <Route path="/formUsuario" element={<FormUsuario />} />
+        <Route path="/perfil" element={<Perfil />} />
+        <Route path="/equipe" element={<Equipe />} />
+        <Route path="/painel-adm" element={<PainelAdm />} />
+      </Route>
       <Route path="/definir-senha"          element={<DefinirSenha />} />
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
 }

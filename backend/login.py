@@ -1,117 +1,110 @@
-from flask import Blueprint, request, jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
-import resources.database_connection as database_connection
-import resources.seguranca as seguranca
+"""Login por RE, consulta da sessão e logout (T03).
 
-login_bp = Blueprint('login', __name__)
+O navegador recebe somente um cookie de sessão assinado pelo Flask. A senha e
+seu hash nunca entram no cookie ou na resposta. Ativação e recuperação de senha
+pertencem às próximas tarefas e não são expostas por este blueprint.
+"""
 
-TAMANHO_MINIMO_SENHA = 8
+from flask import Blueprint, g, jsonify, request, session
+from mysql.connector import Error as DatabaseError
+from werkzeug.security import check_password_hash
 
-
-def buscar_colaborador_pelo_token(cursor, token):
-    """Retorna o colaborador dono do token, se o token existir e não tiver expirado."""
-    SQL = """
-        SELECT id_colaborador
-        FROM colaboradores
-        WHERE token_ativacao_hash = %s
-          AND token_expira_em > NOW()
-          AND ativo = 1;
-    """
-    cursor.execute(SQL, (seguranca.hash_token(token),))
-    return cursor.fetchone()
+from auth.csrf import get_csrf_token
+from auth.decorators import ALLOWED_ROLES, login_required, public_collaborator
+from database.connection import db_cursor
 
 
-@login_bp.route('/login', methods=['POST'])
+login_bp = Blueprint("login", __name__)
+
+
+@login_bp.after_request
+def prevent_auth_cache(response):
+    """Evita que dados da sessão e tokens fiquem no cache do navegador."""
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+@login_bp.get("/csrf")
+def csrf():
+    """Inicia a sessão anônima, antes do POST de login protegido por CSRF."""
+    return jsonify({"csrf_token": get_csrf_token()})
+
+
+@login_bp.post("/login")
 def login():
-    data = request.get_json(silent=True) or {}
+    """Valida RE + senha e troca a sessão anônima por uma sessão autenticada."""
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"success": False, "msg": "Envie um objeto JSON válido."}), 400
 
-    # "login" pode ser o RE ou o e-mail
-    identificador = str(data.get('login', '')).strip()
-    senha         = str(data.get('senha', ''))
+    re_value, password = data.get("re"), data.get("senha")
+    if not isinstance(re_value, str) or not isinstance(password, str):
+        return jsonify({"success": False, "msg": "Informe RE e senha válidos."}), 400
 
-    if not identificador or not senha:
-        return jsonify({'msg': 'Login ou senha incorretos.', 'success': False}), 401
+    re_value = re_value.strip()
+    # Os scripts iniciais usam os quatro dígitos aprovados. O login consulta
+    # o identificador como texto; VARCHAR(20) continua sendo o limite do schema.
+    if not re_value or len(re_value) > 20 or "@" in re_value or not password:
+        return jsonify({"success": False, "msg": "RE ou senha incorretos."}), 401
+    if len(password) > 1024:
+        return jsonify({"success": False, "msg": "Informe RE e senha válidos."}), 400
 
-    conn = database_connection.open_connection()
-    cursor = conn.cursor(dictionary=True, buffered=True)
+    try:
+        with db_cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id, re, nome, nivel_acesso, senha_hash, ativo, conta_ativada
+                FROM colaboradores WHERE re = %s
+                """,
+                (re_value,),
+            )
+            collaborator = cursor.fetchone()
+    except (DatabaseError, RuntimeError):
+        # A mensagem não revela SQL, configuração da conexão ou credenciais.
+        return jsonify({"success": False, "msg": "Serviço indisponível. Tente novamente."}), 503
 
-    SQL = """
-        SELECT id_colaborador, nome_completo, nivel_acesso, senha_hash, ativo
-        FROM colaboradores
-        WHERE re = %s OR email = %s;
-    """
-    cursor.execute(SQL, (identificador, identificador))
-    colaborador = cursor.fetchone()
-    cursor.close()
-    conn.close()
+    if not collaborator:
+        return jsonify({"success": False, "msg": "RE ou senha incorretos."}), 401
 
-    # Conta criada, mas a senha ainda não foi definida pelo link
-    if colaborador and colaborador['ativo'] == 1 and colaborador['senha_hash'] is None:
-        return jsonify({
-            'msg': 'Você ainda não definiu sua senha. Use o link enviado no seu cadastro.',
-            'success': False
-        }), 403
+    password_hash = collaborator.get("senha_hash")
+    if (
+        not collaborator.get("ativo")
+        or not collaborator.get("conta_ativada")
+        or not isinstance(password_hash, str)
+        or not password_hash
+        or collaborator.get("nivel_acesso") not in ALLOWED_ROLES
+    ):
+        return jsonify({"success": False, "msg": "Conta sem permissão de acesso."}), 403
 
-    if (not colaborador
-            or not colaborador['ativo']
-            or not check_password_hash(colaborador['senha_hash'], senha)):
-        return jsonify({'msg': 'Login ou senha incorretos.', 'success': False}), 401
+    try:
+        valid_password = check_password_hash(password_hash, password)
+    except (ValueError, TypeError):
+        valid_password = False
+    if not valid_password:
+        return jsonify({"success": False, "msg": "RE ou senha incorretos."}), 401
 
-    return jsonify({
-        'msg': 'Login bem-sucedido!',
-        'success': True,
-        'id_colaborador': colaborador['id_colaborador'],
-        'nome': colaborador['nome_completo'],
-        'nivel_acesso': colaborador['nivel_acesso']
-    })
-
-
-@login_bp.route('/validar-token', methods=['GET'])
-def validar_token():
-    token = request.args.get('token', '')
-    if not token:
-        return jsonify({'valido': False})
-
-    conn = database_connection.open_connection()
-    cursor = conn.cursor(dictionary=True, buffered=True)
-    colaborador = buscar_colaborador_pelo_token(cursor, token)
-    cursor.close()
-    conn.close()
-
-    return jsonify({'valido': colaborador is not None})
+    # Descarta dados da sessão anterior e também o token anônimo. O perfil é
+    # sempre consultado no banco, nunca confiado ao conteúdo do cookie.
+    session.clear()
+    session["colaborador_id"] = collaborator["id"]
+    return jsonify(
+        {
+            "success": True,
+            "csrf_token": get_csrf_token(),
+            "colaborador": public_collaborator(collaborator),
+        }
+    )
 
 
-@login_bp.route('/definir-senha', methods=['POST'])
-def definir_senha():
-    data = request.get_json(silent=True) or {}
+@login_bp.get("/me")
+@login_required
+def me():
+    """Retorna o perfil atual do banco e o token para a SPA após um refresh."""
+    return jsonify({**public_collaborator(g.colaborador), "csrf_token": get_csrf_token()})
 
-    token      = str(data.get('token', ''))
-    nova_senha = str(data.get('senha', ''))
 
-    if len(nova_senha) < TAMANHO_MINIMO_SENHA:
-        return jsonify({
-            'success': False,
-            'msg': f'A senha deve ter pelo menos {TAMANHO_MINIMO_SENHA} caracteres.'
-        }), 400
-
-    conn = database_connection.open_connection()
-    cursor = conn.cursor(dictionary=True, buffered=True)
-
-    colaborador = buscar_colaborador_pelo_token(cursor, token)
-    if not colaborador:
-        cursor.close()
-        conn.close()
-        return jsonify({'success': False, 'msg': 'Link inválido ou expirado.'}), 400
-
-    # Grava a senha e invalida o token (uso único)
-    SQL = """
-        UPDATE colaboradores
-        SET senha_hash = %s, token_ativacao_hash = NULL, token_expira_em = NULL
-        WHERE id_colaborador = %s;
-    """
-    cursor.execute(SQL, (generate_password_hash(nova_senha), colaborador['id_colaborador']))
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-    return jsonify({'success': True, 'msg': 'Senha definida com sucesso!'})
+@login_bp.post("/logout")
+def logout():
+    """O before_request valida CSRF; limpar a sessão expira seu cookie."""
+    session.clear()
+    return jsonify({"success": True})

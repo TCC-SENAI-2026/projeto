@@ -1,0 +1,135 @@
+# E-THREADS — CONTEXTO GERAL DO PROJETO
+TCC SENAI 2026 | Documento de referência para Claude Code e Codex
+
+## 1. Objetivo do projeto
+O E-Threads é um sistema web de gestão e acompanhamento da produção de roupas, desenvolvido como TCC do SENAI. Seu objetivo é organizar informações de clientes, pedidos, personalizações, estoque, colaboradores e etapas da produção em um único ambiente.
+
+Prioridade da equipe: fazer o básico bem feito, com funcionalidades integradas, compreensíveis, seguras e testadas. Não acrescentar módulos complexos sem aprovação.
+
+## 2. Tecnologias e situação atual
+- Frontend: React + Vite + JavaScript, HTML e CSS.
+- Backend: Python + Flask, responsável por rotas, validações, autenticação, autorização e regras de negócio.
+- Banco de dados: relacional; confirmar pelo código o SGBD, o driver e o esquema atualmente existentes antes de implementar ou modificar tabelas. MySQL foi citado na documentação anterior, mas não deve ser presumido como confirmado.
+- Imagens: Cloudinary, conforme as integrações realmente existentes.
+- QR Code: biblioteca Python qrcode; o comportamento após a leitura precisa ser confirmado nos requisitos e com a equipe.
+- Versionamento: Git/GitHub. A branch de referência e desenvolvimento acordada pela equipe é `teste`. Não usar a branch `Rocha` neste fluxo.
+
+O projeto é colaborativo. Algumas telas e rotas já existem, mas a presença de uma interface não comprova que a integração funciona. O banco e o backend precisam ser revisados conforme os requisitos e a versão atualizada do código.
+
+## 3. Fonte de verdade e funcionalidades
+O arquivo `requisitos.txt` é a principal referência para funcionalidades, permissões e regras de negócio. Este `contexto-projeto.txt` explica o propósito, as decisões confirmadas e o fluxo esperado. Se houver divergências, registrá-las e pedir confirmação antes de implementar.
+
+Módulos previstos conforme o escopo: autenticação, dashboard, clientes, pedidos, seleção e personalização de produtos, fichas técnicas, estoque e movimentações, colaboradores, solicitações de autorização administrativa, relatórios e apoio ao acompanhamento da produção por QR Code.
+
+Não incluir automaticamente mapa de calor, gamificação, previsões com IA ou outros recursos não aprovados.
+
+## 4. Decisão de autenticação: RE + senha
+A tela de login terá SOMENTE dois campos: `RE` e `senha`, além da opção de solicitar redefinição de senha. O e-mail não é um campo de login; será usado na ativação da conta e na recuperação de acesso.
+
+O RE é um identificador funcional exclusivo gerado pelo sistema no cadastro de cada usuário. A geração será feita no backend, com mecanismo seguro e restrição UNIQUE no banco para impedir duplicidade. O formato e tamanho devem ser definidos antes de implementar.
+
+A senha será definida pelo próprio usuário, e não pelo administrador. O backend armazenará apenas um hash seguro da senha (por exemplo, com as funções adequadas do Werkzeug), nunca a senha original.
+
+## 5. Fluxo de cadastro e primeiro acesso
+1. O administrador autenticado abre a tela de colaboradores.
+2. Cadastra os dados necessários, incluindo nome e e-mail, e escolhe o perfil: `administrador` ou `colaborador`.
+3. O Flask valida os dados, gera um RE único e registra o usuário com conta ainda não ativada.
+4. O Flask cria um token de ativação aleatório, temporário e de uso único. O banco guarda uma representação segura do token (por exemplo, hash), seu vencimento e sua situação.
+5. O sistema envia ao e-mail cadastrado uma mensagem com o RE e um link para criar a senha. O administrador NÃO vê nem escolhe a senha do usuário.
+6. O usuário abre o link válido, informa e confirma sua própria senha.
+7. O Flask valida o token, armazena o hash da senha, invalida o token e ativa a conta.
+8. A pessoa entra normalmente pela tela de login usando RE e senha.
+
+O link deverá expirar após um prazo curto configurável (por exemplo, 60 minutos). Se expirar, será necessário gerar outro. O token não deve aparecer em logs, repositórios ou mensagens a terceiros.
+
+## 6. Envio gratuito dos e-mails
+A equipe já possui o Gmail `tccgrupo0110@gmail.com`, que será usado como remetente do E-Threads durante o desenvolvimento e a apresentação do TCC.
+
+A abordagem inicial será Flask + SMTP do Gmail, usando bibliotecas Python apropriadas. Não há necessidade de contratar API paga neste momento, mas existem limites de envio e exigências de segurança/configuração do Google; o funcionamento real precisa ser testado.
+
+Usar autenticação adequada para a conta (por exemplo, verificação em duas etapas e senha de app, se disponível). Nunca colocar senhas de app ou tokens diretamente no código ou no GitHub. Guardar credenciais em variáveis de ambiente, com `.env` ignorado pelo Git, e disponibilizar apenas nomes de variáveis em um `.env.example` sem valores secretos.
+
+Durante os testes iniciais, permitir testar o fluxo sem envio real de e-mail, utilizando usuários fictícios e uma forma local e controlada de obter o link. Não registrar links de ativação reais em logs de produção.
+
+## 7. Fluxo de redefinição de senha
+1. Na tela de login, o usuário seleciona `Solicitar redefinição de senha`.
+2. Informa a identificação solicitada (a definir na interface, preferencialmente o e-mail cadastrado).
+3. O Flask cria um token de redefinição temporário e de uso único e envia um link ao e-mail cadastrado.
+4. O usuário acessa o link, define uma nova senha e confirma.
+5. O backend valida o token, substitui o hash da senha, invalida o token e encerra sessões antigas quando aplicável.
+
+A mensagem exibida após a solicitação deve ser genérica, para não revelar se determinado e-mail está cadastrado. Prever limitação de tentativas e reenvios.
+
+## 8. Perfis e autorização
+Existem dois perfis iniciais: `administrador` e `colaborador`.
+
+- Colaborador: acesso somente às telas de Início, Pedidos, Estoque e Clientes, conforme os requisitos e as ações autorizadas.
+- Administrador: acesso às áreas administrativas, incluindo gestão de colaboradores e análise das solicitações, além das demais funcionalidades que o escopo permitir.
+
+Após autenticar RE e senha e verificar que a conta está ativa, o Flask determina o perfil com base nos dados persistidos no banco. O React adapta a navegação, mas TODAS as rotas protegidas precisam validar a autenticação e a permissão no backend. Nunca confiar em um perfil informado pelo navegador para autorizar uma ação.
+
+O primeiro administrador do sistema deverá ser criado por um procedimento inicial controlado, pois não existirá outro administrador para cadastrá-lo. Esse procedimento deve ser planejado e não deve deixar credenciais padrão ou públicas.
+
+## 9. Aprovação de alterações e exclusões
+De acordo com os requisitos, determinadas edições e exclusões de pedidos e itens de estoque feitas por colaboradores dependem de aprovação do administrador.
+
+Fluxo: colaborador solicita a mudança -> sistema registra a solicitação como pendente sem aplicar a mudança protegida -> administrador analisa -> aprovação ou recusa -> backend aplica a operação autorizada e registra o resultado. Uma exclusão solicitada não remove o registro antes da aprovação.
+
+A modelagem do banco precisa permitir relacionar solicitação, autor, registro afetado, decisão administrativa e datas, sem perder a integridade dos dados.
+
+## 10. Fluxo técnico geral
+Usuário -> Tela React -> Requisição HTTP -> Rota Flask -> Autenticação/autorização e validações -> Banco de dados ou serviço externo -> Resposta HTTP -> Atualização da tela React.
+
+O Cloudinary armazena imagens quando necessário. Dashboard e relatórios devem apresentar informações reais derivadas dos dados persistidos, sem exigir tabela própria só porque existe uma tela.
+
+## 11. Trabalho dos agentes e aprendizado
+- Claude Code: auditar frontend e backend, cruzar telas com `requisitos.txt`, mapear contratos de dados e planejar a arquitetura do banco e das rotas. Na auditoria, somente leitura; não executar alterações.
+- ChatGPT: atuar como apoio de Tech Lead para revisar planos, explicar decisões, detectar inconsistências e preparar tarefas objetivas.
+- Codex: implementar somente tarefas aprovadas na branch `teste`, após confirmar com a equipe que não há conflitos com alterações em andamento; executar testes e descrever o que foi alterado. Não fazer push sem autorização.
+- Estudante: aprovar decisões, acompanhar a lógica, executar/verificar testes e entender o fluxo real.
+
+Padrão para cada funcionalidade: REQUISITO -> ARQUITETURA (e por que foi escolhida) -> IMPLEMENTAÇÃO -> TESTE/EVIDÊNCIA -> EXPLICAÇÃO SIMPLES, com analogias curtas do cotidiano quando úteis. Priorizar mudanças pequenas e testáveis.
+
+## 12. Regras para a próxima auditoria
+- Analisar a versão mais recente da branch compartilhada `teste` somente para leitura.
+- Preservar alterações locais e não fazer commits, pushes, merges ou modificações na branch compartilhada por iniciativa própria.
+- Não instalar dependências, executar migrações ou consultar serviços com credenciais reais durante a auditoria.
+- Verificar quais arquivos e integrações existem antes de planejar implementações.
+- Comparar frontend, backend e banco com `requisitos.txt` e classificar achados como confirmado, hipótese ou pendente de teste.
+- Não inventar tabelas, rotas, funcionalidades ou evidências de que algo funciona.
+- As futuras implementações acontecerão na branch `teste`, após a auditoria e a aprovação de cada tarefa. Antes de editar, conferir o estado do Git, preservar alterações locais e coordenar mudanças com os demais integrantes.
+
+## 13. Decisões ainda pendentes
+- Confirmar SGBD e biblioteca de acesso ao banco presentes no código.
+- Definir o formato e tamanho do RE e garantir unicidade.
+- Confirmar a estratégia de sessão/autenticação já existente no Flask antes de escolher JWT ou sessão.
+- Confirmar as rotas reais e os componentes existentes para ativação e recuperação de senha.
+- Validar o envio real de e-mails pelo Gmail e seus limites.
+- Definir o comportamento exato do QR Code conforme o escopo acordado.
+
+## Estado atual do backend e banco de dados
+
+O E-Threads ainda não possui um banco de dados operacional validado.
+
+Os arquivos existentes no backend Python/Flask foram desenvolvidos principalmente para demonstrações e testes com informações fictícias.
+
+A existência de rotas, arquivos de conexão ou scripts SQL não significa que essas funcionalidades estejam integradas ou funcionando corretamente.
+
+O arquivo `schema.sql`, caso exista, deve ser analisado como uma possível referência inicial, não como uma estrutura definitiva.
+
+O banco de dados deverá ser planejado do zero, considerando:
+- Os requisitos definidos em `requisitos.txt`.
+- As telas e formulários React existentes.
+- Os relacionamentos entre as entidades.
+- A autenticação por RE e senha.
+- Os perfis Administrador e Colaborador.
+- As regras de aprovação administrativa.
+- As necessidades reais do backend Flask.
+
+Nenhuma tabela deverá ser criada antes da aprovação da modelagem.
+
+Após a aprovação e implementação do banco, o Codex será responsável por implementar e integrar as funcionalidades do backend Flask nos arquivos correspondentes.
+
+As implementações ocorrerão na branch compartilhada `teste`, com revisão das alterações antes de commits ou pushes.
+
+Toda funcionalidade deverá ter explicação da arquitetura, implementação e evidência de funcionamento.

@@ -1,24 +1,67 @@
-from flask import Flask
-from flask_cors import CORS
+"""Cria o Flask e integra autenticação sem reescrever módulos da equipe."""
 
-from login import login_bp
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from mysql.connector import Error as MySQLError
+
+from auth.csrf import init_csrf
+from auth.decorators import admin_required, login_required
 from clientes import clientes_bp
 from colaboradores import colaboradores_bp
+from config import load_config
+from database.connection import init_db
 from estoque import estoque_bp
-
-import sys
-sys.stdout.reconfigure(line_buffering=True) 
-
-app = Flask(__name__)
-
-CORS(app)
+from login import login_bp
 
 
-app.register_blueprint(login_bp)
-app.register_blueprint(clientes_bp)
-app.register_blueprint(colaboradores_bp)
-app.register_blueprint(estoque_bp)
+def create_app(test_config=None):
+    """Factory também permite testar sem acessar um MySQL real."""
+    app = Flask(__name__)
+    app.config.update(load_config())
+    if test_config:
+        app.config.update(test_config)
+
+    init_db(app)
+    # A SPA usa /api no Vite, que remove o prefixo e encaminha ao Flask.
+    # CORS restringe também os consumidores legados ainda não migrados.
+    CORS(app, origins=[app.config['FRONTEND_ORIGIN']],
+         supports_credentials=True, allow_headers=['Content-Type', 'X-CSRF-Token'])
+    init_csrf(app)
+
+    app.register_blueprint(login_bp)
+    app.register_blueprint(clientes_bp)
+    app.register_blueprint(colaboradores_bp)
+    app.register_blueprint(estoque_bp)
+
+    @app.before_request
+    def protect_existing_modules():
+        """Aplica T03 antes da lógica legada, inclusive nas URLs diretas.
+
+        Colaboradores é uma área administrativa. Clientes e estoque exigem
+        sessão. Não muda consultas/regras internas, previstas em T04/T07/T10.
+        Blueprints futuros devem usar os mesmos decorators explicitamente.
+        """
+        if request.method == 'OPTIONS':
+            return None
+        if request.blueprint == 'colaboradores':
+            return admin_required(lambda: None)()
+        if request.blueprint in ('clientes', 'estoque'):
+            return login_required(lambda: None)()
+        return None
+
+    @app.errorhandler(MySQLError)
+    def database_unavailable(_error):
+        # Nunca devolve SQL, usuário, senha ou detalhes de conexão ao navegador.
+        app.logger.warning('Consulta MySQL indisponível; verificar configuração/schema local.')
+        return jsonify(success=False, msg='Banco de dados indisponível. Tente novamente.'), 503
+
+    @app.after_request
+    def prevent_private_caching(response):
+        response.headers['Cache-Control'] = 'no-store'
+        return response
+
+    return app
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    create_app().run(host='127.0.0.1', port=5000, debug=False)

@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
 import Modal from "../components/Modal";
-import "../styles/Login.css";
+import "../styles/login.css";
 
 function Login() {
   const [re, setRe] = useState("");
-  const navigate = useNavigate();
+  const { colaborador, entrar } = useAuth();
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [modalAberto, setModalAberto] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
     document.body.classList.add("login-body");
@@ -22,58 +23,31 @@ function Login() {
 
 
   async function handleLogin(e) {
-  e.preventDefault();
-  setErro("");
+    e.preventDefault();
+    if (enviando) return;
+    setErro("");
+    setEnviando(true);
 
-  try {
-    const res = await axios.post("http://localhost:5000/login", {
-      login: re,      // campo "re" do estado → chave "login" que o Flask espera
-      senha: senha,
-    });
-
-    console.log('Resposta: ', res.data);
-
-    if(res.data.success){
-      navigate('/home');
-    }
-  } catch (err) {
-
-    console.log('Erro completo: ', err);
-    console.log('Status: ', err.response?.status);
-    console.log('Dados: ', err.response?.data);
-
-    if (err.response?.status === 401) {
-      setErro('Login ou senha incorretos.');
-    } else {
-      setErro('Erro ao conectar com o servidor')
+    try {
+      await entrar(re.trim(), senha);
+    } catch (error) {
+      setErro(error.message);
+    } finally {
+      setEnviando(false);
     }
   }
-  
 
-}
+  if (colaborador) return <Navigate to="/home" replace />;
 
   return (
     <main className="login">
 
-      <img src="/img/E-threads.png" className="logo" />
+      <img src="/img/E-threads.png" className="logo" alt="E-Threads" />
 
       <div className="login-divisor"></div>
 
       <form onSubmit={handleLogin}>
         <p className="login-texto">Acesse sua conta para continuar</p>
-
-        {/* ACEITA APENAS NUMERO!! */}
-        {/* 
-        <div className="campo"> 
-          <input
-            value={re}
-            onChange={(e) =>
-              setRe(e.target.value.replace(/\D/g, "").slice(0, 6))
-            }
-            placeholder="Digite seu RE"
-          />
-        </div> 
-        */}
 
         <div className="campo">
           <input
@@ -82,6 +56,12 @@ function Login() {
               setRe(e.target.value.slice(0, 20)) // só limita tamanho
             }
             placeholder="Digite seu RE"
+            name="re"
+            autoComplete="username"
+            maxLength={20}
+            required
+            disabled={enviando}
+            aria-label="RE"
           />
         </div>
 
@@ -91,12 +71,18 @@ function Login() {
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             placeholder="Digite sua senha"
+            name="senha"
+            autoComplete="current-password"
+            required
+            disabled={enviando}
+            aria-label="Senha"
           />
 
           <button
             type="button"
             className="toggle-senha"
             onClick={() => setMostrarSenha(!mostrarSenha)}
+            aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
           >
             {mostrarSenha ? (
                 //FECHADO                
@@ -110,10 +96,10 @@ function Login() {
           </button>
         </div>
 
-        <p className="erro-login">{erro}</p>
+        <p className="erro-login" role="alert">{erro}</p>
 
-        <button className="bt-entrar" type="submit">
-          Entrar
+        <button className="bt-entrar" type="submit" disabled={enviando}>
+          {enviando ? "Entrando..." : "Entrar"}
         </button>
       </form>
 
@@ -127,12 +113,12 @@ function Login() {
         </div>
 
         <div className="modal-body">
-          <input placeholder="Digite seu RE" />
-          <button onClick={() => alert("Solicitação enviada")}>
+          <input placeholder="Digite seu RE" disabled />
+          <button type="button" disabled>
             Enviar
           </button>
           <p className="modal-help">
-            Sua solicitação será enviada ao administrador.
+            A redefinição de senha ainda não está disponível nesta etapa. Procure o administrador.
           </p>
         </div>
       </Modal>

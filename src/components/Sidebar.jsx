@@ -1,23 +1,43 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
 import "../styles/padrao.css";
 
 function Sidebar() {
-    const [menuAberto, setMenuAberto] = useState(false);
+    const [menuAbertoEm, setMenuAbertoEm] = useState(null);
+    const [saindo, setSaindo] = useState(false);
+    const [erroLogout, setErroLogout] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
-
-    useEffect(() => {
-        setMenuAberto(false);
-    }, [location.pathname]);
+    const { colaborador, sair } = useAuth();
+    const menuAberto = menuAbertoEm === location.pathname;
+    const administrador = colaborador?.nivel_acesso === "administrador";
+    const partesNome = colaborador?.nome.trim().split(/\s+/) || [];
+    const iniciais = [partesNome[0], partesNome.length > 1 ? partesNome.at(-1) : null]
+        .filter(Boolean).map((nome) => nome[0]).join("").toUpperCase();
 
     function toggleMenu() {
-        setMenuAberto((aberto) => !aberto);
+        setMenuAbertoEm(menuAberto ? null : location.pathname);
     }
 
     function irPara(path) {
         navigate(path);
-        setMenuAberto(false);
+        setMenuAbertoEm(null);
+    }
+
+    async function handleLogout() {
+        if (saindo) return;
+        setSaindo(true);
+        setErroLogout("");
+        try {
+            await sair();
+            navigate("/", { replace: true });
+        } catch (error) {
+            // Só saímos da interface depois que o Flask encerra a sessão.
+            setErroLogout(error.message);
+        } finally {
+            setSaindo(false);
+        }
     }
 
     return (
@@ -54,7 +74,7 @@ function Sidebar() {
             <button
                 type="button"
                 className={`sidebar-overlay ${menuAberto ? "active" : ""}`}
-                onClick={() => setMenuAberto(false)}
+                onClick={() => setMenuAbertoEm(null)}
                 aria-label="Fechar menu lateral"
             ></button>
 
@@ -110,6 +130,7 @@ function Sidebar() {
                         </span>
                     </button>
 
+                    {administrador && <>
                     <button type="button" onClick={() => irPara("/equipe")}>
                         <span className="menu-link-left">
                             <span className="material-icons">badge</span>
@@ -129,38 +150,41 @@ function Sidebar() {
                             Painel Adm
                         </span>
                     </button>
+                    </>}
                 </nav>
 
                 <div className="sidebar-footer">
                     <details className="user-dropdown">
                         <summary className="user-info">
-                            <div className="user-avatar">GA</div>
+                            <div className="user-avatar">{iniciais}</div>
 
                             <div className="user-text">
-                                <span className="user-name">Gabrielly</span>
-                                <span className="user-role">Administrador</span>
+                                <span className="user-name">{colaborador?.nome}</span>
+                                <span className="user-role">{administrador ? "Administrador" : "Colaborador"}</span>
                             </div>
 
                             <span className="material-icons user-arrow">unfold_more</span>
                         </summary>
 
                         <div className="user-menu">
-                            <button
+                            {administrador && <button
                                 type="button"
                                 className="user-option"
                                 onClick={() => irPara("/perfil")}
                             >
                                 <span className="material-icons">person</span>
                                 Perfil
-                            </button>
+                            </button>}
 
                             <button 
                                 type="button" 
                                 className="logout-btn"
-                                onClick={() => irPara('/')}>
+                                disabled={saindo}
+                                onClick={handleLogout}>
                                 <span className="material-icons">exit_to_app</span>
-                                Sair
+                                {saindo ? "Saindo..." : "Sair"}
                             </button>
+                            {erroLogout && <p role="alert">{erroLogout}</p>}
                         </div>
                     </details>
                 </div>

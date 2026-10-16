@@ -1,0 +1,116 @@
+Cliente: Senai
+Responsável: João Rocha, Camily, Gabrielly, Nicole e Vanessa
+
+### Autenticação e Acesso
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 1 | O sistema deve permitir que o usuário efetue a autenticação de forma segura, inserindo seus dados de acesso, incluindo o código de verificação (RE) e a senha. | RN | [ ] |
+| 2 | Após a autenticação do funcionário, o sistema deve direcioná-lo automaticamente para a tela principal do sistema. | RN | [ ] |
+| 3 | Depois da autenticação do colaborador, o colaborador terá acesso apenas as telas de: Inicio, pedido, estoque e clientes. | RN | [ ] |
+| 4 | Funcionario ele também poderá fazer logout para finalizar a sessão. | RN | [ ] |
+| 5 | Em todos as telas, haverá um guia de pesquisa que permitirá ao funcionário localizar pedidos pelo número e nome. | RN | [ ] |
+| 6 | Todos os setores devem permitir ordenação de pedidos por nome, data ou filtros adicionais disponíveis. | RN | [ ] |
+| 7 | O sistema deve carregar telas e pedidos instantâneamente para o usuário. | RN | [ ] |
+| 9 | A interface deve ser totalmente responsivas para computadores, tablets e celulares. | RN | [ ] |
+
+### Tela de Inicio
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 10 | Na tela de inicio terá 3 cards: Pedidos Pendentes, Total em Estoque e Estoque baixo | RF | [ ] |
+| 11 | Quando a pessoa clicar em um desses cards, o sistema irá fazer um redirecionamentoda tela, seja para lista de pedidos ou estoque baixo. | RF | [ ] |
+| 12 | Terá um card de Pedidos Recentes aonde o próprio sistema ele irá filtrar todos os pedidos que foram criados recentemente, junto com os status se o pedido está pendente ou em produção. | RN | [ ] |
+| 13 | Na tela de inicio terá um último card aonde o sistema irá mostrar todos os itens relevante do estoque: Tipos de camisas,os tipo do técido e botões | RNF | [ ] |
+
+### Tela de Pedidos
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 10 | Na tela de Pedidos terá um dropdown de duas telas: uma de Criar novo pedido e outra de Lista  de Pedidos. | RF | [ ] |
+| 11 | Na tela de Criar novo Pedido terá um formulário aonde o funcionario irá preencher os dados do pedido dos clientes e depois irá ser redirecionado para a tela de  selecionar produtos. | RF | [ ] |
+
+### Tela de Pedidos/Selecionar Produtos
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 12 | Nessa tela terá cards para o funcionário colocar o tipo do produto ex: camisetas e  calças etc. Nesses cards terá a opçãos de personalização, tecidos, cor, local da arte e um campo de observação do item em caso de excessões do produto. | RF | [ ] |
+| 13 | Depois de selecionar o produto o card irá atualizar e ter um campo para o funcionário  a quantidade da roupa e para o upload de imagens como logo, nome etc... | RF | [ ] |
+| 14 | Ao finalizar a tela de selecionar os produtos, o sistema irá mostrar uma nova tela  aonde será a ficha técnica, contendo todos os dados preenchidos pelo proprio funci- onário para analizar as informações ditas pelo cliente e clicar em um botão para finali- zar. Após o clique, aparecera um modal dizendo que o pedido já foi enviado para a fila de produção. Esse pedido será enviado para a tela de lista de pedidos automaticamente. | RF | [ ] |
+
+### Tela de Pedidos/Lista de Pedidos
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 15 | Nessa tela na parte superior terá uma barra de pesquisa aonde poderá filtrar o  pedido pelo nome do cliente e pelo número do card, irá ter também um select para  buscar pedidos pendentes,finalizados e em produção, e por ultimo um botão para criar um novo pedido. | RF | [ ] |
+| 16 | Em baixo desse terá os pedidos que já foram criados e em cada card terá um  número(1,2), nome da empresa ou cliente, status do pedido e dois botão para editar ou remover | RF | [ ] |
+| 17 | Se o funcionário clicar em um desses pedidos, irá aparecer um modal mostrando a ficha técnica desse pedido que foi criado na tela anterior | RF | [ ] |
+| 18 | quando o funcionário clicar no botão de editar, aparecerá um modal da ficha para que ele possa fazer as alterações, se ele clicar em qualquer campo, esse campo que foi selecionado, ele irá ficar com uma opacidade baixa, e logo em seguida irá aparecer um campo abaixo para ele colocar a alteração, quando ele terminar de digitar irá aparecer um icone verde. | RF | [ ] |
+| 18 | Depois do funcionário terminar as ediões, no final do modal vai ter um botão pra pedir permição ao adm,depois de apertar nessa botão, vai aparecer uma mensagem no topo da seção dizendo:solicitaçào enviada para o adm. | RF | [ ] |
+| 19 | Se for clicado no botão de excluir, o pedido ele ainda não será excluido da tela de lista de pedidos até que o adm autorize essa exclusão. | RF | [ ] |
+
+### Estoque
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 20 | No topo da tela o sistema irá mostrar o número total de itens cadastrados no estoque. | RNF | [ ] |
+| 21 | No lado diretiro desses números, vai ter um campo de pesquisa aonde o sistema irá mostrar o nome do produto em que o usuário for pesquisar para ver as quantidades disponíveis. | RNF | [ ] |
+| 22 | Logo abaixo desses cards, o sitema terá 3 botões de filtros: Estoque de Produtos(aonde irá mostrar somente os estoques de produtos), Estoque de Materiais(Somente estoque dos materiais cadastrados) e movimentação(terá informações de entrada e saída de materiais). | RF | [ ] |
+| 23 | Cada card que aparecer do material/produto, vai ter informações do nome do item,categoria,quantidade,status(disponivel,baixo,indisponivel) e dois botão de editar e excluir item | RF | [ ] |
+| 24 | se o funcionario clicar em editar, irá aparecer a mesma tela de quando a gente vai adicionar Pedidos, mas com todas as informações preenchidas do item selecionado.No final desse modal vai ter dois botões: de movimentação(caso aconteceu alguma falha na empresa ou perca) e um botao de salvar as alterações | RF | [ ] |
+| 25 | se o funcionário clicar em excluir, o sistema deve retornar uma mensagem pra confirmar essa ação, e depois de confirmado, automaticamente o sistema irá enviar uma solicitação para que o adm possa confirmar essa exclução do item. Depois que o adm permitir o sistema automaticamente irá excluir esse item do front e do banco. | RNF | [ ] |
+| 26 | No botão de adicionar item, terá dois cards aonde, aonde a pessoa pode adicionar produtos(peças de roupas/uniformes) e a outra de Material(Tecidos). Embaixo deles, terá um formúlario aonde poderá colocar informações sobre o item escolhido como: nome do item, Unidade de medida e o fornecedor. Embaixo terá as opções  para colocar a quantidade, estoque mínimo,valor unitário e observações gerais. e no final de tudo um botão para cadastrar item | RF | [ ] |
+
+### Clientes
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 26 | Na parte superior terá o número total de clientes cadastrado no sistema. Um campo para pesquisar o nome do cliente e um filtro aonde o usuário poderá filtrar por clientes ativos e inativos | RF | [ ] |
+| 27 | Na seção de baixo, irá ter todos os clientes cadastrados no sistema. | RF | [ ] |
+| 28 | quando a pesso clica no card de cada cliente, automaticamente  a tela irá levaro o colaborador para a tela de formulario do cliente em  que ele selecionou, e lá ele  podera alterar o status para ativo/inativo ou criar um  novo pedido para aquele cliente específico | RF | [ ] |
+
+### Tela de Colaboradores
+
+#### Autenticação
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 29 | O sistema deve verificar se o adm tem o token de acesso para essa tela, caso não tenha, deve aparecer uma mensagem de acesso negado | RN | [ ] |
+| 30 | O sistema deve deixar apenas os ADM ter acesso a tela de colaboradores | RN | [ ] |
+| 30 | Na parte superior terá o número total de colaboradores cadastrado no sistema. Um campo para pesquisar o nome do colaborador específico. Um filtro aonde filtra por colaboradores ativos e inativos | RF | [ ] |
+| 30 | Na parte de baixo, haverá todos os calaboradores com suas  informações(nome,usuário,status,re,email) | RF | [ ] |
+| 31 | Nessa tela o adm poderá cadastrar colaboradores ou ADM. Após ter preenchido as informações, o sistema irá salvar automaticamente  no banco de dados. | RNF | [ ] |
+| 32 | Nessa tela, o sistema deve receber as solicitações que os colaboradores enviaram para o adm permitir edições ou exclusão dos pedidos e estoque, para que o ADM possa ter o controle total do sistema | RNF | [ ] |
+
+### Tela Relatorios
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 27 | Nessa tela  terá todas as estatísticas do mês do sistema como: número total de produção, Pedidos Concluídos,Itens em Estoque Baixo e Pedidos Pendentes. | RF | [ ] |
+| 22 | Vai ter um gráfico aonde será exibido a produção de cada mês | RF | [ ] |
+| 23 | Em baixo do gráfico, irá ter um status em formato de gráfico de Pedidos pendentes,Produção e concluídos | RF | [ ] |
+
+### Setor Administrativo
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 30 | O setor de ADM deve conter três campos: Controle de Funcionários, Catálogo e Histórico de Pedidos. | RN | [ ] |
+| 31 | O administrador deve visualizar todos os funcionários e seus respectivos setores. | RF | [ ] |
+| 32 | O administrador deve poder adicionar, atualizar e inativar funcionários. | RNF | [ ] |
+| 32 | Deve haver barra de pesquisa para buscar por nome ou RE. | RF | [ ] |
+| 33 |  Deve existir ícone de ordenação por ordem alfabética (A–Z) e por cargo. | RF | [ ] |
+
+### Catálogo Administrativo
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 34 |  O administrador deve selecionar um cliente para visualizar padrões e fichas técnicas das roupas. | RF | [ ] |
+| 35 | O administrador deve adicionar, atualizar e inativar itens do catálogo:produtos,tecidos e etc, tudo que está na tela de pedidos | RNF | [ ] |
+
+### Histórico do Pedido
+
+| Nº | Descrição original | Tipo | Status |
+|---|---|---|---|
+| 36 | O administrador deve visualizar os clientes e quando clicar neles, deve aparecer as fichas técnicas de cada pedido. | RF | [ ] |
+| 37 | Deve ser possível pesquisar pedidos pela barra de pesquisa. | RF | [ ] |
+| 38 | Deve ser possível ordenar pedidos por cliente. | RF | [ ] |
