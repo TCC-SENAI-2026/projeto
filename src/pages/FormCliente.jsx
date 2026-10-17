@@ -4,19 +4,17 @@ import { useEffect, useState } from "react"
 import "../styles/padrao.css"
 import "../styles/formulario.css"
 
+const ESTADOS = [
+    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA",
+    "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO",
+]
+
 function FormCliente() {
 
     const navigate = useNavigate()
     const location = useLocation()
     const clienteEditar = location.state
-    const [artePreview, setArtePreview] = useState(null);
-    const [arteBase64, setArteBase64] = useState(null);
-
-    // function handleSubmit(e) {
-    //     e.preventDefault()
-    //     alert("Cliente salvo!")
-    //     navigate("/clientes")
-    // }
+    const [artePreview, setArtePreview] = useState(null)
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -34,7 +32,6 @@ function FormCliente() {
         formData.append('estado', document.getElementById('estado').value)
         formData.append('observacoes', document.getElementById('observacoes').value)
 
-
         const status = document.querySelector('input[name="status"]:checked')
         formData.append('status', status ? status.value : 'ativo')
 
@@ -47,57 +44,70 @@ function FormCliente() {
             formData.append('foto_logo', inputArte.files[0])
         }
 
-        if (clienteEditar) {
-            await fetch(`http://localhost:5000/editar-cliente/${clienteEditar[13]}`, {
+        const url = clienteEditar
+            ? `http://localhost:5000/editar-cliente/${clienteEditar[13]}`
+            : `http://localhost:5000/cadastrar-cliente`
+
+        try {
+            // credentials: 'include' envia o cookie de sessão (o back exige login)
+            const res = await fetch(url, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'include',
             })
-        } else {
-            await fetch(`http://localhost:5000/cadastrar-cliente`, {
-                method: 'POST',
-                body: formData
-            })
+
+            if (!res.ok) {
+                alert('Não foi possível salvar o cliente.')
+                return
+            }
+
+            navigate('/clientes')
+        } catch (erro) {
+            console.log('Erro ao salvar cliente:', erro)
+            alert('Não foi possível conectar ao servidor.')
         }
-
-        navigate('/clientes')
-
     }
 
     function handleArte(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = ev => {
-            setArteBase64(ev.target.result);
-            setArtePreview(ev.target.result);
-        };
-        reader.readAsDataURL(file);
+        const file = e.target.files[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = ev => setArtePreview(ev.target.result)
+        reader.readAsDataURL(file)
+    }
+
+    // Limpa a prévia e também o arquivo escolhido, para ele não ser enviado ao salvar
+    function removerLogo() {
+        setArtePreview(null)
+        const input = document.getElementById('input-arte')
+        if (input) input.value = ''
     }
 
     useEffect(() => {
         if (!clienteEditar) return
-        console.log(clienteEditar)
         document.getElementById('nome_empresa').value = clienteEditar[0] || ''
-        document.getElementById('responsavel').value  = clienteEditar[1] || ''
-        document.getElementById('cpf_cnpj').value     = clienteEditar[2] || ''
-        document.getElementById('telefone').value     = clienteEditar[3] || ''
-        document.getElementById('email').value        = clienteEditar[4] || ''
-        document.getElementById('cep').value          = clienteEditar[5] || ''
-        document.getElementById('municipio').value    = clienteEditar[8] || ''
-        document.getElementById('estado').value       = clienteEditar[9] || ''
-        document.getElementById('rua').value          = clienteEditar[6] || ''
-        document.getElementById('numero').value       = clienteEditar[7] || ''
-        document.getElementById('observacoes').value  = clienteEditar[10] || ''
+        document.getElementById('responsavel').value = clienteEditar[1] || ''
+        document.getElementById('cpf_cnpj').value = clienteEditar[2] || ''
+        document.getElementById('telefone').value = clienteEditar[3] || ''
+        document.getElementById('email').value = clienteEditar[4] || ''
+        document.getElementById('cep').value = clienteEditar[5] || ''
+        document.getElementById('municipio').value = clienteEditar[8] || ''
+        document.getElementById('estado').value = clienteEditar[9] || ''
+        document.getElementById('rua').value = clienteEditar[6] || ''
+        document.getElementById('numero').value = clienteEditar[7] || ''
+        document.getElementById('observacoes').value = clienteEditar[10] || ''
 
-        if (clienteEditar[11]){
+        if (clienteEditar[11]) {
             setArtePreview(`http://localhost:5000/static/uploads/${clienteEditar[11]}`)
         }
     }, [clienteEditar])
 
+    // Preenche rua, município e estado a partir do CEP
     useEffect(() => {
         const inputCep = document.getElementById("cep")
         if (!inputCep) return
-        inputCep.addEventListener("blur", () => {
+
+        function buscarCep() {
             const cep = inputCep.value.replace(/\D/g, "")
             if (cep.length !== 8) return
             fetch(`https://viacep.com.br/ws/${cep}/json/`)
@@ -111,7 +121,10 @@ function FormCliente() {
                     if (rua) rua.value = dados.logradouro || ""
                     if (estado) estado.value = dados.uf || ""
                 })
-        })
+        }
+
+        inputCep.addEventListener("blur", buscarCep)
+        return () => inputCep.removeEventListener("blur", buscarCep)
     }, [])
 
     return (
@@ -203,7 +216,12 @@ function FormCliente() {
 
                                 <div className="form-field">
                                     <label htmlFor="estado">Estado</label>
-                                    <select id="estado"></select>
+                                    <select id="estado">
+                                        <option value="">Selecione</option>
+                                        {ESTADOS.map((uf) => (
+                                            <option key={uf} value={uf}>{uf}</option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <div className="form-field full">
@@ -220,57 +238,61 @@ function FormCliente() {
 
                         </section>
 
+                        {/* LOGO */}
+                        <section className="form-section">
 
-                        <h2>Arte do Cliente</h2>
-                        <p className="section-help">
-                            Envie a arte para personalização. Ela será aplicada nos itens conforme a técnica
-                            de cada um. Formatos aceitos: PNG, AI, PDF.
-                        </p>
+                            <h2>Logo da Empresa</h2>
 
-                        <label className="upload-arte" htmlFor="input-arte">
-                            <span className="material-icons">upload_file</span>
-                            <strong>Arraste sua arte aqui</strong>
-                            <span>ou clique para enviar — PNG, AI, PDF</span>
-                            <input
-                                id="input-arte"
-                                type="file"
-                                accept=".png,.ai,.pdf,image/*"
-                                style={{ display: "none" }}
-                                onChange={handleArte}
-                            />
-                        </label>
+                            <p className="section-help">
+                                Envie o logo do cliente. Ele aparece no card e nos dados do cliente.
+                                Formatos aceitos: PNG, JPG ou WEBP.
+                            </p>
 
-                         {/* Preview da arte após upload */}
-                        {artePreview && (
-                            <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 16 }}>
-                                <img
-                                    src={artePreview}
-                                    alt="Preview da arte"
-                                    style={{
-                                        width: 100,
-                                        height: 100,
-                                        objectFit: "contain",
-                                        borderRadius: 10,
-                                        border: "1px solid #e2e8f0",
-                                        background: "#f8fafc",
-                                    }}
+                            <label className="upload-arte" htmlFor="input-arte">
+                                <span className="material-icons">add_photo_alternate</span>
+                                <strong>Arraste o logo aqui</strong>
+                                <span>ou clique para enviar — PNG, JPG, WEBP</span>
+                                <input
+                                    id="input-arte"
+                                    type="file"
+                                    accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                                    style={{ display: "none" }}
+                                    onChange={handleArte}
                                 />
-                                <div>
-                                    <p style={{ fontSize: 13, color: "#166534", fontWeight: 600 }}>
-                                        ✓ Arte carregada com sucesso
-                                    </p>
-                                    <button
-                                        type="button"
-                                        className="btn-page-sec"
-                                        style={{ marginTop: 6, fontSize: 12 }}
-                                        onClick={() => { setArtePreview(null); setArteBase64(null); }}
-                                    >
-                                        Remover arte
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                            </label>
 
+                            {/* Prévia do logo */}
+                            {artePreview && (
+                                <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 16 }}>
+                                    <img
+                                        src={artePreview}
+                                        alt="Prévia do logo"
+                                        style={{
+                                            width: 100,
+                                            height: 100,
+                                            objectFit: "contain",
+                                            borderRadius: 10,
+                                            border: "1px solid #e2e8f0",
+                                            background: "#f8fafc",
+                                        }}
+                                    />
+                                    <div>
+                                        <p style={{ fontSize: 13, color: "#166534", fontWeight: 600 }}>
+                                            ✓ Logo carregado
+                                        </p>
+                                        <button
+                                            type="button"
+                                            className="btn-page-sec"
+                                            style={{ marginTop: 6, fontSize: 12 }}
+                                            onClick={removerLogo}
+                                        >
+                                            Remover logo
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                        </section>
 
                         {/* EXTRA */}
                         <section className="form-section">

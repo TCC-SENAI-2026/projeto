@@ -14,9 +14,22 @@ function Clientes() {
 
     // Busca os clientes do banco ao carregar a página
     useEffect(() => {
-        fetch('http://localhost:5000/listar-clientes')
-            .then(res => res.json())
-            .then(dados => setClientes(dados))
+        fetch('http://localhost:5000/listar-clientes', {
+            credentials: 'include', // envia o cookie de sessão, se o back usar login por sessão
+        })
+            .then(res => {
+                if (res.status === 401) {
+                    navigate('/login'); // troque pela rota real da sua tela de login
+                    throw new Error('Não autorizado');
+                }
+                if (!res.ok) throw new Error(`Erro ${res.status}`);
+                return res.json();
+            })
+            .then(dados => setClientes(Array.isArray(dados) ? dados : []))
+            .catch(erro => {
+                console.log('Erro ao carregar clientes:', erro);
+                setClientes([]);
+            });
     }, [])
 
     function abrirCliente(cliente) {

@@ -1,3 +1,4 @@
+from database.connection import db_cursor
 from flask import Blueprint, request, jsonify, redirect, url_for
 import os
 import resources.database_connection as database_connection
@@ -51,21 +52,14 @@ def cadastrar_cliente():
 
 @clientes_bp.route('/listar-clientes', methods=['GET'])
 def listar_clientes():
-    conn = database_connection.open_connection()
-    cursor = conn.cursor()
-
-    SQL = """
-        SELECT nome_empresa, responsavel, cpf_cnpj, telefone, email,
-               cep, rua, numero, municipio, estado, observacoes, foto_logo, ativo,
-               id_cliente
-        FROM clientes
-        WHERE ativo = 1;
-    """
-    cursor.execute(SQL)
-    clientes = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
+    with db_cursor() as cursor:
+        cursor.execute("""
+            SELECT id, nome, email, telefone, endereco, logo_url, ativo
+            FROM clientes
+            WHERE ativo = 1
+            ORDER BY nome;
+        """)
+        clientes = cursor.fetchall()
     return jsonify(clientes)
 
 

@@ -50,9 +50,8 @@ def create_app(test_config=None):
         return None
 
     @app.errorhandler(MySQLError)
-    def database_unavailable(_error):
-        # Nunca devolve SQL, usuário, senha ou detalhes de conexão ao navegador.
-        app.logger.warning('Consulta MySQL indisponível; verificar configuração/schema local.')
+    def database_unavailable(error):
+        app.logger.warning('Consulta MySQL indisponível (%s): %s', type(error).__name__, error)
         return jsonify(success=False, msg='Banco de dados indisponível. Tente novamente.'), 503
 
     @app.after_request
