@@ -9,6 +9,9 @@ function Sidebar() {
     const [erroLogout, setErroLogout] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
+
+    // TODO(BACK): garantir que o endpoint de sessão retorne
+    // os dados do usuário autenticado, incluindo nome e nivel_acesso.
     const { colaborador, sair } = useAuth();
     const menuAberto = menuAbertoEm === location.pathname;
     const administrador = colaborador?.nivel_acesso === "administrador";
@@ -131,25 +134,25 @@ function Sidebar() {
                     </button>
 
                     {administrador && <>
-                    <button type="button" onClick={() => irPara("/equipe")}>
-                        <span className="menu-link-left">
-                            <span className="material-icons">badge</span>
-                            Colaboradores
-                        </span>
-                    </button>
+                        <button type="button" onClick={() => irPara("/equipe")}>
+                            <span className="menu-link-left">
+                                <span className="material-icons">badge</span>
+                                Colaboradores
+                            </span>
+                        </button>
 
-                    <button type="button" onClick={() => irPara("/relatorio")}>
-                        <span className="menu-link-left">
-                            <span className="material-icons">bar_chart</span>
-                            Relatorios
-                        </span>
-                    </button>
-                     <button type="button" onClick={() => irPara("/painel-adm")}>
-                        <span className="menu-link-left">
-                            <span className="material-icons">security</span>
-                            Painel Adm
-                        </span>
-                    </button>
+                        <button type="button" onClick={() => irPara("/relatorio")}>
+                            <span className="menu-link-left">
+                                <span className="material-icons">bar_chart</span>
+                                Relatorios
+                            </span>
+                        </button>
+                        <button type="button" onClick={() => irPara("/painel-adm")}>
+                            <span className="menu-link-left">
+                                <span className="material-icons">security</span>
+                                Painel Adm
+                            </span>
+                        </button>
                     </>}
                 </nav>
 
@@ -167,17 +170,19 @@ function Sidebar() {
                         </summary>
 
                         <div className="user-menu">
-                            {administrador && <button
+
+                            <button
                                 type="button"
                                 className="user-option"
                                 onClick={() => irPara("/perfil")}
                             >
                                 <span className="material-icons">person</span>
                                 Perfil
-                            </button>}
+                            </button>
 
-                            <button 
-                                type="button" 
+
+                            <button
+                                type="button"
                                 className="logout-btn"
                                 disabled={saindo}
                                 onClick={handleLogout}>

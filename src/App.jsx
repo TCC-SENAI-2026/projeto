@@ -45,11 +45,12 @@ function App() {
         <Route path="/novo-pedido/produtos"   element={<Navigate to="/pedidos/novo/produtos" replace />} />
         <Route path="/novo-pedido/ficha"      element={<Navigate to="/pedidos/novo/ficha" replace />} />
         <Route path="/editar-estoque/:id"     element={<EditarEstoque />}/>
+        <Route path="/perfil" element={<Perfil />} />
       </Route>
       <Route element={<ProtectedRoute adminOnly />}>
         <Route path="/relatorio" element={<Relatorio />} />
         <Route path="/formUsuario" element={<FormUsuario />} />
-        <Route path="/perfil" element={<Perfil />} />
+    
         <Route path="/equipe" element={<Equipe />} />
         <Route path="/painel-adm" element={<PainelAdm />} />
       </Route>
