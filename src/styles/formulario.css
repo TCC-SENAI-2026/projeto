@@ -17,7 +17,7 @@
     width: 100%;
     max-width: 1280px;
 
-    margin: 32px auto;
+    margin: 0 auto 32px;
 
     background: #ffffff;
     border: 1px solid #e5e7eb;
@@ -414,4 +414,31 @@
     font-size: 14px;
     font-weight: 600;
     color: #334155;
+}
+
+.perfil-campos {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+}
+
+.perfil-rotulo {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.perfil-valor {
+    margin-top: 4px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #111827;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.perfil-leitura .avatar-upload {
+    cursor: default;
 }

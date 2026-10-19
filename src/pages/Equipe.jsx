@@ -7,6 +7,8 @@ import '../styles/padrao.css';
 
 const API_URL = "http://localhost:5000";
 
+// TODO (BACK): alinhar os valores de nivel_acesso com o schema
+// (o banco usa 'administrador' / 'colaborador'; aqui o front espera 'administrativo' / 'padrao').
 const NIVEIS = {
     administrativo: "Administrativo",
     padrao: "Padrão"
@@ -19,11 +21,14 @@ function Equipe() {
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
     const [busca, setBusca] = useState("");
+    const [filtroStatus, setFiltroStatus] = useState("Todos");
 
     useEffect(() => {
         async function carregarColaboradores() {
             try {
-                const { data } = await axios.get(`${API_URL}/listar-colaboradores`);
+                const { data } = await axios.get(`${API_URL}/listar-colaboradores`, {
+                    withCredentials: true, // envia o cookie de sessão
+                });
 
                 // Formato antigo do back (lista de valores, sem nome de campo): o Flask não foi reiniciado
                 if (!Array.isArray(data) || data.some((d) => Array.isArray(d))) {
@@ -32,8 +37,12 @@ function Equipe() {
                 }
 
                 setUsuarios(data);
-            } catch {
-                setErro("Não foi possível carregar os colaboradores. O servidor está rodando?");
+            } catch (e) {
+                if (e.response?.status === 401) {
+                    setErro("Sessão expirada ou usuário não logado. Faça login novamente.");
+                } else {
+                    setErro("Não foi possível carregar os colaboradores. O servidor está rodando?");
+                }
             } finally {
                 setCarregando(false);
             }
@@ -41,11 +50,22 @@ function Equipe() {
         carregarColaboradores();
     }, []);
 
+    // TODO (BACK): o filtro (busca e status) roda aqui no front sobre a lista completa.
+    // Para o filtro "Inativos" funcionar, /listar-colaboradores precisa retornar
+    // ativos E inativos.
     const termo = busca.trim().toLowerCase();
-    const filtrados = usuarios.filter((u) =>
-        !termo ||
-        [u.nome_completo, u.re, u.email].some((v) => v && v.toLowerCase().includes(termo))
-    );
+    const filtrados = usuarios.filter((u) => {
+        const bateBusca =
+            !termo ||
+            [u.nome_completo, u.re, u.email].some((v) => v && v.toLowerCase().includes(termo));
+
+        const bateStatus =
+            filtroStatus === "Todos" ||
+            (filtroStatus === "Ativos" && u.ativo) ||
+            (filtroStatus === "Inativos" && !u.ativo);
+
+        return bateBusca && bateStatus;
+    });
 
     return (
         <div className="equipe-container">
@@ -57,7 +77,7 @@ function Equipe() {
                     <div className="page-header">
                         <div className="page-title-row">
                             <h1 className="page-title">Colaboradores</h1>
-                            <span className="page-count">({usuarios.length})</span>
+                            <span className="page-count">({filtrados.length})</span>
                         </div>
                         <p className="page-subtitle">
                             Gerenciamento de membros da equipe
@@ -75,8 +95,14 @@ function Equipe() {
                             />
                         </div>
 
-                        <select className="btn btn-filter">
+                        <select
+                            className="btn btn-filter"
+                            value={filtroStatus}
+                            onChange={(e) => setFiltroStatus(e.target.value)}
+                        >
                             <option>Todos</option>
+                            <option>Ativos</option>
+                            <option>Inativos</option>
                         </select>
 
                         <button className="btn btn-add" onClick={() => navigate('/formUsuario')}>
@@ -119,7 +145,7 @@ function Equipe() {
                                                         ? erro
                                                         : usuarios.length === 0
                                                             ? "Nenhum usuário vinculado."
-                                                            : "Nenhum colaborador encontrado para essa busca."}
+                                                            : "Nenhum colaborador encontrado para esse filtro."}
                                             </div>
                                         </td>
                                     </tr>

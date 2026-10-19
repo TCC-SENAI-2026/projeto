@@ -727,6 +727,19 @@ body.imprimindo-modal {
     overflow-y: visible;
 }
 
+.fc-modal-rodape {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 18px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.fc-modal-rodape .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* ----- Impressão do modal: só as fichas ----- */
 @media print {
     body.imprimindo-modal {

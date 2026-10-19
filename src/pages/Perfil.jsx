@@ -4,8 +4,32 @@ import { useState } from "react";
 import '../styles/padrao.css';
 import '../styles/formulario.css';
 
+const NOTIF = { email: "E-mail", sistema: "Sistema", ambos: "Ambos" };
+
+function formatarData(v) {
+    if (!v) return "—";
+    const [ano, mes, dia] = v.split("-");
+    return `${dia}/${mes}/${ano}`;
+}
+
+function Campo({ rotulo, valor, cheio }) {
+    return (
+        <div className={`form-field${cheio ? " full" : ""}`}>
+            <span className="perfil-rotulo">{rotulo}</span>
+            <p className="perfil-valor">{valor || "—"}</p>
+        </div>
+    );
+}
+
 function Perfil() {
 
+    // TODO (BACK): informar o nivel_acesso do usuário logado (ex.: uma rota /meu-perfil que devolva
+    // nivel_acesso: 'administrador' | 'colaborador') e os dados do perfil para preencher o form.
+    // O front só esconde o botão de editar; o back precisa recusar a edição de quem não for administrador.
+    const ehAdmin = true; // temporário: troque para false para ver a tela do funcionário comum
+
+
+    const [editando, setEditando] = useState(false);
     const navigate = useNavigate();
     const [preview, setPreview] = useState(null);
 
@@ -15,6 +39,8 @@ function Perfil() {
         acesso: "", notif: "", senhaAtual: "", novaSenha: "",
         bio: "Responsável por aprovar pedidos..."
     });
+
+    const [original, setOriginal] = useState(form); // precisa vir depois do form
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -27,9 +53,28 @@ function Perfil() {
         setPreview(URL.createObjectURL(file));
     }
 
+    function iniciarEdicao() {
+        if (!ehAdmin) return;
+        setEditando(true);
+    }
+
+    function cancelarEdicao() {
+        setForm(original);   // descarta o que foi digitado
+        setPreview(null);
+        setEditando(false);
+    }
+
     function handleSubmit(e) {
         e.preventDefault();
+        if (!ehAdmin || !editando) return;
+
+        // TODO (BACK): enviar o form para a API de atualização do perfil
         console.log(form);
+
+        const salvo = { ...form, senhaAtual: "", novaSenha: "" };
+        setForm(salvo);
+        setOriginal(salvo);
+        setEditando(false);
         alert("Alterações salvas");
     }
 
@@ -51,139 +96,215 @@ function Perfil() {
                             </p>
                         </div>
 
-                        {/* FOTO */}
-                        <section className="form-section">
-                            <h2>Foto</h2>
-                            <p className="section-help">Imagem de exibição do seu perfil no sistema.</p>
+                        {editando ? (
 
-                            <div className="avatar-wrapper">
-                                <label className="avatar-upload" htmlFor="foto-input">
-                                    {preview ? (
-                                        <img src={preview} className="avatar-img" alt="Foto de perfil" />
-                                    ) : (
-                                        <div className="avatar-placeholder">
-                                            <span className="material-icons">person</span>
+                        <fieldset className="perfil-campos">
+
+                            {/* FOTO */}
+                            <section className="form-section">
+                                <h2>Foto</h2>
+                                <p className="section-help">Imagem de exibição do seu perfil no sistema.</p>
+
+                                <div className="avatar-wrapper">
+                                    <label className="avatar-upload" htmlFor="foto-input">
+                                        {preview ? (
+                                            <img src={preview} className="avatar-img" alt="Foto de perfil" />
+                                        ) : (
+                                            <div className="avatar-placeholder">
+                                                <span className="material-icons">person</span>
+                                            </div>
+                                        )}
+                                        {editando && <span className="avatar-hint">Clique para alterar</span>}
+                                    </label>
+                                    <input id="foto-input" type="file" accept="image/*" onChange={handleFoto} style={{ display: "none" }} />
+                                </div>
+                            </section>
+
+                            {/* DADOS PESSOAIS */}
+                            <section className="form-section">
+                                <h2>Dados Pessoais</h2>
+                                <p className="section-help">Suas informações de identificação e contato.</p>
+                                <div className="form-grid">
+
+                                    <div className="form-field full">
+                                        <label htmlFor="nome">Nome Completo</label>
+                                        <input id="nome" name="nome" placeholder="Ex: João Silva" value={form.nome} onChange={handleChange} />
+                                    </div>
+
+                                    <div className="form-field">
+                                        <label htmlFor="email">E-mail</label>
+                                        <input id="email" name="email" placeholder="seu@email.com" value={form.email} onChange={handleChange} />
+                                    </div>
+
+                                    <div className="form-field">
+                                        <label htmlFor="telefone">Telefone</label>
+                                        <input id="telefone" name="telefone" placeholder="(11) 99999-9999" value={form.telefone} onChange={handleChange} />
+                                    </div>
+
+                                    <div className="form-field">
+                                        <label htmlFor="nascimento">Data de Nascimento</label>
+                                        <input id="nascimento" type="date" name="nascimento" value={form.nascimento} onChange={handleChange} />
+                                    </div>
+
+                                    <div className="form-field">
+                                        <label htmlFor="cidade">Cidade</label>
+                                        <input id="cidade" name="cidade" placeholder="Ex: São Paulo" value={form.cidade} onChange={handleChange} />
+                                    </div>
+
+                                </div>
+                            </section>
+
+                            {/* PROFISSIONAL */}
+                            <section className="form-section">
+                                <h2>Profissional</h2>
+                                <p className="section-help">Seu cargo, setor e nível de acesso ao sistema.</p>
+                                <div className="form-grid">
+
+                                    <div className="form-field">
+                                        <label htmlFor="cargo">Cargo</label>
+                                        <input id="cargo" name="cargo" placeholder="Ex: Gerente de Produção" value={form.cargo} onChange={handleChange} />
+                                    </div>
+
+                                    <div className="form-field">
+                                        <label htmlFor="setor">Setor</label>
+                                        <select id="setor" name="setor" value={form.setor} onChange={handleChange}>
+                                            <option value="">Selecione</option>
+                                            <option value="Administração">Administração</option>
+                                            <option value="Produção">Produção</option>
+                                            <option value="Comercial">Comercial</option>
+                                            <option value="Estoque">Estoque</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="form-field">
+                                        <label htmlFor="admissao">Data de Admissão</label>
+                                        <input id="admissao" type="date" name="admissao" value={form.admissao} onChange={handleChange} />
+                                    </div>
+
+                                    <div className="form-field">
+                                        <label htmlFor="acesso">Nível de Acesso</label>
+                                        <select id="acesso" name="acesso" value={form.acesso} onChange={handleChange}>
+                                            <option value="">Selecione</option>
+                                            <option value="Administrador">Administrador</option>
+                                            <option value="Gestor">Gestor</option>
+                                            <option value="Operacional">Operacional</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </section>
+
+                            {/* SEGURANÇA */}
+                            <section className="form-section">
+                                <h2>Segurança</h2>
+                                <p className="section-help">Notificações, senha e observações da conta.</p>
+                                <div className="form-grid">
+
+                                    <div className="form-field full">
+                                        <p className="form-label-like">Notificações</p>
+                                        <div className="status-toggle">
+                                            <input type="radio" id="notif_email" name="notif" value="email" checked={form.notif === "email"} onChange={handleChange} />
+                                            <label htmlFor="notif_email">E-mail</label>
+                                            <input type="radio" id="notif_sistema" name="notif" value="sistema" checked={form.notif === "sistema"} onChange={handleChange} />
+                                            <label htmlFor="notif_sistema">Sistema</label>
+                                            <input type="radio" id="notif_ambos" name="notif" value="ambos" checked={form.notif === "ambos"} onChange={handleChange} />
+                                            <label htmlFor="notif_ambos">Ambos</label>
                                         </div>
-                                    )}
-                                    <span className="avatar-hint">Clique para alterar</span>
-                                </label>
-                                <input id="foto-input" type="file" accept="image/*" onChange={handleFoto} style={{ display: "none" }} />
-                            </div>
-                        </section>
+                                    </div>
 
-                        {/* DADOS PESSOAIS */}
-                        <section className="form-section">
-                            <h2>Dados Pessoais</h2>
-                            <p className="section-help">Suas informações de identificação e contato.</p>
-                            <div className="form-grid">
+                                    <div className="form-field">
+                                        <label htmlFor="senhaAtual">Senha Atual</label>
+                                        <input id="senhaAtual" type="password" name="senhaAtual" placeholder="••••••••" onChange={handleChange} />
+                                    </div>
 
-                                <div className="form-field full">
-                                    <label htmlFor="nome">Nome Completo</label>
-                                    <input id="nome" name="nome" placeholder="Ex: João Silva" value={form.nome} onChange={handleChange} />
+                                    <div className="form-field">
+                                        <label htmlFor="novaSenha">Nova Senha</label>
+                                        <input id="novaSenha" type="password" name="novaSenha" placeholder="••••••••" onChange={handleChange} />
+                                    </div>
+
+                                    <div className="form-field full">
+                                        <label htmlFor="bio">Observações</label>
+                                        <textarea id="bio" name="bio" value={form.bio} onChange={handleChange} />
+                                    </div>
+
                                 </div>
+                            </section>
+                        </fieldset>
 
-                                <div className="form-field">
-                                    <label htmlFor="email">E-mail</label>
-                                    <input id="email" name="email" placeholder="seu@email.com" value={form.email} onChange={handleChange} />
-                                </div>
+                        ) : (
 
-                                <div className="form-field">
-                                    <label htmlFor="telefone">Telefone</label>
-                                    <input id="telefone" name="telefone" placeholder="(11) 99999-9999" value={form.telefone} onChange={handleChange} />
-                                </div>
+                        <div className="perfil-leitura">
 
-                                <div className="form-field">
-                                    <label htmlFor="nascimento">Data de Nascimento</label>
-                                    <input id="nascimento" type="date" name="nascimento" value={form.nascimento} onChange={handleChange} />
-                                </div>
-
-                                <div className="form-field">
-                                    <label htmlFor="cidade">Cidade</label>
-                                    <input id="cidade" name="cidade" placeholder="Ex: São Paulo" value={form.cidade} onChange={handleChange} />
-                                </div>
-
-                            </div>
-                        </section>
-
-                        {/* PROFISSIONAL */}
-                        <section className="form-section">
-                            <h2>Profissional</h2>
-                            <p className="section-help">Seu cargo, setor e nível de acesso ao sistema.</p>
-                            <div className="form-grid">
-
-                                <div className="form-field">
-                                    <label htmlFor="cargo">Cargo</label>
-                                    <input id="cargo" name="cargo" placeholder="Ex: Gerente de Produção" value={form.cargo} onChange={handleChange} />
-                                </div>
-
-                                <div className="form-field">
-                                    <label htmlFor="setor">Setor</label>
-                                    <select id="setor" name="setor" value={form.setor} onChange={handleChange}>
-                                        <option value="">Selecione</option>
-                                        <option value="Administração">Administração</option>
-                                        <option value="Produção">Produção</option>
-                                        <option value="Comercial">Comercial</option>
-                                        <option value="Estoque">Estoque</option>
-                                    </select>
-                                </div>
-
-                                <div className="form-field">
-                                    <label htmlFor="admissao">Data de Admissão</label>
-                                    <input id="admissao" type="date" name="admissao" value={form.admissao} onChange={handleChange} />
-                                </div>
-
-                                <div className="form-field">
-                                    <label htmlFor="acesso">Nível de Acesso</label>
-                                    <select id="acesso" name="acesso" value={form.acesso} onChange={handleChange}>
-                                        <option value="">Selecione</option>
-                                        <option value="Administrador">Administrador</option>
-                                        <option value="Gestor">Gestor</option>
-                                        <option value="Operacional">Operacional</option>
-                                    </select>
-                                </div>
-
-                            </div>
-                        </section>
-
-                        {/* SEGURANÇA */}
-                        <section className="form-section">
-                            <h2>Segurança</h2>
-                            <p className="section-help">Notificações, senha e observações da conta.</p>
-                            <div className="form-grid">
-
-                                <div className="form-field full">
-                                    <p className="form-label-like">Notificações</p>
-                                    <div className="status-toggle">
-                                        <input type="radio" id="notif_email" name="notif" value="email" checked={form.notif === "email"} onChange={handleChange} />
-                                        <label htmlFor="notif_email">E-mail</label>
-                                        <input type="radio" id="notif_sistema" name="notif" value="sistema" checked={form.notif === "sistema"} onChange={handleChange} />
-                                        <label htmlFor="notif_sistema">Sistema</label>
-                                        <input type="radio" id="notif_ambos" name="notif" value="ambos" checked={form.notif === "ambos"} onChange={handleChange} />
-                                        <label htmlFor="notif_ambos">Ambos</label>
+                            <section className="form-section">
+                                <h2>Foto</h2>
+                                <div className="avatar-wrapper">
+                                    <div className="avatar-upload">
+                                        {preview ? (
+                                            <img src={preview} className="avatar-img" alt="Foto de perfil" />
+                                        ) : (
+                                            <div className="avatar-placeholder">
+                                                <span className="material-icons">person</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
+                            </section>
 
-                                <div className="form-field">
-                                    <label htmlFor="senhaAtual">Senha Atual</label>
-                                    <input id="senhaAtual" type="password" name="senhaAtual" placeholder="••••••••" onChange={handleChange} />
+                            <section className="form-section">
+                                <h2>Dados Pessoais</h2>
+                                <div className="form-grid">
+                                    <Campo rotulo="Nome completo" valor={form.nome} cheio />
+                                    <Campo rotulo="E-mail" valor={form.email} />
+                                    <Campo rotulo="Telefone" valor={form.telefone} />
+                                    <Campo rotulo="Data de nascimento" valor={formatarData(form.nascimento)} />
+                                    <Campo rotulo="Cidade" valor={form.cidade} />
                                 </div>
+                            </section>
 
-                                <div className="form-field">
-                                    <label htmlFor="novaSenha">Nova Senha</label>
-                                    <input id="novaSenha" type="password" name="novaSenha" placeholder="••••••••" onChange={handleChange} />
+                            <section className="form-section">
+                                <h2>Profissional</h2>
+                                <div className="form-grid">
+                                    <Campo rotulo="Cargo" valor={form.cargo} />
+                                    <Campo rotulo="Setor" valor={form.setor} />
+                                    <Campo rotulo="Data de admissão" valor={formatarData(form.admissao)} />
+                                    <Campo rotulo="Nível de acesso" valor={form.acesso} />
                                 </div>
+                            </section>
 
-                                <div className="form-field full">
-                                    <label htmlFor="bio">Observações</label>
-                                    <textarea id="bio" name="bio" value={form.bio} onChange={handleChange} />
+                            <section className="form-section">
+                                <h2>Preferências</h2>
+                                <div className="form-grid">
+                                    <Campo rotulo="Notificações" valor={NOTIF[form.notif]} cheio />
+                                    <Campo rotulo="Observações" valor={form.bio} cheio />
                                 </div>
+                            </section>
 
-                            </div>
-                        </section>
+                        </div>
+
+                        )}
 
                         <div className="form-actions">
-                            <button type="button" className="btn-page-sec" onClick={() => navigate("/")}>Cancelar</button>
-                            <button type="submit" className="btn btn-add">Salvar</button>
+                            {editando ? (
+                                <>
+                                    <button key="cancelar" type="button" className="btn-page-sec" onClick={cancelarEdicao}>
+                                        Cancelar
+                                    </button>
+                                    <button key="salvar" type="submit" className="btn btn-add">
+                                        Salvar
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <button key="voltar" type="button" className="btn-page-sec" onClick={() => navigate("/")}>
+                                        Voltar
+                                    </button>
+                                    {ehAdmin && (
+                                        <button key="editar" type="button" className="btn btn-add" onClick={iniciarEdicao}>
+                                            Editar perfil
+                                        </button>
+                                    )}
+                                </>
+                            )}
                         </div>
 
                     </form>

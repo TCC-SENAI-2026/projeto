@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import FichaModal from "../components/FichaModal";
 import EditarPedidoModal from "../components/EditarPedidoModal";
-import { listarPedidos, buscarPedido } from "../services/pedidosService";
+import { listarPedidos, buscarPedido, atualizarStatus } from "../services/pedidosService";
 import AvisoTopo from "../components/AvisoTopo";
 import useSolicitacoesPedido from "../hooks/useSolicitacoesPedido";
 import "../styles/solicitacoes.css";
@@ -22,6 +22,9 @@ function Pedidos() {
     const [pedidos, setPedidos] = useState([]);
     const [fichaAberta, setFichaAberta] = useState(null);
     const [pedidoEditando, setPedidoEditando] = useState(null);
+    const [busca, setBusca] = useState("");
+    const [ordemCliente, setOrdemCliente] = useState("asc"); // "asc" ou "desc"
+    const [clientesAbertos, setClientesAbertos] = useState([]);
     const emHistorico = tab === "historico";
     const navigate = useNavigate();
     const { mensagem, resultados, temPendente, solicitar, fecharResultado } =
@@ -50,6 +53,27 @@ function Pedidos() {
         // Enquanto houver solicitação pendente, o botão fica bloqueado (checagem extra de segurança)
         if (temPendente(id)) return;
         setPedidoEditando(await buscarPedido(id));
+    }
+
+    async function mudarStatus(id, novoStatus) {
+        // Mesmo bloqueio do editar e do excluir: não muda enquanto há solicitação pendente
+        if (temPendente(id)) return;
+
+        if (
+            novoStatus === "finalizado" &&
+            !window.confirm(`Finalizar o pedido #${id}? Ele irá para o histórico.`)
+        ) {
+            return;
+        }
+
+        try {
+            // TODO(BACK): PATCH /api/pedidos/:id com { status } (via atualizarStatus no service)
+            await atualizarStatus(id, novoStatus);
+            setPedidos(await listarPedidos());
+            setFichaAberta(null); // fecha o modal, e a lista já mostra o novo status
+        } catch (erro) {
+            alert(erro.message || "Não foi possível atualizar o pedido.");
+        }
     }
 
     // O funcionário não salva direto: envia uma solicitação para o adm aprovar.
@@ -91,13 +115,38 @@ function Pedidos() {
         setTab(valor === "finalizado" ? "historico" : "recentes");
     }
 
-    // Filtra pela aba e pelo status escolhido no select
+    const nomeCliente = (p) => p.ficha?.cliente || "Sem cliente";
+    const termo = busca.trim().toLowerCase().replace("#", "");
+
     const visiveis = pedidos.filter((p) => {
-        const base = p.status;
-        const naAba = tab === "recentes" ? base !== "finalizado" : base === "finalizado";
-        const noFiltro = !filtro || base === filtro;
-        return naAba && noFiltro;
+        const naAba = tab === "recentes" ? p.status !== "finalizado" : p.status === "finalizado";
+        const noFiltro = !filtro || p.status === filtro;
+        const naBusca =
+            !termo ||
+            String(p.id).includes(termo) ||
+            nomeCliente(p).toLowerCase().includes(termo);
+        return naAba && noFiltro && naBusca;
     });
+
+    // No histórico os pedidos ficam agrupados por cliente, em ordem alfabética
+    if (emHistorico) {
+        visiveis.sort(
+            (a, b) =>
+                nomeCliente(a).localeCompare(nomeCliente(b), "pt-BR") *
+                (ordemCliente === "asc" ? 1 : -1)
+        );
+    }
+
+    const totalPorCliente = {};
+    visiveis.forEach((p) => {
+        totalPorCliente[nomeCliente(p)] = (totalPorCliente[nomeCliente(p)] || 0) + 1;
+    });
+
+    function alternarCliente(nome) {
+        setClientesAbertos((atual) =>
+            atual.includes(nome) ? atual.filter((n) => n !== nome) : [...atual, nome]
+        );
+    }
 
     // Contagem de cada aba (usada no título)
     const emAberto = pedidos.filter(
@@ -105,6 +154,8 @@ function Pedidos() {
     ).length;
 
     const finalizados = pedidos.length - emAberto;
+
+
 
     return (
         <>
@@ -133,8 +184,12 @@ function Pedidos() {
                         <div className="search-box">
                             <span className="material-icons search-icon">search</span>
 
-                            {/* TODO(BACK): o input ainda não filtra nada. Ligar a um state (filtro no front) ou usar GET /api/pedidos?busca= */}
-                            <input className="search" placeholder="Pesquisar pedido" />
+                            <input
+                                className="search"
+                                placeholder="Pesquisar pedido ou cliente"
+                                value={busca}
+                                onChange={(e) => setBusca(e.target.value)}
+                            />
                         </div>
 
                         {emHistorico ? (
@@ -153,17 +208,30 @@ function Pedidos() {
                             </button>
                         )}
 
-                        <select
-                            className="btn btn-filter"
-                            value={filtro}
-                            onChange={mudarFiltro}
-                        >
-                            <option value="">Todos os pedidos</option>
-                            <option value="pendente">Pendentes</option>
-                            <option value="finalizado">Finalizados</option>
-                            <option value="producao">Em producao</option>
-                        </select>
+                        {!emHistorico && (
+                            <select
+                                className="btn btn-filter"
+                                value={filtro}
+                                onChange={mudarFiltro}
+                            >
+                                <option value="">Todos os pedidos</option>
+                                <option value="pendente">Pendentes</option>
+                                <option value="finalizado">Finalizados</option>
+                                <option value="producao">Em producao</option>
+                            </select>
+                        )}
 
+                        {emHistorico && (
+                            <button
+                                type="button"
+                                className="btn-historico"
+                                onClick={() => setOrdemCliente((o) => (o === "asc" ? "desc" : "asc"))}
+                            >
+                                <span className="material-icons">sort_by_alpha</span>
+                                Cliente {ordemCliente === "asc" ? "A–Z" : "Z–A"}
+                            </button>
+                        )}
+                        
                         <button className="btn btn-add" type="button"
                             onClick={() => navigate("/pedidos/novo")}>
                             + Pedido
@@ -188,66 +256,108 @@ function Pedidos() {
                             </p>
                         )}
 
-                        {visiveis.map((p) => {
+                        {visiveis.map((p, i) => {
                             const st = infoStatus(p);
                             const prio = infoPrioridade(p);
                             const aguardando = temPendente(p.id);
 
+                            const grupo = nomeCliente(p);
+                            const primeiroDoGrupo = i === 0 || nomeCliente(visiveis[i - 1]) !== grupo;
+                            // com busca ativa, tudo fica aberto para não esconder resultado
+                            const recolhido = emHistorico && !termo && !clientesAbertos.includes(grupo);
+
                             return (
-                                <div
-                                    className="product pedido-card"
-                                    key={p.id}
-                                    onClick={() => abrirPedido(p.id)}
-                                >
-                                    <div className="produto">
-                                        <div className="img"></div>
-                                        <div className="pedido-main">
-                                            <span className="mobile-field-label">Pedido</span>
-                                            <p>#{p.id}
-                                                {prio && <span className={`prio-selo ${prio.classe}`}>{prio.texto}</span>}
-                                            </p>
+                                <Fragment key={p.id}>
+                                    {emHistorico && primeiroDoGrupo && (
+                                        <button
+                                            type="button"
+                                            className="grupo-cliente"
+                                            onClick={() => alternarCliente(grupo)}
+                                        >
+                                            <span className="material-icons">
+                                                {recolhido ? "chevron_right" : "expand_more"}
+                                            </span>
+                                            {grupo}
+                                            <span>({totalPorCliente[grupo]})</span>
+                                        </button>
+                                    )}
 
+                                    {!recolhido && (
+                                        <div
+                                            className="product pedido-card"
+                                            onClick={() => abrirPedido(p.id)}
+                                        >
+                                            <div className="produto">
+                                                <div className="img"></div>
+                                                <div className="pedido-main">
+                                                    <span className="mobile-field-label">Pedido</span>
+                                                    <p>#{p.id}
+                                                        {prio && <span className={`prio-selo ${prio.classe}`}>{prio.texto}</span>}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="empresa info-block">
+                                                <span className="mobile-field-label">Empresa</span>
+                                                <p>{p.ficha?.cliente || "—"}</p>
+                                            </div>
+
+                                            <div className="status-col info-block">
+                                                <span className="mobile-field-label">Status</span>
+                                                <span className={`status ${st.classe}`}>{st.texto}</span>
+                                            </div>
+
+                                            <div className="actions">
+                                                <span className="mobile-field-label">Acoes</span>
+
+                                                {emHistorico ? (
+                                                    <button
+                                                        className="action-btn"
+                                                        title="Ver ficha técnica"
+                                                        aria-label="Ver ficha técnica"
+                                                        onClick={(e) => { e.stopPropagation(); abrirPedido(p.id); }}
+                                                    >
+                                                        <span className="material-icons">visibility</span>
+                                                    </button>
+                                                ) : (
+                                                    <>
+                                                        {p.status === "pendente" && (
+                                                            <button
+                                                                className="action-btn iniciar-btn"
+                                                                disabled={aguardando}
+                                                                title={aguardando ? "Aguardando aprovação do administrador" : "Iniciar pedido"}
+                                                                aria-label="Iniciar pedido"
+                                                                onClick={(e) => { e.stopPropagation(); mudarStatus(p.id, "producao"); }}
+                                                            >
+                                                                <span className="material-icons">play_arrow</span>
+                                                            </button>
+                                                        )}
+
+                                                        <button
+                                                            className="action-btn edit-btn"
+                                                            disabled={aguardando}
+                                                            title={aguardando ? "Aguardando aprovação do administrador" : "Editar pedido"}
+                                                            aria-label={aguardando ? "Edição bloqueada: aguardando aprovação do administrador" : "Editar pedido"}
+                                                            onClick={(e) => { e.stopPropagation(); abrirEdicao(p.id); }}
+                                                        >
+                                                            <span className="material-icons">edit</span>
+                                                        </button>
+
+                                                        <button
+                                                            className="action-btn delete-btn"
+                                                            disabled={aguardando}
+                                                            title={aguardando ? "Aguardando aprovação do administrador" : "Excluir pedido"}
+                                                            aria-label={aguardando ? "Exclusão bloqueada: aguardando aprovação do administrador" : "Excluir pedido"}
+                                                            onClick={(e) => { e.stopPropagation(); pedirExclusao(p); }}
+                                                        >
+                                                            <span className="material-icons">delete</span>
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div className="empresa info-block">
-                                        <span className="mobile-field-label">Empresa</span>
-                                        <p>{p.ficha?.cliente || "—"}</p>
-                                    </div>
-
-                                    <div className="status-col info-block">
-                                        <span className="mobile-field-label">Status</span>
-                                        <span className={`status ${st.classe}`}>{st.texto}</span>
-                                    </div>
-
-                                    <div className="actions">
-                                        <span className="mobile-field-label">Acoes</span>
-
-                                        {/* Bloqueado enquanto houver solicitação pendente de aprovação */}
-                                        <button
-                                            className="action-btn edit-btn"
-                                            disabled={aguardando}
-                                            title={aguardando ? "Aguardando aprovação do administrador" : "Editar pedido"}
-                                            aria-label={aguardando ? "Edição bloqueada: aguardando aprovação do administrador" : "Editar pedido"}
-                                            onClick={(e) => { e.stopPropagation(); abrirEdicao(p.id); }}
-                                        >
-                                            <span className="material-icons">edit</span>
-                                        </button>
-
-                                        <button
-                                            className="action-btn delete-btn"
-                                            disabled={aguardando}
-                                            title={aguardando ? "Aguardando aprovação do administrador" : "Excluir pedido"}
-                                            aria-label={aguardando ? "Exclusão bloqueada: aguardando aprovação do administrador" : "Excluir pedido"}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                pedirExclusao(p);
-                                            }}
-                                        >
-                                            <span className="material-icons">delete</span>
-                                        </button>
-                                    </div>
-                                </div>
+                                    )}
+                                </Fragment>
                             );
                         })}
                     </div>
@@ -255,7 +365,13 @@ function Pedidos() {
             </div>
 
             {fichaAberta && (
-                <FichaModal ficha={fichaAberta} onFechar={fecharFicha} />
+                <FichaModal
+                    ficha={fichaAberta}
+                    onFechar={fecharFicha}
+                    bloqueado={temPendente(fichaAberta.id)}
+                    onIniciar={() => mudarStatus(fichaAberta.id, "producao")}
+                    onFinalizar={() => mudarStatus(fichaAberta.id, "finalizado")}
+                />
             )}
 
             {pedidoEditando && (

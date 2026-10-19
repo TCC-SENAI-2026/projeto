@@ -11,9 +11,17 @@ function Clientes() {
     const [modalAberto, setModalAberto] = useState(false);
     const [clienteSelecionado, setClienteSelecionado] = useState(null);
     const [clientes, setClientes] = useState([]);
+    const [busca, setBusca] = useState('');
+    const [filtroStatus, setFiltroStatus] = useState('Todos');
 
     // Busca os clientes do banco ao carregar a página
     useEffect(() => {
+        // TODO (BACK): /listar-clientes precisa
+        // 1) retornar ativos E inativos (hoje tem WHERE ativo = 1), senão o filtro "Inativos" fica vazio;
+        // 2) incluir o id do cliente (necessário para /editar-cliente/<id>);
+        // 3) seguir a ordem de colunas que o front lê: 0 nome, 1 responsavel, 2 cpf_cnpj,
+        //    3 telefone, 4 email, 5 cep, 6 rua, 7 numero, 8 municipio, 9 estado,
+        //    10 observacoes, 11 foto_logo, 12 ativo (ou retornar objetos).
         fetch('http://localhost:5000/listar-clientes', {
             credentials: 'include', // envia o cookie de sessão, se o back usar login por sessão
         })
@@ -32,10 +40,28 @@ function Clientes() {
             });
     }, [])
 
+    // TODO (BACK): incluir o id do cliente na resposta de /listar-clientes,
+    // necessário para chamar /editar-cliente/<id_cliente>.
     function abrirCliente(cliente) {
         setClienteSelecionado(cliente)
         setModalAberto(true)
     }
+
+    // TODO (BACK): o filtro de busca e de status roda aqui no front, sobre a lista
+    // completa. Se a quantidade de clientes crescer, mover para o back
+    // (ex.: ?busca=...&status=...) com paginação.
+    const clientesFiltrados = clientes.filter(cliente => {
+        const termo = busca.trim().toLowerCase();
+        const nome = String(cliente[0] ?? '').toLowerCase();
+
+        const bateBusca = nome.includes(termo);
+        const bateStatus =
+            filtroStatus === 'Todos' ||
+            (filtroStatus === 'Ativos' && cliente[12]) ||
+            (filtroStatus === 'Inativos' && !cliente[12]);
+
+        return bateBusca && bateStatus;
+    });
 
     return (
         <>
@@ -48,7 +74,7 @@ function Clientes() {
                     <div className="page-header">
                         <div className="page-title-row">
                             <h1 className="page-title">Clientes Cadastrados</h1>
-                            <span className="page-count">({clientes.length})</span>
+                            <span className="page-count">({clientesFiltrados.length})</span>
                         </div>
                         <p className="page-subtitle">
                             Gerenciamento de clientes cadastrados no sistema
@@ -58,11 +84,22 @@ function Clientes() {
                     <div className="top-right">
                         <div className="search-box">
                             <span className="material-icons search-icon">search</span>
-                            <input className="search" placeholder="Pesquisar cliente" />
+                            <input
+                                className="search"
+                                placeholder="Pesquisar cliente"
+                                value={busca}
+                                onChange={e => setBusca(e.target.value)}
+                            />
                         </div>
 
-                        <select className="btn btn-filter">
+                        <select
+                            className="btn btn-filter"
+                            value={filtroStatus}
+                            onChange={e => setFiltroStatus(e.target.value)}
+                        >
                             <option>Todos</option>
+                            <option>Ativos</option>
+                            <option>Inativos</option>
                         </select>
 
                         <button className="btn btn-add" onClick={() => navigate('/formCliente')}>
@@ -74,7 +111,7 @@ function Clientes() {
                 <div className="list">
                     <div className="clients-grid">
 
-                        {clientes.map((cliente, index) => (
+                        {clientesFiltrados.map((cliente, index) => (
                             <div
                                 key={index}
                                 className="client-card"

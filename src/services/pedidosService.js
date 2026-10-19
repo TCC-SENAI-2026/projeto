@@ -22,6 +22,30 @@ function ler() {
     }
 }
 
+// Os status do banco têm outros nomes. A tradução fica só aqui, então as telas
+// continuam usando "pendente", "producao" e "finalizado".
+const STATUS_PARA_API = {
+    pendente: "pendente",
+    producao: "em_producao",
+    finalizado: "concluido",
+};
+
+const STATUS_PARA_FRONT = Object.fromEntries(
+    Object.entries(STATUS_PARA_API).map(([front, api]) => [api, front])
+);
+
+const statusParaApi = (s) => STATUS_PARA_API[s] ?? s;
+const statusParaFront = (s) => STATUS_PARA_FRONT[s] ?? s;
+
+// Converte um pedido que veio da API para o formato que as telas esperam
+function doApi(p) {
+    return {
+        ...p,
+        status: statusParaFront(p.status),
+        finalizadoEm: p.data_conclusao ?? null, // coluna que já existe no banco
+    };
+}
+
 
 function gravar(lista) {
     try {
@@ -124,17 +148,55 @@ export async function atualizarPedido(id, dados) {
     return lista[i];
 }
 
-// TODO(BACK): PATCH /api/pedidos/:id  -> mudar só o status (ainda não existe no front)
+// Só estas mudanças são permitidas: pendente → producao → finalizado
+const TRANSICOES = {
+    pendente: ["producao"],
+    producao: ["finalizado"],
+};
+
+// TODO(BACK): PATCH /api/pedidos/:id  body: { status }
+// O back deve validar a transição e, ao finalizar, preencher data_conclusao.
+// Atenção: no banco os status são em_producao e concluido (no front: producao e finalizado).
+export async function atualizarStatus(id, novoStatus) {
+    // const res = await fetch(`${API}/pedidos/${id}`, {
+    //     method: "PATCH",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ status: novoStatus }),
+    // });
+    // if (!res.ok) throw new Error("Não foi possível atualizar o pedido.");
+    // return res.json();
+
+    const lista = ler();
+    const i = lista.findIndex((p) => String(p.id) === String(id));
+    if (i === -1) throw new Error("Pedido não encontrado.");
+
+    if (!TRANSICOES[lista[i].status]?.includes(novoStatus)) {
+        throw new Error("Esta mudança de status não é permitida.");
+    }
+
+    const agora = new Date().toISOString();
+    lista[i] = {
+        ...lista[i],
+        status: novoStatus,
+        ...(novoStatus === "producao" && { iniciadoEm: agora }),
+        ...(novoStatus === "finalizado" && { finalizadoEm: agora }),
+    };
+
+    gravar(lista); // lança erro se o localStorage estiver cheio
+    return lista[i];
+}
 /* ----------------------------------------------------------------------
    COMO É UM PEDIDO (para consulta)
 
    {  
-     id, status, criadoEm,
+      id, status, criadoEm, iniciadoEm, finalizadoEm,
      ficha:  { cliente, contato, email, dataPedido, entrega,
                prioridade, local, personalizacao, observacao, referencia },
      pedido: { arte, produtos: [ ... ] }
    }
 
-   status: "pendente", "producao" ou "finalizado" (minúsculas, sem acento)
+   status: "pendente", "producao" ou "finalizado" (no banco: pendente, em_producao, concluido)
    criadoEm: data no formato 2026-10-13T12:00:00.000Z
+   iniciadoEm: só existe no modo demonstração (o banco não guarda o início)
+   finalizadoEm: no banco vem de data_conclusao
    ---------------------------------------------------------------------- */

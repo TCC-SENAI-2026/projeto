@@ -31,7 +31,7 @@ function situacaoPrazo(texto, status) {
     return "";
 }
 
-function FichaModal({ ficha, onFechar }) {
+function FichaModal({ ficha, onFechar, onIniciar, onFinalizar, bloqueado = false }) {
     const st = infoStatus(ficha);
     const prio = infoPrioridade(ficha);
     const dados = ficha.ficha || {};
@@ -118,6 +118,43 @@ function FichaModal({ ficha, onFechar }) {
 
                     <FichaConteudo pedido={ficha.pedido} ficha={ficha.ficha} />
                 </div>
+
+                {/* RODAPÉ: ação conforme o status. Não sai na impressão. */}
+                {(ficha.status === "pendente" || ficha.status === "producao") && (
+                    <div className="fc-modal-rodape no-print">
+                        <button type="button" className="btn-page-sec" onClick={onFechar}>
+                            Fechar
+                        </button>
+
+                        {ficha.status === "pendente" && (
+                            <button
+                                type="button"
+                                className="btn btn-add"
+                                disabled={bloqueado}
+                                onClick={onIniciar}
+                            >
+                                <span className="material-icons" style={{ fontSize: 18, marginRight: 6 }}>
+                                    play_arrow
+                                </span>
+                                Iniciar pedido
+                            </button>
+                        )}
+
+                        {ficha.status === "producao" && (
+                            <button
+                                type="button"
+                                className="btn btn-add"
+                                disabled={bloqueado}
+                                onClick={onFinalizar}
+                            >
+                                <span className="material-icons" style={{ fontSize: 18, marginRight: 6 }}>
+                                    check_circle
+                                </span>
+                                Finalizar pedido
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
         </div>,
         document.body

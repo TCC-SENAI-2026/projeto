@@ -6,6 +6,15 @@ import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
 import "../styles/Relatorio.css";
 
+// TODO (BACK): criar rota (ex.: GET /relatorio-mensal) que devolva, para o mês atual:
+// - producao_total (definir com o grupo: soma de pedido_item_tamanhos.quantidade dos pedidos do mês);
+// - pedidos_concluidos (status 'concluido' e data_conclusao no mês);
+// - pedidos_pendentes (status 'pendente') e pedidos_em_producao (status 'em_producao');
+// - estoque_baixo (estoque ativo com quantidade_atual <= estoque_minimo);
+// - producao_por_mes: lista { mes, total } dos meses do ano.
+// Ignorar pedidos com excluido_em preenchido.
+// Hoje os cards, os dois gráficos e o PDF usam valores fixos (Jan–Jun, 245, 38, 12, 4...).
+
 function Relatorio() {
     const producaoRef = useRef(null);
     const statusRef = useRef(null);
@@ -120,6 +129,9 @@ function Relatorio() {
         doc.save("relatorio-producao.pdf");
     }
 
+    const mesAtual = new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
+    .replace(/^./, (c) => c.toUpperCase());
+
     return (
         <>
             <Sidebar />
@@ -131,7 +143,7 @@ function Relatorio() {
                         <div className="page-title-row">
                             <h1 className="page-title">Relatórios</h1>
                         </div>
-                        <p className="page-subtitle">Gerencie todos os Relatórios</p>
+                        <p className="page-subtitle">Estatísticas de {mesAtual}</p>
                     </div>
 
                     <button className="btn btn-add" onClick={downloadPDF}>
