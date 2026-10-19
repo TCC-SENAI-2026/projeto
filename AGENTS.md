@@ -83,3 +83,14 @@ Utilize linguagem simples e analogias curtas quando necessárias.
 Evite respostas extensas, refatorações desnecessárias e alterações fora da tarefa.
 
 **Fluxo oficial: Planejamento aprovado → Implementação → Testes → Evidências → Validação.**
+
+## 8. Convenção de nomenclatura de arquivos
+
+Siga a convenção documentada em `CLAUDE.md §5`:
+
+- Novos arquivos Python criados pela equipe: `snake_case` em português (ex.: `criar_usuarios_teste.py`).
+- Arquivos Markdown: nomes descritivos em português.
+- Componentes React: preservar o padrão já utilizado pelo projeto; nomes em português quando forem novos.
+- Pastas (`backend/`, `scripts/`, `src/`, `auth/`, `services/`, `components/`, `docs/`, `tests/`): permanecem em inglês.
+
+Não renomear arquivos existentes apenas por estarem em inglês. Preserve imports, rotas, APIs e referências já consolidadas.

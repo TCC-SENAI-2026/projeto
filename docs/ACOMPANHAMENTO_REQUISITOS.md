@@ -387,3 +387,19 @@ Todas as tarefas abaixo aguardam autorização individual para execução — ne
 - Decisões pendentes (não implementar sem confirmação da equipe): comportamento do QR Code; se a edição comum de campos do estoque exige aprovação do admin; formato exato do RE; aceite da reorganização de pastas do Flask (`blueprints/`); versão do MySQL em uso (afeta a aplicação do `CHECK` em `solicitacoes`/`estoque`); se "Controle de Funcionários" (*Setor Administrativo*) é a mesma tela de Colaboradores ou uma tela administrativa separada (sinalizado em T17).
 
 Nenhuma tarefa foi autorizada para execução. Nenhum requisito foi marcado como concluído.
+
+## 4. Pendências registradas na Fase 03 (não implementar nesta fase)
+
+Esta seção registra divergências entre o código atual e o schema/arquitetura aprovados que foram identificadas durante a auditoria técnica da Fase 03 (19/10/2026). Nenhuma delas foi corrigida — a Fase 03 cobre apenas a finalização do login real. Cada pendência aponta para a tarefa futura responsável pela correção.
+
+| # | Arquivo | Pendência | Tarefa futura |
+|---|---|---|---|
+| P1 | `backend/colaboradores.py` | Usa colunas incompatíveis com o schema novo: `id_colaborador`, `nome_completo`, `token_ativacao_hash`, `token_expira_em`, `data_nascimento`; `nivel_acesso` com valores `'administrativo'`/`'padrao'` em vez de `'administrador'`/`'colaborador'`. Qualquer rota de escrita falhará contra o banco atual. | T04 |
+| P2 | `backend/clientes.py` | Rotas `/cadastrar-cliente`, `/editar-cliente`, `/excluir-cliente` referenciam `nome_empresa`, `responsavel`, `cpf_cnpj`, `id_cliente` — colunas que não existem no schema atual. Somente `/listar-clientes` usa as colunas corretas via `db_cursor`. | T07 |
+| P3 | `backend/estoque.py` | Rota `DELETE /excluir-estoque/:id` executa `DELETE` físico, violando o requisito 25 e a decisão de soft delete em `ARQUITETURA_TCC.md §2.2/§7`. Além disso, `/listar-estoque` e `/estoque/:id` não filtram `WHERE ativo = 1`. | T10 |
+| P4 | `src/pages/Inicio.jsx`, `src/pages/Estoque.jsx`, `src/pages/AddEstoque.jsx` | Chamadas `axios` para `http://localhost:5000/...` hardcoded; bypassa o proxy do Vite, o cookie de sessão não é enviado corretamente em todos os navegadores e o token CSRF não vai junto. Também aplica-se a `EditarEstoque.jsx` por simetria. | T12 / T14 |
+| P5 | `src/pages/AddEstoque.jsx` | Envia `tipo_item: "Produto"`/`"Material"` com inicial maiúscula; o schema define `ENUM('produto', 'material')` em minúsculas. Em MySQL com modo estrito, a inserção é rejeitada. | T14 |
+| P6 | `src/services/pedidosService.js`, `src/services/solicitacoesService.js` | Persistência mockada em `localStorage` — nenhum backend real de pedidos ou solicitações existe ainda. Todos os `TODO(BACK)` já estão sinalizados no código. | T08 / T09 / T13 |
+| P7 | `start.sh` | Script auxiliar na raiz inicia `backend/app.py` em background **e** depois chama `npm run start` — o `npm run start` agora é o launcher unificado, que subiria um segundo Flask na mesma porta. Após a Fase 03, `start.sh` ficou redundante e potencialmente conflitante. | Avaliar remoção ou simplificação em tarefa futura (sem urgência). |
+
+Nenhuma dessas pendências é bloqueador do login da Fase 03. Elas estão listadas aqui para preservar o conhecimento da auditoria e para que cada tarefa futura (T04, T07, T08, T09, T10, T12, T13, T14) comece com o diagnóstico já feito.
