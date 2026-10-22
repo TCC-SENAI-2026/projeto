@@ -48,6 +48,11 @@ async function request(path, { method = 'GET', body, signal, raw = false } = {})
     throw new ApiError('O servidor retornou uma resposta inválida. Tente novamente.', response.status);
   }
 
+  // Arrays são respostas válidas em endpoints de listagem (ex: /catalogo/produtos)
+  if (response.ok && Array.isArray(data)) {
+    return data;
+  }
+
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     throw new ApiError('O servidor retornou uma resposta inválida. Tente novamente.', response.status);
   }
@@ -82,5 +87,6 @@ export const api = {
   patch:    (path, body)    => request(path, { method: 'PATCH', body }),
   delete:   (path)          => request(path, { method: 'DELETE' }),
   postFile: (path, formData) => request(path, { method: 'POST', body: formData, raw: true }),
+  putFile:  (path, formData) => request(path, { method: 'PUT',  body: formData, raw: true }),
   fetchCsrfToken,
 };

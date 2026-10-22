@@ -438,6 +438,48 @@
 }
 
 /* =========================
+   ADICIONAR MODELO (modal edição)
+========================= */
+
+.adicionar-modelo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #f1f5f9;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+}
+
+.adicionar-modelo-icone {
+    font-size: 22px;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.adicionar-modelo-select {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    font-size: 13px;
+    color: #334155;
+}
+
+.adicionar-modelo-select:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.adicionar-modelo-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* =========================
    ARTE INDIVIDUAL POR PRODUTO
 ========================= */
 

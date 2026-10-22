@@ -12,23 +12,27 @@ from database.connection import db_cursor, open_connection
 LOCAIS_VALIDOS_POR_PRODUTO = {
     "Camiseta": {
         "Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito",
-        "Costas — Centro Alto", "Costas — Centro Baixo",
+        "Costas — Centro Alto", "Costas — Centro Baixo", "Costas — Full Back",
         "Manga Esquerda", "Manga Direita", "Gola",
     },
     "Camisa": {
         "Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito",
-        "Costas — Centro Alto", "Costas — Centro Baixo",
+        "Costas — Centro Alto", "Costas — Centro Baixo", "Costas — Full Back",
         "Manga Esquerda", "Manga Direita", "Gola", "Bolso",
     },
     "Camisa Longa": {
-        "Frente — Centro", "Costas — Centro Alto", "Gola",
+        "Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito",
+        "Costas — Centro Alto", "Costas — Centro Baixo",
         "Manga Esquerda", "Manga Direita", "Ambas as Mangas",
+        "Punho Esquerdo", "Punho Direito", "Gola",
     },
     "Moletom c/ Capuz": {
-        "Frente — Centro", "Costas — Centro Alto",
+        "Frente — Centro", "Frente — Peito Esquerdo",
+        "Costas — Centro Alto", "Costas — Full Back",
         "Manga Esquerda", "Manga Direita", "Capuz", "Bolso",
     },
-    "Calça": {"Barra"},
+    "Calça": {"Coxa Direita", "Coxa Esquerda", "Lateral da Perna",
+               "Parte Traseira", "Bolso Traseiro", "Barra"},
 }
 
 pedidos_bp = Blueprint('pedidos', __name__)
@@ -79,21 +83,72 @@ def servir_item_arte(item_id):
     return send_file(buf, mimetype=item.get('imagem_mime') or 'image/png')
 
 
-# ---------- QR Code do pedido ----------
+# ---------- QR Code por item ----------
 
-@pedidos_bp.route('/pedidos/<int:pedido_id>/qrcode', methods=['GET'])
+@pedidos_bp.route('/pedidos/itens/<int:item_id>/qrcode', methods=['GET'])
 @login_required
-def qrcode_pedido(pedido_id):
+def qrcode_item(item_id):
     with db_cursor() as cursor:
         cursor.execute(
-            "SELECT id FROM pedidos WHERE id = %s AND excluido_em IS NULL",
-            (pedido_id,)
+            """SELECT pi.id FROM pedido_itens pi
+               JOIN pedidos p ON p.id = pi.pedido_id
+               WHERE pi.id = %s AND p.excluido_em IS NULL""",
+            (item_id,)
         )
         if not cursor.fetchone():
-            return jsonify(success=False, msg='Pedido não encontrado.'), 404
-    from gerador_qrcode import gerar_qrcode_pedido
-    buf = gerar_qrcode_pedido(pedido_id)
+            return jsonify(success=False, msg='Item não encontrado.'), 404
+    from gerador_qrcode import gerar_qrcode_item
+    buf = gerar_qrcode_item(item_id)
     return send_file(buf, mimetype='image/png')
+
+
+# ---------- Buscar item individual (para VisualizarItem) ----------
+
+@pedidos_bp.route('/pedidos/itens/<int:item_id>', methods=['GET'])
+@login_required
+def buscar_item_pedido(item_id):
+    with db_cursor() as cursor:
+        cursor.execute("""
+            SELECT
+                pi.id,
+                pi.pedido_id,
+                pi.observacao,
+                pi.estoque_id,
+                (pi.imagem_dados IS NOT NULL) AS tem_arte,
+                p.numero_pedido,
+                cp.nome  AS nome_produto,
+                ct.nome  AS tecido,
+                cc.nome  AS cor,
+                cpe.nome AS personalizacao,
+                cl.nome  AS local_arte
+            FROM pedido_itens pi
+            JOIN pedidos p             ON p.id  = pi.pedido_id
+            JOIN catalogo_itens cp     ON cp.id = pi.tipo_produto_id
+            JOIN catalogo_itens ct     ON ct.id = pi.tecido_id
+            JOIN catalogo_itens cc     ON cc.id = pi.cor_id
+            LEFT JOIN catalogo_itens cpe ON cpe.id = pi.personalizacao_id
+            JOIN catalogo_itens cl     ON cl.id = pi.local_arte_id
+            WHERE pi.id = %s AND p.excluido_em IS NULL
+        """, (item_id,))
+        item = cursor.fetchone()
+
+        if not item:
+            return jsonify(success=False, msg='Item não encontrado.'), 404
+
+        cursor.execute("""
+            SELECT tamanho, quantidade
+            FROM pedido_item_tamanhos
+            WHERE pedido_item_id = %s
+            ORDER BY tamanho
+        """, (item_id,))
+        tamanhos = cursor.fetchall()
+
+    item['tamanhos'] = tamanhos
+    if item.get('tem_arte'):
+        item['arte_url'] = f'/api/pedidos/itens/{item_id}/arte'
+    if item.get('estoque_id'):
+        item['foto_estoque_url'] = f'/api/estoque/{item["estoque_id"]}/imagem'
+    return jsonify(success=True, data=item)
 
 
 # ---------- listar pedidos ----------
@@ -169,6 +224,7 @@ def buscar_pedido(pedido_id):
         cursor.execute("""
             SELECT
                 pi.id,
+                pi.estoque_id,
                 pi.observacao,
                 pi.imagem_url,
                 (pi.imagem_dados IS NOT NULL) AS tem_imagem,
@@ -229,17 +285,17 @@ def criar_pedido():
     email_cliente = (dados.get('email_cliente') or '').strip() or None
     data_pedido   = (dados.get('data_pedido') or '').strip()
     prazo_entrega = dados.get('prazo_entrega') or None
-    prioridade    = (dados.get('prioridade') or '').strip()
+    prioridade    = (dados.get('prioridade') or 'media').strip()
     obs_geral     = dados.get('obs_geral') or None
     produtos      = dados.get('produtos', [])
     contato       = (dados.get('contato') or '').strip() or None
 
+    if prioridade not in ('baixa', 'media', 'alta'):
+        prioridade = 'media'
     if not nome_cliente:
         return jsonify(success=False, msg='Nome do cliente é obrigatório.'), 400
     if not data_pedido:
         return jsonify(success=False, msg='Data do pedido é obrigatória.'), 400
-    if prioridade not in ('baixa', 'media', 'alta'):
-        return jsonify(success=False, msg='Prioridade inválida.'), 400
     if not produtos:
         return jsonify(success=False, msg='Selecione pelo menos um produto.'), 400
     if contato and not _validar_telefone(contato):
@@ -329,17 +385,19 @@ def criar_pedido():
             imagem_dados = arquivo_arte.read() if arquivo_arte else None
             imagem_mime  = ((arquivo_arte.content_type or '').strip() or None) if arquivo_arte else None
 
+            estoque_id = prod.get('estoque_id') or None
+
             cursor.execute("""
                 INSERT INTO pedido_itens
                     (pedido_id, tipo_produto_id, personalizacao_id,
                      tecido_id, cor_id, local_arte_id, observacao,
-                     imagem_mime, imagem_dados)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                     imagem_mime, imagem_dados, estoque_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 pedido_id, tipo_produto_id, personalizacao_id,
                 tecido_id, cor_id, local_id,
                 detalhes.get('observacao') or None,
-                imagem_mime, imagem_dados,
+                imagem_mime, imagem_dados, estoque_id,
             ))
             item_id = cursor.lastrowid
 
@@ -384,30 +442,132 @@ def atualizar_status(pedido_id):
 
     transicoes_validas = {'pendente': 'em_producao', 'em_producao': 'concluido'}
 
-    with db_cursor(commit=True) as cursor:
+    # Conclusão (em_producao → concluido): sem baixa de estoque
+    if novo_status == 'concluido':
+        with db_cursor(commit=True) as cursor:
+            cursor.execute(
+                "SELECT status FROM pedidos WHERE id = %s AND excluido_em IS NULL",
+                (pedido_id,)
+            )
+            pedido = cursor.fetchone()
+            if not pedido:
+                return jsonify(success=False, msg='Pedido não encontrado.'), 404
+            if transicoes_validas.get(pedido['status']) != 'concluido':
+                return jsonify(success=False, msg='Transição de status não permitida.'), 400
+            cursor.execute(
+                "UPDATE pedidos SET status = 'concluido', data_conclusao = NOW() WHERE id = %s",
+                (pedido_id,)
+            )
+        return jsonify(success=True)
+
+    # Início da produção (pendente → em_producao): baixa automática de estoque
+    colaborador_id = g.colaborador['id']
+    conn = open_connection()
+    try:
+        cursor = conn.cursor(dictionary=True, buffered=True)
+
         cursor.execute(
-            "SELECT status FROM pedidos WHERE id = %s AND excluido_em IS NULL",
+            "SELECT status FROM pedidos WHERE id = %s AND excluido_em IS NULL FOR UPDATE",
             (pedido_id,)
         )
         pedido = cursor.fetchone()
         if not pedido:
+            cursor.close()
             return jsonify(success=False, msg='Pedido não encontrado.'), 404
-
-        if transicoes_validas.get(pedido['status']) != novo_status:
+        if pedido['status'] != 'pendente':
+            cursor.close()
             return jsonify(success=False, msg='Transição de status não permitida.'), 400
 
-        if novo_status == 'concluido':
+        # Proteção contra baixa duplicada: verifica se já houve movimentação
+        cursor.execute(
+            "SELECT COUNT(*) AS c FROM estoque_movimentacoes "
+            "WHERE tipo = 'saida' AND motivo LIKE CONCAT('Baixa automática — Pedido #', %s, '%%')",
+            (str(pedido_id),)
+        )
+        if cursor.fetchone()['c'] > 0:
             cursor.execute(
-                "UPDATE pedidos SET status = %s, data_conclusao = NOW() WHERE id = %s",
-                (novo_status, pedido_id)
+                "UPDATE pedidos SET status = 'em_producao' WHERE id = %s",
+                (pedido_id,)
             )
-        else:
-            cursor.execute(
-                "UPDATE pedidos SET status = %s WHERE id = %s",
-                (novo_status, pedido_id)
-            )
+            conn.commit()
+            cursor.close()
+            return jsonify(success=True)
 
-    return jsonify(success=True)
+        # Busca itens com estoque vinculado (apenas unidade_medida = 'Unidade')
+        cursor.execute("""
+            SELECT pi.estoque_id,
+                   e.nome_item,
+                   COALESCE(SUM(pit.quantidade), 0) AS total_pedido
+            FROM pedido_itens pi
+            JOIN estoque e ON e.id = pi.estoque_id
+            LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
+            WHERE pi.pedido_id = %s
+              AND pi.estoque_id IS NOT NULL
+              AND e.unidade_medida = 'Unidade'
+            GROUP BY pi.estoque_id, e.nome_item
+        """, (pedido_id,))
+        itens_baixa = cursor.fetchall()
+
+        if itens_baixa:
+            ids_est = sorted({i['estoque_id'] for i in itens_baixa})
+            fmt_est = ','.join(['%s'] * len(ids_est))
+            cursor.execute(
+                f"SELECT id, quantidade_atual FROM estoque WHERE id IN ({fmt_est}) FOR UPDATE",
+                ids_est
+            )
+            saldos = {r['id']: float(r['quantidade_atual']) for r in cursor.fetchall()}
+
+            insuficientes = []
+            for it in itens_baixa:
+                total = float(it['total_pedido'])
+                disp = saldos.get(it['estoque_id'], 0)
+                if total > disp:
+                    insuficientes.append(
+                        f"{it['nome_item']} (solicitado: {int(total)}, disponível: {int(disp)})"
+                    )
+
+            if insuficientes:
+                conn.rollback()
+                cursor.close()
+                return jsonify(
+                    success=False,
+                    msg=f"Estoque insuficiente para iniciar o pedido. {'; '.join(insuficientes)}."
+                ), 409
+
+            for it in itens_baixa:
+                total = float(it['total_pedido'])
+                if total <= 0:
+                    continue
+                cursor.execute(
+                    "UPDATE estoque SET quantidade_atual = quantidade_atual - %s WHERE id = %s",
+                    (total, it['estoque_id'])
+                )
+                cursor.execute("""
+                    INSERT INTO estoque_movimentacoes
+                        (estoque_id, tipo, quantidade, motivo, colaborador_id)
+                    VALUES (%s, 'saida', %s, %s, %s)
+                """, (
+                    it['estoque_id'], total,
+                    f'Baixa automática — Pedido #{pedido_id}',
+                    colaborador_id,
+                ))
+
+        cursor.execute(
+            "UPDATE pedidos SET status = 'em_producao' WHERE id = %s",
+            (pedido_id,)
+        )
+        conn.commit()
+        cursor.close()
+        return jsonify(success=True)
+
+    except MySQLError:
+        conn.rollback()
+        raise
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 
 # ---------- atualizar pedido (via solicitação aprovada) ----------
@@ -415,32 +575,298 @@ def atualizar_status(pedido_id):
 @pedidos_bp.route('/pedidos/<int:pedido_id>', methods=['PUT'])
 @login_required
 def atualizar_pedido(pedido_id):
+    import base64 as _b64
     dados = request.get_json(silent=True) or {}
 
-    with db_cursor(commit=True) as cursor:
+    ficha        = dados.get('ficha') or {}
+    pedido_data  = dados.get('pedido') or {}
+    produtos     = pedido_data.get('produtos') or []
+
+    conn = open_connection()
+    try:
+        cursor = conn.cursor(dictionary=True, buffered=True)
+
         cursor.execute(
-            "SELECT id FROM pedidos WHERE id = %s AND excluido_em IS NULL",
+            "SELECT id, cliente_id, status FROM pedidos WHERE id = %s AND excluido_em IS NULL",
             (pedido_id,)
         )
-        if not cursor.fetchone():
+        pedido_row = cursor.fetchone()
+        if not pedido_row:
+            cursor.close()
+            conn.close()
             return jsonify(success=False, msg='Pedido não encontrado.'), 404
 
-        campos = {}
-        if 'prazo_entrega' in dados:
-            campos['prazo_entrega'] = dados['prazo_entrega'] or None
-        if 'prioridade' in dados and dados['prioridade'] in ('baixa', 'media', 'alta'):
-            campos['prioridade'] = dados['prioridade']
-        if 'obs_geral' in dados:
-            campos['obs_geral'] = dados['obs_geral'] or None
+        pedido_ja_iniciado = pedido_row['status'] != 'pendente'
 
-        if campos:
-            sets = ', '.join(f"{k} = %s" for k in campos)
+        # ── Snapshot ANTES: totais por estoque_id (apenas Unidade) ──
+        cursor.execute("""
+            SELECT pi.estoque_id,
+                   COALESCE(SUM(pit.quantidade), 0) AS total
+            FROM pedido_itens pi
+            JOIN estoque e ON e.id = pi.estoque_id
+            LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
+            WHERE pi.pedido_id = %s
+              AND pi.estoque_id IS NOT NULL
+              AND e.unidade_medida = 'Unidade'
+            GROUP BY pi.estoque_id
+        """, (pedido_id,))
+        totais_antes = {r['estoque_id']: float(r['total']) for r in cursor.fetchall()}
+
+        # Atualiza campos da ficha no pedido
+        campos_ped = {}
+        if 'entrega' in ficha:
+            campos_ped['prazo_entrega'] = ficha['entrega'] or None
+        if 'dataPedido' in ficha:
+            campos_ped['data_pedido'] = ficha['dataPedido'] or None
+        if 'observacao' in ficha:
+            campos_ped['obs_geral'] = ficha['observacao'] or None
+
+        if campos_ped:
+            sets = ', '.join(f"{k} = %s" for k in campos_ped)
             cursor.execute(
                 f"UPDATE pedidos SET {sets} WHERE id = %s",
-                [*campos.values(), pedido_id]
+                [*campos_ped.values(), pedido_id]
             )
 
-    return jsonify(success=True)
+        # Atualiza cliente
+        if ficha.get('cliente') and pedido_row['cliente_id']:
+            cursor.execute(
+                "UPDATE clientes SET nome=%s, telefone=%s, email=%s WHERE id=%s",
+                (
+                    ficha['cliente'].strip(),
+                    (ficha.get('contato') or '').strip() or None,
+                    (ficha.get('email') or '').strip() or None,
+                    pedido_row['cliente_id'],
+                )
+            )
+
+        ids_processados = []
+
+        for prod in produtos:
+            item_nome = (prod.get('item') or '').strip()
+            if not item_nome:
+                continue
+
+            detalhes   = prod.get('detalhes') or {}
+            grade      = prod.get('grade') or {}
+            item_id    = detalhes.get('id')
+            estoque_id = prod.get('estoque_id') or detalhes.get('estoque_id') or None
+
+            tipo_produto_id   = _resolver_catalogo(cursor, 'produto', item_nome)
+            personalizacao_id = _resolver_catalogo(cursor, 'personalizacao', detalhes.get('personalizacao'))
+            tecido_id         = _resolver_catalogo(cursor, 'tecido', detalhes.get('tecido'))
+            cor_id            = _resolver_catalogo(cursor, 'cor', detalhes.get('cor'))
+            local_id          = _resolver_catalogo(cursor, 'local', detalhes.get('local'))
+
+            if not tecido_id or not cor_id or not local_id:
+                conn.rollback()
+                cursor.close()
+                conn.close()
+                return jsonify(
+                    success=False,
+                    msg=f'Preencha Tecido, Cor e Local da Arte para "{item_nome}".'
+                ), 400
+
+            # Decodifica arte nova (base64), se enviada
+            img_bytes = img_mime = None
+            arte_nova = detalhes.get('arteNova')
+            if arte_nova and isinstance(arte_nova, str) and ',' in arte_nova:
+                try:
+                    header, encoded = arte_nova.split(',', 1)
+                    img_mime  = header.split(':')[1].split(';')[0] if ':' in header else 'image/png'
+                    img_bytes = _b64.b64decode(encoded)
+                except Exception:
+                    pass
+
+            if item_id:
+                # Item existente — UPDATE
+                ids_processados.append(item_id)
+                if img_bytes is not None:
+                    cursor.execute("""
+                        UPDATE pedido_itens
+                        SET tipo_produto_id=%s, personalizacao_id=%s, tecido_id=%s,
+                            cor_id=%s, local_arte_id=%s, observacao=%s,
+                            estoque_id=%s, imagem_dados=%s, imagem_mime=%s, imagem_url=NULL
+                        WHERE id=%s AND pedido_id=%s
+                    """, (tipo_produto_id, personalizacao_id, tecido_id, cor_id, local_id,
+                          detalhes.get('observacao') or None, estoque_id,
+                          img_bytes, img_mime, item_id, pedido_id))
+                else:
+                    cursor.execute("""
+                        UPDATE pedido_itens
+                        SET tipo_produto_id=%s, personalizacao_id=%s, tecido_id=%s,
+                            cor_id=%s, local_arte_id=%s, observacao=%s, estoque_id=%s
+                        WHERE id=%s AND pedido_id=%s
+                    """, (tipo_produto_id, personalizacao_id, tecido_id, cor_id, local_id,
+                          detalhes.get('observacao') or None, estoque_id,
+                          item_id, pedido_id))
+
+                # Substitui grade
+                cursor.execute(
+                    "DELETE FROM pedido_item_tamanhos WHERE pedido_item_id=%s", (item_id,)
+                )
+                for tamanho, quantidade in grade.items():
+                    try:
+                        qtd = int(quantidade)
+                    except (TypeError, ValueError):
+                        qtd = 0
+                    if qtd > 0:
+                        cursor.execute(
+                            "INSERT INTO pedido_item_tamanhos (pedido_item_id, tamanho, quantidade) VALUES (%s,%s,%s)",
+                            (item_id, tamanho, qtd)
+                        )
+            else:
+                # Item novo — INSERT
+                cursor.execute("""
+                    INSERT INTO pedido_itens
+                        (pedido_id, tipo_produto_id, personalizacao_id, tecido_id, cor_id,
+                         local_arte_id, observacao, imagem_mime, imagem_dados, estoque_id)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                """, (pedido_id, tipo_produto_id, personalizacao_id, tecido_id, cor_id,
+                      local_id, detalhes.get('observacao') or None,
+                      img_mime, img_bytes, estoque_id))
+                novo_id = cursor.lastrowid
+                ids_processados.append(novo_id)
+
+                for tamanho, quantidade in grade.items():
+                    try:
+                        qtd = int(quantidade)
+                    except (TypeError, ValueError):
+                        qtd = 0
+                    if qtd > 0:
+                        cursor.execute(
+                            "INSERT INTO pedido_item_tamanhos (pedido_item_id, tamanho, quantidade) VALUES (%s,%s,%s)",
+                            (novo_id, tamanho, qtd)
+                        )
+
+        # Remove itens que foram excluídos na edição
+        if ids_processados:
+            fmt = ','.join(['%s'] * len(ids_processados))
+            cursor.execute(
+                f"SELECT id FROM pedido_itens WHERE pedido_id=%s AND id NOT IN ({fmt})",
+                [pedido_id, *ids_processados]
+            )
+            ids_remover = [r['id'] for r in cursor.fetchall()]
+            if ids_remover:
+                fmt2 = ','.join(['%s'] * len(ids_remover))
+                cursor.execute(
+                    f"DELETE FROM pedido_item_tamanhos WHERE pedido_item_id IN ({fmt2})",
+                    ids_remover
+                )
+                cursor.execute(
+                    f"DELETE FROM pedido_itens WHERE id IN ({fmt2})",
+                    ids_remover
+                )
+
+        # ── Ajuste diferencial de estoque (somente se o pedido já foi iniciado) ──
+        if pedido_ja_iniciado:
+            cursor.execute("""
+                SELECT pi.estoque_id,
+                       e.nome_item,
+                       COALESCE(SUM(pit.quantidade), 0) AS total
+                FROM pedido_itens pi
+                JOIN estoque e ON e.id = pi.estoque_id
+                LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
+                WHERE pi.pedido_id = %s
+                  AND pi.estoque_id IS NOT NULL
+                  AND e.unidade_medida = 'Unidade'
+                GROUP BY pi.estoque_id, e.nome_item
+            """, (pedido_id,))
+            totais_depois = {r['estoque_id']: (float(r['total']), r['nome_item'])
+                             for r in cursor.fetchall()}
+
+            todos_ids = set(totais_antes) | set(totais_depois)
+            if todos_ids:
+                fmt_lock = ','.join(['%s'] * len(todos_ids))
+                ids_lock = sorted(todos_ids)
+                cursor.execute(
+                    f"SELECT id, quantidade_atual FROM estoque WHERE id IN ({fmt_lock}) FOR UPDATE",
+                    ids_lock
+                )
+                saldos = {r['id']: float(r['quantidade_atual']) for r in cursor.fetchall()}
+
+                colaborador_id = g.colaborador['id']
+                insuficientes = []
+
+                for eid in todos_ids:
+                    antes = totais_antes.get(eid, 0)
+                    depois_total, nome = totais_depois.get(eid, (0, ''))
+                    diff = depois_total - antes
+
+                    if diff == 0:
+                        continue
+
+                    if diff > 0:
+                        disp = saldos.get(eid, 0)
+                        if diff > disp:
+                            if not nome:
+                                nome = f'ID {eid}'
+                            insuficientes.append(
+                                f"{nome} (adicional: {int(diff)}, disponível: {int(disp)})"
+                            )
+
+                if insuficientes:
+                    conn.rollback()
+                    cursor.close()
+                    return jsonify(
+                        success=False,
+                        msg=f"Estoque insuficiente: {'; '.join(insuficientes)}."
+                    ), 409
+
+                for eid in todos_ids:
+                    antes = totais_antes.get(eid, 0)
+                    depois_total, nome = totais_depois.get(eid, (0, ''))
+                    diff = depois_total - antes
+
+                    if diff == 0:
+                        continue
+
+                    if diff > 0:
+                        cursor.execute(
+                            "UPDATE estoque SET quantidade_atual = quantidade_atual - %s WHERE id = %s",
+                            (diff, eid)
+                        )
+                        cursor.execute("""
+                            INSERT INTO estoque_movimentacoes
+                                (estoque_id, tipo, quantidade, motivo, colaborador_id)
+                            VALUES (%s, 'saida', %s, %s, %s)
+                        """, (eid, diff,
+                              f'Saída por edição — Pedido #{pedido_id} (aumento de {int(antes)} → {int(depois_total)})',
+                              colaborador_id))
+                    else:
+                        devolucao = abs(diff)
+                        cursor.execute(
+                            "SELECT COUNT(*) AS c FROM estoque_movimentacoes "
+                            "WHERE estoque_id = %s AND tipo = 'saida' "
+                            "AND motivo LIKE CONCAT('Baixa automática — Pedido #', %s, '%%')",
+                            (eid, str(pedido_id))
+                        )
+                        tem_mov = cursor.fetchone()['c'] > 0
+                        if tem_mov:
+                            cursor.execute(
+                                "UPDATE estoque SET quantidade_atual = quantidade_atual + %s WHERE id = %s",
+                                (devolucao, eid)
+                            )
+                            cursor.execute("""
+                                INSERT INTO estoque_movimentacoes
+                                    (estoque_id, tipo, quantidade, motivo, colaborador_id)
+                                VALUES (%s, 'entrada', %s, %s, %s)
+                            """, (eid, devolucao,
+                                  f'Devolução por edição — Pedido #{pedido_id} (redução de {int(antes)} → {int(depois_total)})',
+                                  colaborador_id))
+
+        conn.commit()
+        cursor.close()
+        return jsonify(success=True)
+
+    except MySQLError:
+        conn.rollback()
+        raise
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 
 # ---------- excluir pedido (lógico, somente admin) ----------

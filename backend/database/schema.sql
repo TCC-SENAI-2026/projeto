@@ -83,6 +83,14 @@ CREATE TABLE catalogo_itens (
     KEY idx_catalogo_itens_tipo_ativo (tipo, ativo)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- Dados iniciais: modelos de produto usados pelo frontend (MODELOS em opcoesProduto.js)
+INSERT IGNORE INTO catalogo_itens (tipo, nome, ativo) VALUES
+    ('produto', 'Camiseta',          1),
+    ('produto', 'Camisa',            1),
+    ('produto', 'Camisa Longa',      1),
+    ('produto', 'Moletom c/ Capuz',  1),
+    ('produto', 'Calça',             1);
+
 CREATE TABLE pedidos (
     id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
     numero_pedido  INT NULL,
@@ -115,6 +123,7 @@ CREATE TABLE pedidos (
 -- independente do status de negocio. Exclusao aprovada e logica.
 CREATE TABLE pedido_itens (
     id                INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    estoque_id INT UNSIGNED NULL,
     pedido_id         INT UNSIGNED NOT NULL,
     tipo_produto_id   INT UNSIGNED NOT NULL,
     personalizacao_id INT UNSIGNED NULL,
@@ -131,6 +140,7 @@ CREATE TABLE pedido_itens (
     KEY idx_pedido_itens_personalizacao (personalizacao_id),
     KEY idx_pedido_itens_tecido (tecido_id),
     KEY idx_pedido_itens_cor (cor_id),
+    KEY idx_pedido_itens_estoque (estoque_id),
     KEY idx_pedido_itens_local (local_arte_id),
     CONSTRAINT fk_pedido_itens_pedido FOREIGN KEY (pedido_id)
         REFERENCES pedidos (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
@@ -143,7 +153,11 @@ CREATE TABLE pedido_itens (
     CONSTRAINT fk_pedido_itens_cor FOREIGN KEY (cor_id)
         REFERENCES catalogo_itens (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT fk_pedido_itens_local FOREIGN KEY (local_arte_id)
-        REFERENCES catalogo_itens (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+        REFERENCES catalogo_itens (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        CONSTRAINT fk_pedido_itens_estoque
+    FOREIGN KEY (estoque_id)
+    REFERENCES estoque(id)
+    ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- As FKs garantem a existencia do catalogo. A aplicacao valida seu tipo:
@@ -164,6 +178,9 @@ CREATE TABLE estoque (
     tipo_item        ENUM('produto', 'material') NOT NULL,
     nome_item        VARCHAR(150) NOT NULL,
     categoria        VARCHAR(100) NULL,
+    catalogo_item_id INT UNSIGNED NULL,
+    imagem_mime VARCHAR(50) NULL,
+    imagem_dados MEDIUMBLOB NULL,
     unidade_medida   VARCHAR(30) NULL,
     fornecedor       VARCHAR(150) NULL,
     quantidade_atual DECIMAL(10,2) NOT NULL DEFAULT 0,
@@ -173,6 +190,11 @@ CREATE TABLE estoque (
     ativo            BOOLEAN NOT NULL DEFAULT 1,
     created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
+    KEY idx_estoque_catalogo_item (catalogo_item_id),
+    CONSTRAINT fk_estoque_catalogo_item
+    FOREIGN KEY (catalogo_item_id)
+    REFERENCES catalogo_itens(id)
+    ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT chk_estoque_quantidade_nao_negativa CHECK (quantidade_atual >= 0),
     KEY idx_estoque_nome (nome_item),
     KEY idx_estoque_tipo_ativo (tipo_item, ativo),
@@ -231,14 +253,27 @@ CREATE TABLE solicitacoes (
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- ===========================================================================
--- ALTER TABLE necessario para instancias ja existentes (executar no Workbench):
+-- ATENCAO: o bloco abaixo NAO deve ser executado em instalacoes novas.
+-- Quem rodar este arquivo completo JA tem todas as colunas no CREATE TABLE.
+--
+-- Execute SOMENTE se o banco ja existia SEM estas colunas:
 --
 --   ALTER TABLE pedido_itens
 --     ADD COLUMN imagem_mime VARCHAR(50) NULL,
---     ADD COLUMN imagem_dados MEDIUMBLOB NULL;
+--     ADD COLUMN imagem_dados MEDIUMBLOB NULL,
+--     ADD COLUMN estoque_id INT UNSIGNED NULL,
+--     ADD CONSTRAINT fk_pedido_itens_estoque
+--         FOREIGN KEY (estoque_id) REFERENCES estoque(id)
+--         ON DELETE RESTRICT ON UPDATE RESTRICT;
 --
--- Novos clones usam o CREATE TABLE acima que ja inclui essas colunas.
--- imagem_url e mantida para compatibilidade com dados anteriores.
+--   ALTER TABLE estoque
+--     ADD COLUMN catalogo_item_id INT UNSIGNED NULL,
+--     ADD COLUMN imagem_mime VARCHAR(50) NULL,
+--     ADD COLUMN imagem_dados MEDIUMBLOB NULL,
+--     ADD CONSTRAINT fk_estoque_catalogo_item
+--         FOREIGN KEY (catalogo_item_id) REFERENCES catalogo_itens(id)
+--         ON DELETE RESTRICT ON UPDATE RESTRICT;
+--
 -- ===========================================================================
 
 -- A aplicacao impede duas solicitacoes pendentes simultaneas para o mesmo alvo.

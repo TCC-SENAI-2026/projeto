@@ -1,3 +1,4 @@
+import base64
 import json
 
 from flask import Blueprint, g, jsonify, request
@@ -14,6 +15,8 @@ solicitacoes_bp = Blueprint('solicitacoes', __name__)
 def listar_solicitacoes():
     colaborador = g.colaborador
     with db_cursor() as cursor:
+        # Busca sem dados_propostos para evitar sort buffer overflow (MySQL 1038)
+        # com BLOBs base64 grandes armazenados em solicitações de edição antigas.
         if colaborador['nivel_acesso'] == 'administrador':
             cursor.execute("""
                 SELECT
@@ -21,7 +24,6 @@ def listar_solicitacoes():
                     s.tipo,
                     s.pedido_id,
                     s.status,
-                    s.dados_propostos,
                     s.data_solicitacao,
                     s.data_decisao,
                     co.nome AS nome_solicitante
@@ -37,7 +39,6 @@ def listar_solicitacoes():
                     s.tipo,
                     s.pedido_id,
                     s.status,
-                    s.dados_propostos,
                     s.data_solicitacao,
                     s.data_decisao,
                     co.nome AS nome_solicitante
@@ -50,14 +51,27 @@ def listar_solicitacoes():
 
         rows = cursor.fetchall()
 
+        # Busca dados_propostos separadamente (sem interferir no ORDER BY)
+        dp_map = {}
+        if rows:
+            ids = [r['id'] for r in rows]
+            fmt = ','.join(['%s'] * len(ids))
+            cursor.execute(
+                f"SELECT id, dados_propostos FROM solicitacoes WHERE id IN ({fmt})",
+                ids
+            )
+            for dp_row in cursor.fetchall():
+                raw = dp_row.get('dados_propostos') or {}
+                if isinstance(raw, str):
+                    try:
+                        raw = json.loads(raw)
+                    except (ValueError, TypeError):
+                        raw = {}
+                dp_map[dp_row['id']] = raw
+
     resultado = []
     for r in rows:
-        dp = r.get('dados_propostos') or {}
-        if isinstance(dp, str):
-            try:
-                dp = json.loads(dp)
-            except (ValueError, TypeError):
-                dp = {}
+        dp = dp_map.get(r['id'], {})
 
         resultado.append({
             'id': r['id'],
@@ -170,9 +184,50 @@ def decidir_solicitacao(sol_id):
 
         if decisao == 'aprovada':
             if sol['tipo'] == 'exclusao':
+                pid = sol['pedido_id']
+
+                # Devolve estoque dos itens que tiveram baixa comprovada
+                cursor.execute("""
+                    SELECT pi.estoque_id,
+                           e.nome_item,
+                           COALESCE(SUM(pit.quantidade), 0) AS total
+                    FROM pedido_itens pi
+                    JOIN estoque e ON e.id = pi.estoque_id
+                    LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
+                    WHERE pi.pedido_id = %s
+                      AND pi.estoque_id IS NOT NULL
+                      AND e.unidade_medida = 'Unidade'
+                    GROUP BY pi.estoque_id, e.nome_item
+                """, (pid,))
+                itens_pedido = cursor.fetchall()
+
+                admin_id = g.colaborador['id']
+                for it in itens_pedido:
+                    total = float(it['total'])
+                    if total <= 0:
+                        continue
+                    cursor.execute(
+                        "SELECT COUNT(*) AS c FROM estoque_movimentacoes "
+                        "WHERE estoque_id = %s AND tipo = 'saida' "
+                        "AND motivo LIKE CONCAT('Baixa automática — Pedido #', %s, '%%')",
+                        (it['estoque_id'], str(pid))
+                    )
+                    if cursor.fetchone()['c'] > 0:
+                        cursor.execute(
+                            "UPDATE estoque SET quantidade_atual = quantidade_atual + %s WHERE id = %s",
+                            (total, it['estoque_id'])
+                        )
+                        cursor.execute("""
+                            INSERT INTO estoque_movimentacoes
+                                (estoque_id, tipo, quantidade, motivo, colaborador_id)
+                            VALUES (%s, 'entrada', %s, %s, %s)
+                        """, (it['estoque_id'], total,
+                              f'Devolução por exclusão aprovada — Pedido #{pid}',
+                              admin_id))
+
                 cursor.execute(
                     "UPDATE pedidos SET excluido_em = NOW() WHERE id = %s AND excluido_em IS NULL",
-                    (sol['pedido_id'],)
+                    (pid,)
                 )
             else:
                 # Aplica alterações do pedido
@@ -193,6 +248,24 @@ def decidir_solicitacao(sol_id):
                         f"UPDATE pedidos SET {sets} WHERE id = %s",
                         [*campos.values(), sol['pedido_id']]
                     )
+
+                # Aplica artes individuais por produto (se enviadas no pedidoNovo)
+                produtos_novos = (pedido_novo.get('pedido') or {}).get('produtos') or []
+                for prod in produtos_novos:
+                    det = prod.get('detalhes') or {}
+                    item_id = det.get('id')
+                    arte_nova = det.get('arteNova')
+                    if item_id and arte_nova and isinstance(arte_nova, str) and ',' in arte_nova:
+                        try:
+                            header, encoded = arte_nova.split(',', 1)
+                            mime = header.split(':')[1].split(';')[0] if ':' in header else 'image/png'
+                            img_bytes = base64.b64decode(encoded)
+                            cursor.execute(
+                                "UPDATE pedido_itens SET imagem_dados = %s, imagem_mime = %s, imagem_url = NULL WHERE id = %s",
+                                (img_bytes, mime, item_id)
+                            )
+                        except Exception:
+                            pass
 
         # Atualiza dados_propostos com motivo de recusa, se houver
         if decisao == 'recusada' and motivo:

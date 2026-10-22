@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 
 import Sidebar from "../components/Sidebar";
+import { api } from "../services/api";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
 
@@ -10,6 +10,7 @@ function EditarEstoque() {
 
     const navigate = useNavigate();
     const { id } = useParams();
+    const inputArteRef = useRef(null);
 
     const [form, setForm] = useState({
         tipo_item: "Produto",
@@ -20,29 +21,33 @@ function EditarEstoque() {
         quantidade_atual: "",
         estoque_minimo: "",
         valor_unitario: "",
-        observacoes: ""
+        observacoes: "",
+        catalogo_item_id: "",
     });
 
+    const [catalogoProdutos, setCatalogoProdutos] = useState([]);
+    const [imagemFile, setImagemFile] = useState(null);
+    const [imagemPreview, setImagemPreview] = useState(null);
+    const [temImagemAtual, setTemImagemAtual] = useState(false);
+
+    // Buscar catálogo de produtos
+    useEffect(() => {
+        api.get('/catalogo/produtos')
+            .then(data => setCatalogoProdutos(Array.isArray(data) ? data : []))
+            .catch(() => setCatalogoProdutos([]));
+    }, []);
 
     // BUSCAR ITEM PELO ID
     useEffect(() => {
 
         async function carregarItem() {
-
             try {
-
-                const resposta = await axios.get(
-                    `http://localhost:5000/estoque/${id}`
-                );
-
-                setForm(resposta.data);
-
+                const resposta = await api.get(`/estoque/${id}`);
+                setForm(prev => ({ ...prev, ...resposta }));
+                setTemImagemAtual(!!resposta.tem_imagem);
             } catch (erro) {
-
                 console.log("Erro ao buscar item:", erro);
-
                 alert("Erro ao carregar item.");
-
                 navigate("/estoque");
             }
         }
@@ -50,6 +55,21 @@ function EditarEstoque() {
         carregarItem();
 
     }, [id, navigate]);
+
+    function handleArte(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (imagemPreview) URL.revokeObjectURL(imagemPreview);
+        setImagemFile(file);
+        setImagemPreview(URL.createObjectURL(file));
+    }
+
+    function removerArte() {
+        if (imagemPreview) URL.revokeObjectURL(imagemPreview);
+        setImagemFile(null);
+        setImagemPreview(null);
+        if (inputArteRef.current) inputArteRef.current.value = '';
+    }
 
 
     function handleChange(e) {
@@ -70,40 +90,30 @@ function EditarEstoque() {
 
         try {
 
-            await axios.put(
-                `http://localhost:5000/editar-estoque/${id}`,
-                {
-                    ...form,
+            const fd = new FormData();
+            fd.append('tipo_item',        form.tipo_item);
+            fd.append('nome_item',        form.nome_item);
+            fd.append('categoria',        form.categoria || '');
+            fd.append('unidade_medida',   form.unidade_medida || '');
+            fd.append('fornecedor',       form.fornecedor || '');
+            fd.append('quantidade_atual', Number(form.quantidade_atual || 0));
+            fd.append('estoque_minimo',   Number(form.estoque_minimo || 0));
+            fd.append('valor_unitario',   form.valor_unitario
+                ? Number(String(form.valor_unitario).replace(',', '.'))
+                : '');
+            fd.append('observacoes',      form.observacoes || '');
+            fd.append('catalogo_item_id', form.catalogo_item_id || '');
+            if (imagemFile) fd.append('imagem', imagemFile);
 
-                    quantidade_atual:
-                        Number(form.quantidade_atual || 0),
-
-                    estoque_minimo:
-                        Number(form.estoque_minimo || 0),
-
-                    valor_unitario:
-                        form.valor_unitario
-                            ? Number(
-                                String(form.valor_unitario)
-                                    .replace(",", ".")
-                            )
-                            : null
-                }
-            );
+            await api.putFile(`/editar-estoque/${id}`, fd);
 
             alert("Item atualizado com sucesso!");
-
             navigate("/estoque");
 
         } catch (erro) {
 
             console.log("Erro ao editar:", erro);
-            console.log(erro.response?.data);
-
-            alert(
-                erro.response?.data?.message ||
-                "Erro ao editar item."
-            );
+            alert(erro.message || "Erro ao editar item.");
         }
     }
 
@@ -232,6 +242,56 @@ function EditarEstoque() {
 
                                     </div>
 
+
+                                    {form.tipo_item === "Produto" && (
+                                        <div className="form-field full">
+                                            <label>Modelo do Catálogo</label>
+                                            <select
+                                                name="catalogo_item_id"
+                                                value={form.catalogo_item_id || ""}
+                                                onChange={handleChange}
+                                            >
+                                                <option value="">Selecione (opcional)</option>
+                                                {catalogoProdutos.map(p => (
+                                                    <option key={p.id} value={p.id}>{p.nome}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
+
+                                    {form.tipo_item === "Produto" && (
+                                        <div className="form-field full">
+                                            <label>Foto do Produto</label>
+                                            {(imagemPreview || temImagemAtual) && (
+                                                <img
+                                                    src={imagemPreview || `/api/estoque/${id}/imagem`}
+                                                    alt="foto do produto"
+                                                    style={{ maxWidth: 160, maxHeight: 160, borderRadius: 8,
+                                                             objectFit: 'contain', marginBottom: 8, display: 'block' }}
+                                                />
+                                            )}
+                                            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                                <button type="button" className="btn-page-sec"
+                                                    onClick={() => inputArteRef.current?.click()}>
+                                                    {(imagemPreview || temImagemAtual) ? 'Trocar foto' : 'Escolher foto'}
+                                                </button>
+                                                {(imagemPreview || temImagemAtual) && (
+                                                    <button type="button" className="btn-page-sec"
+                                                        style={{ color: '#991b1b' }}
+                                                        onClick={removerArte}>
+                                                        Remover
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <input
+                                                ref={inputArteRef}
+                                                type="file"
+                                                accept=".png,.jpg,.jpeg,.webp,image/*"
+                                                style={{ display: 'none' }}
+                                                onChange={handleArte}
+                                            />
+                                        </div>
+                                    )}
 
                                     <div className="form-field">
 

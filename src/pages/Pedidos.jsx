@@ -3,12 +3,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import FichaModal from "../components/FichaModal";
 import EditarPedidoModal from "../components/EditarPedidoModal";
-import { listarPedidos, buscarPedido, atualizarStatus } from "../services/pedidosService";
+import { listarPedidos, buscarPedido, atualizarStatus, atualizarPedido } from "../services/pedidosService";
 import AvisoTopo from "../components/AvisoTopo";
 import useSolicitacoesPedido from "../hooks/useSolicitacoesPedido";
 import "../styles/solicitacoes.css";
 import { infoStatus } from "../utils/status";
-import { infoPrioridade } from "../utils/prioridade";
 import "../styles/padrao.css";
 import "../styles/Pedidos.css";
 import "../styles/ficha-tecnica.css";
@@ -69,21 +68,22 @@ function Pedidos() {
         }
 
         try {
-            // TODO(BACK): PATCH /api/pedidos/:id com { status } (via atualizarStatus no service)
             await atualizarStatus(id, novoStatus);
             setPedidos(await listarPedidos());
-            setFichaAberta(null); // fecha o modal, e a lista já mostra o novo status
+            setFichaAberta(null);
         } catch (erro) {
-            alert(erro.message || "Não foi possível atualizar o pedido.");
+            const msg = erro.message || "Não foi possível atualizar o pedido.";
+            // Estoque insuficiente: erro 409 com nome dos itens
+            alert(msg);
         }
     }
 
-    // O funcionário não salva direto: envia uma solicitação para o adm aprovar.
+    // Edição direta — sem aprovação administrativa.
     // Se der erro, a exceção sobe para o modal, que continua aberto com a mensagem.
-    async function enviarSolicitacao(dados) {
-        // TODO(BACK): POST /api/solicitacoes (ver solicitacoesService.js)
-        await solicitar(dados);
-        setPedidoEditando(null); // sucesso: fecha o modal e a mensagem aparece no topo
+    async function salvarPedido({ pedidoId, pedidoNovo }) {
+        await atualizarPedido(pedidoId, pedidoNovo);
+        setPedidos(await listarPedidos());
+        setPedidoEditando(null);
     }
 
 
@@ -246,7 +246,7 @@ function Pedidos() {
 
                     {/* CABEÇALHO DA TABELA */}
                     <div className="pedidos-header">
-                        <span>Pedido / Prioridade</span>
+                        <span>Pedido / Responsável</span>
                         <span>Empresa</span>
                         <span>Status</span>
                         <span>Ações</span>
@@ -261,7 +261,6 @@ function Pedidos() {
 
                         {visiveis.map((p, i) => {
                             const st = infoStatus(p);
-                            const prio = infoPrioridade(p);
                             const aguardando = temPendente(p.id);
 
                             const grupo = nomeCliente(p);
@@ -296,7 +295,6 @@ function Pedidos() {
                                                     <span className="mobile-field-label">Pedido</span>
                                                     <p>
                                                         <strong>#{p.numero_pedido || p.id}</strong>
-                                                        {prio && <span className={`prio-selo ${prio.classe}`}>{prio.texto}</span>}
                                                     </p>
                                                     {p.nome_colaborador && (
                                                         <p className="pedido-colaborador">
@@ -387,7 +385,7 @@ function Pedidos() {
                 <EditarPedidoModal
                     pedido={pedidoEditando}
                     onFechar={() => setPedidoEditando(null)}
-                    onSolicitar={enviarSolicitacao}
+                    onSalvar={salvarPedido}
                 />
             )}
         </>

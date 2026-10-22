@@ -7,24 +7,15 @@ import {
     TAMANHOS, PERSONALIZACOES, TECIDOS, CORES, LOCAIS, MODELOS, DETALHES_VAZIOS,
 } from "../utils/opcoesProduto";
 
-
-const PRIORIDADES = [
-    { value: "baixa", label: "Baixa" },
-    { value: "media", label: "Média" },
-    { value: "alta", label: "Alta" },
-];
-
-const LOCAIS_PERSONALIZACAO = ["Frente", "Costas", "Manga direita", "Manga esquerda", "Peito", "Gola"]
-    .map((o) => ({ value: o, label: o }));
-
-function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
+function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
     const original = pedido.ficha || {};
 
     const [ficha, setFicha] = useState({ ...original });
     const [produtos, setProdutos] = useState(
         structuredClone(pedido.pedido?.produtos || [])
     );
-    const [arte, setArte] = useState(pedido.pedido?.arte || null);
+    // Arte por produto: { [index]: base64DataURL }
+    const [artes, setArtes] = useState({});
     const [novoModelo, setNovoModelo] = useState("");
     const [enviando, setEnviando] = useState(false);
     const [erro, setErro] = useState("");
@@ -56,6 +47,15 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
 
     function removerProduto(index) {
         setProdutos(prev => prev.filter((_, i) => i !== index));
+        setArtes(prev => {
+            const novo = {};
+            Object.entries(prev).forEach(([k, v]) => {
+                const ki = Number(k);
+                if (ki < index) novo[ki] = v;
+                else if (ki > index) novo[ki - 1] = v;
+            });
+            return novo;
+        });
     }
 
     function adicionarProduto() {
@@ -71,14 +71,20 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
 
     const disponiveis = MODELOS.filter(m => !produtos.some(p => p.item === m.label));
 
-    // ---------- arte ----------
-    function handleArte(e) {
-        const file = e.target.files[0];
+    // ---------- arte por produto ----------
+    function handleArteItem(index, file) {
         if (!file) return;
-        // TODO(BACK): trocar base64 por upload (multipart/form-data) e guardar só a URL
         const reader = new FileReader();
-        reader.onload = ev => setArte(ev.target.result);
+        reader.onload = ev => setArtes(prev => ({ ...prev, [index]: ev.target.result }));
         reader.readAsDataURL(file);
+    }
+
+    function removerArteItem(index) {
+        setArtes(prev => {
+            const novo = { ...prev };
+            delete novo[index];
+            return novo;
+        });
     }
 
     // ---------- enviar solicitação ----------
@@ -103,9 +109,10 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
             return;
         }
 
-        const limpos = produtos.map(p => ({
+        const limpos = produtos.map((p, i) => ({
             ...p,
             grade: Object.fromEntries(Object.entries(p.grade || {}).filter(([, v]) => v > 0)),
+            detalhes: { ...p.detalhes, arteNova: artes[i] || null },
         }));
 
         const semQtd = limpos.filter(p => Object.keys(p.grade).length === 0);
@@ -114,7 +121,7 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
             return;
         }
 
-        const alteracoes = gerarAlteracoes(pedido, { ficha, produtos: limpos, arte });
+        const alteracoes = gerarAlteracoes(pedido, { ficha, produtos: limpos });
         if (alteracoes.length === 0) {
             setErro("Você ainda não alterou nada.");
             return;
@@ -122,22 +129,19 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
 
         setEnviando(true);
         try {
-            await onSolicitar({
+            await onSalvar({
                 pedidoId: pedido.id,
-                alteracoes,
                 pedidoNovo: {
                     ficha,
-                    pedido: { ...(pedido.pedido || {}), produtos: limpos, arte },
+                    pedido: { ...(pedido.pedido || {}), produtos: limpos },
                 },
             });
-            // Sucesso: quem chamou fecha o modal e mostra a mensagem no topo
         } catch (e2) {
             setErro(e2.message || "Não foi possível enviar a solicitação. Tente novamente.");
             setEnviando(false);
         }
     }
 
-    // Props que se repetem em todo CampoEditavel dos dados gerais
     const campo = (name, extra = {}) => ({
         id: `e_${name}`,
         name,
@@ -167,10 +171,8 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
                 <form onSubmit={handleSubmit} autoComplete="off" noValidate className="fc-form-editar">
                     <div className="fc-modal-body fc-body-editar">
 
-
                         <p className="fc-ajuda-edicao">
-                            Clique em um campo para alterá-lo. As mudanças só valem depois que o
-                            administrador aprovar.
+                            Clique em um campo para alterá-lo. As alterações são salvas diretamente.
                         </p>
 
                         {/* DADOS DO CLIENTE */}
@@ -189,25 +191,13 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
                             <div className="form-grid">
                                 <CampoEditavel {...campo("dataPedido", { rotulo: "Data do Pedido", tipo: "date" })} />
                                 <CampoEditavel {...campo("entrega", { rotulo: "Prazo de Entrega", tipo: "date" })} />
-                                <CampoEditavel {...campo("prioridade", {
-                                    rotulo: "Prioridade", tipo: "select", opcoes: PRIORIDADES, full: true,
-                                })} />
-                                <CampoEditavel {...campo("referencia", {
-                                    rotulo: "Referência", full: true, placeholder: "Ex: INV 2026/12",
-                                })} />
                             </div>
                         </section>
 
-                        {/* PERSONALIZAÇÃO GERAL */}
+                        {/* OBSERVAÇÕES GERAIS */}
                         <section className="form-section">
-                            <h2>Personalização</h2>
+                            <h2>Observações</h2>
                             <div className="form-grid">
-                                <CampoEditavel {...campo("local", {
-                                    rotulo: "Local da Personalização", tipo: "select", opcoes: LOCAIS_PERSONALIZACAO,
-                                })} />
-                                <CampoEditavel {...campo("personalizacao", {
-                                    rotulo: "Observação da Personalização", placeholder: "Opcional",
-                                })} />
                                 <CampoEditavel {...campo("observacao", {
                                     rotulo: "Observações Gerais", tipo: "textarea", full: true,
                                 })} />
@@ -218,7 +208,7 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
                         <section className="form-section">
                             <h2>Produtos</h2>
                             <p className="section-help">
-                                Altere técnica, tecido, cor, local da arte e quantidades de cada item.
+                                Altere técnica, tecido, cor, local da arte, quantidades e arte de cada item.
                             </p>
 
                             {produtos.map((p, i) => (
@@ -229,6 +219,23 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
                                             Remover
                                         </button>
                                     </div>
+
+                                    {/* Foto de referência do Estoque */}
+                                    {p.detalhes?.estoque_id && (
+                                        <div style={{ marginBottom: 10, textAlign: "center" }}>
+                                            <img
+                                                src={`/api/estoque/${p.detalhes.estoque_id}/imagem`}
+                                                alt="Foto de referência"
+                                                style={{
+                                                    maxWidth: 80, maxHeight: 80, objectFit: "contain",
+                                                    borderRadius: 6, border: "1px solid #e2e8f0",
+                                                }}
+                                            />
+                                            <p style={{ fontSize: 11, color: "#6b7280", margin: "4px 0 0" }}>
+                                                Foto de referência
+                                            </p>
+                                        </div>
+                                    )}
 
                                     <div className="modelo-selects">
                                         <SelectOpcoes label="Personalização" groups={PERSONALIZACOES}
@@ -265,46 +272,70 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
                                             </div>
                                         ))}
                                     </div>
+
+                                    {/* Arte individual do produto */}
+                                    <div className="arte-produto" style={{ marginTop: 12 }}>
+                                        <p className="arte-produto-titulo">
+                                            <span className="material-icons" style={{ fontSize: 16, verticalAlign: "middle", marginRight: 4 }}>image</span>
+                                            Arte do Cliente
+                                        </p>
+
+                                        {(artes[i] || p.detalhes?.imagem_url) && (
+                                            <img
+                                                src={artes[i] || p.detalhes.imagem_url}
+                                                alt={`Arte — ${p.item}`}
+                                                style={{
+                                                    maxWidth: 120, maxHeight: 120, objectFit: "contain",
+                                                    borderRadius: 8, border: "1px solid #e2e8f0",
+                                                    marginBottom: 8, display: "block",
+                                                }}
+                                            />
+                                        )}
+
+                                        <label className="upload-arte-mini" htmlFor={`arte-item-${i}`}>
+                                            <span className="material-icons" style={{ fontSize: 16 }}>upload</span>
+                                            {(artes[i] || p.detalhes?.imagem_url) ? "Trocar arte" : "Enviar arte"}
+                                            <input
+                                                id={`arte-item-${i}`}
+                                                type="file"
+                                                accept=".png,.ai,.pdf,image/*"
+                                                style={{ display: "none" }}
+                                                onChange={e => handleArteItem(i, e.target.files[0])}
+                                            />
+                                        </label>
+
+                                        {artes[i] && (
+                                            <button type="button" className="btn-page-sec"
+                                                style={{ fontSize: 12, marginTop: 4 }}
+                                                onClick={() => removerArteItem(i)}>
+                                                Remover nova arte
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             ))}
 
                             {disponiveis.length > 0 && (
-                                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                                    <select value={novoModelo} onChange={e => setNovoModelo(e.target.value)}>
-                                        <option value="">Adicionar modelo...</option>
+                                <div className="adicionar-modelo-row">
+                                    <span className="material-icons adicionar-modelo-icone">add_circle_outline</span>
+                                    <select
+                                        className="adicionar-modelo-select"
+                                        value={novoModelo}
+                                        onChange={e => setNovoModelo(e.target.value)}
+                                    >
+                                        <option value="">Selecionar modelo...</option>
                                         {disponiveis.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
                                     </select>
-                                    <button type="button" className="btn btn-add" onClick={adicionarProduto} disabled={!novoModelo}>
-                                        + Adicionar
+                                    <button
+                                        type="button"
+                                        className="btn btn-add adicionar-modelo-btn"
+                                        onClick={adicionarProduto}
+                                        disabled={!novoModelo}
+                                    >
+                                        Adicionar modelo
                                     </button>
                                 </div>
                             )}
-                        </section>
-
-                        {/* ARTE */}
-                        <section className="form-section">
-                            <h2>Arte do Cliente</h2>
-
-                            {arte && (
-                                <div style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 16 }}>
-                                    <img src={arte} alt="Arte atual"
-                                        style={{
-                                            width: 100, height: 100, objectFit: "contain", borderRadius: 10,
-                                            border: "1px solid #e2e8f0", background: "#f8fafc",
-                                        }} />
-                                    <button type="button" className="btn-page-sec" onClick={() => setArte(null)}>
-                                        Remover arte
-                                    </button>
-                                </div>
-                            )}
-
-                            <label className="upload-arte" htmlFor="e-input-arte">
-                                <span className="material-icons">upload_file</span>
-                                <strong>{arte ? "Trocar arte" : "Enviar arte"}</strong>
-                                <span>PNG, AI, PDF</span>
-                                <input id="e-input-arte" type="file" accept=".png,.ai,.pdf,image/*"
-                                    style={{ display: "none" }} onChange={handleArte} />
-                            </label>
                         </section>
                     </div>
 
@@ -313,8 +344,8 @@ function EditarPedidoModal({ pedido, onFechar, onSolicitar }) {
                     <div className="form-actions">
                         <button type="button" className="btn-page-sec" onClick={onFechar}>Cancelar</button>
                         <button type="submit" className="btn btn-add" disabled={enviando}>
-                            <span className="material-icons" style={{ fontSize: 18, marginRight: 6 }}>send</span>
-                            {enviando ? "Enviando..." : "Solicitar aprovação"}
+                            <span className="material-icons" style={{ fontSize: 18, marginRight: 6 }}>save</span>
+                            {enviando ? "Salvando..." : "Salvar alterações"}
                         </button>
                     </div>
                 </form>

@@ -7,7 +7,7 @@ import { listarPedidos, buscarPedido } from "../services/pedidosService";
 import FichaModal from "../components/FichaModal";
 import { useNavigate, Link } from "react-router-dom";
 import { infoStatus } from "../utils/status";
-import axios from "axios";
+import { api } from "../services/api.js";
 import { estaBaixo } from "../utils/estoque";
 
 function Inicio() {
@@ -15,8 +15,6 @@ function Inicio() {
   const [pedidos, setPedidos] = useState([]);
 
   useEffect(() => {
-    // TODO(BACK): GET /api/pedidos (cada pedido precisa de id, status, criadoEm e ficha.cliente).
-    // Opcional: GET /api/pedidos/resumo para trazer só as contagens e os 5 recentes.
     listarPedidos().then(setPedidos);
   }, []);
 
@@ -32,12 +30,9 @@ function Inicio() {
   const [estoque, setEstoque] = useState([]);
 
   useEffect(() => {
-
-    // TODO(BACK): mover a URL para VITE_API_URL (já existe: GET /listar-estoque)
-    axios
-      .get("http://localhost:5000/listar-estoque")
-      .then((res) => setEstoque(res.data))
-      .catch((erro) => console.log("Erro ao carregar estoque:", erro));
+    api.get('/listar-estoque')
+      .then((data) => setEstoque(Array.isArray(data) ? data : []))
+      .catch(() => {});
   }, []);
 
   const totalEstoque = estoque.reduce(
@@ -47,17 +42,15 @@ function Inicio() {
 
   const itensBaixos = estoque.filter(estaBaixo);
 
-  // Itens relevantes: os de estoque baixo primeiro, até 3
-  const relevantes = [...estoque]
-    .sort((a, b) => estaBaixo(b) - estaBaixo(a))
-    .slice(0, 3);
+  // Itens relevantes: prioriza estoque baixo; se nenhum, mostra os de menor quantidade relativa
+  const relevantes = itensBaixos.length > 0
+    ? itensBaixos.slice(0, 5)
+    : [...estoque].sort((a, b) => Number(a.quantidade_atual) - Number(b.quantidade_atual)).slice(0, 5);
 
 
   const [fichaAberta, setFichaAberta] = useState(null);
 
   async function abrirPedido(id) {
-
-    // TODO(BACK): GET /api/pedidos/:id (pedido completo, via buscarPedido no service)
     setFichaAberta(await buscarPedido(id));
   }
 
@@ -195,22 +188,38 @@ function Inicio() {
           <div className="dashboard-section">
 
             <div className="section-header">
-              <h3>Itens Relevantes do Estoque</h3>
-              <Link to="/estoque">Ver estoque</Link>
+              <h3>{itensBaixos.length > 0 ? "Estoque Baixo" : "Itens do Estoque"}</h3>
+              <Link to={itensBaixos.length > 0 ? "/estoque?filtro=baixo" : "/estoque"}>Ver estoque</Link>
             </div>
 
-            <div className="stock-grid">
-              {relevantes.length === 0 && (
-                <p style={{ color: "#64748b" }}>Nenhum item no estoque.</p>
-              )}
+            {relevantes.length === 0 && (
+              <p style={{ color: "#64748b", padding: "8px 0" }}>Nenhum item no estoque.</p>
+            )}
 
-              {relevantes.map((item) => (
-                <div className="stock-card" key={item.id}>
-                  <div className="img"></div>
-                  <span>{item.nome_item}</span>
-                  <p>{item.quantidade_atual} unidades</p>
-                </div>
-              ))}
+            <div className="stock-lista-alertas">
+              {relevantes.map((item) => {
+                const atual = Number(item.quantidade_atual) || 0;
+                const minimo = Number(item.estoque_minimo) || 0;
+                const baixo = estaBaixo(item);
+                const max = Math.max(minimo * 2, atual, 1);
+                const pct = Math.min(Math.round((atual / max) * 100), 100);
+                return (
+                  <div className="stock-alerta-row" key={item.id}>
+                    <div className="stock-alerta-info">
+                      <span className="stock-alerta-nome">{item.nome_item}</span>
+                      <span className="stock-alerta-qtd">
+                        {atual} / mín. {minimo} {item.unidade_medida || "un."}
+                      </span>
+                    </div>
+                    <div className="stock-bar-bg">
+                      <div
+                        className={`stock-bar-fill${baixo ? " baixo" : ""}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
           </div>

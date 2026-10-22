@@ -63,6 +63,7 @@ function PainelAdm() {
     const [filtroStatus, setFiltroStatus] = useState("Pendentes");
 
     const [reais, setReais] = useState([]);
+    const [erroCarregar, setErroCarregar] = useState("");
 
     const [selecionadaId, setSelecionadaId] = useState(null);
     const [modalAcao, setModalAcao] = useState(null);
@@ -72,7 +73,13 @@ function PainelAdm() {
     const [processando, setProcessando] = useState(false);
 
     const carregar = useCallback(async () => {
-        setReais(await listarSolicitacoes());
+        setErroCarregar("");
+        try {
+            setReais(await listarSolicitacoes());
+        } catch (erro) {
+            console.error("Erro ao carregar solicitações:", erro);
+            setErroCarregar(erro.message || "Não foi possível carregar as solicitações.");
+        }
     }, []);
 
     useEffect(() => {
@@ -231,6 +238,27 @@ function PainelAdm() {
 
 
                 {/* SOLICITAÇÕES */}
+                {erroCarregar && (
+                    <div style={{
+                        background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 10,
+                        padding: '14px 18px', marginBottom: 16, display: 'flex',
+                        alignItems: 'center', gap: 10, color: '#b91c1c', fontSize: 14,
+                    }}>
+                        <span className="material-icons" style={{ fontSize: 20 }}>error</span>
+                        <span style={{ flex: 1 }}>{erroCarregar}</span>
+                        <button
+                            type="button"
+                            onClick={carregar}
+                            style={{
+                                background: '#b91c1c', color: '#fff', border: 'none',
+                                borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontSize: 13,
+                            }}
+                        >
+                            Tentar novamente
+                        </button>
+                    </div>
+                )}
+
                 <section className="solicitacoes-lista">
 
                     {solicitacoesFiltradas.map((solicitacao) => (

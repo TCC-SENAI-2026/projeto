@@ -224,3 +224,55 @@
     outline: 2px solid #6366f1;
     outline-offset: 2px;
 }
+
+/* ===========================
+   LISTA DE ALERTAS DE ESTOQUE
+=========================== */
+
+.stock-lista-alertas {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 4px;
+}
+
+.stock-alerta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stock-alerta-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.stock-alerta-nome {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.stock-alerta-qtd {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.stock-bar-bg {
+    background: #e2e8f0;
+    border-radius: 4px;
+    height: 7px;
+    overflow: hidden;
+}
+
+.stock-bar-fill {
+    height: 7px;
+    border-radius: 4px;
+    background: #22c55e;
+    transition: width 0.3s ease;
+}
+
+.stock-bar-fill.baixo {
+    background: #ef4444;
+}

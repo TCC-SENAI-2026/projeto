@@ -40,16 +40,20 @@ export const MODELOS = [
 
 export const LOCAIS_POR_PRODUTO = {
     camiseta:     ["Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito",
-                   "Costas — Centro Alto", "Costas — Centro Baixo", "Manga Esquerda",
-                   "Manga Direita", "Gola"],
+                   "Costas — Centro Alto", "Costas — Centro Baixo", "Costas — Full Back",
+                   "Manga Esquerda", "Manga Direita", "Gola"],
     camisa:       ["Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito",
-                   "Costas — Centro Alto", "Costas — Centro Baixo", "Manga Esquerda",
-                   "Manga Direita", "Gola", "Bolso"],
-    camisa_longa: ["Frente — Centro", "Costas — Centro Alto", "Gola",
-                   "Manga Esquerda", "Manga Direita", "Ambas as Mangas"],
-    moletom:      ["Frente — Centro", "Costas — Centro Alto",
+                   "Costas — Centro Alto", "Costas — Centro Baixo", "Costas — Full Back",
+                   "Manga Esquerda", "Manga Direita", "Gola", "Bolso"],
+    camisa_longa: ["Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito",
+                   "Costas — Centro Alto", "Costas — Centro Baixo",
+                   "Manga Esquerda", "Manga Direita", "Ambas as Mangas",
+                   "Punho Esquerdo", "Punho Direito", "Gola"],
+    moletom:      ["Frente — Centro", "Frente — Peito Esquerdo",
+                   "Costas — Centro Alto", "Costas — Full Back",
                    "Manga Esquerda", "Manga Direita", "Capuz", "Bolso"],
-    calca:        ["Barra"],
+    calca:        ["Coxa Direita", "Coxa Esquerda", "Lateral da Perna",
+                   "Parte Traseira", "Bolso Traseiro", "Barra"],
 };
 
 export const DETALHES_VAZIOS = {

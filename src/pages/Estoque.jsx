@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { estaBaixo } from "../utils/estoque";
-import axios from "axios";
-
+import { api } from "../services/api.js";
 
 import Sidebar from "../components/Sidebar";
 
@@ -19,6 +18,7 @@ function Estoque() {
 
     const [estoque, setEstoque] = useState([]);
     const [pesquisa, setPesquisa] = useState("");
+    const [erroApi, setErroApi] = useState("");
 
     useEffect(() => {
         carregarEstoque();
@@ -26,12 +26,11 @@ function Estoque() {
 
     async function carregarEstoque() {
         try {
-            const resposta = await axios.get("http://localhost:5000/listar-estoque");
-            setEstoque(resposta.data);
+            const data = await api.get('/listar-estoque');
+            setEstoque(Array.isArray(data) ? data : []);
+            setErroApi("");
         } catch (erro) {
-            // TODO(BACK): se a API falhar, a tela só mostra "Nenhum item encontrado".
-            // Considerar exibir uma mensagem de erro ao usuário.
-            console.log("Erro ao carregar estoque:", erro);
+            setErroApi("Não foi possível carregar o estoque. Verifique a conexão.");
         }
     }
 
@@ -40,12 +39,10 @@ function Estoque() {
         if (!confirmar) return;
 
         try {
-            await axios.delete(`http://localhost:5000/excluir-estoque/${id}`);
-            alert("Item excluído com sucesso!");
+            await api.delete(`/excluir-estoque/${id}`);
             carregarEstoque();
         } catch (erro) {
-            console.log("Erro:", erro);
-            alert("Erro ao excluir item.");
+            alert(erro.message || "Erro ao excluir item.");
         }
     }
 
@@ -121,6 +118,42 @@ function Estoque() {
                     </div>
                 </div>
 
+                {erroApi && (
+                    <div className="aviso-erro" role="alert" style={{
+                        margin: "0 0 16px", padding: "10px 16px",
+                        background: "#fef2f2", border: "1px solid #fca5a5",
+                        borderRadius: 8, color: "#b91c1c", fontSize: 14,
+                    }}>
+                        <span className="material-icons" style={{ fontSize: 16, verticalAlign: "middle", marginRight: 6 }}>error_outline</span>
+                        {erroApi}
+                    </div>
+                )}
+
+                {/* ALERTA DE ESTOQUE BAIXO */}
+                {(() => {
+                    const baixos = estoque.filter(estaBaixo);
+                    if (!baixos.length || filtro === "baixo") return null;
+                    return (
+                        <div
+                            className="alerta-estoque-baixo"
+                            role="alert"
+                            style={{
+                                margin: "0 0 16px", padding: "10px 16px",
+                                background: "#fffbeb", border: "1px solid #fcd34d",
+                                borderRadius: 8, color: "#92400e", fontSize: 14,
+                                display: "flex", alignItems: "center", gap: 8, cursor: "pointer",
+                            }}
+                            onClick={() => setSearchParams({ filtro: "baixo" })}
+                        >
+                            <span className="material-icons" style={{ fontSize: 18, color: "#f59e0b" }}>warning</span>
+                            <span>
+                                <strong>{baixos.length} {baixos.length === 1 ? "item" : "itens"}</strong> com estoque baixo ou esgotado.
+                                {" "}<u>Ver agora</u>
+                            </span>
+                        </div>
+                    );
+                })()}
+
                 {/* LISTA */}
                 <div className="list">
 
@@ -150,7 +183,16 @@ function Estoque() {
                                     >
                                         {/* ITEM */}
                                         <div className="item-info">
-                                            <div className="img"></div>
+                                            {item.tem_imagem ? (
+                                                <img
+                                                    className="estoque-thumb"
+                                                    src={`/api/estoque/${item.id}/imagem?v=${item.id}`}
+                                                    alt={item.nome_item}
+                                                    loading="lazy"
+                                                />
+                                            ) : (
+                                                <div className="img"></div>
+                                            )}
 
                                             <div className="produto estoque-main">
                                                 <span className="mobile-field-label">Item</span>
