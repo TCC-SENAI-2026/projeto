@@ -16,10 +16,15 @@ export function clearCsrfToken() {
   csrfToken = null;
 }
 
-async function request(path, { method = 'GET', body, signal } = {}) {
+// lista: true permite que a resposta seja um array (ex.: /listar-estoque).
+// Por padrão só objetos são aceitos, como no login.
+async function request(path, { method = 'GET', body, signal, lista = false } = {}) {
   const headers = { Accept: 'application/json' };
 
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  // FormData (formulários com campos/arquivos) segue sem Content-Type: o navegador
+  // define o multipart com o boundary correto. Objetos comuns viram JSON.
+  const ehFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+  if (body !== undefined && !ehFormData) headers['Content-Type'] = 'application/json';
 
   if (method !== 'GET') {
     if (!csrfToken) await fetchCsrfToken();
@@ -32,7 +37,7 @@ async function request(path, { method = 'GET', body, signal } = {}) {
       method,
       headers,
       credentials: 'same-origin',
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : (ehFormData ? body : JSON.stringify(body)),
       signal,
     });
   } catch (error) {
@@ -47,7 +52,7 @@ async function request(path, { method = 'GET', body, signal } = {}) {
     throw new ApiError('O servidor retornou uma resposta inválida. Tente novamente.', response.status);
   }
 
-  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+  if (!data || typeof data !== 'object' || (Array.isArray(data) && !lista)) {
     throw new ApiError('O servidor retornou uma resposta inválida. Tente novamente.', response.status);
   }
 
@@ -55,7 +60,8 @@ async function request(path, { method = 'GET', body, signal } = {}) {
     // Outra aba ou uma sessão expirada pode ter invalidado o token em memória.
     // A próxima tentativa obtém um token atual; não repetimos operações automaticamente.
     if (response.status === 403) clearCsrfToken();
-    throw new ApiError(data.msg || 'Não foi possível concluir a solicitação.', response.status);
+    // Os módulos antigos respondem com 'msg' (colaboradores) ou 'message' (estoque).
+    throw new ApiError(data.msg || data.message || 'Não foi possível concluir a solicitação.', response.status);
   }
 
   // Login gira o token; /me também o fornece ao restaurar a sessão.
@@ -74,9 +80,12 @@ async function fetchCsrfToken() {
   return data.csrf_token;
 }
 
-// A migração dos módulos de negócio para este cliente pertence às próximas tarefas.
+// Toda tela que fala com o backend deve usar este cliente: ele envia o cookie de
+// sessão e o X-CSRF-Token em POST/PUT/DELETE, igual ao login.
 export const api = {
   get: (path, options) => request(path, options),
   post: (path, body) => request(path, { method: 'POST', body }),
+  put: (path, body) => request(path, { method: 'PUT', body }),
+  delete: (path) => request(path, { method: 'DELETE' }),
   fetchCsrfToken,
 };

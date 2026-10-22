@@ -3,8 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
-
-const API_URL = "http://localhost:5000";
+import { api } from "../services/api";
 
 const FORM_VAZIO = {
     nome: "", re: "", cpf: "", dataNascimento: "",
@@ -30,9 +29,7 @@ function FormUsuario() {
 
         async function carregarColaborador() {
             try {
-                const resposta = await fetch(`${API_URL}/editar-colaborador/${id}`);
-                if (!resposta.ok) throw new Error();
-                const c = await resposta.json();
+                const c = await api.get(`/editar-colaborador/${id}`);
 
                 setForm({
                     nome: c.nome_completo || "",
@@ -84,17 +81,11 @@ function FormUsuario() {
         dados.append("status", form.status);
 
         const url = editando
-            ? `${API_URL}/editar-colaborador/${id}`
-            : `${API_URL}/cadastrar-colaborador`;
+            ? `/editar-colaborador/${id}`
+            : `/cadastrar-colaborador`;
 
         try {
-            const resposta = await fetch(url, { method: "POST", body: dados });
-            const resultado = await resposta.json().catch(() => ({}));
-
-            if (!resposta.ok) {
-                alert(resultado.msg || "Erro ao salvar colaborador.");
-                return;
-            }
+            const resultado = await api.post(url, dados);
 
             alert(
                 editando
@@ -102,8 +93,8 @@ function FormUsuario() {
                     : resultado.aviso || "Colaborador cadastrado! O link para definir a senha foi enviado."
             );
             navigate("/equipe");
-        } catch {
-            alert("Não foi possível conectar ao servidor.");
+        } catch (erro) {
+            alert(erro.message || "Erro ao salvar colaborador.");
         } finally {
             setEnviando(false);
         }
@@ -112,8 +103,7 @@ function FormUsuario() {
     async function excluir() {
         if (!window.confirm(`Deseja excluir ${form.nome}?`)) return;
         try {
-            const resposta = await fetch(`${API_URL}/excluir-colaborador/${id}`, { method: "POST" });
-            if (!resposta.ok) throw new Error();
+            await api.post(`/excluir-colaborador/${id}`);
             navigate("/equipe");
         } catch {
             alert("Erro ao excluir o colaborador.");
@@ -122,16 +112,10 @@ function FormUsuario() {
 
     async function reenviarLink() {
         try {
-            const resposta = await fetch(`${API_URL}/reenviar-link/${id}`, { method: "POST" });
-            const resultado = await resposta.json().catch(() => ({}));
-
-            if (!resposta.ok) {
-                alert(resultado.msg || "Não foi possível reenviar o link.");
-                return;
-            }
+            await api.post(`/reenviar-link/${id}`);
             alert("Link reenviado!");
-        } catch {
-            alert("Não foi possível conectar ao servidor.");
+        } catch (erro) {
+            alert(erro.message || "Não foi possível reenviar o link.");
         }
     }
 

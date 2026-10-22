@@ -7,7 +7,7 @@ import { listarPedidos, buscarPedido } from "../services/pedidosService";
 import FichaModal from "../components/FichaModal";
 import { useNavigate, Link } from "react-router-dom";
 import { infoStatus } from "../utils/status";
-import axios from "axios";
+import { api } from "../services/api";
 import { estaBaixo } from "../utils/estoque";
 
 function Inicio() {
@@ -33,10 +33,9 @@ function Inicio() {
 
   useEffect(() => {
 
-    // TODO(BACK): mover a URL para VITE_API_URL (já existe: GET /listar-estoque)
-    axios
-      .get("http://localhost:5000/listar-estoque")
-      .then((res) => setEstoque(res.data))
+    api
+      .get("/listar-estoque", { lista: true })
+      .then((dados) => setEstoque(dados))
       .catch((erro) => console.log("Erro ao carregar estoque:", erro));
   }, []);
 

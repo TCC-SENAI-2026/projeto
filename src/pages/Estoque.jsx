@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { estaBaixo } from "../utils/estoque";
-import axios from "axios";
+import { api } from "../services/api";
 
 
 import Sidebar from "../components/Sidebar";
@@ -26,8 +26,8 @@ function Estoque() {
 
     async function carregarEstoque() {
         try {
-            const resposta = await axios.get("http://localhost:5000/listar-estoque");
-            setEstoque(resposta.data);
+            const dados = await api.get("/listar-estoque", { lista: true });
+            setEstoque(dados);
         } catch (erro) {
             // TODO(BACK): se a API falhar, a tela só mostra "Nenhum item encontrado".
             // Considerar exibir uma mensagem de erro ao usuário.
@@ -40,7 +40,7 @@ function Estoque() {
         if (!confirmar) return;
 
         try {
-            await axios.delete(`http://localhost:5000/excluir-estoque/${id}`);
+            await api.delete(`/excluir-estoque/${id}`);
             alert("Item excluído com sucesso!");
             carregarEstoque();
         } catch (erro) {
