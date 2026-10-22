@@ -38,6 +38,20 @@ export const MODELOS = [
     { id: "calca", label: "Calça", icon: "checkroom" },
 ];
 
+export const LOCAIS_POR_PRODUTO = {
+    camiseta:     ["Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito",
+                   "Costas — Centro Alto", "Costas — Centro Baixo", "Manga Esquerda",
+                   "Manga Direita", "Gola"],
+    camisa:       ["Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito",
+                   "Costas — Centro Alto", "Costas — Centro Baixo", "Manga Esquerda",
+                   "Manga Direita", "Gola", "Bolso"],
+    camisa_longa: ["Frente — Centro", "Costas — Centro Alto", "Gola",
+                   "Manga Esquerda", "Manga Direita", "Ambas as Mangas"],
+    moletom:      ["Frente — Centro", "Costas — Centro Alto",
+                   "Manga Esquerda", "Manga Direita", "Capuz", "Bolso"],
+    calca:        ["Barra"],
+};
+
 export const DETALHES_VAZIOS = {
     tecido: "",
     cor: "",

@@ -6,12 +6,15 @@ from mysql.connector import Error as MySQLError
 
 from auth.csrf import init_csrf
 from auth.decorators import admin_required, login_required
+from catalogo import catalogo_bp
 from clientes import clientes_bp
 from colaboradores import colaboradores_bp
 from config import load_config
 from database.connection import init_db
 from estoque import estoque_bp
 from login import login_bp
+from pedidos import pedidos_bp
+from solicitacoes import solicitacoes_bp
 
 
 def create_app(test_config=None):
@@ -32,6 +35,9 @@ def create_app(test_config=None):
     app.register_blueprint(clientes_bp)
     app.register_blueprint(colaboradores_bp)
     app.register_blueprint(estoque_bp)
+    app.register_blueprint(catalogo_bp)
+    app.register_blueprint(pedidos_bp)
+    app.register_blueprint(solicitacoes_bp)
 
     @app.before_request
     def protect_existing_modules():
@@ -47,6 +53,7 @@ def create_app(test_config=None):
             return admin_required(lambda: None)()
         if request.blueprint in ('clientes', 'estoque'):
             return login_required(lambda: None)()
+        # pedidos, solicitacoes e catalogo protegem cada rota com seus próprios decorators
         return None
 
     @app.errorhandler(MySQLError)

@@ -786,3 +786,216 @@ body.imprimindo-modal {
         display: none;
     }
 }
+
+/* ==================================================
+   FICHA TÉCNICA ÚNICA — nova estrutura
+   ================================================== */
+
+.fc-documento {
+    width: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #111;
+}
+
+/* Cabeçalho único do pedido */
+.fc-cabecalho-geral {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+    background: #f8fafc;
+    border: 2px solid #334155;
+    border-radius: 6px;
+}
+
+.fc-cab-esquerda {
+    flex: 1;
+    min-width: 0;
+}
+
+.fc-titulo-doc {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.fc-cab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.fc-cab-grid .fc-campo {
+    border-right: 1px solid #cbd5e1;
+    border-bottom: 1px solid #cbd5e1;
+}
+
+.fc-cab-grid .fc-campo:last-child,
+.fc-cab-grid .fc-campo-full {
+    grid-column: 1 / -1;
+}
+
+.fc-cab-direita {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 110px;
+    text-align: center;
+}
+
+.fc-qr-img {
+    display: block;
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.fc-qr-label {
+    font-size: 9px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.fc-qr-pendente {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border: 1px dashed #94a3b8;
+    border-radius: 4px;
+    font-size: 10px;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.4;
+    padding: 8px;
+}
+
+/* Seção por produto */
+.fc-produto-secao {
+    margin-bottom: 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    overflow: hidden;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.fc-produto-titulo {
+    margin: 0;
+    padding: 8px 14px;
+    background: #334155;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.fc-produto-corpo {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+}
+
+.fc-produto-detalhes {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.fc-campos-produto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.fc-campos-produto .fc-campo {
+    border-right: 1px solid #cbd5e1;
+    border-bottom: 1px solid #cbd5e1;
+}
+
+.fc-total-pecas {
+    margin: 6px 0 0 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.fc-produto-obs {
+    margin-top: 8px;
+    padding: 6px 8px;
+    background: #fafafa;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.fc-produto-obs > strong {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 3px;
+}
+
+.fc-produto-obs > p {
+    margin: 0;
+}
+
+.fc-produto-arte {
+    width: 220px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 12px;
+}
+
+.fc-ilustracao-produto {
+    flex: 1;
+    min-height: 160px;
+    padding: 10px !important;
+}
+
+.fc-ilustracao-produto img {
+    max-height: 180px;
+}
+
+@media print {
+    .fc-documento {
+        font-size: 10px;
+    }
+
+    .fc-cabecalho-geral {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 8px;
+        padding: 10px;
+    }
+
+    .fc-produto-secao {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 8px;
+    }
+
+    .fc-produto-arte {
+        width: 180px;
+    }
+
+    .fc-ilustracao-produto {
+        min-height: 120px;
+    }
+}

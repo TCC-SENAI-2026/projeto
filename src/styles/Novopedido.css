@@ -391,3 +391,175 @@
         display: none;
     }
 }
+
+/* =========================
+   SELECT COM ESTILO PRÓPRIO
+========================= */
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper select,
+.form-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%2364748b' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 14px;
+    font-size: 14px;
+    color: #1e293b;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+}
+
+.form-field select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.form-field select:hover:not(:disabled) {
+    border-color: #94a3b8;
+}
+
+.form-field select:disabled {
+    background-color: #f8fafc;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* =========================
+   ARTE INDIVIDUAL POR PRODUTO
+========================= */
+
+.arte-produto {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.arte-produto-titulo {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.arte-preview-wrapper {
+    margin-bottom: 10px;
+}
+
+.arte-preview-img {
+    width: 100%;
+    max-width: 160px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    display: block;
+}
+
+.arte-sem-preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #475569;
+}
+
+.arte-nome-arquivo {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+    word-break: break-all;
+}
+
+.upload-arte-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #f1f5f9;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    margin-top: 4px;
+}
+
+.upload-arte-mini:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.arte-enviando {
+    font-size: 13px;
+    color: #64748b;
+    font-style: italic;
+}
+
+.arte-erro {
+    font-size: 12px;
+    color: #991b1b;
+    background: #fee2e2;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 8px;
+}
+
+.modelo-textarea {
+    width: 100%;
+    border-radius: 10px;
+    border: 1.5px solid #e2e8f0;
+    padding: 8px 12px;
+    font-size: 13px;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.15s;
+}
+
+.modelo-textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.modelo-obs {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #64748b;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+/* =========================
+   COLABORADOR NA LISTAGEM
+========================= */
+
+.pedido-colaborador {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 2px;
+}

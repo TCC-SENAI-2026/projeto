@@ -59,9 +59,11 @@ function Pedidos() {
         // Mesmo bloqueio do editar e do excluir: não muda enquanto há solicitação pendente
         if (temPendente(id)) return;
 
+        const pedidoAtual = pedidos.find(p => p.id === id);
+        const numExibicao = pedidoAtual?.numero_pedido || id;
         if (
             novoStatus === "finalizado" &&
-            !window.confirm(`Finalizar o pedido #${id}? Ele irá para o histórico.`)
+            !window.confirm(`Finalizar o pedido #${numExibicao}? Ele irá para o histórico.`)
         ) {
             return;
         }
@@ -100,7 +102,7 @@ function Pedidos() {
             await solicitar({
                 tipo: "exclusao",
                 pedidoId: p.id,
-                resumo: p.ficha?.cliente || "",
+                resumo: nomeCliente(p),
                 justificativa,
             });
         } catch (erro) {
@@ -115,7 +117,7 @@ function Pedidos() {
         setTab(valor === "finalizado" ? "historico" : "recentes");
     }
 
-    const nomeCliente = (p) => p.ficha?.cliente || "Sem cliente";
+    const nomeCliente = (p) => p.nome_cliente || p.ficha?.cliente || "Sem cliente";
     const termo = busca.trim().toLowerCase().replace("#", "");
 
     const visiveis = pedidos.filter((p) => {
@@ -123,6 +125,7 @@ function Pedidos() {
         const noFiltro = !filtro || p.status === filtro;
         const naBusca =
             !termo ||
+            String(p.numero_pedido || p.id).includes(termo) ||
             String(p.id).includes(termo) ||
             nomeCliente(p).toLowerCase().includes(termo);
         return naAba && noFiltro && naBusca;
@@ -291,15 +294,21 @@ function Pedidos() {
                                                 <div className="img"></div>
                                                 <div className="pedido-main">
                                                     <span className="mobile-field-label">Pedido</span>
-                                                    <p>#{p.id}
+                                                    <p>
+                                                        <strong>#{p.numero_pedido || p.id}</strong>
                                                         {prio && <span className={`prio-selo ${prio.classe}`}>{prio.texto}</span>}
                                                     </p>
+                                                    {p.nome_colaborador && (
+                                                        <p className="pedido-colaborador">
+                                                            Colaborador: {p.nome_colaborador}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
 
                                             <div className="empresa info-block">
                                                 <span className="mobile-field-label">Empresa</span>
-                                                <p>{p.ficha?.cliente || "—"}</p>
+                                                <p>{nomeCliente(p)}</p>
                                             </div>
 
                                             <div className="status-col info-block">

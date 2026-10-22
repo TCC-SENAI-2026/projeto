@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
 import Modal from "../components/Modal";
 import "../styles/login.css";
@@ -37,7 +37,13 @@ function Login() {
     }
   }
 
-  if (colaborador) return <Navigate to="/home" replace />;
+  const [searchParams] = useSearchParams();
+  const redirectTo = (() => {
+    const r = searchParams.get('redirect');
+    return r && r.startsWith('/') ? r : '/home';
+  })();
+
+  if (colaborador) return <Navigate to={redirectTo} replace />;
 
   return (
     <main className="login">

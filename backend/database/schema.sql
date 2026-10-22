@@ -85,7 +85,7 @@ CREATE TABLE catalogo_itens (
 
 CREATE TABLE pedidos (
     id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    numero_pedido  INT NOT NULL,
+    numero_pedido  INT NULL,
     cliente_id     INT UNSIGNED NOT NULL,
     colaborador_id INT UNSIGNED NOT NULL,
     data_pedido    DATE NOT NULL,
@@ -122,7 +122,9 @@ CREATE TABLE pedido_itens (
     cor_id            INT UNSIGNED NOT NULL,
     local_arte_id     INT UNSIGNED NOT NULL,
     observacao        TEXT NULL,
-    imagem_url        VARCHAR(2048) NULL,
+    imagem_url        VARCHAR(2048) NULL,   -- legado; mantido para dados existentes
+    imagem_mime       VARCHAR(50) NULL,
+    imagem_dados      MEDIUMBLOB NULL,
     PRIMARY KEY (id),
     KEY idx_pedido_itens_pedido (pedido_id),
     KEY idx_pedido_itens_produto (tipo_produto_id),
@@ -227,6 +229,17 @@ CREATE TABLE solicitacoes (
     CONSTRAINT fk_solicitacoes_administrador FOREIGN KEY (administrador_id)
         REFERENCES colaboradores (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- ===========================================================================
+-- ALTER TABLE necessario para instancias ja existentes (executar no Workbench):
+--
+--   ALTER TABLE pedido_itens
+--     ADD COLUMN imagem_mime VARCHAR(50) NULL,
+--     ADD COLUMN imagem_dados MEDIUMBLOB NULL;
+--
+-- Novos clones usam o CREATE TABLE acima que ja inclui essas colunas.
+-- imagem_url e mantida para compatibilidade com dados anteriores.
+-- ===========================================================================
 
 -- A aplicacao impede duas solicitacoes pendentes simultaneas para o mesmo alvo.
 -- Nao ha trigger nem alteracao automatica de negocio neste schema.

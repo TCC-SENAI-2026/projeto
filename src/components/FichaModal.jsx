@@ -116,7 +116,7 @@ function FichaModal({ ficha, onFechar, onIniciar, onFinalizar, bloqueado = false
                         )}
                     </div>
 
-                    <FichaConteudo pedido={ficha.pedido} ficha={ficha.ficha} />
+                    <FichaConteudo pedido={ficha.pedido} ficha={ficha.ficha} pedidoId={ficha.id} />
                 </div>
 
                 {/* RODAPÉ: ação conforme o status. Não sai na impressão. */}

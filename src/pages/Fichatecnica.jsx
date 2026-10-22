@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import FichaConteudo from "../components/FichaConteudo";
 import { salvarPedido } from "../services/pedidosService";
@@ -35,10 +35,19 @@ const PRIORIDADE_COR = {
 
 function FichaTecnica() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [pedido, setPedido] = useState(null);
     const [ficha, setFicha] = useState(null);
     const [modalAberto, setModalAberto] = useState(false);
     const [salvando, setSalvando] = useState(false);
+    const [pedidoCriado, setPedidoCriado] = useState(null);
+
+    // File objects vindos de SelecionarProdutos via router state
+    // (nunca null, mas pode estar vazio se o usuário acessar a página diretamente)
+    const [previewArtes] = useState(() => {
+        const artes = location.state?.artesOrdenadas || [];
+        return artes.map(f => (f instanceof File ? URL.createObjectURL(f) : null));
+    });
 
     useEffect(() => {
         const d = localStorage.getItem("detalhesPedido");
@@ -52,12 +61,10 @@ function FichaTecnica() {
 
         setSalvando(true);
         try {
-            // TODO(BACK): POST /api/pedidos (a chamada real está em pedidosService.js → salvarPedido)
-            // O back gera id, status inicial ("pendente") e criadoEm, e devolve o pedido criado.
-
-            await salvarPedido({ pedido, ficha });
+            const artesOrdenadas = location.state?.artesOrdenadas || [];
+            const resultado = await salvarPedido({ pedido, ficha, artesOrdenadas });
+            setPedidoCriado(resultado);
             setModalAberto(true);
-            // Rascunho do formulário: pode continuar no localStorage mesmo com back
             localStorage.removeItem("detalhesPedido");
             localStorage.removeItem("dadosFicha");
         } catch (erro) {
@@ -96,8 +103,7 @@ function FichaTecnica() {
 
     const prio = PRIORIDADE_COR[ficha.prioridade] || { bg: "#e5e7eb", color: "#374151" };
 
-    // TODO(BACK): a arte vem em base64. Trocar por URL devolvida pelo upload (ver SelecionarProdutos.jsx)
-    const arteGeral = pedido.arte || null;
+    // previewArtes: array de object URLs geradas no useState inicial (uma por produto, ou null)
 
     return (
         <>
@@ -201,32 +207,15 @@ function FichaTecnica() {
                         </div>
                     </section>
 
-                    {/* ── BLOCO B: ARTE GERAL (se houver uma só para o pedido inteiro) ── */}
-                    {arteGeral && (
-                        <section className="form-section">
-                            <h2>Arte do Pedido</h2>
-                            <p className="section-help">
-                                Imagem de referência enviada pelo cliente. Pode ser aplicada em diferentes
-                                técnicas conforme cada item abaixo.
-                            </p>
-                            <img
-                                src={arteGeral}
-                                alt="Arte do pedido"
-                                style={{ maxWidth: 220, borderRadius: 12, border: "1px solid #e2e8f0" }}
-                            />
-                        </section>
-                    )}
-
-
-                    {/* BLOCO C: FICHAS TÉCNICAS INDUSTRIAIS */}
+                    {/* BLOCO B: FICHA TÉCNICA ÚNICA */}
                     <section className="form-section secao-fichas-industriais">
-                        <h2 className="no-print">Fichas Técnicas dos Itens</h2>
+                        <h2 className="no-print">Ficha Técnica</h2>
 
                         <p className="section-help no-print">
                             Visualização técnica dos produtos do pedido.
                         </p>
 
-                        <FichaConteudo pedido={pedido} ficha={ficha} />
+                        <FichaConteudo pedido={pedido} ficha={ficha} previewArtes={previewArtes} />
                     </section>
 
 
@@ -275,14 +264,19 @@ function FichaTecnica() {
                         <div className="modal-sucesso-icon">
                             <span className="material-icons">check_circle</span>
                         </div>
-                        <h2>Pedido enviado com sucesso!</h2>
-
-                        {/* TODO(BACK): confirmar com o back se o pedido já nasce em produção; hoje nasce "pendente" */}
-                        
+                        <h2>Pedido #{pedidoCriado?.numero_pedido} enviado!</h2>
                         <p>Os itens já estão na fila de produção.</p>
-                        <button className="btn btn-add" onClick={fecharESair}>
-                            OK
-                        </button>
+                        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 16 }}>
+                            <button className="btn-page-sec" onClick={fecharESair}>
+                                Ir para Pedidos
+                            </button>
+                            <button
+                                className="btn btn-add"
+                                onClick={() => navigate(`/pedidos/${pedidoCriado?.id}`)}
+                            >
+                                Ver Ficha Técnica
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

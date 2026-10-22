@@ -5,48 +5,85 @@ import "../styles/padrao.css";
 import "../styles/formulario.css";
 import "../styles/Novopedido.css";
 
+// Aplica máscara de telefone brasileiro conforme o usuário digita
+function mascaraTelefone(valor) {
+    const nums = valor.replace(/\D/g, '').slice(0, 11);
+    if (nums.length === 0) return '';
+    if (nums.length <= 2)  return `(${nums}`;
+    if (nums.length <= 6)  return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
+    if (nums.length <= 10) return `(${nums.slice(0,2)}) ${nums.slice(2,6)}-${nums.slice(6)}`;
+    return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
+}
+
+function validarTelefone(valor) {
+    const nums = valor.replace(/\D/g, '');
+    return nums.length >= 10 && nums.length <= 11;
+}
+
 function NovoPedido() {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
-        nomeCliente: "",
-        dataPedido: "",
-        telefone: "",
-        email: "",
-        prazoEntrega: "",
-        prioridade: "",
-        localPersonalizacao: "",
-        obsPersonalizacao: "",
-        obsGeral: "",
+        nomeCliente:        '',
+        contato:            '',
+        email:              '',
+        dataPedido:         '',
+        prazoEntrega:       '',
+        prioridade:         '',
+        localPersonalizacao: '',
+        obsPersonalizacao:  '',
+        obsGeral:           '',
     });
+
+    const [erroTelefone, setErroTelefone] = useState('');
 
     function handleChange(e) {
         const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
+
+        if (name === 'contato') {
+            const mascarado = mascaraTelefone(value);
+            setForm(prev => ({ ...prev, contato: mascarado }));
+            setErroTelefone('');
+            return;
+        }
+
+        setForm(prev => ({ ...prev, [name]: value }));
     }
 
     function handleSubmit(e) {
         e.preventDefault();
 
+        if (!form.nomeCliente.trim()) {
+            alert('Digite o nome do cliente.');
+            return;
+        }
         if (!form.prioridade) {
-            alert("Selecione a prioridade do pedido.");
+            alert('Selecione a prioridade do pedido.');
+            return;
+        }
+        if (form.contato && !validarTelefone(form.contato)) {
+            setErroTelefone('Telefone inválido. Use o formato (11) 99999-9999.');
+            return;
+        }
+        if (form.prazoEntrega && form.dataPedido && form.prazoEntrega < form.dataPedido) {
+            alert('O prazo de entrega não pode ser anterior à data do pedido.');
             return;
         }
 
-        localStorage.setItem("dadosFicha", JSON.stringify({
-            cliente:        form.nomeCliente,
+        localStorage.setItem('dadosFicha', JSON.stringify({
+            cliente:        form.nomeCliente.trim(),
             dataPedido:     form.dataPedido,
-            contato:        form.telefone,
+            contato:        form.contato,
             email:          form.email,
             entrega:        form.prazoEntrega,
             prioridade:     form.prioridade,
             local:          form.localPersonalizacao,
             personalizacao: form.obsPersonalizacao,
             observacao:     form.obsGeral,
-            dataCriacao:    new Date().toLocaleDateString("pt-BR"),
+            dataCriacao:    new Date().toLocaleDateString('pt-BR'),
         }));
 
-        navigate("/pedidos/novo/produtos");
+        navigate('/pedidos/novo/produtos');
     }
 
     return (
@@ -90,7 +127,7 @@ function NovoPedido() {
                         {/* DADOS DO CLIENTE */}
                         <section className="form-section">
                             <h2>Dados do Cliente</h2>
-                            <p className="section-help">Identificação e contato do cliente para este pedido.</p>
+                            <p className="section-help">Informe os dados do cliente para este pedido.</p>
 
                             <div className="form-grid">
 
@@ -99,7 +136,8 @@ function NovoPedido() {
                                     <input
                                         id="nomeCliente"
                                         name="nomeCliente"
-                                        placeholder="Ex: Empresa Caio Induscar"
+                                        type="text"
+                                        placeholder="Digite o nome do cliente"
                                         value={form.nomeCliente}
                                         onChange={handleChange}
                                         required
@@ -107,15 +145,20 @@ function NovoPedido() {
                                 </div>
 
                                 <div className="form-field">
-                                    <label htmlFor="telefone">Telefone</label>
+                                    <label htmlFor="contato">Telefone</label>
                                     <input
-                                        id="telefone"
-                                        name="telefone"
+                                        id="contato"
+                                        name="contato"
                                         placeholder="(11) 99999-9999"
-                                        value={form.telefone}
+                                        value={form.contato}
                                         onChange={handleChange}
-                                        required
+                                        inputMode="numeric"
                                     />
+                                    {erroTelefone && (
+                                        <span style={{ color: '#991b1b', fontSize: 12, marginTop: 4, display: 'block' }}>
+                                            {erroTelefone}
+                                        </span>
+                                    )}
                                 </div>
 
                                 <div className="form-field">
@@ -127,7 +170,6 @@ function NovoPedido() {
                                         placeholder="contato@empresa.com"
                                         value={form.email}
                                         onChange={handleChange}
-                                        required
                                     />
                                 </div>
 
@@ -166,37 +208,19 @@ function NovoPedido() {
                                 </div>
 
                                 <div className="form-field full">
-                                    <p className="form-label-like">Prioridade (opional)</p>
+                                    <p className="form-label-like">Prioridade</p>
                                     <div className="status-toggle">
 
-                                        <input
-                                            type="radio"
-                                            id="prio_baixa"
-                                            name="prioridade"
-                                            value="baixa"
-                                            checked={form.prioridade === "baixa"}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="radio" id="prio_baixa" name="prioridade"
+                                            value="baixa" checked={form.prioridade === 'baixa'} onChange={handleChange} />
                                         <label htmlFor="prio_baixa" className="tg-verde">Baixa</label>
 
-                                        <input
-                                            type="radio"
-                                            id="prio_media"
-                                            name="prioridade"
-                                            value="media"
-                                            checked={form.prioridade === "media"}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="radio" id="prio_media" name="prioridade"
+                                            value="media" checked={form.prioridade === 'media'} onChange={handleChange} />
                                         <label htmlFor="prio_media" className="tg-amarelo">Média</label>
 
-                                        <input
-                                            type="radio"
-                                            id="prio_alta"
-                                            name="prioridade"
-                                            value="alta"
-                                            checked={form.prioridade === "alta"}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="radio" id="prio_alta" name="prioridade"
+                                            value="alta" checked={form.prioridade === 'alta'} onChange={handleChange} />
                                         <label htmlFor="prio_alta" className="tg-vermelho">Alta</label>
 
                                     </div>
@@ -208,27 +232,29 @@ function NovoPedido() {
                         {/* PERSONALIZAÇÃO */}
                         <section className="form-section">
                             <h2>Personalização</h2>
-                            <p className="section-help">Local e detalhes da personalização do pedido.</p>
+                            <p className="section-help">Local e detalhes gerais da personalização do pedido.</p>
 
                             <div className="form-grid">
 
                                 <div className="form-field">
                                     <label htmlFor="localPersonalizacao">Local da Personalização</label>
-                                    <select
-                                        id="localPersonalizacao"
-                                        name="localPersonalizacao"
-                                        value={form.localPersonalizacao}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">Selecione</option>
-                                        <option value="Frente">Frente</option>
-                                        <option value="Costas">Costas</option>
-                                        <option value="Manga direita">Manga direita</option>
-                                        <option value="Manga esquerda">Manga esquerda</option>
-                                        <option value="Peito">Peito</option>
-                                        <option value="Gola">Gola</option>
-                                    </select>
+                                    <div className="select-wrapper">
+                                        <select
+                                            id="localPersonalizacao"
+                                            name="localPersonalizacao"
+                                            value={form.localPersonalizacao}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            <option value="">Selecione</option>
+                                            <option value="Frente">Frente</option>
+                                            <option value="Costas">Costas</option>
+                                            <option value="Manga direita">Manga direita</option>
+                                            <option value="Manga esquerda">Manga esquerda</option>
+                                            <option value="Peito">Peito</option>
+                                            <option value="Gola">Gola</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div className="form-field">
@@ -257,11 +283,7 @@ function NovoPedido() {
                         </section>
 
                         <div className="form-actions">
-                            <button
-                                type="button"
-                                className="btn-page-sec"
-                                onClick={() => navigate("/pedidos")}
-                            >
+                            <button type="button" className="btn-page-sec" onClick={() => navigate('/pedidos')}>
                                 Cancelar
                             </button>
                             <button type="submit" className="btn btn-add">

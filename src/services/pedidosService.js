@@ -1,202 +1,125 @@
-/* ======================================================================
-   PEDIDOS: ONDE O SISTEMA BUSCA E SALVA OS DADOS
+import { api } from './api.js';
 
-   Hoje os pedidos ficam guardados no navegador (só para demonstração).
-   Quando o back estiver pronto, é só trocar o código dentro de cada
-   função abaixo por uma chamada à API. As telas continuam iguais.
-
-   Para ver o que falta, busque no projeto: TODO(BACK)
-   ====================================================================== */
-
-// TODO(BACK): colocar aqui o endereço da API (ex.: VITE_API_URL no .env)
-// const API = import.meta.env.VITE_API_URL;
-
-const CHAVE = "pedidos";
-
-// ----- Só para demonstração: apagar quando o back estiver pronto -----
-function ler() {
-    try {
-        return JSON.parse(localStorage.getItem(CHAVE) || "[]");
-    } catch {
-        return [];
-    }
-}
-
-// Os status do banco têm outros nomes. A tradução fica só aqui, então as telas
-// continuam usando "pendente", "producao" e "finalizado".
-const STATUS_PARA_API = {
-    pendente: "pendente",
-    producao: "em_producao",
-    finalizado: "concluido",
+// Tradução de status entre frontend e banco
+const STATUS_PARA_FRONT = {
+    pendente:    'pendente',
+    em_producao: 'producao',
+    concluido:   'finalizado',
+    cancelado:   'cancelado',
 };
 
-const STATUS_PARA_FRONT = Object.fromEntries(
-    Object.entries(STATUS_PARA_API).map(([front, api]) => [api, front])
-);
+const STATUS_PARA_API = {
+    pendente:   'pendente',
+    producao:   'em_producao',
+    finalizado: 'concluido',
+};
 
-const statusParaApi = (s) => STATUS_PARA_API[s] ?? s;
 const statusParaFront = (s) => STATUS_PARA_FRONT[s] ?? s;
+const statusParaApi   = (s) => STATUS_PARA_API[s]   ?? s;
 
-// Converte um pedido que veio da API para o formato que as telas esperam
-function doApi(p) {
+// Converte a resposta da API para o formato esperado pelas telas
+function apiParaFront(p) {
     return {
-        ...p,
-        status: statusParaFront(p.status),
-        finalizadoEm: p.data_conclusao ?? null, // coluna que já existe no banco
+        id:                p.id,
+        numero_pedido:     p.numero_pedido,
+        status:            statusParaFront(p.status),
+        prioridade:        p.prioridade,
+        nome_colaborador:  p.nome_colaborador,
+        // Estrutura compatível com FichaModal, FichaConteudo e Pedidos.jsx
+        ficha: {
+            numero_pedido: p.numero_pedido,
+            colaborador:   p.nome_colaborador,
+            cliente:       p.nome_cliente,
+            contato:       p.contato,
+            email:         p.email,
+            dataPedido:    p.data_pedido,
+            entrega:       p.prazo_entrega,
+            prioridade:    p.prioridade,
+            observacao:    p.obs_geral,
+        },
+        pedido: p.itens ? {
+            arte: null,
+            produtos: (p.itens || []).map(item => ({
+                item: item.tipo_produto,
+                grade: Object.fromEntries(
+                    (item.tamanhos || []).map(t => [t.tamanho, t.quantidade])
+                ),
+                detalhes: {
+                    personalizacao: item.personalizacao,
+                    tecido:         item.tecido,
+                    cor:            item.cor,
+                    local:          item.local_arte,
+                    observacao:     item.observacao,
+                    imagem_url:     item.imagem_url,
+                },
+            })),
+        } : undefined,
     };
 }
-
-
-function gravar(lista) {
-    try {
-        localStorage.setItem(CHAVE, JSON.stringify(lista));
-        return true;
-    } catch (erro) {
-        if (erro.name === "QuotaExceededError") {
-            console.error(
-                "Não foi possível salvar os pedidos: armazenamento local cheio."
-            );
-            throw new Error(
-                "O armazenamento dos pedidos está cheio. Nenhum dado existente foi removido."
-            );
-        }
-
-        throw erro;
-    }
-}
-
-// TODO(BACK): GET /api/pedidos  (lista de pedidos)
 
 export async function listarPedidos() {
-    // return (await fetch(`${API}/pedidos`)).json();
-    return ler();
+    const res = await api.get('/pedidos');
+    return (res.data || []).map(apiParaFront);
 }
 
-
-// TODO(BACK): GET /api/pedidos/:id  (um pedido completo)
 export async function buscarPedido(id) {
-    // return (await fetch(`${API}/pedidos/${id}`)).json();
-    return ler().find((p) => String(p.id) === String(id)) ?? null;
+    const res = await api.get(`/pedidos/${id}`);
+    return apiParaFront(res.data);
 }
 
-// TODO(BACK): POST /api/pedidos  (criar pedido)
-// O back deve criar o id, o status inicial ("pendente") e a data de criação.
-export async function salvarPedido({ pedido, ficha }) {
-    // const res = await fetch(`${API}/pedidos`, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ pedido, ficha }),
-    // });
-    // return res.json();
-
-    const novo = {
-        id: Date.now(),
-        status: "pendente",
-        criadoEm: new Date().toISOString(),
-        pedido,
-        ficha,
+export async function salvarPedido({ pedido, ficha, artesOrdenadas = [] }) {
+    const payload = {
+        nome_cliente:  ficha.cliente,
+        email_cliente: ficha.email  || null,
+        data_pedido:   ficha.dataPedido,
+        prazo_entrega: ficha.entrega || null,
+        prioridade:    ficha.prioridade,
+        obs_geral:     ficha.observacao || null,
+        contato:       ficha.contato || null,
+        produtos: (pedido.produtos || []).map(p => ({
+            item:  p.item,
+            grade: p.grade,
+            detalhes: {
+                tecido:         p.detalhes?.tecido,
+                cor:            p.detalhes?.cor,
+                personalizacao: p.detalhes?.personalizacao,
+                local:          p.detalhes?.local,
+                observacao:     p.detalhes?.observacao,
+            },
+        })),
     };
 
-    const pedidosExistentes = ler();
-    const pedidosAtualizados = [novo, ...pedidosExistentes];
+    const formData = new FormData();
+    formData.append('dados', JSON.stringify(payload));
+    artesOrdenadas.forEach((file, i) => {
+        if (file instanceof File) formData.append(`arte_${i}`, file);
+    });
 
-    // ATENÇÃO (só demonstração): o localStorage guarda no máximo 5 pedidos.
-    // Pedidos mais antigos são descartados. APAGAR este laço quando o back estiver pronto.
-    // Tenta salvar começando pelos 5 pedidos mais recentes.
-    for (let quantidade = Math.min(5, pedidosAtualizados.length); quantidade >= 1; quantidade--) {
-        try {
-            gravar(pedidosAtualizados.slice(0, quantidade));
-            return novo;
-        } catch (erro) {
-            if (
-                erro.name !== "QuotaExceededError" &&
-                !String(erro.message).includes("armazenamento local cheio")
-            ) {
-                throw erro;
-            }
-        }
-    }
-
-    throw new Error(
-        "Não foi possível salvar nem um pedido. O armazenamento local está cheio."
-    );
+    const res = await api.postFile('/pedidos', formData);
+    return res.data;
 }
 
-// TODO(BACK): DELETE /api/pedidos/:id  (apagar pedido)
 export async function excluirPedido(id) {
-    // await fetch(`${API}/pedidos/${id}`, { method: "DELETE" });
-    gravar(ler().filter((p) => String(p.id) !== String(id)));
+    await api.delete(`/pedidos/${id}`);
 }
 
-// TODO(BACK): PUT /api/pedidos/:id  (editar pedido)
 export async function atualizarPedido(id, dados) {
-    // const res = await fetch(`${API}/pedidos/${id}`, {
-    //     method: "PUT",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(dados),
-    // });
-    // return res.json();
-
-    const lista = ler();
-    const i = lista.findIndex((p) => String(p.id) === String(id));
-    if (i === -1) throw new Error("Pedido não encontrado.");
-
-    // id e criadoEm nunca mudam numa edição
-    lista[i] = { ...lista[i], ...dados, id: lista[i].id, criadoEm: lista[i].criadoEm };
-
-    gravar(lista); // lança erro se o localStorage estiver cheio
-    return lista[i];
-}
-
-// Só estas mudanças são permitidas: pendente → producao → finalizado
-const TRANSICOES = {
-    pendente: ["producao"],
-    producao: ["finalizado"],
-};
-
-// TODO(BACK): PATCH /api/pedidos/:id  body: { status }
-// O back deve validar a transição e, ao finalizar, preencher data_conclusao.
-// Atenção: no banco os status são em_producao e concluido (no front: producao e finalizado).
-export async function atualizarStatus(id, novoStatus) {
-    // const res = await fetch(`${API}/pedidos/${id}`, {
-    //     method: "PATCH",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ status: novoStatus }),
-    // });
-    // if (!res.ok) throw new Error("Não foi possível atualizar o pedido.");
-    // return res.json();
-
-    const lista = ler();
-    const i = lista.findIndex((p) => String(p.id) === String(id));
-    if (i === -1) throw new Error("Pedido não encontrado.");
-
-    if (!TRANSICOES[lista[i].status]?.includes(novoStatus)) {
-        throw new Error("Esta mudança de status não é permitida.");
-    }
-
-    const agora = new Date().toISOString();
-    lista[i] = {
-        ...lista[i],
-        status: novoStatus,
-        ...(novoStatus === "producao" && { iniciadoEm: agora }),
-        ...(novoStatus === "finalizado" && { finalizadoEm: agora }),
+    // dados pode vir no formato localStorage (com ficha/pedido) ou direto
+    const ficha = dados?.ficha || dados || {};
+    const payload = {
+        prazo_entrega: ficha.entrega || ficha.prazo_entrega || null,
+        prioridade:    ficha.prioridade || null,
+        obs_geral:     ficha.observacao || ficha.obs_geral || null,
     };
-
-    gravar(lista); // lança erro se o localStorage estiver cheio
-    return lista[i];
+    await api.put(`/pedidos/${id}`, payload);
 }
-/* ----------------------------------------------------------------------
-   COMO É UM PEDIDO (para consulta)
 
-   {  
-      id, status, criadoEm, iniciadoEm, finalizadoEm,
-     ficha:  { cliente, contato, email, dataPedido, entrega,
-               prioridade, local, personalizacao, observacao, referencia },
-     pedido: { arte, produtos: [ ... ] }
-   }
+export async function atualizarStatus(id, novoStatusFront) {
+    await api.patch(`/pedidos/${id}/status`, { status: novoStatusFront });
+}
 
-   status: "pendente", "producao" ou "finalizado" (no banco: pendente, em_producao, concluido)
-   criadoEm: data no formato 2026-10-13T12:00:00.000Z
-   iniciadoEm: só existe no modo demonstração (o banco não guarda o início)
-   finalizadoEm: no banco vem de data_conclusao
-   ---------------------------------------------------------------------- */
+// Só estas transições são permitidas (validação também no backend)
+export const TRANSICOES = {
+    pendente:   ['producao'],
+    producao:   ['finalizado'],
+};
