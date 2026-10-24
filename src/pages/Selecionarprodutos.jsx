@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import SelectOpcoes from "../components/SelectOpcoes";
@@ -6,6 +6,7 @@ import {
     TAMANHOS, PERSONALIZACOES, TECIDOS, CORES, LOCAIS,
     LOCAIS_POR_PRODUTO, MODELOS,
 } from "../utils/opcoesProduto";
+import { api } from "../services/api";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
 import "../styles/Novopedido.css";
@@ -27,7 +28,17 @@ function locaisPorModelo(modeloId) {
 }
 
 // Card individual de produto com arte própria
-function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, selecionado, onToggle }) {
+function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, selecionado, onToggle,
+                      estoqueItens = [], estoqueId = null, onEstoqueChange }) {
+
+    const fotoProduto = estoqueId
+        ? (estoqueItens.find(e => e.id === estoqueId)?.tem_imagem
+            ? `/api/estoque/${estoqueId}/imagem`
+            : null)
+        : (estoqueItens.length === 1 && estoqueItens[0].tem_imagem
+            ? `/api/estoque/${estoqueItens[0].id}/imagem`
+            : null);
+
     return (
         <div className={`modelo-card ${selecionado ? 'selecionado' : ''}`}>
 
@@ -35,8 +46,26 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
             {!selecionado && (
                 <div className="modelo-frente">
                     <div className="modelo-icon">
-                        <span className="material-icons">{modelo.icon}</span>
+                        {fotoProduto ? (
+                            <img src={fotoProduto} alt={modelo.label}
+                                 style={{ width: 80, height: 80, objectFit: 'contain', borderRadius: 8 }} />
+                        ) : (
+                            <span className="material-icons">{modelo.icon}</span>
+                        )}
                     </div>
+
+                    {estoqueItens.length > 1 && (
+                        <div className="form-field" style={{ marginBottom: 8 }}>
+                            <label style={{ fontSize: 12 }}>Modelo do estoque</label>
+                            <select value={estoqueId || ''} onChange={e => onEstoqueChange(Number(e.target.value) || null)}
+                                    style={{ fontSize: 12 }}>
+                                <option value="">Selecione</option>
+                                {estoqueItens.map(e => (
+                                    <option key={e.id} value={e.id}>{e.nome_item}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
 
                     <h3 className="modelo-nome">{modelo.label}</h3>
 
@@ -174,6 +203,7 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
                     </button>
                 </div>
             )}
+
         </div>
     );
 }
@@ -190,6 +220,32 @@ function SelecionarProdutos() {
 
     // Arte individual por produto: { modeloId: { file, preview, nome, temPreview } }
     const [artes, setArtes] = useState({});
+
+    // Fotos do estoque por modelo: { modeloId: [{id, nome_item, tem_imagem}] }
+    const [estoquesPorModelo, setEstoquesPorModelo] = useState({});
+    // Estoque selecionado por modelo (quando há mais de um item)
+    const [estoqueIds, setEstoqueIds] = useState({});
+
+    useEffect(() => {
+        api.get('/catalogo/produtos', { lista: true })
+            .then(prods => {
+                if (!Array.isArray(prods)) return;
+                MODELOS.forEach(m => {
+                    const cat = prods.find(p => p.nome.toLowerCase() === m.label.toLowerCase());
+                    if (!cat) return;
+                    api.get(`/estoque/por-catalogo/${cat.id}`, { lista: true })
+                        .then(itens => {
+                            if (!Array.isArray(itens) || itens.length === 0) return;
+                            setEstoquesPorModelo(prev => ({ ...prev, [m.id]: itens }));
+                            if (itens.length === 1) {
+                                setEstoqueIds(prev => ({ ...prev, [m.id]: itens[0].id }));
+                            }
+                        })
+                        .catch(() => {});
+                });
+            })
+            .catch(() => {});
+    }, []);
 
     function handleChange(modeloId, campo, valor) {
         setModelos(prev => {
@@ -259,9 +315,12 @@ function SelecionarProdutos() {
             const grade = Object.fromEntries(
                 Object.entries(d.quantidades).filter(([, v]) => v > 0)
             );
+            const itens = estoquesPorModelo[m.id] || [];
+            const estoqueId = estoqueIds[m.id] || (itens.length === 1 ? itens[0].id : null);
             return {
                 item: m.label,
                 grade,
+                estoque_id: estoqueId,
                 detalhes: {
                     tecido:         d.tecido,
                     cor:            d.cor,
@@ -348,6 +407,9 @@ function SelecionarProdutos() {
                                     onArte={arquivo => handleArte(m.id, arquivo)}
                                     onRemoverArte={() => removerArte(m.id)}
                                     onToggle={() => handleToggle(m.id)}
+                                    estoqueItens={estoquesPorModelo[m.id] || []}
+                                    estoqueId={estoqueIds[m.id] || null}
+                                    onEstoqueChange={id => setEstoqueIds(prev => ({ ...prev, [m.id]: id }))}
                                 />
                             ))}
                         </div>

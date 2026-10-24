@@ -57,22 +57,6 @@ function FichaConteudo({ pedido, ficha, pedidoId = null, previewArtes = null }) 
                     </div>
                 </div>
 
-                <div className="fc-cab-direita">
-                    {pedidoId ? (
-                        <>
-                            <img
-                                src={`/api/pedidos/${pedidoId}/qrcode`}
-                                alt="QR Code do pedido"
-                                className="fc-qr-img"
-                            />
-                            <span className="fc-qr-label">Escanear para ver o pedido</span>
-                        </>
-                    ) : (
-                        <div className="fc-qr-pendente">
-                            QR Code<br />disponível<br />após finalizar
-                        </div>
-                    )}
-                </div>
             </header>
 
             {/* SEÇÕES POR PRODUTO — cada produto na sua seção */}
@@ -139,6 +123,24 @@ function FichaConteudo({ pedido, ficha, pedidoId = null, previewArtes = null }) 
                                         <span className="fc-arte-vazia">
                                             Área reservada para a ilustração
                                         </span>
+                                    )}
+                                </div>
+
+                                {/* QR Code individual do item */}
+                                <div className="fc-item-qr">
+                                    {detalhes.id ? (
+                                        <>
+                                            <img
+                                                src={`/api/pedidos/itens/${detalhes.id}/qrcode`}
+                                                alt={`QR Code — ${nomeProduto}`}
+                                                className="fc-qr-img"
+                                            />
+                                            <span className="fc-qr-label">Escanear para ver item</span>
+                                        </>
+                                    ) : (
+                                        <div className="fc-qr-pendente">
+                                            QR Code<br />após finalizar
+                                        </div>
                                     )}
                                 </div>
                             </div>

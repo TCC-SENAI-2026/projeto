@@ -84,10 +84,11 @@ async function fetchCsrfToken() {
 // sessão e o X-CSRF-Token em POST/PUT/PATCH/DELETE, igual ao login.
 export const api = {
   get: (path, options) => request(path, options),
-  post: (path, body) => request(path, { method: 'POST', body }),
+  post: (path, body, options) => request(path, { ...options, method: 'POST', body }),
   put: (path, body) => request(path, { method: 'PUT', body }),
   patch: (path, body) => request(path, { method: 'PATCH', body }),
   delete: (path) => request(path, { method: 'DELETE' }),
   postFile: (path, formData) => request(path, { method: 'POST', body: formData, raw: true }),
+  putFile: (path, formData) => request(path, { method: 'PUT', body: formData, raw: true }),
   fetchCsrfToken,
 };

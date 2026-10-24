@@ -7,10 +7,6 @@ const ROTULOS_FICHA = {
     email: "E-mail",
     dataPedido: "Data do pedido",
     entrega: "Prazo de entrega",
-    prioridade: "Prioridade",
-    referencia: "Referência",
-    local: "Local da personalização",
-    personalizacao: "Observação da personalização",
     observacao: "Observações gerais",
 };
 
@@ -117,15 +113,17 @@ export function gerarAlteracoes(original, novo) {
         }
     }
 
-    // ---------- arte ----------
-    const arteAntiga = original.pedido?.arte || null;
-    if ((arteAntiga || null) !== (novo.arte || null)) {
-        alteracoes.push({
-            campo: "arte",
-            rotulo: "Arte do cliente",
-            antigo: arteAntiga ? "Arte atual" : "Sem arte",
-            novo: novo.arte ? "Nova arte enviada" : "Arte removida",
-        });
+    // ---------- arte por produto ----------
+    for (const p of novos) {
+        if (p.detalhes?.arteNova) {
+            const base = antigos.find((a) => a.item === p.item);
+            alteracoes.push({
+                campo: `produto:${p.item}:arte`,
+                rotulo: `${p.item} · Arte do cliente`,
+                antigo: base?.detalhes?.imagem_url ? "Arte atual" : "Sem arte",
+                novo: "Nova arte enviada",
+            });
+        }
     }
 
     return alteracoes;

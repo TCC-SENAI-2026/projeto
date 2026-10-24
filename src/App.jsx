@@ -15,6 +15,7 @@ import SelecionarProdutos from './pages/Selecionarprodutos'
 import FichaTecnica from './pages/Fichatecnica'
 import DefinirSenha from './pages/DefinirSenha'
 import VisualizarPedido from './pages/VisualizarPedido'
+import VisualizarItem from './pages/VisualizarItem'
 
 import PainelAdm from './pages/PainelAdm'
 
@@ -42,6 +43,7 @@ function App() {
         <Route path="/pedidos/novo"           element={<NovoPedido />} />
         <Route path="/pedidos/novo/produtos"  element={<SelecionarProdutos />} />
         <Route path="/pedidos/novo/ficha"     element={<FichaTecnica />} />
+        <Route path="/pedidos/itens/:id"      element={<VisualizarItem />} />
         <Route path="/pedidos/:id"            element={<VisualizarPedido />} />
         <Route path="/novo-pedido"            element={<Navigate to="/pedidos/novo" replace />} />
         <Route path="/novo-pedido/produtos"   element={<Navigate to="/pedidos/novo/produtos" replace />} />

@@ -24,15 +24,13 @@ function NovoPedido() {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
-        nomeCliente:        '',
-        contato:            '',
-        email:              '',
-        dataPedido:         '',
-        prazoEntrega:       '',
-        prioridade:         '',
-        localPersonalizacao: '',
-        obsPersonalizacao:  '',
-        obsGeral:           '',
+        nomeCliente:       '',
+        contato:           '',
+        email:             '',
+        dataPedido:        '',
+        prazoEntrega:      '',
+        obsPersonalizacao: '',
+        obsGeral:          '',
     });
 
     const [erroTelefone, setErroTelefone] = useState('');
@@ -57,10 +55,6 @@ function NovoPedido() {
             alert('Digite o nome do cliente.');
             return;
         }
-        if (!form.prioridade) {
-            alert('Selecione a prioridade do pedido.');
-            return;
-        }
         if (form.contato && !validarTelefone(form.contato)) {
             setErroTelefone('Telefone inválido. Use o formato (11) 99999-9999.');
             return;
@@ -76,8 +70,6 @@ function NovoPedido() {
             contato:        form.contato,
             email:          form.email,
             entrega:        form.prazoEntrega,
-            prioridade:     form.prioridade,
-            local:          form.localPersonalizacao,
             personalizacao: form.obsPersonalizacao,
             observacao:     form.obsGeral,
             dataCriacao:    new Date().toLocaleDateString('pt-BR'),
@@ -179,7 +171,7 @@ function NovoPedido() {
                         {/* LOGÍSTICA */}
                         <section className="form-section">
                             <h2>Detalhes Logísticos</h2>
-                            <p className="section-help">Datas e prioridade de entrega do pedido.</p>
+                            <p className="section-help">Datas de início e entrega do pedido.</p>
 
                             <div className="form-grid">
 
@@ -207,55 +199,15 @@ function NovoPedido() {
                                     />
                                 </div>
 
-                                <div className="form-field full">
-                                    <p className="form-label-like">Prioridade</p>
-                                    <div className="status-toggle">
-
-                                        <input type="radio" id="prio_baixa" name="prioridade"
-                                            value="baixa" checked={form.prioridade === 'baixa'} onChange={handleChange} />
-                                        <label htmlFor="prio_baixa" className="tg-verde">Baixa</label>
-
-                                        <input type="radio" id="prio_media" name="prioridade"
-                                            value="media" checked={form.prioridade === 'media'} onChange={handleChange} />
-                                        <label htmlFor="prio_media" className="tg-amarelo">Média</label>
-
-                                        <input type="radio" id="prio_alta" name="prioridade"
-                                            value="alta" checked={form.prioridade === 'alta'} onChange={handleChange} />
-                                        <label htmlFor="prio_alta" className="tg-vermelho">Alta</label>
-
-                                    </div>
-                                </div>
-
                             </div>
                         </section>
 
-                        {/* PERSONALIZAÇÃO */}
+                        {/* OBSERVAÇÕES */}
                         <section className="form-section">
-                            <h2>Personalização</h2>
-                            <p className="section-help">Local e detalhes gerais da personalização do pedido.</p>
+                            <h2>Observações</h2>
+                            <p className="section-help">Detalhes adicionais de personalização e do pedido.</p>
 
                             <div className="form-grid">
-
-                                <div className="form-field">
-                                    <label htmlFor="localPersonalizacao">Local da Personalização</label>
-                                    <div className="select-wrapper">
-                                        <select
-                                            id="localPersonalizacao"
-                                            name="localPersonalizacao"
-                                            value={form.localPersonalizacao}
-                                            onChange={handleChange}
-                                            required
-                                        >
-                                            <option value="">Selecione</option>
-                                            <option value="Frente">Frente</option>
-                                            <option value="Costas">Costas</option>
-                                            <option value="Manga direita">Manga direita</option>
-                                            <option value="Manga esquerda">Manga esquerda</option>
-                                            <option value="Peito">Peito</option>
-                                            <option value="Gola">Gola</option>
-                                        </select>
-                                    </div>
-                                </div>
 
                                 <div className="form-field">
                                     <label htmlFor="obsPersonalizacao">Observação da Personalização</label>

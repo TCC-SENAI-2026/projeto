@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../services/api";
 
 import Sidebar from "../components/Sidebar";
+import { api } from "../services/api";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
 
 function AddEstoque() {
 
     const navigate = useNavigate();
+    const inputArteRef = useRef(null);
 
     const [form, setForm] = useState({
         tipo_item: "Produto",
@@ -19,9 +20,34 @@ function AddEstoque() {
         quantidade_atual: "",
         estoque_minimo: "",
         valor_unitario: "",
-        observacoes: ""
+        observacoes: "",
+        catalogo_item_id: "",
     });
 
+    const [catalogoProdutos, setCatalogoProdutos] = useState([]);
+    const [imagemFile, setImagemFile] = useState(null);
+    const [imagemPreview, setImagemPreview] = useState(null);
+
+    useEffect(() => {
+        api.get('/catalogo/produtos', { lista: true })
+            .then(data => setCatalogoProdutos(Array.isArray(data) ? data : []))
+            .catch(() => setCatalogoProdutos([]));
+    }, []);
+
+    function handleArte(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (imagemPreview) URL.revokeObjectURL(imagemPreview);
+        setImagemFile(file);
+        setImagemPreview(URL.createObjectURL(file));
+    }
+
+    function removerArte() {
+        if (imagemPreview) URL.revokeObjectURL(imagemPreview);
+        setImagemFile(null);
+        setImagemPreview(null);
+        if (inputArteRef.current) inputArteRef.current.value = '';
+    }
 
     function handleChange(e) {
 
@@ -55,38 +81,30 @@ function AddEstoque() {
 
         try {
 
-            await api.post(
-                "/cadastrar-estoque",
-                {
-                    ...form,
+            const fd = new FormData();
+            fd.append('tipo_item',        form.tipo_item.toLowerCase());
+            fd.append('nome_item',        form.nome_item);
+            fd.append('categoria',        form.categoria);
+            fd.append('unidade_medida',   form.unidade_medida);
+            fd.append('fornecedor',       form.fornecedor || '');
+            fd.append('quantidade_atual', Number(form.quantidade_atual || 0));
+            fd.append('estoque_minimo',   Number(form.estoque_minimo || 0));
+            fd.append('valor_unitario',   form.valor_unitario
+                ? Number(form.valor_unitario.replace(',', '.'))
+                : '');
+            fd.append('observacoes',      form.observacoes || '');
+            fd.append('catalogo_item_id', form.catalogo_item_id || '');
+            if (imagemFile) fd.append('imagem', imagemFile);
 
-                    quantidade_atual:
-                        Number(form.quantidade_atual || 0),
-
-                    estoque_minimo:
-                        Number(form.estoque_minimo || 0),
-
-                    valor_unitario:
-                        form.valor_unitario
-                            ? Number(
-                                form.valor_unitario.replace(",", ".")
-                            )
-                            : null
-                }
-            );
+            await api.postFile('/cadastrar-estoque', fd);
 
             alert("Item cadastrado com sucesso!");
-
             navigate("/estoque");
 
         } catch (erro) {
 
             console.log("Erro:", erro);
-
-            alert(
-                erro.message ||
-                "Erro ao cadastrar item."
-            );
+            alert(erro.message || "Erro ao cadastrar item.");
         }
     }
 
@@ -222,6 +240,56 @@ function AddEstoque() {
 
                                     </div>
 
+
+                                    {form.tipo_item === "Produto" && (
+                                        <div className="form-field full">
+                                            <label>Modelo do Catálogo</label>
+                                            <select
+                                                name="catalogo_item_id"
+                                                value={form.catalogo_item_id}
+                                                onChange={handleChange}
+                                            >
+                                                <option value="">Selecione (opcional)</option>
+                                                {catalogoProdutos.map(p => (
+                                                    <option key={p.id} value={p.id}>{p.nome}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
+
+                                    {form.tipo_item === "Produto" && (
+                                        <div className="form-field full">
+                                            <label>Foto do Produto</label>
+                                            {imagemPreview && (
+                                                <img
+                                                    src={imagemPreview}
+                                                    alt="prévia"
+                                                    style={{ maxWidth: 160, maxHeight: 160, borderRadius: 8,
+                                                             objectFit: 'contain', marginBottom: 8, display: 'block' }}
+                                                />
+                                            )}
+                                            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                                <button type="button" className="btn-page-sec"
+                                                    onClick={() => inputArteRef.current?.click()}>
+                                                    {imagemPreview ? 'Trocar foto' : 'Escolher foto'}
+                                                </button>
+                                                {imagemPreview && (
+                                                    <button type="button" className="btn-page-sec"
+                                                        style={{ color: '#991b1b' }}
+                                                        onClick={removerArte}>
+                                                        Remover
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <input
+                                                ref={inputArteRef}
+                                                type="file"
+                                                accept=".png,.jpg,.jpeg,.webp,image/*"
+                                                style={{ display: 'none' }}
+                                                onChange={handleArte}
+                                            />
+                                        </div>
+                                    )}
 
                                     <div className="form-field">
 

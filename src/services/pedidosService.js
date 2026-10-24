@@ -45,6 +45,8 @@ function apiParaFront(p) {
                     (item.tamanhos || []).map(t => [t.tamanho, t.quantidade])
                 ),
                 detalhes: {
+                    id:             item.id,
+                    estoque_id:     item.estoque_id || null,
                     personalizacao: item.personalizacao,
                     tecido:         item.tecido,
                     cor:            item.cor,
@@ -77,8 +79,9 @@ export async function salvarPedido({ pedido, ficha, artesOrdenadas = [] }) {
         obs_geral:     ficha.observacao || null,
         contato:       ficha.contato || null,
         produtos: (pedido.produtos || []).map(p => ({
-            item:  p.item,
-            grade: p.grade,
+            item:       p.item,
+            grade:      p.grade,
+            estoque_id: p.estoque_id || null,
             detalhes: {
                 tecido:         p.detalhes?.tecido,
                 cor:            p.detalhes?.cor,
@@ -103,15 +106,8 @@ export async function excluirPedido(id) {
     await api.delete(`/pedidos/${id}`);
 }
 
-export async function atualizarPedido(id, dados) {
-    // dados pode vir no formato localStorage (com ficha/pedido) ou direto
-    const ficha = dados?.ficha || dados || {};
-    const payload = {
-        prazo_entrega: ficha.entrega || ficha.prazo_entrega || null,
-        prioridade:    ficha.prioridade || null,
-        obs_geral:     ficha.observacao || ficha.obs_geral || null,
-    };
-    await api.put(`/pedidos/${id}`, payload);
+export async function atualizarPedido(id, pedidoNovo) {
+    await api.put(`/pedidos/${id}`, pedidoNovo);
 }
 
 export async function atualizarStatus(id, novoStatusFront) {
