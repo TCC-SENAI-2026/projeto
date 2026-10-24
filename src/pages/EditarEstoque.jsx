@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { api } from "../services/api";
 
 import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
@@ -31,11 +31,9 @@ function EditarEstoque() {
 
             try {
 
-                const resposta = await axios.get(
-                    `http://localhost:5000/estoque/${id}`
-                );
+                const item = await api.get(`/estoque/${id}`);
 
-                setForm(resposta.data);
+                setForm(item);
 
             } catch (erro) {
 
@@ -70,8 +68,8 @@ function EditarEstoque() {
 
         try {
 
-            await axios.put(
-                `http://localhost:5000/editar-estoque/${id}`,
+            await api.put(
+                `/editar-estoque/${id}`,
                 {
                     ...form,
 
@@ -98,10 +96,9 @@ function EditarEstoque() {
         } catch (erro) {
 
             console.log("Erro ao editar:", erro);
-            console.log(erro.response?.data);
 
             alert(
-                erro.response?.data?.message ||
+                erro.message ||
                 "Erro ao editar item."
             );
         }

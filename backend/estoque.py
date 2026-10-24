@@ -1,8 +1,13 @@
 from flask import Blueprint, request, jsonify
+from auth.decorators import login_required
 import resources.database_connection as database_connection
 
 
 estoque_bp = Blueprint('estoque', __name__)
+
+# Segurança (mesmo padrão do login.py): @login_required em cada rota exige sessão válida,
+# conta ativa e perfil conhecido, lidos do banco a cada requisição. O token CSRF
+# (X-CSRF-Token) já é exigido globalmente em POST/PUT/PATCH/DELETE por auth/csrf.py.
 
 
 # ==================================================
@@ -10,6 +15,7 @@ estoque_bp = Blueprint('estoque', __name__)
 # ==================================================
 
 @estoque_bp.route('/cadastrar-estoque', methods=['POST'])
+@login_required
 def cadastrar_estoque():
 
     dados = request.get_json()
@@ -92,6 +98,7 @@ def cadastrar_estoque():
 # ==================================================
 
 @estoque_bp.route('/listar-estoque', methods=['GET'])
+@login_required
 def listar_estoque():
 
     connection = None
@@ -149,6 +156,7 @@ def listar_estoque():
 # ==================================================
 
 @estoque_bp.route('/estoque/<int:id>', methods=['GET'])
+@login_required
 def buscar_item(id):
 
     connection = None
@@ -201,6 +209,7 @@ def buscar_item(id):
 # ==================================================
 
 @estoque_bp.route('/editar-estoque/<int:id>', methods=['PUT'])
+@login_required
 def editar_estoque(id):
 
     dados = request.get_json()
@@ -282,6 +291,7 @@ def editar_estoque(id):
 # ==================================================
 
 @estoque_bp.route('/excluir-estoque/<int:id>', methods=['DELETE'])
+@login_required
 def excluir_estoque(id):
 
     connection = None
@@ -328,4 +338,4 @@ def excluir_estoque(id):
             cursor.close()
 
         if connection:
-            connection.close()
+            connection.close()

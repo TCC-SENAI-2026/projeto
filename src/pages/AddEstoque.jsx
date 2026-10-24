@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../services/api";
 
 import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
@@ -55,8 +55,8 @@ function AddEstoque() {
 
         try {
 
-            await axios.post(
-                "http://localhost:5000/cadastrar-estoque",
+            await api.post(
+                "/cadastrar-estoque",
                 {
                     ...form,
 
@@ -82,10 +82,9 @@ function AddEstoque() {
         } catch (erro) {
 
             console.log("Erro:", erro);
-            console.log("Resposta:", erro.response?.data);
 
             alert(
-                erro.response?.data?.message ||
+                erro.message ||
                 "Erro ao cadastrar item."
             );
         }

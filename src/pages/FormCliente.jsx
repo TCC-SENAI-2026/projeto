@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react"
 import "../styles/padrao.css"
 import "../styles/formulario.css"
+import { api } from "../services/api";
 
 const ESTADOS = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA",
@@ -45,26 +46,17 @@ function FormCliente() {
         }
 
         const url = clienteEditar
-            ? `http://localhost:5000/editar-cliente/${clienteEditar[13]}`
-            : `http://localhost:5000/cadastrar-cliente`
+            ? `/editar-cliente/${clienteEditar[13]}`
+            : `/cadastrar-cliente`
 
         try {
-            // credentials: 'include' envia o cookie de sessão (o back exige login)
-            const res = await fetch(url, {
-                method: 'POST',
-                body: formData,
-                credentials: 'include',
-            })
-
-            if (!res.ok) {
-                alert('Não foi possível salvar o cliente.')
-                return
-            }
+            // o api envia o cookie de sessão e o token CSRF (o back exige os dois)
+            await api.post(url, formData)
 
             navigate('/clientes')
         } catch (erro) {
             console.log('Erro ao salvar cliente:', erro)
-            alert('Não foi possível conectar ao servidor.')
+            alert(erro.status ? 'Não foi possível salvar o cliente.' : 'Não foi possível conectar ao servidor.')
         }
     }
 

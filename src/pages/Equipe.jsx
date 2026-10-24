@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import { useNavigate } from "react-router-dom";
 import '../styles/Equipe.css';
 import '../styles/padrao.css';
-
-const API_URL = "http://localhost:5000";
+import { api } from "../services/api";
 
 // TODO (BACK): alinhar os valores de nivel_acesso com o schema
 // (o banco usa 'administrador' / 'colaborador'; aqui o front espera 'administrativo' / 'padrao').
@@ -26,9 +24,7 @@ function Equipe() {
     useEffect(() => {
         async function carregarColaboradores() {
             try {
-                const { data } = await axios.get(`${API_URL}/listar-colaboradores`, {
-                    withCredentials: true, // envia o cookie de sessão
-                });
+                const data = await api.get("/listar-colaboradores", { lista: true });
 
                 // Formato antigo do back (lista de valores, sem nome de campo): o Flask não foi reiniciado
                 if (!Array.isArray(data) || data.some((d) => Array.isArray(d))) {
@@ -38,7 +34,7 @@ function Equipe() {
 
                 setUsuarios(data);
             } catch (e) {
-                if (e.response?.status === 401) {
+                if (e.status === 401) {
                     setErro("Sessão expirada ou usuário não logado. Faça login novamente.");
                 } else {
                     setErro("Não foi possível carregar os colaboradores. O servidor está rodando?");

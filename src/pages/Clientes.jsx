@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import '../styles/padrao.css'
 import '../styles/cliente.css'
+import { api } from "../services/api";
 
 function Clientes() {
 
@@ -22,19 +23,10 @@ function Clientes() {
         // 3) seguir a ordem de colunas que o front lê: 0 nome, 1 responsavel, 2 cpf_cnpj,
         //    3 telefone, 4 email, 5 cep, 6 rua, 7 numero, 8 municipio, 9 estado,
         //    10 observacoes, 11 foto_logo, 12 ativo (ou retornar objetos).
-        fetch('http://localhost:5000/listar-clientes', {
-            credentials: 'include', // envia o cookie de sessão, se o back usar login por sessão
-        })
-            .then(res => {
-                if (res.status === 401) {
-                    navigate('/login'); // troque pela rota real da sua tela de login
-                    throw new Error('Não autorizado');
-                }
-                if (!res.ok) throw new Error(`Erro ${res.status}`);
-                return res.json();
-            })
+        api.get('/listar-clientes', { lista: true })
             .then(dados => setClientes(Array.isArray(dados) ? dados : []))
             .catch(erro => {
+                if (erro.status === 401) navigate('/login'); // troque pela rota real da sua tela de login
                 console.log('Erro ao carregar clientes:', erro);
                 setClientes([]);
             });
