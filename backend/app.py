@@ -14,6 +14,7 @@ from database.connection import init_db
 from estoque import estoque_bp
 from login import login_bp
 from pedidos import pedidos_bp
+from relatorios import relatorios_bp
 from solicitacoes import solicitacoes_bp
 
 
@@ -37,6 +38,7 @@ def create_app(test_config=None):
     app.register_blueprint(estoque_bp)
     app.register_blueprint(catalogo_bp)
     app.register_blueprint(pedidos_bp)
+    app.register_blueprint(relatorios_bp)
     app.register_blueprint(solicitacoes_bp)
 
     @app.before_request

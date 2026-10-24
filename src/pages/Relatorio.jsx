@@ -1,32 +1,45 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import { jsPDF } from "jspdf";
 import autotable from "jspdf-autotable";
 import Sidebar from "../components/Sidebar";
+import { api } from "../services/api";
 import "../styles/padrao.css";
 import "../styles/Relatorio.css";
 
-// TODO (BACK): criar rota (ex.: GET /relatorio-mensal) que devolva, para o mês atual:
-// - producao_total (definir com o grupo: soma de pedido_item_tamanhos.quantidade dos pedidos do mês);
-// - pedidos_concluidos (status 'concluido' e data_conclusao no mês);
-// - pedidos_pendentes (status 'pendente') e pedidos_em_producao (status 'em_producao');
-// - estoque_baixo (estoque ativo com quantidade_atual <= estoque_minimo);
-// - producao_por_mes: lista { mes, total } dos meses do ano.
-// Ignorar pedidos com excluido_em preenchido.
-// Hoje os cards, os dois gráficos e o PDF usam valores fixos (Jan–Jun, 245, 38, 12, 4...).
+const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
 function Relatorio() {
     const producaoRef = useRef(null);
     const statusRef = useRef(null);
 
+    const [relatorio, setRelatorio] = useState(null);
+    const [erro, setErro] = useState("");
     useEffect(() => {
+        const controller = new AbortController();
+        Promise.all([
+            api.get('/relatorios/resumo', { signal: controller.signal }),
+            api.get('/relatorios/producao-mensal', { signal: controller.signal }),
+        ]).then(([resumo, producao]) => {
+            if (!controller.signal.aborted) {
+                setRelatorio({ ...resumo.data, producao: producao.data.meses });
+            }
+        }).catch((error) => {
+            if (!controller.signal.aborted) setErro(error.message);
+        });
+        return () => controller.abort();
+    }, []);
+
+    useEffect(() => {
+        if (!relatorio) return;
         const producaoChart = new Chart(producaoRef.current, {
             type: "line",
             data: {
-                labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
+                labels: relatorio.producao.map(({ mes }) => MESES[mes - 1].slice(0, 3)),
                 datasets: [
                     {
-                        data: [120, 190, 150, 220, 180, 240],
+                        data: relatorio.producao.map(({ total }) => total),
                         borderColor: "#6366f1",
                         backgroundColor: "rgba(99, 102, 241, 0.1)",
                         tension: 0.4,
@@ -44,7 +57,12 @@ function Relatorio() {
                 plugins: { legend: { display: false } },
                 scales: {
                     x: { grid: { display: false }, ticks: { color: "#9ca3af" } },
-                    y: { grid: { color: "#f1f5f9" }, ticks: { color: "#9ca3af" } },
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 100,
+                        grid: { color: "#f1f5f9" },
+                        ticks: { color: "#9ca3af", stepSize: 100, precision: 0 },
+                    },
                 },
             },
         });
@@ -55,7 +73,7 @@ function Relatorio() {
                 labels: ["Pendentes", "Produção", "Concluídos"],
                 datasets: [
                     {
-                        data: [12, 8, 38],
+                        data: [relatorio.pedidos_pendentes, relatorio.pedidos_em_producao, relatorio.pedidos_concluidos_total],
                         backgroundColor: ["#151e31", "#4400ff", "#b3c0d75c"],
                         borderWidth: 0,
                     },
@@ -84,9 +102,10 @@ function Relatorio() {
             producaoChart.destroy();
             statusChart.destroy();
         };
-    }, []);
+    }, [relatorio]);
 
     function downloadPDF() {
+        if (!relatorio) return;
         const doc = new jsPDF();
 
         doc.setFillColor("#1f4e79");
@@ -103,18 +122,18 @@ function Relatorio() {
         doc.setTextColor("#000000");
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
-        doc.text("Resumo Geral", 20, 45);
+        doc.text(`Resumo Geral - ${relatorio.mes}/${relatorio.ano}`, 20, 45);
 
         doc.setFontSize(11);
         doc.setFont("helvetica", "normal");
-        ["Produção Total: 245 peças", "Pedidos Concluídos: 38", "Pedidos Pendentes: 12", "Itens com Estoque Baixo: 4"]
+        [`Produção Total: ${relatorio.producao_total} peças`, `Pedidos Concluídos: ${relatorio.pedidos_concluidos}`, `Pedidos Pendentes: ${relatorio.pedidos_pendentes}`, `Itens com Estoque Baixo: ${relatorio.estoque_baixo}`]
             .forEach((linha, i) => doc.text(linha, 20, 55 + i * 7));
 
         autotable(doc, {
             startY: 90,
             head: [[{ content: "Mês", styles: { fillColor: "#1f4e79", textColor: 255 } },
                     { content: "Produção", styles: { fillColor: "#1f4e79", textColor: 255 } }]],
-            body: [["Janeiro", 120], ["Fevereiro", 190], ["Março", 150], ["Abril", 220], ["Maio", 180], ["Junho", 240]],
+            body: relatorio.producao.map(({ mes, total }) => [MESES[mes - 1], total]),
             styles: { font: "helvetica", fontSize: 11, cellPadding: 4 },
             alternateRowStyles: { fillColor: "#f2f2f2" },
             headStyles: { halign: "center" },
@@ -129,7 +148,7 @@ function Relatorio() {
         doc.save("relatorio-producao.pdf");
     }
 
-    const mesAtual = new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
+    const mesAtual = (relatorio ? new Date(relatorio.ano, relatorio.mes - 1, 1) : new Date()).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
     .replace(/^./, (c) => c.toUpperCase());
 
     return (
@@ -146,10 +165,12 @@ function Relatorio() {
                         <p className="page-subtitle">Estatísticas de {mesAtual}</p>
                     </div>
 
-                    <button className="btn btn-add" onClick={downloadPDF}>
+                    <button className="btn btn-add" onClick={downloadPDF} disabled={!relatorio}>
                         Baixar PDF
                     </button>
                 </div>
+
+                {erro && <p role="alert">Não foi possível carregar os relatórios: {erro}</p>}
 
                 {/* CARDS RESUMO */}
                 <div className="report-cards">
@@ -161,7 +182,7 @@ function Relatorio() {
                                 <span className="material-icons">insights</span>
                             </div>
                         </div>
-                        <h2>245</h2>
+                        <h2>{relatorio ? relatorio.producao_total : "—"}</h2>
                     </div>
 
                     <div className="report-card">
@@ -171,7 +192,7 @@ function Relatorio() {
                                 <span className="material-icons">check_circle</span>
                             </div>
                         </div>
-                        <h2>38</h2>
+                        <h2>{relatorio ? relatorio.pedidos_concluidos : "—"}</h2>
                     </div>
 
                     <div className="report-card-baixo">
@@ -181,7 +202,7 @@ function Relatorio() {
                                 <span className="material-icons">warning</span>
                             </div>
                         </div>
-                        <h2>4</h2>
+                        <h2>{relatorio ? relatorio.estoque_baixo : "—"}</h2>
                     </div>
 
                     <div className="report-card">
@@ -191,7 +212,7 @@ function Relatorio() {
                                 <span className="material-icons">receipt</span>
                             </div>
                         </div>
-                        <h2>12</h2>
+                        <h2>{relatorio ? relatorio.pedidos_pendentes : "—"}</h2>
                     </div>
 
                 </div>

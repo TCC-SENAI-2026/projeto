@@ -146,6 +146,58 @@ describe('Cliente HTTP de autenticação (fetch simulado)', { concurrency: false
       && erro.status === 401 && erro.message === 'Autenticação necessária.');
   });
 
+  test('merge preserva listas, uploads, PATCH e mensagens dos módulos antigos', async (t) => {
+    const chamadas = simularFetch(t, [
+      { body: [{ id: 1 }] },
+      { body: [] },
+      { body: { csrf_token: 'token-merge' } },
+      { body: { success: true } },
+      { body: { success: true } },
+      { body: { success: true } },
+      { body: { message: 'Estoque inválido.' }, status: 400 },
+    ]);
+    assert.deepEqual(await api.get('/listar-estoque', { lista: true }), [{ id: 1 }]);
+    await assert.rejects(api.get('/me'), /resposta inválida/);
+    const form = new FormData();
+    form.append('nome', 'Cliente');
+    await api.post('/cadastrar-cliente', form);
+    await api.postFile('/pedidos', form);
+    await api.patch('/pedidos/1/status', { status: 'concluido' });
+    await assert.rejects(api.put('/editar-estoque/1', {}), (erro) =>
+      erro instanceof ApiError && erro.status === 400 && erro.message === 'Estoque inválido.');
+    for (const chamada of chamadas.slice(3)) {
+      assert.equal(chamada.headers['X-CSRF-Token'], 'token-merge');
+      assert.equal(chamada.credentials, 'same-origin');
+    }
+    for (const chamada of chamadas.slice(3, 5)) {
+      assert.equal(chamada.body, form);
+      assert.equal(chamada.headers['Content-Type'], undefined);
+    }
+    assert.equal(chamadas[5].method, 'PATCH');
+    assert.equal(chamadas[5].body, JSON.stringify({ status: 'concluido' }));
+  });
+
+  test('PUT de arquivo e listagem por POST preservam cookie e CSRF', async (t) => {
+    const chamadas = simularFetch(t, [
+      { body: { csrf_token: 'token-estoque' } },
+      { body: { success: true } },
+      { body: [{ estoque_id: 1, disponivel: true }] },
+    ]);
+    const form = new FormData();
+    form.append('nome_item', 'Camiseta');
+    await api.putFile('/editar-estoque/1', form);
+    const disponibilidade = await api.post('/estoque/verificar-disponibilidade',
+      { itens: [{ estoque_id: 1, quantidade: 2 }] }, { lista: true });
+    assert.equal(disponibilidade[0].disponivel, true);
+    assert.equal(chamadas[1].method, 'PUT');
+    assert.equal(chamadas[1].body, form);
+    assert.equal(chamadas[1].headers['Content-Type'], undefined);
+    for (const chamada of chamadas.slice(1)) {
+      assert.equal(chamada.headers['X-CSRF-Token'], 'token-estoque');
+      assert.equal(chamada.credentials, 'same-origin');
+    }
+  });
+
   test('resposta inválida e ausência de token impedem conexão insegura', async (t) => {
     const chamadas = simularFetch(t, [
       new Response('<html>Erro do proxy</html>', { status: 502 }),

@@ -39,10 +39,9 @@ function Inicio() {
       .catch((erro) => console.log("Erro ao carregar estoque:", erro));
   }, []);
 
-  const totalEstoque = estoque.reduce(
-    (soma, item) => soma + Number(item.quantidade_atual || 0),
-    0
-  );
+  const totalEstoque = estoque.filter(
+    (item) => item.tipo_item?.toLowerCase() === "produto"
+  ).length;
 
   const itensBaixos = estoque.filter(estaBaixo);
 
@@ -204,7 +203,19 @@ function Inicio() {
               )}
 
               {relevantes.map((item) => (
-                <div className="stock-card" key={item.id}>
+                <div
+                  className="stock-card"
+                  key={item.id}
+                  role="link"
+                  tabIndex={0}
+                  onClick={() => navigate("/estoque")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigate("/estoque");
+                    }
+                  }}
+                >
                   <div className="img"></div>
                   <span>{item.nome_item}</span>
                   <p>{item.quantidade_atual} unidades</p>

@@ -125,6 +125,29 @@ class ApplicationInfrastructureTests(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
         self.auth_db.assert_not_called()
 
+    def test_csrf_protects_every_registered_write_before_business_logic(self):
+        token = self.client.get("/csrf").get_json()["csrf_token"]
+        other_token = self.app.test_client().get("/csrf").get_json()["csrf_token"]
+        writes = 0
+        for rule in self.app.url_map.iter_rules():
+            for method in rule.methods & {"POST", "PUT", "PATCH", "DELETE"}:
+                writes += 1
+                path = rule.build({argument: 1 for argument in rule.arguments})[1]
+                view = Mock(return_value={"fixture_view_reached": True})
+                with patch.dict(self.app.view_functions, {rule.endpoint: view}):
+                    for received in (None, "invalido", other_token):
+                        with self.subTest(path=path, method=method, token=received):
+                            headers = {} if received is None else {"X-CSRF-Token": received}
+                            response = self.client.open(path, method=method, headers=headers)
+                            self.assertEqual(response.status_code, 403)
+                            self.assertIn("CSRF", response.get_json()["msg"])
+                            view.assert_not_called()
+                    self.authenticate_session()
+                    response = self.client.open(path, method=method, headers={"X-CSRF-Token": token})
+                    self.assertEqual(response.status_code, 200)
+                    view.assert_called_once()
+        self.assertGreater(writes, 0)
+
     def test_cors_allows_only_configured_frontend_with_credentials(self):
         allowed = self.client.get("/csrf", headers={"Origin": "http://localhost:5173"})
         self.assertEqual(allowed.headers["Access-Control-Allow-Origin"], "http://localhost:5173")
