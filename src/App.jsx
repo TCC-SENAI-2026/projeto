@@ -54,6 +54,7 @@ function App() {
       <Route element={<ProtectedRoute adminOnly />}>
         <Route path="/relatorio" element={<Relatorio />} />
         <Route path="/formUsuario" element={<FormUsuario />} />
+        <Route path="/formUsuario/:id" element={<FormUsuario />} />
     
         <Route path="/equipe" element={<Equipe />} />
         <Route path="/painel-adm" element={<PainelAdm />} />
