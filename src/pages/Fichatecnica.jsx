@@ -21,7 +21,13 @@ function FichaTecnica() {
     // (nunca null, mas pode estar vazio se o usuário acessar a página diretamente)
     const [previewArtes] = useState(() => {
         const artes = location.state?.artesOrdenadas || [];
-        return artes.map(f => (f instanceof File ? URL.createObjectURL(f) : null));
+        return artes.map(arte => {
+            if (arte instanceof File) return URL.createObjectURL(arte);
+            if (arte?.logoCliente) {
+                return `http://localhost:5000/static/uploads/${encodeURIComponent(arte.logoCliente)}`;
+            }
+            return null;
+        });
     });
 
     useEffect(() => {

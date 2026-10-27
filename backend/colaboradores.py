@@ -210,7 +210,6 @@ def listar_colaboradores():
                preferencia_notificacoes, ativo,
                (conta_ativada = 1) AS senha_definida
         FROM colaboradores
-        WHERE ativo = 1
         ORDER BY nome;
     """
     with db_cursor() as cursor:

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { estaBaixo } from "../utils/estoque";
+import { estaBaixo, formatarQuantidadeEstoque } from "../utils/estoque";
 import { api } from "../services/api.js";
 
 import Sidebar from "../components/Sidebar";
@@ -183,15 +183,17 @@ function Estoque() {
                                     >
                                         {/* ITEM */}
                                         <div className="item-info">
-                                            {item.tem_imagem ? (
-                                                <img
-                                                    className="estoque-thumb"
-                                                    src={`/api/estoque/${item.id}/imagem?v=${item.id}`}
-                                                    alt={item.nome_item}
-                                                    loading="lazy"
-                                                />
-                                            ) : (
-                                                <div className="img"></div>
+                                            {item.tipo_item?.toLowerCase() === "produto" && (
+                                                item.tem_imagem ? (
+                                                    <img
+                                                        className="estoque-thumb"
+                                                        src={`/api/estoque/${item.id}/imagem?v=${item.id}`}
+                                                        alt={item.nome_item}
+                                                        loading="lazy"
+                                                    />
+                                                ) : (
+                                                    <div className="img" aria-hidden="true"></div>
+                                                )
                                             )}
 
                                             <div className="produto estoque-main">
@@ -212,7 +214,7 @@ function Estoque() {
                                         {/* QUANTIDADE */}
                                         <div className="quantidade info-block">
                                             <span className="mobile-field-label">Quantidade</span>
-                                            <p>{item.quantidade_atual}</p>
+                                            <p>{formatarQuantidadeEstoque(item)}</p>
                                         </div>
 
                                         {/* STATUS */}

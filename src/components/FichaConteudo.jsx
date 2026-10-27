@@ -66,7 +66,10 @@ function FichaConteudo({ pedido, ficha, pedidoId = null, previewArtes = null }) 
                 const { total }   = formatarGrade(grade);
                 const nomeProduto = produto.item || `Produto ${idx + 1}`;
                 // Arte: preview local antes do save ou URL da API após save
-                const arteItem    = previewArtes?.[idx] || detalhes.imagem_url || null;
+                const arteItem    = previewArtes?.[idx] || detalhes.imagem_url || ficha.logoCliente || null;
+                const imagemAlternativa = ficha.logoCliente && ficha.logoCliente !== arteItem
+                    ? ficha.logoCliente
+                    : null;
 
                 return (
                     <section key={idx} className="fc-produto-secao">
@@ -118,7 +121,26 @@ function FichaConteudo({ pedido, ficha, pedidoId = null, previewArtes = null }) 
                                 <strong className="fc-rotulo">ARTE / CROQUI</strong>
                                 <div className="fc-ilustracao-conteudo fc-ilustracao-produto">
                                     {arteItem ? (
-                                        <img src={arteItem} alt={`Arte de ${nomeProduto}`} />
+                                        <>
+                                            <img
+                                                src={arteItem}
+                                                alt={`Arte de ${nomeProduto}`}
+                                                onError={evento => {
+                                                    const imagem = evento.currentTarget;
+                                                    if (imagemAlternativa && !imagem.dataset.usouLogoFallback) {
+                                                        imagem.dataset.usouLogoFallback = "true";
+                                                        imagem.src = imagemAlternativa;
+                                                        return;
+                                                    }
+                                                    imagem.hidden = true;
+                                                    const vazio = imagem.parentElement.querySelector("[data-arte-vazia]");
+                                                    if (vazio) vazio.hidden = false;
+                                                }}
+                                            />
+                                            <span className="fc-arte-vazia" data-arte-vazia hidden>
+                                                Área reservada para a ilustração
+                                            </span>
+                                        </>
                                     ) : (
                                         <span className="fc-arte-vazia">
                                             Área reservada para a ilustração

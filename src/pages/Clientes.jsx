@@ -13,16 +13,10 @@ function Clientes() {
     const [clienteSelecionado, setClienteSelecionado] = useState(null);
     const [clientes, setClientes] = useState([]);
     const [busca, setBusca] = useState('');
-    const [filtroStatus, setFiltroStatus] = useState('Todos');
+    const [filtroStatus, setFiltroStatus] = useState('Ativos');
 
-    // Busca os clientes do banco ao carregar a página
+    // A API retorna clientes ativos e inativos; o status é filtrado nesta tela.
     useEffect(() => {
-        // TODO (BACK): /listar-clientes precisa
-        // 1) retornar ativos E inativos (hoje tem WHERE ativo = 1), senão o filtro "Inativos" fica vazio;
-        // 2) incluir o id do cliente (necessário para /editar-cliente/<id>);
-        // 3) seguir a ordem de colunas que o front lê: 0 nome, 1 responsavel, 2 cpf_cnpj,
-        //    3 telefone, 4 email, 5 cep, 6 rua, 7 numero, 8 municipio, 9 estado,
-        //    10 observacoes, 11 foto_logo, 12 ativo (ou retornar objetos).
         api.get('/listar-clientes', { lista: true })
             .then(dados => setClientes(Array.isArray(dados) ? dados : []))
             .catch(erro => {
@@ -32,16 +26,12 @@ function Clientes() {
             });
     }, [])
 
-    // TODO (BACK): incluir o id do cliente na resposta de /listar-clientes,
-    // necessário para chamar /editar-cliente/<id_cliente>.
     function abrirCliente(cliente) {
         setClienteSelecionado(cliente)
         setModalAberto(true)
     }
 
-    // TODO (BACK): o filtro de busca e de status roda aqui no front, sobre a lista
-    // completa. Se a quantidade de clientes crescer, mover para o back
-    // (ex.: ?busca=...&status=...) com paginação.
+    // Aplica busca e status sobre os registros recebidos da API.
     const clientesFiltrados = clientes.filter(cliente => {
         const termo = busca.trim().toLowerCase();
         const nome = String(cliente[0] ?? '').toLowerCase();
@@ -131,6 +121,8 @@ function Clientes() {
                 <Modal
                     aberto={modalAberto}
                     onClose={() => setModalAberto(false)}
+                    className="cliente-detalhes-modal"
+                    tituloId="cliente-modal-titulo"
                 >
                     {clienteSelecionado && (
                         <>
@@ -152,7 +144,7 @@ function Clientes() {
                                     </div>
 
                                     <div>
-                                        <h2 className="modal-title">
+                                        <h2 className="modal-title" id="cliente-modal-titulo">
                                             {clienteSelecionado[0]}
                                         </h2>
 
@@ -174,7 +166,7 @@ function Clientes() {
 
                             </div>
 
-                            <div className="modal-body">
+                            <div className="modal-body cliente-detalhes-body">
 
                                 <div className="cliente-info-section">
 
@@ -300,15 +292,7 @@ function Clientes() {
 
                                 <button
                                     type="button"
-                                    className="btn-sec"
-                                    onClick={() => setModalAberto(false)}
-                                >
-                                    Fechar
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="btn btn-add"
+                                    className="btn-sec cliente-acao-editar"
                                     onClick={() => {
                                         setModalAberto(false);
 
@@ -322,6 +306,27 @@ function Clientes() {
                                     </span>
 
                                     Editar cliente
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="btn btn-add cliente-acao-novo"
+                                    onClick={() => {
+                                        setModalAberto(false);
+                                        navigate("/pedidos/novo", {
+                                            state: {
+                                                cliente: {
+                                                    nomeCliente: clienteSelecionado[0] || "",
+                                                    contato: clienteSelecionado[3] || "",
+                                                    email: clienteSelecionado[4] || "",
+                                                    logo: clienteSelecionado[11] || "",
+                                                },
+                                            },
+                                        });
+                                    }}
+                                >
+                                    <span className="material-icons">add_shopping_cart</span>
+                                    Novo pedido
                                 </button>
 
                             </div>

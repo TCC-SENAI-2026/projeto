@@ -308,6 +308,15 @@
     font-weight: 500;
 }
 
+.pedido-thumb {
+    width: 62px;
+    height: 62px;
+    flex: 0 0 62px;
+    object-fit: contain;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
 @media (max-width: 768px) {
     .pedidos-header {
         display: none;

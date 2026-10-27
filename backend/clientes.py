@@ -59,10 +59,16 @@ def linha_para_front(cliente):
     0 nome, 1 responsável, 2 cpf/cnpj, 3 telefone, 4 e-mail, 5 cep, 6 rua, 7 número,
     8 município, 9 estado, 10 observações, 11 logo, 12 ativo, 13 id."""
     ender = separar_endereco(cliente['endereco'])
+    valor_ativo = cliente['ativo']
+    ativo = (
+        valor_ativo is True
+        or valor_ativo == 1
+        or str(valor_ativo).strip().lower() in {'1', 'true', 'ativo', 'sim'}
+    )
     return [
         cliente['nome'], '', '', cliente['telefone'] or '', cliente['email'] or '',
         ender['cep'], ender['rua'], ender['numero'], ender['municipio'], ender['estado'],
-        '', cliente['logo_url'] or '', cliente['ativo'], cliente['id'],
+        '', cliente['logo_url'] or '', ativo, cliente['id'],
     ]
 
 
@@ -136,7 +142,6 @@ def listar_clientes():
         cursor.execute("""
             SELECT id, nome, email, telefone, endereco, logo_url, ativo
             FROM clientes
-            WHERE ativo = 1
             ORDER BY nome;
         """)
         clientes = cursor.fetchall()

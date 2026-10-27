@@ -1,9 +1,13 @@
 import io
 import json as _json
+import mimetypes
+import os
 import re
+from urllib.parse import quote
 
 from flask import Blueprint, g, jsonify, request, send_file
 from mysql.connector import Error as MySQLError
+from werkzeug.utils import secure_filename
 
 from auth.decorators import admin_required, login_required
 from database.connection import db_cursor, open_connection
@@ -36,6 +40,8 @@ LOCAIS_VALIDOS_POR_PRODUTO = {
 }
 
 pedidos_bp = Blueprint('pedidos', __name__)
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
+EXTENSOES_LOGO = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}
 
 
 # ---------- utilitários ----------
@@ -170,6 +176,12 @@ def listar_pedidos():
                 c.nome      AS nome_cliente,
                 c.telefone  AS contato,
                 c.email,
+                c.logo_url AS logo_cliente,
+                (SELECT pi.id
+                 FROM pedido_itens pi
+                 WHERE pi.pedido_id = p.id AND pi.imagem_dados IS NOT NULL
+                 ORDER BY pi.id
+                 LIMIT 1) AS item_com_arte_id,
                 co.nome     AS nome_colaborador
             FROM pedidos p
             JOIN clientes c       ON c.id  = p.cliente_id
@@ -180,6 +192,8 @@ def listar_pedidos():
         pedidos = cursor.fetchall()
 
     for p in pedidos:
+        if p.get('item_com_arte_id'):
+            p['imagem_pedido_url'] = f'/api/pedidos/itens/{p["item_com_arte_id"]}/arte'
         if p.get('created_at'):
             p['created_at'] = p['created_at'].isoformat()
         if p.get('data_pedido'):
@@ -210,6 +224,7 @@ def buscar_pedido(pedido_id):
                 c.nome      AS nome_cliente,
                 c.telefone  AS contato,
                 c.email,
+                c.logo_url AS logo_cliente,
                 co.nome     AS nome_colaborador
             FROM pedidos p
             JOIN clientes c       ON c.id  = p.cliente_id
@@ -252,6 +267,16 @@ def buscar_pedido(pedido_id):
             # URL de arte: MEDIUMBLOB tem prioridade sobre imagem_url legado
             if item.get('tem_imagem'):
                 item['imagem_url'] = f'/api/pedidos/itens/{item["id"]}/arte'
+            elif not item.get('imagem_url') and pedido.get('logo_cliente'):
+                logo = str(pedido['logo_cliente'])
+                if logo.startswith(('http://', 'https://', '/api/')):
+                    item['imagem_url'] = logo
+                elif logo.startswith('/static/'):
+                    item['imagem_url'] = f'/api{logo}'
+                elif logo.startswith('/'):
+                    item['imagem_url'] = logo
+                else:
+                    item['imagem_url'] = f'/api/static/uploads/{quote(logo, safe="")}'
             del item['tem_imagem']
 
         pedido['itens'] = itens
@@ -382,8 +407,24 @@ def criar_pedido():
                 ), 400
 
             arquivo_arte = request.files.get(f'arte_{i}')
-            imagem_dados = arquivo_arte.read() if arquivo_arte else None
-            imagem_mime  = ((arquivo_arte.content_type or '').strip() or None) if arquivo_arte else None
+            logo_cliente = request.form.get(f'logo_cliente_{i}', '').strip()
+            if arquivo_arte:
+                imagem_dados = arquivo_arte.read()
+                imagem_mime = ((arquivo_arte.content_type or '').strip() or None)
+            elif logo_cliente:
+                nome_seguro = secure_filename(logo_cliente)
+                caminho_logo = os.path.join(UPLOAD_FOLDER, nome_seguro)
+                extensao = os.path.splitext(nome_seguro)[1].lower()
+                if nome_seguro != logo_cliente or extensao not in EXTENSOES_LOGO or not os.path.isfile(caminho_logo):
+                    cursor.close()
+                    conn.rollback()
+                    return jsonify(success=False, msg='A logo cadastrada do cliente não está disponível.'), 400
+                with open(caminho_logo, 'rb') as arquivo_logo:
+                    imagem_dados = arquivo_logo.read()
+                imagem_mime = mimetypes.guess_type(caminho_logo)[0] or 'application/octet-stream'
+            else:
+                imagem_dados = None
+                imagem_mime = None
 
             estoque_id = prod.get('estoque_id') or None
 

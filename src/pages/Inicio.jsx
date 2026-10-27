@@ -8,7 +8,7 @@ import FichaModal from "../components/FichaModal";
 import { useNavigate, Link } from "react-router-dom";
 import { infoStatus } from "../utils/status";
 import { api } from "../services/api";
-import { estaBaixo } from "../utils/estoque";
+import { estaBaixo, formatarQuantidadeEstoque } from "../utils/estoque";
 
 function Inicio() {
   const navigate = useNavigate();
@@ -216,9 +216,20 @@ function Inicio() {
                     }
                   }}
                 >
-                  <div className="img"></div>
+                  {item.tipo_item?.toLowerCase() === "produto" && (
+                    item.tem_imagem ? (
+                      <img
+                        className="stock-card-image"
+                        src={`/api/estoque/${item.id}/imagem?v=${item.id}`}
+                        alt={item.nome_item}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="img" aria-hidden="true"></div>
+                    )
+                  )}
                   <span>{item.nome_item}</span>
-                  <p>{item.quantidade_atual} unidades</p>
+                  <p>{formatarQuantidadeEstoque(item)}</p>
                 </div>
               ))}
             </div>

@@ -162,10 +162,26 @@
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
 }
 
-.stock-card .img {
+.stock-card > .img {
+    width: 48px;
+    height: 48px;
     margin-bottom: 14px;
-      background:#e5e7eb;
-    border-radius:10px;
+    background: #e5e7eb;
+    border-radius: 10px;
+}
+
+.stock-card > .stock-card-image {
+    display: block;
+    width: 48px;
+    min-width: 48px;
+    max-width: 48px;
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    background: #f8fafc;
+    object-fit: contain;
 }
 
 .stock-card span {

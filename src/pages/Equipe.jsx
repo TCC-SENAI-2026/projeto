@@ -5,8 +5,7 @@ import '../styles/Equipe.css';
 import '../styles/padrao.css';
 import { api } from "../services/api";
 
-// TODO (BACK): alinhar os valores de nivel_acesso com o schema
-// (o banco usa 'administrador' / 'colaborador'; aqui o front espera 'administrativo' / 'padrao').
+// O backend traduz os valores do schema para os rótulos usados pelo front.
 const NIVEIS = {
     administrativo: "Administrativo",
     padrao: "Padrão"
@@ -46,9 +45,7 @@ function Equipe() {
         carregarColaboradores();
     }, []);
 
-    // TODO (BACK): o filtro (busca e status) roda aqui no front sobre a lista completa.
-    // Para o filtro "Inativos" funcionar, /listar-colaboradores precisa retornar
-    // ativos E inativos.
+    // Busca e status são filtrados localmente sobre a lista completa da API.
     const termo = busca.trim().toLowerCase();
     const filtrados = usuarios.filter((u) => {
         const bateBusca =

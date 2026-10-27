@@ -156,7 +156,7 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
                             Arte do Cliente
                         </p>
 
-                        {arte?.file && (
+                        {(arte?.file || arte?.logoCliente) && (
                             <div className="arte-preview-wrapper">
                                 {arte.temPreview && arte.preview ? (
                                     <img
@@ -176,7 +176,7 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
 
                         <label className="upload-arte-mini" htmlFor={`arte-${modelo.id}`}>
                             <span className="material-icons" style={{ fontSize: 16 }}>upload</span>
-                            {arte?.file ? 'Trocar arte' : 'Escolher arte'}
+                            {arte?.file || arte?.logoCliente ? 'Trocar arte' : 'Escolher arte'}
                             <input
                                 id={`arte-${modelo.id}`}
                                 type="file"
@@ -186,7 +186,7 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
                             />
                         </label>
 
-                        {arte?.file && (
+                        {(arte?.file || arte?.logoCliente) && (
                             <button
                                 type="button"
                                 className="btn-page-sec"
@@ -219,7 +219,24 @@ function SelecionarProdutos() {
     );
 
     // Arte individual por produto: { modeloId: { file, preview, nome, temPreview } }
-    const [artes, setArtes] = useState({});
+    const [artes, setArtes] = useState(() => {
+        let logoCliente = null;
+        try {
+            logoCliente = JSON.parse(localStorage.getItem('dadosFicha') || '{}').logoCliente;
+        } catch {
+            logoCliente = null;
+        }
+        if (!logoCliente) return {};
+
+        const preview = `http://localhost:5000/static/uploads/${encodeURIComponent(logoCliente)}`;
+        return Object.fromEntries(MODELOS.map(modelo => [modelo.id, {
+            file: null,
+            nome: logoCliente,
+            preview,
+            temPreview: true,
+            logoCliente,
+        }]));
+    });
 
     // Fotos do estoque por modelo: { modeloId: [{id, nome_item, tem_imagem}] }
     const [estoquesPorModelo, setEstoquesPorModelo] = useState({});
@@ -346,7 +363,10 @@ function SelecionarProdutos() {
         }
 
         // File objects passados via state do router (não serializados em localStorage)
-        const artesOrdenadas = selecionadosModelos.map(m => artes[m.id]?.file || null);
+        const artesOrdenadas = selecionadosModelos.map(m => {
+            const arte = artes[m.id];
+            return arte?.file || (arte?.logoCliente ? { logoCliente: arte.logoCliente } : null);
+        });
 
         localStorage.setItem('detalhesPedido', JSON.stringify({ produtos: selecionados }));
         navigate('/pedidos/novo/ficha', { state: { artesOrdenadas } });

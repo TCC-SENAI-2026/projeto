@@ -290,7 +290,16 @@ function Pedidos() {
                                             onClick={() => abrirPedido(p.id)}
                                         >
                                             <div className="produto">
-                                                <div className="img"></div>
+                                                {p.imagemUrl ? (
+                                                    <img
+                                                        className="pedido-thumb"
+                                                        src={p.imagemUrl}
+                                                        alt={`Logo ou arte de ${nomeCliente(p)}`}
+                                                        loading="lazy"
+                                                    />
+                                                ) : (
+                                                    <div className="img" aria-hidden="true"></div>
+                                                )}
                                                 <div className="pedido-main">
                                                     <span className="mobile-field-label">Pedido</span>
                                                     <p>

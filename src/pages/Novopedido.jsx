@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
@@ -22,11 +22,13 @@ function validarTelefone(valor) {
 
 function NovoPedido() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const clienteInicial = location.state?.cliente;
 
     const [form, setForm] = useState({
-        nomeCliente:       '',
-        contato:           '',
-        email:             '',
+        nomeCliente:       clienteInicial?.nomeCliente || '',
+        contato:           mascaraTelefone(String(clienteInicial?.contato || '')),
+        email:             clienteInicial?.email || '',
         dataPedido:        '',
         prazoEntrega:      '',
         obsPersonalizacao: '',
@@ -72,6 +74,7 @@ function NovoPedido() {
             entrega:        form.prazoEntrega,
             personalizacao: form.obsPersonalizacao,
             observacao:     form.obsGeral,
+            logoCliente:    clienteInicial?.logo || null,
             dataCriacao:    new Date().toLocaleDateString('pt-BR'),
         }));
 
