@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import FotoProdutoEstoque from "./FotoProdutoEstoque";
+import SelectTecidoCor from "./SelectTecidoCor";
+import { useTecidosEstoque } from "../hooks/useTecidosEstoque";
 import SelectOpcoes from "./SelectOpcoes";
+import { api } from "../services/api";
+import { avisoSaldo, locaisProdutoPedido } from "../utils/produtosEstoque";
 import CampoEditavel from "./CampoEditavel";
 import { gerarAlteracoes } from "../utils/alteracoes";
 import {
-    TAMANHOS, PERSONALIZACOES, TECIDOS, CORES, LOCAIS, MODELOS, DETALHES_VAZIOS,
+    TAMANHOS, PERSONALIZACOES, DETALHES_VAZIOS,
 } from "../utils/opcoesProduto";
 
 function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
     const original = pedido.ficha || {};
+    const tecidosEstoque = useTecidosEstoque();
 
     const [ficha, setFicha] = useState({ ...original });
     const [produtos, setProdutos] = useState(
@@ -16,6 +22,8 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
     );
     // Arte por produto: { [index]: base64DataURL }
     const [artes, setArtes] = useState({});
+    const [produtosEstoque, setProdutosEstoque] = useState([]);
+    const [erroProdutos, setErroProdutos] = useState("");
     const [novoModelo, setNovoModelo] = useState("");
     const [enviando, setEnviando] = useState(false);
     const [erro, setErro] = useState("");
@@ -25,6 +33,14 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
         document.addEventListener("keydown", onKey);
         return () => document.removeEventListener("keydown", onKey);
     }, [onFechar]);
+
+    useEffect(() => {
+        let ativo = true;
+        api.get('/estoque/produtos-pedido', { lista: true })
+            .then(lista => { if (ativo) setProdutosEstoque(lista); })
+            .catch(erro => { if (ativo) setErroProdutos(erro.message); });
+        return () => { ativo = false; };
+    }, []);
 
     // ---------- dados gerais ----------
     function handleFicha(e) {
@@ -59,17 +75,19 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
     }
 
     function adicionarProduto() {
-        const modelo = MODELOS.find(m => m.id === novoModelo);
-        if (!modelo) return;
+        const modelo = produtosEstoque.find(m => m.id === Number(novoModelo));
+        if (!modelo || Number(modelo.quantidade_atual) <= 0) return;
         setProdutos(prev => [...prev, {
-            item: modelo.label,
+            item: modelo.nome,
+            estoque_id: modelo.id,
             grade: {},
-            detalhes: { ...DETALHES_VAZIOS },
+            detalhes: { ...DETALHES_VAZIOS, estoque_id: modelo.id, tipo_produto_id: null },
         }]);
         setNovoModelo("");
     }
 
-    const disponiveis = MODELOS.filter(m => !produtos.some(p => p.item === m.label));
+    const disponiveis = produtosEstoque.filter(m => !produtos.some(
+        p => Number(p.estoque_id ?? p.detalhes?.estoque_id) === m.id));
 
     // ---------- arte por produto ----------
     function handleArteItem(index, file) {
@@ -118,6 +136,12 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
         const semQtd = limpos.filter(p => Object.keys(p.grade).length === 0);
         if (semQtd.length > 0) {
             setErro(`Preencha as quantidades de: ${semQtd.map(p => p.item).join(", ")}`);
+            return;
+        }
+
+        if (limpos.some(p => !p.detalhes?.id &&
+            (!p.detalhes?.material_id || !p.detalhes?.material_cor_id || !p.detalhes?.local))) {
+            setErro('Selecione Tecido, Cor e Local da Arte para os novos itens.');
             return;
         }
 
@@ -220,46 +244,29 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
                                         </button>
                                     </div>
 
-                                    {/* Foto de referência do Estoque */}
-                                    {p.detalhes?.estoque_id && (
-                                        <div style={{ marginBottom: 10, textAlign: "center" }}>
-                                            <img
-                                                src={`/api/estoque/${p.detalhes.estoque_id}/imagem`}
-                                                alt="Foto de referência"
-                                                style={{
-                                                    maxWidth: 80, maxHeight: 80, objectFit: "contain",
-                                                    borderRadius: 6, border: "1px solid #e2e8f0",
-                                                }}
-                                            />
-                                            <p style={{ fontSize: 11, color: "#6b7280", margin: "4px 0 0" }}>
-                                                Foto de referência
-                                            </p>
-                                        </div>
+                                    {/* Foto de referência do produto cadastrado no estoque */}
+                                    {(p.estoque_id ?? p.detalhes?.estoque_id) && (
+                                        <FotoProdutoEstoque
+                                            estoqueId={p.estoque_id ?? p.detalhes?.estoque_id}
+                                            nome={p.item}
+                                            temImagem={produtosEstoque.find(produto =>
+                                                produto.id === (p.estoque_id ?? p.detalhes?.estoque_id)
+                                            )?.tem_imagem ?? true} />
                                     )}
 
                                     <div className="modelo-selects">
                                         <SelectOpcoes label="Personalização" groups={PERSONALIZACOES}
                                             value={p.detalhes?.personalizacao || ""}
                                             onChange={e => setDetalhe(i, "personalizacao", e.target.value)} />
-                                        <SelectOpcoes label="Tecido" groups={TECIDOS}
-                                            value={p.detalhes?.tecido || ""}
-                                            onChange={e => setDetalhe(i, "tecido", e.target.value)} />
-                                        <SelectOpcoes label="Cor" groups={CORES}
-                                            value={p.detalhes?.cor || ""}
-                                            onChange={e => setDetalhe(i, "cor", e.target.value)} />
-                                        <SelectOpcoes label="Local da Arte" groups={LOCAIS}
+                                        <SelectTecidoCor {...tecidosEstoque} detalhes={p.detalhes || {}}
+                                            bloqueado={p.detalhes?.id != null}
+                                            onChange={detalhes => setProdutos(prev => prev.map((produto, indice) =>
+                                                indice === i ? { ...produto, detalhes: { ...produto.detalhes, ...detalhes } } : produto
+                                            ))} />
+                                        <SelectOpcoes label="Local da Arte" groups={locaisProdutoPedido(p)}
                                             value={p.detalhes?.local || ""}
                                             onChange={e => setDetalhe(i, "local", e.target.value)} />
-                                        <div className="form-field">
-                                            <label>Observações deste item</label>
-                                            <textarea rows={2}
-                                                value={p.detalhes?.observacao || ""}
-                                                onChange={e => setDetalhe(i, "observacao", e.target.value)}
-                                                style={{
-                                                    width: "100%", borderRadius: 10, border: "1px solid #e2e8f0",
-                                                    padding: "8px 12px", fontSize: 13, resize: "vertical", fontFamily: "inherit",
-                                                }} />
-                                        </div>
+
                                     </div>
 
                                     <div className="grade-tamanhos">
@@ -315,6 +322,7 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
                                 </div>
                             ))}
 
+                            {erroProdutos && <p role="alert">{erroProdutos}</p>}
                             {disponiveis.length > 0 && (
                                 <div className="adicionar-modelo-row">
                                     <span className="material-icons adicionar-modelo-icone">add_circle_outline</span>
@@ -323,8 +331,9 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
                                         value={novoModelo}
                                         onChange={e => setNovoModelo(e.target.value)}
                                     >
-                                        <option value="">Selecionar modelo...</option>
-                                        {disponiveis.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                                        <option value="">Selecionar produto...</option>
+                                        {disponiveis.map(m => <option key={m.id} value={m.id}
+                                            disabled={Number(m.quantidade_atual) <= 0}>{m.nome}{avisoSaldo(m)}</option>)}
                                     </select>
                                     <button
                                         type="button"
@@ -332,7 +341,7 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
                                         onClick={adicionarProduto}
                                         disabled={!novoModelo}
                                     >
-                                        Adicionar modelo
+                                        Adicionar produto
                                     </button>
                                 </div>
                             )}

@@ -7,22 +7,6 @@ export const PERSONALIZACOES = [
     { group: "Efeitos / Estilo", options: ["Transparente", "Degradê", "Brilho (Glitter)", "Fosco"] },
 ];
 
-export const TECIDOS = [
-    { group: "Básicos", options: ["Algodão", "Poliéster", "Malha", "Viscose"] },
-    { group: "Intermediários", options: ["Algodão + Poliéster", "Algodão + Elastano", "Poliéster + Elastano", "Viscolycra", "Dry Fit", "Piquet"] },
-    { group: "Avançados", options: ["Algodão Pima", "Algodão Egípcio", "Fleece", "Moletom Felpado", "Linho", "Seda"] },
-    { group: "Sustentáveis", options: ["Modal", "Fibra de Bambu", "Poliéster de PET Reciclado"] },
-    { group: "Especiais", options: ["Jeans", "Sarja", "Nylon", "Helanca", "Suplex"] },
-];
-
-export const CORES = [
-    { group: "Básicas", options: ["Branco", "Preto", "Cinza", "Azul", "Vermelho"] },
-    { group: "Neutras / Sóbrias", options: ["Off-white", "Bege", "Marrom", "Caqui", "Grafite"] },
-    { group: "Intermediárias", options: ["Azul Marinho", "Verde Militar", "Vinho", "Mostarda", "Rosa Claro"] },
-    { group: "Vibrantes", options: ["Verde Limão", "Azul Ciano", "Laranja", "Pink", "Roxo"] },
-    { group: "Especiais", options: ["Metálico", "Neon", "Pastel", "Tie-dye", "Estampado"] },
-];
-
 export const LOCAIS = [
     { group: "Frente", options: ["Frente — Centro", "Frente — Peito Esquerdo", "Frente — Peito Direito", "Frente — Abaixo do Peito"] },
     { group: "Costas", options: ["Costas — Centro Alto", "Costas — Centro Baixo", "Costas — Full Back"] },
@@ -57,9 +41,10 @@ export const LOCAIS_POR_PRODUTO = {
 };
 
 export const DETALHES_VAZIOS = {
+    material_id: null,
+    material_cor_id: null,
     tecido: "",
     cor: "",
     personalizacao: "",
     local: "",
-    observacao: "",
 };

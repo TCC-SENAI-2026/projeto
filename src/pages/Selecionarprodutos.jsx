@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import FotoProdutoEstoque from "../components/FotoProdutoEstoque";
+import SelectTecidoCor from "../components/SelectTecidoCor";
+import { useTecidosEstoque } from "../hooks/useTecidosEstoque";
+import { nomeTecidoCor } from "../utils/tecidosEstoque";
 import SelectOpcoes from "../components/SelectOpcoes";
 import {
-    TAMANHOS, PERSONALIZACOES, TECIDOS, CORES, LOCAIS,
-    LOCAIS_POR_PRODUTO, MODELOS,
+    TAMANHOS, PERSONALIZACOES, LOCAIS,
 } from "../utils/opcoesProduto";
+import { avisoSaldo } from "../utils/produtosEstoque";
 import { api } from "../services/api";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
@@ -17,57 +21,18 @@ function obterExtensao(nome) {
     return (nome || '').split('.').pop().toLowerCase();
 }
 
-// Filtra os grupos de Local da Arte conforme os locais permitidos para o modelo
-function locaisPorModelo(modeloId) {
-    const permitidos = LOCAIS_POR_PRODUTO[modeloId];
-    if (!permitidos) return LOCAIS;
-    const set = new Set(permitidos);
-    return LOCAIS
-        .map(g => ({ ...g, options: g.options.filter(opt => set.has(opt)) }))
-        .filter(g => g.options.length > 0);
-}
-
 // Card individual de produto com arte própria
-function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, selecionado, onToggle,
-                      estoqueItens = [], estoqueId = null, onEstoqueChange }) {
-
-    const fotoProduto = estoqueId
-        ? (estoqueItens.find(e => e.id === estoqueId)?.tem_imagem
-            ? `/api/estoque/${estoqueId}/imagem`
-            : null)
-        : (estoqueItens.length === 1 && estoqueItens[0].tem_imagem
-            ? `/api/estoque/${estoqueItens[0].id}/imagem`
-            : null);
-
+function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, selecionado, onToggle, tecidosEstoque, onTecidoChange }) {
+    const semEstoque = Number(modelo.quantidade_atual) <= 0;
     return (
-        <div className={`modelo-card ${selecionado ? 'selecionado' : ''}`}>
+        <fieldset disabled={semEstoque} className={`modelo-card produto-estoque-card ${selecionado ? 'selecionado' : ''}`}>
 
             {/* FRENTE — configuração */}
             {!selecionado && (
                 <div className="modelo-frente">
-                    <div className="modelo-icon">
-                        {fotoProduto ? (
-                            <img src={fotoProduto} alt={modelo.label}
-                                 style={{ width: 80, height: 80, objectFit: 'contain', borderRadius: 8 }} />
-                        ) : (
-                            <span className="material-icons">{modelo.icon}</span>
-                        )}
-                    </div>
+                    <FotoProdutoEstoque estoqueId={modelo.id} nome={modelo.label} temImagem={!!modelo.tem_imagem} />
 
-                    {estoqueItens.length > 1 && (
-                        <div className="form-field" style={{ marginBottom: 8 }}>
-                            <label style={{ fontSize: 12 }}>Modelo do estoque</label>
-                            <select value={estoqueId || ''} onChange={e => onEstoqueChange(Number(e.target.value) || null)}
-                                    style={{ fontSize: 12 }}>
-                                <option value="">Selecione</option>
-                                {estoqueItens.map(e => (
-                                    <option key={e.id} value={e.id}>{e.nome_item}</option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
-
-                    <h3 className="modelo-nome">{modelo.label}</h3>
+                    <h3 className="modelo-nome">{modelo.label}{avisoSaldo(modelo)}</h3>
 
                     <div className="modelo-selects">
                         <SelectOpcoes
@@ -76,34 +41,14 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
                             value={dados.personalizacao}
                             onChange={e => onChange('personalizacao', e.target.value)}
                         />
-                        <SelectOpcoes
-                            label="Tecido"
-                            groups={TECIDOS}
-                            value={dados.tecido}
-                            onChange={e => onChange('tecido', e.target.value)}
-                        />
-                        <SelectOpcoes
-                            label="Cor"
-                            groups={CORES}
-                            value={dados.cor}
-                            onChange={e => onChange('cor', e.target.value)}
-                        />
+                        <SelectTecidoCor {...tecidosEstoque} detalhes={dados} onChange={onTecidoChange} />
                         <SelectOpcoes
                             label="Local da Arte"
-                            groups={locaisPorModelo(modelo.id)}
+                            groups={LOCAIS}
                             value={dados.local}
                             onChange={e => onChange('local', e.target.value)}
                         />
-                        <div className="form-field">
-                            <label>Observações deste item</label>
-                            <textarea
-                                rows={2}
-                                placeholder="Ex: bordado em linha branca..."
-                                value={dados.observacao}
-                                onChange={e => onChange('observacao', e.target.value)}
-                                className="modelo-textarea"
-                            />
-                        </div>
+
                     </div>
 
                     <button type="button" className="btn btn-add modelo-btn" onClick={onToggle}>
@@ -115,11 +60,10 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
             {/* VERSO — quantidades + arte */}
             {selecionado && (
                 <div className="modelo-verso">
-                    <h3 className="modelo-nome">{modelo.label}</h3>
+                    <h3 className="modelo-nome">{modelo.label}{avisoSaldo(modelo)}</h3>
 
                     <p className="section-help" style={{ marginBottom: 16 }}>
-                        {dados.cor          && <span className="tag-detalhe">{dados.cor}</span>}
-                        {dados.tecido       && <span className="tag-detalhe">{dados.tecido}</span>}
+                        {nomeTecidoCor(dados) && <span className="tag-detalhe">{nomeTecidoCor(dados)}</span>}
                         {dados.personalizacao && <span className="tag-detalhe">{dados.personalizacao}</span>}
                         {dados.local        && (
                             <span className="tag-detalhe" style={{ background: '#f3e8ff', color: '#6b21a8' }}>
@@ -143,11 +87,7 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
                         ))}
                     </div>
 
-                    {dados.observacao && (
-                        <p className="modelo-obs">
-                            <strong>Obs.:</strong> {dados.observacao}
-                        </p>
-                    )}
+
 
                     {/* Arte individual deste produto */}
                     <div className="arte-produto">
@@ -204,47 +144,35 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
                 </div>
             )}
 
-        </div>
+        </fieldset>
     );
 }
 
 function SelecionarProdutos() {
     const navigate = useNavigate();
+    const tecidosEstoque = useTecidosEstoque();
 
-    const [modelos, setModelos] = useState(() =>
-        Object.fromEntries(MODELOS.map(m => [
-            m.id,
-            { personalizacao: '', tecido: '', cor: '', local: '', observacao: '', quantidades: {}, selecionado: false }
-        ]))
-    );
-
-    // Arte individual por produto: { modeloId: { file, preview, nome, temPreview } }
+    const [produtosEstoque, setProdutosEstoque] = useState([]);
+    const [modelos, setModelos] = useState({});
+    const [carregando, setCarregando] = useState(true);
+    const [erroProdutos, setErroProdutos] = useState('');
     const [artes, setArtes] = useState({});
 
-    // Fotos do estoque por modelo: { modeloId: [{id, nome_item, tem_imagem}] }
-    const [estoquesPorModelo, setEstoquesPorModelo] = useState({});
-    // Estoque selecionado por modelo (quando há mais de um item)
-    const [estoqueIds, setEstoqueIds] = useState({});
-
     useEffect(() => {
-        api.get('/catalogo/produtos', { lista: true })
-            .then(prods => {
-                if (!Array.isArray(prods)) return;
-                MODELOS.forEach(m => {
-                    const cat = prods.find(p => p.nome.toLowerCase() === m.label.toLowerCase());
-                    if (!cat) return;
-                    api.get(`/estoque/por-catalogo/${cat.id}`, { lista: true })
-                        .then(itens => {
-                            if (!Array.isArray(itens) || itens.length === 0) return;
-                            setEstoquesPorModelo(prev => ({ ...prev, [m.id]: itens }));
-                            if (itens.length === 1) {
-                                setEstoqueIds(prev => ({ ...prev, [m.id]: itens[0].id }));
-                            }
-                        })
-                        .catch(() => {});
-                });
+        let ativo = true;
+        api.get('/estoque/produtos-pedido', { lista: true })
+            .then(produtos => {
+                if (!ativo) return;
+                const lista = produtos.map(p => ({ ...p, label: p.nome }));
+                setProdutosEstoque(lista);
+                setModelos(Object.fromEntries(lista.map(p => [p.id, {
+                    personalizacao: '', tecido: '', cor: '', material_id: null, material_cor_id: null, local: '',
+                    quantidades: {}, selecionado: false,
+                }])));
             })
-            .catch(() => {});
+            .catch(erro => { if (ativo) setErroProdutos(erro.message); })
+            .finally(() => { if (ativo) setCarregando(false); });
+        return () => { ativo = false; };
     }, []);
 
     function handleChange(modeloId, campo, valor) {
@@ -261,6 +189,7 @@ function SelecionarProdutos() {
     }
 
     function handleToggle(modeloId) {
+        if (Number(produtosEstoque.find(p => p.id === modeloId)?.quantidade_atual) <= 0) return;
         setModelos(prev => ({
             ...prev,
             [modeloId]: {
@@ -303,7 +232,7 @@ function SelecionarProdutos() {
     }
 
     function handleContinuar() {
-        const selecionadosModelos = MODELOS.filter(m => modelos[m.id].selecionado);
+        const selecionadosModelos = produtosEstoque.filter(m => modelos[m.id]?.selecionado);
 
         if (selecionadosModelos.length === 0) {
             alert('Selecione pelo menos um produto.');
@@ -315,18 +244,18 @@ function SelecionarProdutos() {
             const grade = Object.fromEntries(
                 Object.entries(d.quantidades).filter(([, v]) => v > 0)
             );
-            const itens = estoquesPorModelo[m.id] || [];
-            const estoqueId = estoqueIds[m.id] || (itens.length === 1 ? itens[0].id : null);
             return {
                 item: m.label,
                 grade,
-                estoque_id: estoqueId,
+                estoque_id: m.id,
                 detalhes: {
+                    tipo_produto_id: null,
+                    material_id: d.material_id,
+                    material_cor_id: d.material_cor_id,
                     tecido:         d.tecido,
                     cor:            d.cor,
                     personalizacao: d.personalizacao,
                     local:          d.local,
-                    observacao:     d.observacao,
                 },
             };
         });
@@ -338,7 +267,7 @@ function SelecionarProdutos() {
         }
 
         const semDetalhe = selecionados.filter(p =>
-            !p.detalhes.tecido || !p.detalhes.cor || !p.detalhes.local
+            !p.detalhes.material_id || !p.detalhes.material_cor_id || !p.detalhes.local
         );
         if (semDetalhe.length > 0) {
             alert(`Preencha Tecido, Cor e Local da Arte de: ${semDetalhe.map(p => p.item).join(', ')}`);
@@ -389,17 +318,28 @@ function SelecionarProdutos() {
                     </div>
 
                     <section className="form-section">
-                        <h2>Modelos disponíveis</h2>
+                        <h2>Produtos disponíveis</h2>
                         <p className="section-help">
-                            Configure cada modelo — técnica, tecido, cor e local da arte. Clique em "Selecionar" para definir
+                            Configure cada produto — técnica, tecido, cor e local da arte. Clique em "Selecionar" para definir
                             quantidades e adicionar a arte individual.
                         </p>
 
+                        {carregando && <p role="status">Carregando produtos...</p>}
+                        {erroProdutos && <p role="alert">{erroProdutos}</p>}
+                        {!carregando && !erroProdutos && produtosEstoque.length === 0 && (
+                            <p className="section-help">
+                                Nenhum produto cadastrado no estoque. <Link to="/add-estoque">Adicionar Itens</Link>
+                            </p>
+                        )}
                         <div className="modelos-grid">
-                            {MODELOS.map(m => (
+                            {produtosEstoque.map(m => (
                                 <ModeloCard
                                     key={m.id}
                                     modelo={m}
+                                    tecidosEstoque={tecidosEstoque}
+                                    onTecidoChange={detalhes => setModelos(prev => ({
+                                        ...prev, [m.id]: { ...prev[m.id], ...detalhes },
+                                    }))}
                                     dados={modelos[m.id]}
                                     arte={artes[m.id]}
                                     selecionado={modelos[m.id].selecionado}
@@ -407,9 +347,6 @@ function SelecionarProdutos() {
                                     onArte={arquivo => handleArte(m.id, arquivo)}
                                     onRemoverArte={() => removerArte(m.id)}
                                     onToggle={() => handleToggle(m.id)}
-                                    estoqueItens={estoquesPorModelo[m.id] || []}
-                                    estoqueId={estoqueIds[m.id] || null}
-                                    onEstoqueChange={id => setEstoqueIds(prev => ({ ...prev, [m.id]: id }))}
                                 />
                             ))}
                         </div>
@@ -419,7 +356,7 @@ function SelecionarProdutos() {
                         <button type="button" className="btn-page-sec" onClick={() => navigate('/pedidos/novo')}>
                             Voltar
                         </button>
-                        <button type="button" className="btn btn-add" onClick={handleContinuar}>
+                        <button type="button" className="btn btn-add" disabled={carregando || !!erroProdutos || !produtosEstoque.length} onClick={handleContinuar}>
                             Revisar Ficha Técnica
                             <span className="material-icons" style={{ fontSize: 18, marginLeft: 6 }}>arrow_forward</span>
                         </button>

@@ -1,3 +1,4 @@
+import { nomeTecidoCor } from "../utils/tecidosEstoque";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
@@ -88,8 +89,7 @@ function VisualizarItem() {
                                 <tbody>
                                     {[
                                         ['Produto',         item.nome_produto],
-                                        ['Tecido',          item.tecido],
-                                        ['Cor',             item.cor],
+                                        ['Tecido',          nomeTecidoCor(item)],
                                         ['Personalização',  item.personalizacao || '—'],
                                         ['Local da Arte',   item.local_arte],
                                     ].map(([label, val]) => (

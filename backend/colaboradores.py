@@ -1,7 +1,11 @@
-from flask import Blueprint, request, jsonify
+import io
+from hashlib import sha256
+
+from flask import Blueprint, request, jsonify, send_file
 import mysql.connector
 
-from auth.decorators import admin_required
+from auth.decorators import admin_required, login_required
+from resources.foto_colaborador import ler_foto_formulario
 from database.connection import db_cursor
 import resources.email_service as email_service
 import resources.seguranca as seguranca
@@ -134,19 +138,24 @@ def cadastrar_colaborador():
     if erro:
         return jsonify({'status': 'erro', 'msg': erro}), 400
 
+    try:
+        _, foto_mime, foto_dados = ler_foto_formulario(request.form, request.files)
+    except ValueError as erro_foto:
+        return jsonify(status='erro', msg=str(erro_foto)), 400
+
     # A conta nasce sem senha e não ativada (conta_ativada = 0). Ela só passa a
     # poder entrar depois que o colaborador definir a senha pelo link.
     SQL = """
         INSERT INTO colaboradores
             (re, nome, cpf, email, telefone, endereco, nivel_acesso,
-             ativo, data_contrato, salario, preferencia_notificacoes, conta_ativada)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0);
+             ativo, data_contrato, salario, preferencia_notificacoes, foto_mime, foto_dados, conta_ativada)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0);
     """
     try:
         with db_cursor(commit=True) as cursor:
             cursor.execute(SQL, (dados['re'], dados['nome'], dados['cpf'], dados['email'],
                 dados['telefone'], dados['endereco'], dados['nivel_acesso'] or 'colaborador', dados['ativo'],
-                dados['data_contrato'], dados['salario'], dados['preferencia_notificacoes']))
+                dados['data_contrato'], dados['salario'], dados['preferencia_notificacoes'], foto_mime, foto_dados))
             token = criar_token_ativacao(cursor, cursor.lastrowid)
     except mysql.connector.IntegrityError as erro_db:
         print('ERRO DE INTEGRIDADE:', erro_db)
@@ -208,6 +217,7 @@ def listar_colaboradores():
     SQL = """
         SELECT id AS id_colaborador, nome AS nome_completo, re, email, nivel_acesso,
                preferencia_notificacoes, ativo,
+               (foto_dados IS NOT NULL AND OCTET_LENGTH(foto_dados) > 0) AS tem_foto,
                (conta_ativada = 1) AS senha_definida
         FROM colaboradores
         WHERE ativo = 1
@@ -248,6 +258,11 @@ def editar_colaborador(id_colaborador):
         if erro:
             return jsonify({'status': 'erro', 'msg': erro}), 400
 
+        try:
+            alterar_foto, foto_mime, foto_dados = ler_foto_formulario(request.form, request.files)
+        except ValueError as erro_foto:
+            return jsonify(status='erro', msg=str(erro_foto)), 400
+
         SQL = """
             UPDATE colaboradores
             SET nome = %s, re = %s, cpf = %s, telefone = %s, email = %s,
@@ -257,10 +272,16 @@ def editar_colaborador(id_colaborador):
         """
         try:
             with db_cursor(commit=True) as cursor:
-                cursor.execute(SQL, (dados['nome'], dados['re'], dados['cpf'], dados['telefone'],
+                cursor.execute('SELECT id FROM colaboradores WHERE id = %s FOR UPDATE', (id_colaborador,))
+                if not cursor.fetchone():
+                    return jsonify(status='erro', msg='Colaborador não encontrado.'), 404
+                if alterar_foto:
+                    SQL = SQL.replace('ativo = %s', 'ativo = %s, foto_mime = %s, foto_dados = %s')
+                valores = (dados['nome'], dados['re'], dados['cpf'], dados['telefone'],
                     dados['email'], dados['endereco'], dados['nivel_acesso'], dados['data_contrato'],
                     dados['salario'], dados['preferencia_notificacoes'], dados['ativo'],
-                    id_colaborador))
+                    *((foto_mime, foto_dados) if alterar_foto else ()), id_colaborador)
+                cursor.execute(SQL, valores)
         except mysql.connector.IntegrityError as erro_db:
             print('ERRO DE INTEGRIDADE:', erro_db)
             return jsonify({'status': 'erro', 'msg': mensagem_duplicidade(erro_db)}), 409
@@ -271,6 +292,7 @@ def editar_colaborador(id_colaborador):
     SQL = """
         SELECT nome AS nome_completo, re, cpf, telefone, email, endereco, nivel_acesso,
                data_contrato AS data_contratacao, salario, preferencia_notificacoes, ativo,
+               (foto_dados IS NOT NULL AND OCTET_LENGTH(foto_dados) > 0) AS tem_foto,
                (conta_ativada = 1) AS senha_definida
         FROM colaboradores WHERE id = %s;
     """
@@ -299,3 +321,17 @@ def excluir_colaborador(id_colaborador):
         cursor.execute("UPDATE colaboradores SET ativo = 0 WHERE id = %s;", (id_colaborador,))
 
     return jsonify({'status': 'ok'})
+
+
+@colaboradores_bp.get('/colaboradores/<int:id_colaborador>/foto')
+@login_required
+def foto_colaborador(id_colaborador):
+    with db_cursor() as cursor:
+        cursor.execute('SELECT foto_mime, foto_dados FROM colaboradores WHERE id = %s', (id_colaborador,))
+        colaborador = cursor.fetchone()
+    if not colaborador or not colaborador['foto_dados']:
+        return jsonify(success=False, msg='Foto não encontrada.'), 404
+    dados = bytes(colaborador['foto_dados'])
+    mime = colaborador['foto_mime'] or 'image/jpeg'
+    versao = sha256(mime.encode('utf-8') + b'\0' + dados).hexdigest()
+    return send_file(io.BytesIO(dados), mimetype=mime, etag=versao, conditional=True, max_age=0)

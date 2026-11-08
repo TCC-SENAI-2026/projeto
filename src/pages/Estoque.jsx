@@ -160,7 +160,6 @@ function Estoque() {
                     {/* CABEÇALHO DA TABELA */}
                     <div className="estoque-header">
                         <span>Item</span>
-                        <span>Categoria</span>
                         <span>Quantidade</span>
                         <span>Status</span>
                         <span>Ações</span>
@@ -197,16 +196,8 @@ function Estoque() {
                                             <div className="produto estoque-main">
                                                 <span className="mobile-field-label">Item</span>
                                                 <p>{item.nome_item}</p>
+                                                <small style={{ color: "#94a3b8" }}>{item.tipo_item}</small>
                                             </div>
-                                        </div>
-
-                                        {/* CATEGORIA (com o tipo embaixo, para diferenciar em "Todo o Estoque") */}
-                                        <div className="categoria info-block">
-                                            <span className="mobile-field-label">Categoria</span>
-                                            <p>{item.categoria}</p>
-                                            <small style={{ color: "#94a3b8" }}>
-                                                {item.tipo_item}
-                                            </small>
                                         </div>
 
                                         {/* QUANTIDADE */}

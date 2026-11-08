@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
-import { useNavigate } from "react-router-dom";
+import FotoColaborador from "../components/FotoColaborador";
+import { Link, useNavigate } from "react-router-dom";
 import '../styles/Equipe.css';
 import '../styles/padrao.css';
 import { api } from "../services/api";
@@ -127,13 +128,12 @@ function Equipe() {
                                     <th>RE</th>
                                     <th>Nível de acesso</th>
                                     <th>Status</th>
-                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {carregando || erro || filtrados.length === 0 ? (
                                     <tr>
-                                        <td colSpan="5">
+                                        <td colSpan="4">
                                             <div className="equipe-vazio">
                                                 {carregando
                                                     ? "Carregando colaboradores..."
@@ -148,7 +148,10 @@ function Equipe() {
                                 ) : (
                                     filtrados.map((item) => (
                                         <tr key={item.id_colaborador}>
-                                            <td>{item.nome_completo}</td>
+                                            <td><div className="equipe-identidade">
+                                                <FotoColaborador id={item.id_colaborador} nome={item.nome_completo} temFoto={!!item.tem_foto} pequena />
+                                                <Link to={`/formUsuario/${item.id_colaborador}`}>{item.nome_completo}</Link>
+                                            </div></td>
                                             <td>{item.re || "—"}</td>
                                             <td>{NIVEIS[item.nivel_acesso] || item.nivel_acesso}</td>
                                             <td>
@@ -156,16 +159,7 @@ function Equipe() {
                                                     {item.ativo ? "Ativo" : "Inativo"}
                                                 </span>
                                             </td>
-                                            <td>
-                                                <div className="equipe-acoes">
-                                                    <button
-                                                        className="btn-salvar"
-                                                        onClick={() => navigate(`/formUsuario/${item.id_colaborador}`)}
-                                                    >
-                                                        Editar
-                                                    </button>
-                                                </div>
-                                            </td>
+
                                         </tr>
                                     ))
                                 )}

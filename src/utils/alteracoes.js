@@ -15,7 +15,6 @@ const ROTULOS_DETALHE = {
     tecido: "Tecido",
     cor: "Cor",
     local: "Local da arte",
-    observacao: "Observações do item",
 };
 
 function texto(valor) {

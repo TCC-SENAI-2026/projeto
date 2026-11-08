@@ -1,3 +1,4 @@
+import FotoCaptura from "../components/FotoCaptura";
 import Sidebar from "../components/Sidebar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -19,6 +20,10 @@ function FormUsuario() {
     const editando = Boolean(id);
 
     const [form, setForm] = useState(FORM_VAZIO);
+    const [foto, setFoto] = useState(null);
+    const [temFoto, setTemFoto] = useState(false);
+    const [removerFoto, setRemoverFoto] = useState(false);
+    const [fotoOcupada, setFotoOcupada] = useState(false);
     const [enviando, setEnviando] = useState(false);
     const [carregando, setCarregando] = useState(editando);
     const [senhaDefinida, setSenhaDefinida] = useState(true);
@@ -46,6 +51,7 @@ function FormUsuario() {
                     status: c.ativo ? "ativo" : "inativo"
                 });
                 setSenhaDefinida(Boolean(c.senha_definida));
+                setTemFoto(!!c.tem_foto);
             } catch {
                 alert("Não foi possível carregar o colaborador.");
                 navigate("/equipe");
@@ -64,6 +70,7 @@ function FormUsuario() {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        if (fotoOcupada || enviando) return;
         setEnviando(true);
 
         const dados = new FormData();
@@ -79,6 +86,8 @@ function FormUsuario() {
         dados.append("salario", form.salario);
         dados.append("preferencia_notificacoes", form.preferenciaNotificacoes);
         dados.append("status", form.status);
+        if (foto) dados.append("foto", foto);
+        if (removerFoto) dados.append("remover_foto", "true");
 
         const url = editando
             ? `/editar-colaborador/${id}`
@@ -97,16 +106,6 @@ function FormUsuario() {
             alert(erro.message || "Erro ao salvar colaborador.");
         } finally {
             setEnviando(false);
-        }
-    }
-
-    async function excluir() {
-        if (!window.confirm(`Deseja excluir ${form.nome}?`)) return;
-        try {
-            await api.post(`/excluir-colaborador/${id}`);
-            navigate("/equipe");
-        } catch {
-            alert("Erro ao excluir o colaborador.");
         }
     }
 
@@ -151,6 +150,14 @@ function FormUsuario() {
                                 Centralize os dados pessoais, profissionais e de acesso do colaborador.
                             </p>
                         </div>
+
+                        <section className="form-section">
+                            <h2>Foto do colaborador</h2>
+                            <FotoCaptura nome={form.nome} arquivo={foto}
+                                fotoAtual={editando && temFoto && !removerFoto ? `/api/colaboradores/${id}/foto` : ''}
+                                onChange={arquivo => { setFoto(arquivo); setRemoverFoto(arquivo === null); }}
+                                onOcupado={setFotoOcupada} disabled={enviando} />
+                        </section>
 
                         <section className="form-section">
                             <h2>Dados Pessoais</h2>
@@ -259,20 +266,14 @@ function FormUsuario() {
                         </section>
 
                         <div className="form-actions">
-                            {editando && (
-                                <button type="button" className="btn-page-sec"
-                                        style={{ color: "#dc2626", marginRight: "auto" }}
-                                        onClick={excluir}>
-                                    Excluir
-                                </button>
-                            )}
+
                             {editando && !senhaDefinida && (
                                 <button type="button" className="btn-page-sec" onClick={reenviarLink}>
                                     Reenviar link
                                 </button>
                             )}
                             <button type="button" className="btn-page-sec" onClick={() => navigate("/equipe")}>Cancelar</button>
-                            <button type="submit" className="btn btn-add" disabled={enviando}>
+                            <button type="submit" className="btn btn-add" disabled={enviando || fotoOcupada}>
                                 {enviando ? "Salvando..." : "Salvar"}
                             </button>
                         </div>

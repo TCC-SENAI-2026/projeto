@@ -19,7 +19,7 @@ Os documentos de arquitetura/acompanhamento não foram alterados.
 
 | Arquivo | Responsabilidade |
 |---|---|
-| `database/schema.sql` | Única definição das 10 tabelas, sem SQL destrutivo |
+| `database/schema.sql` | Única definição das 11 tabelas, com SQL destrutivo que apaga e recria o banco |
 | `config.py`, `.env.example`, `requirements.txt` | Configuração e dependências |
 | `database/__init__.py`, `database/connection.py` | Pool e cursor nomeado |
 | `resources/database_connection.py` | Compatibilidade legada, sem credenciais fixas |
@@ -154,7 +154,7 @@ execução estão em `EVIDENCIAS_ETAPA_A.md`.
    DELETE, migração ou inserção de dados. CREATE TABLE não usa IF NOT EXISTS
    para não mascarar uma estrutura antiga incompatível.
 5. Confira o painel **Action Output** sem erros. Atualize **Schemas**,
-   expanda a base e confira as 10 tabelas. `SHOW TABLES;` também permite
+   expanda a base e confira as 11 tabelas. `SHOW TABLES;` também permite
    contar. Guarde o resultado de `SHOW CREATE TABLE` para a validação futura.
 
 **Pare aqui e confirme no chat se o banco foi criado sem erros e qual nome
@@ -164,7 +164,7 @@ Não envie senhas ou conteúdo do `.env` pelo chat.
 
 ## Pendências e divisão com a equipe
 
-- Validação real das 10 tabelas, FKs/CHECKs, `SELECT 1`, login e interface:
+- Validação real das 11 tabelas, FKs/CHECKs, `SELECT 1`, login e interface:
   aguardam etapa C; nenhum requisito foi marcado `[x]`.
 - Os módulos legados mantêm SQL de demonstração com campos antigos e as
   telas de negócio ainda usam URLs diretas sem o novo cliente/CSRF. Acesso

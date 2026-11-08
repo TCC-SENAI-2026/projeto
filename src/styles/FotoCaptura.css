@@ -1,0 +1,20 @@
+.foto-colaborador {
+    display: inline-flex;
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    background: #e2e8f0;
+    color: #334155;
+    font-weight: 600;
+}
+.foto-colaborador img { width: 100%; height: 100%; object-fit: cover; }
+.foto-colaborador-pequena { width: 40px; height: 40px; }
+.foto-captura { display: grid; gap: 12px; }
+.foto-captura-botoes { display: flex; gap: 10px; flex-wrap: wrap; }
+.foto-captura-painel { display: grid; gap: 12px; padding: 18px; border: 1px solid #cbd5e1; border-radius: 14px; }
+.foto-captura-painel video { width: 100%; max-width: 512px; aspect-ratio: 4 / 3; object-fit: contain; background: #0f172a; border-radius: 12px; }
+.foto-captura [role="alert"] { color: #b91c1c; }
