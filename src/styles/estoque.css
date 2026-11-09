@@ -110,11 +110,6 @@
     color: #166534;
 }
 
-.status.baixo {
-    background: #fde68a;
-    color: #78350f;
-}
-
 .status.saida {
     background: #dbeafe;
     color: #1d4ed8;
@@ -195,3 +190,4 @@
         padding: 10px !important;
     }
 }
+.estoque-card:focus-visible { outline: 2px solid #2563eb; outline-offset: 3px; }

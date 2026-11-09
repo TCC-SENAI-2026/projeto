@@ -77,13 +77,21 @@
     font-size: 14px;
 }
 
+.equipe-table th:first-child { width: 36%; }
+.equipe-table th:nth-child(2) { width: 14%; }
+.equipe-table th:nth-child(3) { width: 24%; }
+.equipe-table th:nth-child(4) { width: 16%; }
+.equipe-table th:last-child { width: 10%; }
+
+.equipe-table td:nth-child(2),
+.equipe-table td:nth-child(3),
+.equipe-table td:nth-child(4) { white-space: nowrap; }
+
 .equipe-identidade {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-
-.equipe-identidade a { color: inherit; text-underline-offset: 3px; }
 
 .equipe-table thead th {
     text-align: left;

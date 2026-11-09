@@ -79,7 +79,8 @@
     color: #16803c;
 }
 
-.cliente-status.inativo {
+.cliente-status.inativo,
+.estoque-row .status.baixo {
     color: #9a3412;
 }
 
@@ -253,7 +254,8 @@
     background: #edf8f0;
 }
 
-.cliente-detalhes-modal .cliente-status.inativo { background: #fff4e8; }
+.cliente-detalhes-modal .cliente-status.inativo,
+.estoque-row .status.baixo { background: #fff4e8; }
 
 .cliente-detalhes-body {
     display: block;

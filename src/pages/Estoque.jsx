@@ -4,9 +4,11 @@ import { estaBaixo, formatarQuantidadeEstoque } from "../utils/estoque";
 import { api } from "../services/api.js";
 
 import Sidebar from "../components/Sidebar";
+import Modal from "../components/Modal";
 
 import "../styles/padrao.css";
 import "../styles/Estoque.css";
+import "../styles/cliente.css";
 
 
 function Estoque() {
@@ -19,6 +21,16 @@ function Estoque() {
     const [estoque, setEstoque] = useState([]);
     const [pesquisa, setPesquisa] = useState("");
     const [erroApi, setErroApi] = useState("");
+    const [itemSelecionado, setItemSelecionado] = useState(null);
+
+    useEffect(() => {
+        if (!itemSelecionado) return;
+        function fecharComEscape(evento) {
+            if (evento.key === "Escape") setItemSelecionado(null);
+        }
+        window.addEventListener("keydown", fecharComEscape);
+        return () => window.removeEventListener("keydown", fecharComEscape);
+    }, [itemSelecionado]);
 
     useEffect(() => {
         carregarEstoque();
@@ -179,6 +191,16 @@ function Estoque() {
                                     <div
                                         className="product estoque-row estoque-card"
                                         key={item.id}
+                                        tabIndex={0}
+                                        aria-label={`Ver informações de ${item.nome_item}`}
+                                        onClick={() => setItemSelecionado(item)}
+                                        onKeyDown={(evento) => {
+                                            if (evento.target !== evento.currentTarget) return;
+                                            if (evento.key === "Enter" || evento.key === " ") {
+                                                evento.preventDefault();
+                                                setItemSelecionado(item);
+                                            }
+                                        }}
                                     >
                                         {/* ITEM */}
                                         <div className="item-info">
@@ -218,7 +240,7 @@ function Estoque() {
                                         </div>
 
                                         {/* AÇÕES */}
-                                        <div className="actions">
+                                        <div className="actions" onClick={(evento) => evento.stopPropagation()}>
                                             <span className="mobile-field-label">Ações</span>
 
                                             <button
@@ -244,6 +266,83 @@ function Estoque() {
                     </div>
                 </div>
             </div>
+            <Modal
+                aberto={Boolean(itemSelecionado)}
+                onClose={() => setItemSelecionado(null)}
+                className="cliente-detalhes-modal"
+                tituloId="estoque-modal-titulo"
+            >
+                {itemSelecionado && (
+                    <>
+                        <div className="modal-header cliente-modal-header">
+                            <div className="cliente-modal-identidade">
+                                <div className="cliente-modal-logo">
+                                    {itemSelecionado.tem_imagem ? (
+                                        <img src={`/api/estoque/${itemSelecionado.id}/imagem`} alt={itemSelecionado.nome_item} />
+                                    ) : (
+                                        <span className="material-icons" aria-hidden="true">
+                                            {itemSelecionado.tipo_item === "material" ? "palette" : "checkroom"}
+                                        </span>
+                                    )}
+                                </div>
+                                <div>
+                                    <h2 className="modal-title" id="estoque-modal-titulo">{itemSelecionado.nome_item}</h2>
+                                    <p className="modal-subtitle">Informações do item de estoque</p>
+                                </div>
+                            </div>
+                            <span className={`cliente-status ${estaBaixo(itemSelecionado) ? "inativo" : "ativo"}`}>
+                                <span className="status-dot"></span>
+                                {estaBaixo(itemSelecionado) ? "Baixo estoque" : "Disponível"}
+                            </span>
+                        </div>
+                        <div className="modal-body cliente-detalhes-body">
+                            <section className="cliente-info-section">
+                                <h3>Informações do item</h3>
+                                <div className="cliente-info-grid">
+                            {[
+                                ["Fornecedor", itemSelecionado.fornecedor],
+                                ["Quantidade", formatarQuantidadeEstoque(itemSelecionado)],
+                                ...(!itemSelecionado.tem_variacoes ? [["Estoque mínimo", itemSelecionado.estoque_minimo]] : []),
+                                ["Valor unitário", itemSelecionado.valor_unitario == null ? null :
+                                    Number(itemSelecionado.valor_unitario).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })],
+                            ].map(([rotulo, valor]) => (
+                                <div className="modal-info" key={rotulo}>
+                                    <span className="modal-label">{rotulo}</span>
+                                    <p className="modal-value">{valor == null || valor === "" ? "Não informado" : valor}</p>
+                                </div>
+                            ))}
+                                </div>
+                            </section>
+                        {itemSelecionado.tipo_item?.toLowerCase() === "material" && (
+                            <section className="cliente-info-section" aria-labelledby="estoque-cores-titulo">
+                                <h3 id="estoque-cores-titulo">Cores cadastradas</h3>
+                                {itemSelecionado.cores?.length ? (
+                                    <div className="cliente-info-grid">
+                                        {itemSelecionado.cores.map(cor => (
+                                            <div className="modal-info" key={cor.id}>
+                                                <span className="modal-label">{cor.nome_cor}</span>
+                                                <p className="modal-value">
+                                                    {Number(cor.quantidade_atual).toLocaleString("pt-BR")} metros
+                                                </p>
+                                                <p className="modal-subtitle">
+                                                    Mínimo: {Number(cor.estoque_minimo).toLocaleString("pt-BR")} metros
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : <p>Nenhuma cor cadastrada.</p>}
+                            </section>
+                        )}
+                            {itemSelecionado.observacoes && (
+                                <section className="cliente-info-section">
+                                    <h3>Observações</h3>
+                                    <p className="cliente-observacoes">{itemSelecionado.observacoes}</p>
+                                </section>
+                            )}
+                        </div>
+                    </>
+                )}
+            </Modal>
         </>
     );
 }

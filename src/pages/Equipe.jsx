@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import FotoColaborador from "../components/FotoColaborador";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import '../styles/Equipe.css';
 import '../styles/padrao.css';
 import { api } from "../services/api";
@@ -125,12 +125,13 @@ function Equipe() {
                                     <th>RE</th>
                                     <th>Nível de acesso</th>
                                     <th>Status</th>
+                                    <th aria-label="Editar colaborador"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {carregando || erro || filtrados.length === 0 ? (
                                     <tr>
-                                        <td colSpan="4">
+                                        <td colSpan="5">
                                             <div className="equipe-vazio">
                                                 {carregando
                                                     ? "Carregando colaboradores..."
@@ -147,7 +148,7 @@ function Equipe() {
                                         <tr key={item.id_colaborador}>
                                             <td><div className="equipe-identidade">
                                                 <FotoColaborador id={item.id_colaborador} nome={item.nome_completo} temFoto={!!item.tem_foto} pequena />
-                                                <Link to={`/formUsuario/${item.id_colaborador}`}>{item.nome_completo}</Link>
+                                                <span>{item.nome_completo}</span>
                                             </div></td>
                                             <td>{item.re || "—"}</td>
                                             <td>{NIVEIS[item.nivel_acesso] || item.nivel_acesso}</td>
@@ -156,7 +157,18 @@ function Equipe() {
                                                     {item.ativo ? "Ativo" : "Inativo"}
                                                 </span>
                                             </td>
-
+                                            <td>
+                                                <div className="equipe-acoes">
+                                                    <button
+                                                        type="button"
+                                                        className="btn-salvar"
+                                                        aria-label={`Editar ${item.nome_completo}`}
+                                                        onClick={() => navigate(`/formUsuario/${item.id_colaborador}`)}
+                                                    >
+                                                        Editar
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))
                                 )}
