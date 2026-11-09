@@ -2,12 +2,18 @@ import base64
 import json
 
 from flask import Blueprint, g, jsonify, request
-from mysql.connector import Error as MySQLError
+from mysql.connector import Error as MySQLError, IntegrityError
 
 from auth.decorators import admin_required, login_required
 from database.connection import db_cursor, open_connection
+from resources.controle_estoque import FILTRO_ESTOQUE_PECAS
+from perfil import ErroPerfil, aprovar_perfil, processar_alteracao_perfil
 
 solicitacoes_bp = Blueprint('solicitacoes', __name__)
+
+
+def data_iso(valor):
+    return valor.isoformat() if hasattr(valor, 'isoformat') else str(valor)
 
 
 @solicitacoes_bp.route('/solicitacoes', methods=['GET'])
@@ -23,13 +29,14 @@ def listar_solicitacoes():
                     s.id,
                     s.tipo,
                     s.pedido_id,
+                    s.colaborador_alvo_id,
                     s.status,
                     s.data_solicitacao,
                     s.data_decisao,
                     co.nome AS nome_solicitante
                 FROM solicitacoes s
                 JOIN colaboradores co ON co.id = s.colaborador_solicitante_id
-                WHERE s.pedido_id IS NOT NULL
+                WHERE (s.pedido_id IS NOT NULL OR s.tipo = 'perfil')
                 ORDER BY s.data_solicitacao DESC
             """)
         else:
@@ -38,13 +45,14 @@ def listar_solicitacoes():
                     s.id,
                     s.tipo,
                     s.pedido_id,
+                    s.colaborador_alvo_id,
                     s.status,
                     s.data_solicitacao,
                     s.data_decisao,
                     co.nome AS nome_solicitante
                 FROM solicitacoes s
                 JOIN colaboradores co ON co.id = s.colaborador_solicitante_id
-                WHERE s.pedido_id IS NOT NULL
+                WHERE (s.pedido_id IS NOT NULL OR s.tipo = 'perfil')
                   AND s.colaborador_solicitante_id = %s
                 ORDER BY s.data_solicitacao DESC
             """, (colaborador['id'],))
@@ -77,13 +85,14 @@ def listar_solicitacoes():
             'id': r['id'],
             'tipo': r['tipo'],
             'pedidoId': r['pedido_id'],
+            'colaboradorAlvoId': r.get('colaborador_alvo_id'),
             'status': r['status'],
             'resumo': dp.get('resumo', ''),
             'justificativa': dp.get('justificativa', ''),
             'motivo': dp.get('motivo_recusa', ''),
             'solicitante': r['nome_solicitante'],
-            'criadoEm': r['data_solicitacao'].isoformat() if r['data_solicitacao'] else None,
-            'decididoEm': r['data_decisao'].isoformat() if r['data_decisao'] else None,
+            'criadoEm': data_iso(r['data_solicitacao']) if r['data_solicitacao'] else None,
+            'decididoEm': data_iso(r['data_decisao']) if r['data_decisao'] else None,
             'alteracoes': dp.get('alteracoes', []),
             'pedidoNovo': dp.get('pedidoNovo'),
         })
@@ -95,6 +104,13 @@ def listar_solicitacoes():
 @login_required
 def criar_solicitacao():
     dados = request.get_json(silent=True) or {}
+
+    if not isinstance(dados, dict):
+        return jsonify(success=False, msg='Dados inválidos.'), 400
+    if dados.get('tipo') == 'perfil':
+        if set(dados) - {'tipo', 'colaborador_alvo_id', 'dados_propostos'}:
+            return jsonify(success=False, msg='Campos não permitidos na solicitação de perfil.'), 400
+        return processar_alteracao_perfil(dados.get('dados_propostos'), dados.get('colaborador_alvo_id'))
 
     tipo = dados.get('tipo', 'edicao')
     pedido_id = dados.get('pedido_id') or dados.get('pedidoId')
@@ -157,11 +173,12 @@ def decidir_solicitacao(sol_id):
         return jsonify(success=False, msg='Decisão inválida.'), 400
 
     conn = open_connection()
+    sol = None
     try:
         cursor = conn.cursor(dictionary=True, buffered=True)
 
         cursor.execute("""
-            SELECT id, tipo, pedido_id, status, dados_propostos
+            SELECT id, tipo, pedido_id, colaborador_alvo_id, colaborador_solicitante_id, status, dados_propostos
             FROM solicitacoes WHERE id = %s FOR UPDATE
         """, (sol_id,))
         sol = cursor.fetchone()
@@ -182,7 +199,10 @@ def decidir_solicitacao(sol_id):
             except (ValueError, TypeError):
                 dp = {}
 
-        if decisao == 'aprovada':
+        if sol['tipo'] == 'perfil' and decisao == 'aprovada':
+            aprovar_perfil(cursor, sol, dp)
+
+        if decisao == 'aprovada' and sol['tipo'] != 'perfil':
             # Serializa a decisao com inicio de producao e edicoes do pedido.
             cursor.execute(
                 "SELECT id FROM pedidos WHERE id = %s AND excluido_em IS NULL FOR UPDATE",
@@ -196,7 +216,7 @@ def decidir_solicitacao(sol_id):
                 pid = sol['pedido_id']
 
                 # Devolve estoque dos itens que tiveram baixa comprovada
-                cursor.execute("""
+                cursor.execute(f"""
                     SELECT pi.estoque_id,
                            e.nome_item,
                            COALESCE(SUM(pit.quantidade), 0) AS total
@@ -205,7 +225,7 @@ def decidir_solicitacao(sol_id):
                     LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
                     WHERE pi.pedido_id = %s
                       AND pi.estoque_id IS NOT NULL
-                      AND e.unidade_medida = 'Unidade'
+                      AND {FILTRO_ESTOQUE_PECAS}
                     GROUP BY pi.estoque_id, e.nome_item
                 """, (pid,))
                 itens_pedido = cursor.fetchall()
@@ -294,6 +314,15 @@ def decidir_solicitacao(sol_id):
         cursor.close()
         return jsonify(success=True)
 
+    except ErroPerfil as erro:
+        conn.rollback()
+        cursor.close()
+        return jsonify(success=False, msg=str(erro)), erro.status
+    except IntegrityError:
+        conn.rollback()
+        if sol and sol['tipo'] == 'perfil':
+            return jsonify(success=False, msg='E-mail já cadastrado por outro colaborador.'), 409
+        raise
     except MySQLError:
         conn.rollback()
         raise

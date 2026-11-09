@@ -1,321 +1,140 @@
-import Sidebar from "../components/Sidebar";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useAuth } from "../auth/useAuth";
+import { useCallback, useEffect, useState } from 'react';
+import Sidebar from '../components/Sidebar';
+import FotoCaptura from '../components/FotoCaptura';
+import FotoColaborador from '../components/FotoColaborador';
+import { buscarPerfil, salvarPerfil } from '../services/perfilService';
 import '../styles/padrao.css';
 import '../styles/formulario.css';
 
-const NOTIF = { email: "E-mail", sistema: "Sistema", ambos: "Ambos" };
-
-function formatarData(v) {
-    if (!v) return "—";
-    const [ano, mes, dia] = v.split("-");
-    return `${dia}/${mes}/${ano}`;
-}
-
-function Campo({ rotulo, valor, cheio }) {
-    return (
-        <div className={`form-field${cheio ? " full" : ""}`}>
-            <span className="perfil-rotulo">{rotulo}</span>
-            <p className="perfil-valor">{valor || "—"}</p>
-        </div>
-    );
-}
+const EDITAVEIS = [
+    ['nome', 'Nome', 'text'], ['email', 'E-mail', 'email'],
+    ['telefone', 'Telefone', 'tel'], ['endereco', 'Endereço', 'text'],
+];
 
 function Perfil() {
-
-    // TODO(BACK): criar endpoint para buscar os dados do perfil do usuário autenticado.
-    // Retornar os dados pessoais, profissionais e nivel_acesso.
-    // O colaborador pode apenas visualizar as próprias informações.
-    // Somente o administrador pode editar o perfil.
-    // O backend deve validar as permissões antes de permitir qualquer alteração.
-    const { colaborador } = useAuth();
-
-    const ehAdmin = colaborador?.nivel_acesso === "administrador";
-
-
+    const [perfil, setPerfil] = useState(null);
+    const [solicitacao, setSolicitacao] = useState(null);
+    const [form, setForm] = useState({});
     const [editando, setEditando] = useState(false);
-    const navigate = useNavigate();
-    const [preview, setPreview] = useState(null);
+    const [foto, setFoto] = useState(null);
+    const [removerFoto, setRemoverFoto] = useState(false);
+    const [fotoOcupada, setFotoOcupada] = useState(false);
+    const [carregando, setCarregando] = useState(true);
+    const [salvando, setSalvando] = useState(false);
+    const [erro, setErro] = useState('');
+    const [mensagem, setMensagem] = useState('');
 
-    const [form, setForm] = useState({
-        nome: "", email: "", telefone: "", nascimento: "",
-        cidade: "", cargo: "", setor: "", admissao: "",
-        acesso: "", notif: "", senhaAtual: "", novaSenha: "",
-        bio: "Responsável por aprovar pedidos..."
-    });
+    const carregar = useCallback(async () => {
+        setErro('');
+        setCarregando(true);
+        try {
+            const resposta = await buscarPerfil();
+            setPerfil(resposta.data);
+            setForm(resposta.data);
+            setSolicitacao(resposta.solicitacao);
+        } catch (error) { setErro(error.message); }
+        finally { setCarregando(false); }
+    }, []);
+    useEffect(() => { carregar(); }, [carregar]);
+    useEffect(() => {
+        const atualizar = () => { if (!editando && !salvando) carregar(); };
+        window.addEventListener('focus', atualizar);
+        return () => window.removeEventListener('focus', atualizar);
+    }, [carregar, editando, salvando]);
 
-    const [original, setOriginal] = useState(form); // precisa vir depois do form
-
-    function handleChange(e) {
-        const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
-    }
-
-    function handleFoto(e) {
-        const file = e.target.files[0];
-        if (!file) return setPreview(null);
-        setPreview(URL.createObjectURL(file));
-    }
-
-    function iniciarEdicao() {
-        if (!ehAdmin) return;
-        setEditando(true);
-    }
-
-    function cancelarEdicao() {
-        setForm(original);   // descarta o que foi digitado
-        setPreview(null);
+    const pendente = solicitacao?.status === 'pendente';
+    const admin = perfil?.nivel_acesso === 'administrador';
+    function cancelar() {
+        setForm(perfil);
+        setFoto(null);
+        setRemoverFoto(false);
+        setFotoOcupada(false);
         setEditando(false);
+        setErro('');
+    }
+    async function salvar(event) {
+        event.preventDefault();
+        if (salvando || fotoOcupada || pendente || !editando) return;
+        setSalvando(true);
+        setErro('');
+        try {
+            const resposta = await salvarPerfil(form, foto, removerFoto);
+            setMensagem(resposta.msg);
+            setEditando(false);
+            setFoto(null);
+            setRemoverFoto(false);
+            await carregar();
+        } catch (error) { setErro(error.message); }
+        finally { setSalvando(false); }
     }
 
-    function handleSubmit(e) {
-        e.preventDefault();
-        if (!ehAdmin || !editando) return;
-
-        // TODO(BACK): enviar os dados atualizados para a API.
-        // O backend deve verificar se o usuário autenticado é administrador.
-        console.log(form);
-
-        const salvo = { ...form, senhaAtual: "", novaSenha: "" };
-        setForm(salvo);
-        setOriginal(salvo);
-        setEditando(false);
-        alert("Alterações salvas");
-    }
+    const bloqueados = perfil ? [
+        ['RE', perfil.re], ['Nível de acesso', admin ? 'Administrador' : 'Colaborador'],
+        ['Salário', perfil.salario == null ? '—' : Number(perfil.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })],
+        ['Data de contrato', perfil.data_contrato], ['Status', perfil.ativo ? 'Ativo' : 'Inativo'], ['CPF', perfil.cpf],
+    ] : [];
 
     return (
         <>
             <Sidebar />
-            <div className="container">
-                <div className="form-page-card">
-                    <form onSubmit={handleSubmit} autoComplete="off">
-
-                        <div className="form-header">
-                            <span className="form-badge">
-                                <span className="material-icons">person</span>
-                                Meu perfil
-                            </span>
-                            <h1 className="form-title">Perfil</h1>
-                            <p className="form-subtitle">
-                                Gerencie suas informações pessoais, profissionais e de acesso ao sistema.
-                            </p>
-                        </div>
-
-                        {editando ? (
-
-                            <fieldset className="perfil-campos">
-
-                                {/* FOTO */}
-                                <section className="form-section">
-                                    <h2>Foto</h2>
-                                    <p className="section-help">Imagem de exibição do seu perfil no sistema.</p>
-
-                                    <div className="avatar-wrapper">
-                                        <label className="avatar-upload" htmlFor="foto-input">
-                                            {preview ? (
-                                                <img src={preview} className="avatar-img" alt="Foto de perfil" />
-                                            ) : (
-                                                <div className="avatar-placeholder">
-                                                    <span className="material-icons">person</span>
-                                                </div>
-                                            )}
-                                            {editando && <span className="avatar-hint">Clique para alterar</span>}
-                                        </label>
-                                        <input id="foto-input" type="file" accept="image/*" onChange={handleFoto} style={{ display: "none" }} />
-                                    </div>
-                                </section>
-
-                                {/* DADOS PESSOAIS */}
-                                <section className="form-section">
-                                    <h2>Dados Pessoais</h2>
-                                    <p className="section-help">Suas informações de identificação e contato.</p>
-                                    <div className="form-grid">
-
-                                        <div className="form-field full">
-                                            <label htmlFor="nome">Nome Completo</label>
-                                            <input id="nome" name="nome" placeholder="Ex: João Silva" value={form.nome} onChange={handleChange} />
-                                        </div>
-
-                                        <div className="form-field">
-                                            <label htmlFor="email">E-mail</label>
-                                            <input id="email" name="email" placeholder="seu@email.com" value={form.email} onChange={handleChange} />
-                                        </div>
-
-                                        <div className="form-field">
-                                            <label htmlFor="telefone">Telefone</label>
-                                            <input id="telefone" name="telefone" placeholder="(11) 99999-9999" value={form.telefone} onChange={handleChange} />
-                                        </div>
-
-                                        <div className="form-field">
-                                            <label htmlFor="nascimento">Data de Nascimento</label>
-                                            <input id="nascimento" type="date" name="nascimento" value={form.nascimento} onChange={handleChange} />
-                                        </div>
-
-                                        <div className="form-field">
-                                            <label htmlFor="cidade">Cidade</label>
-                                            <input id="cidade" name="cidade" placeholder="Ex: São Paulo" value={form.cidade} onChange={handleChange} />
-                                        </div>
-
-                                    </div>
-                                </section>
-
-                                {/* PROFISSIONAL */}
-                                <section className="form-section">
-                                    <h2>Profissional</h2>
-                                    <p className="section-help">Seu cargo, setor e nível de acesso ao sistema.</p>
-                                    <div className="form-grid">
-
-                                        <div className="form-field">
-                                            <label htmlFor="cargo">Cargo</label>
-                                            <input id="cargo" name="cargo" placeholder="Ex: Gerente de Produção" value={form.cargo} onChange={handleChange} />
-                                        </div>
-
-                                        <div className="form-field">
-                                            <label htmlFor="setor">Setor</label>
-                                            <select id="setor" name="setor" value={form.setor} onChange={handleChange}>
-                                                <option value="">Selecione</option>
-                                                <option value="Administração">Administração</option>
-                                                <option value="Produção">Produção</option>
-                                                <option value="Comercial">Comercial</option>
-                                                <option value="Estoque">Estoque</option>
-                                            </select>
-                                        </div>
-
-                                        <div className="form-field">
-                                            <label htmlFor="admissao">Data de Admissão</label>
-                                            <input id="admissao" type="date" name="admissao" value={form.admissao} onChange={handleChange} />
-                                        </div>
-
-                                        <div className="form-field">
-                                            <label htmlFor="acesso">Nível de Acesso</label>
-                                            <select id="acesso" name="acesso" value={form.acesso} onChange={handleChange}>
-                                                <option value="">Selecione</option>
-                                                <option value="Administrador">Administrador</option>
-                                                <option value="Gestor">Gestor</option>
-                                                <option value="Operacional">Operacional</option>
-                                            </select>
-                                        </div>
-
-                                    </div>
-                                </section>
-
-                                {/* SEGURANÇA */}
-                                <section className="form-section">
-                                    <h2>Segurança</h2>
-                                    <p className="section-help">Notificações, senha e observações da conta.</p>
-                                    <div className="form-grid">
-
-                                        <div className="form-field full">
-                                            <p className="form-label-like">Notificações</p>
-                                            <div className="status-toggle">
-                                                <input type="radio" id="notif_email" name="notif" value="email" checked={form.notif === "email"} onChange={handleChange} />
-                                                <label htmlFor="notif_email">E-mail</label>
-                                                <input type="radio" id="notif_sistema" name="notif" value="sistema" checked={form.notif === "sistema"} onChange={handleChange} />
-                                                <label htmlFor="notif_sistema">Sistema</label>
-                                                <input type="radio" id="notif_ambos" name="notif" value="ambos" checked={form.notif === "ambos"} onChange={handleChange} />
-                                                <label htmlFor="notif_ambos">Ambos</label>
-                                            </div>
-                                        </div>
-
-                                        <div className="form-field">
-                                            <label htmlFor="senhaAtual">Senha Atual</label>
-                                            <input id="senhaAtual" type="password" name="senhaAtual" placeholder="••••••••" onChange={handleChange} />
-                                        </div>
-
-                                        <div className="form-field">
-                                            <label htmlFor="novaSenha">Nova Senha</label>
-                                            <input id="novaSenha" type="password" name="novaSenha" placeholder="••••••••" onChange={handleChange} />
-                                        </div>
-
-                                        <div className="form-field full">
-                                            <label htmlFor="bio">Observações</label>
-                                            <textarea id="bio" name="bio" value={form.bio} onChange={handleChange} />
-                                        </div>
-
-                                    </div>
-                                </section>
-                            </fieldset>
-
-                        ) : (
-
-                            <div className="perfil-leitura">
-
-                                <section className="form-section">
-                                    <h2>Foto</h2>
-                                    <div className="avatar-wrapper">
-                                        <div className="avatar-upload">
-                                            {preview ? (
-                                                <img src={preview} className="avatar-img" alt="Foto de perfil" />
-                                            ) : (
-                                                <div className="avatar-placeholder">
-                                                    <span className="material-icons">person</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </section>
-
-                                <section className="form-section">
-                                    <h2>Dados Pessoais</h2>
-                                    <div className="form-grid">
-                                        <Campo rotulo="Nome completo" valor={form.nome} cheio />
-                                        <Campo rotulo="E-mail" valor={form.email} />
-                                        <Campo rotulo="Telefone" valor={form.telefone} />
-                                        <Campo rotulo="Data de nascimento" valor={formatarData(form.nascimento)} />
-                                        <Campo rotulo="Cidade" valor={form.cidade} />
-                                    </div>
-                                </section>
-
-                                <section className="form-section">
-                                    <h2>Profissional</h2>
-                                    <div className="form-grid">
-                                        <Campo rotulo="Cargo" valor={form.cargo} />
-                                        <Campo rotulo="Setor" valor={form.setor} />
-                                        <Campo rotulo="Data de admissão" valor={formatarData(form.admissao)} />
-                                        <Campo rotulo="Nível de acesso" valor={form.acesso} />
-                                    </div>
-                                </section>
-
-                                <section className="form-section">
-                                    <h2>Preferências</h2>
-                                    <div className="form-grid">
-                                        <Campo rotulo="Notificações" valor={NOTIF[form.notif]} cheio />
-                                        <Campo rotulo="Observações" valor={form.bio} cheio />
-                                    </div>
-                                </section>
-
-                            </div>
-
-                        )}
-
-                        <div className="form-actions">
-                            {editando ? (
-                                <>
-                                    <button key="cancelar" type="button" className="btn-page-sec" onClick={cancelarEdicao}>
-                                        Cancelar
-                                    </button>
-                                    <button key="salvar" type="submit" className="btn btn-add">
-                                        Salvar
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <button key="voltar" type="button" className="btn-page-sec" onClick={() => navigate("/")}>
-                                        Voltar
-                                    </button>
-                                    {ehAdmin && (
-                                        <button key="editar" type="button" className="btn btn-add" onClick={iniciarEdicao}>
-                                            Editar perfil
-                                        </button>
-                                    )}
-                                </>
-                            )}
-                        </div>
-
-                    </form>
+            <div className="container"><main className="form-page-card">
+                <div className="form-header">
+                    <span className="form-badge"><span className="material-icons">person</span>Meu perfil</span>
+                    <h1 className="form-title">Perfil</h1>
+                    <p className="form-subtitle">Confira seus dados e acompanhe suas alterações.</p>
                 </div>
-            </div>
+                {erro && <p role="alert">{erro}</p>}
+                {mensagem && <p role="status">{mensagem}</p>}
+                {carregando ? <p role="status">Carregando perfil...</p> : perfil ? (
+                    <form onSubmit={salvar} autoComplete="off">
+                        {pendente && <p role="status">Alteração aguardando aprovação</p>}
+                        {solicitacao?.status === 'aprovada' && <p role="status">Sua alteração de perfil foi aprovada.</p>}
+                        {solicitacao?.status === 'recusada' && <p role="status">Sua alteração de perfil foi recusada. {solicitacao.motivo}</p>}
+                        <section className="form-section">
+                            <h2>Foto</h2>
+                            {editando ? <FotoCaptura nome={form.nome} arquivo={foto}
+                                fotoAtual={perfil.tem_foto && !removerFoto ? `/api/colaboradores/${perfil.id}/foto` : ''}
+                                onChange={arquivo => { setFoto(arquivo); setRemoverFoto(arquivo === null); }}
+                                onOcupado={setFotoOcupada} disabled={salvando} /> :
+                                <FotoColaborador id={perfil.id} nome={perfil.nome} temFoto={!!perfil.tem_foto} />}
+                        </section>
+                        <section className="form-section">
+                            <h2>Dados pessoais</h2>
+                            <p className="section-help">{admin ? 'Suas alterações serão aplicadas diretamente.' : 'Suas alterações serão enviadas ao administrador para aprovação.'}</p>
+                            <div className="form-grid">
+                                {EDITAVEIS.map(([campo, rotulo, tipo]) => (
+                                    <div className="form-field" key={campo}>
+                                        <label htmlFor={`perfil-${campo}`}>{rotulo}</label>
+                                        <input id={`perfil-${campo}`} type={tipo} value={form[campo] ?? ''}
+                                            required={campo === 'nome' || campo === 'email'}
+                                            maxLength={{ nome: 150, email: 254, telefone: 20, endereco: 255 }[campo]}
+                                            readOnly={!editando} disabled={salvando}
+                                            onChange={event => setForm(prev => ({ ...prev, [campo]: event.target.value }))} />
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                        <section className="form-section">
+                            <h2>Dados profissionais e identificação</h2>
+                            <div className="form-grid">
+                                {bloqueados.map(([rotulo, valor]) => <div className="form-field" key={rotulo}>
+                                    <label>{rotulo}<input value={valor ?? '—'} readOnly /></label>
+                                </div>)}
+                            </div>
+                        </section>
+                        <div className="form-actions">
+                            {editando ? <>
+                                <button type="button" className="btn-page-sec" disabled={salvando} onClick={cancelar}>Cancelar</button>
+                                <button type="submit" className="btn btn-add" disabled={salvando || fotoOcupada}>Salvar alterações</button>
+                            </> : <>
+                                <button type="button" className="btn-page-sec" onClick={carregar}>Atualizar</button>
+                                <button type="button" className="btn btn-add" disabled={pendente}
+                                    onClick={() => { setMensagem(''); setEditando(true); }}>Editar perfil</button>
+                            </>}
+                        </div>
+                    </form>
+                ) : <button type="button" className="btn-page-sec" onClick={carregar}>Tentar novamente</button>}
+            </main></div>
         </>
     );
 }

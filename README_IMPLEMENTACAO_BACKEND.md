@@ -60,7 +60,7 @@ Referências: [arquitetura aprovada](docs/ARQUITETURA_TCC.md) e [planejamento do
 |---|---|---|
 | [.gitignore](.gitignore) | Acrescentou `.venv/` ao ignore. | Ambiente Python fora do versionamento. |
 | [backend/app.py](backend/app.py) | Integra configuração, CORS restrito, CSRF, autorização e erros. | Inicialização e proteção do Flask. |
-| [backend/database/schema.sql](backend/database/schema.sql) | Substituiu SQL antigo pelas dez tabelas aprovadas. | Estrutura relacional sem exclusões ou migrações. |
+| [backend/database/schema.sql](backend/database/schema.sql) | Substituiu SQL antigo pelas 11 tabelas aprovadas. | Estrutura relacional com recriação destrutiva do banco. |
 | [backend/login.py](backend/login.py) | Implementa sessão, `/csrf`, login, `/me` e logout. | Ciclo de autenticação; ativação antiga não publicada. |
 | [backend/resources/database_connection.py](backend/resources/database_connection.py) | Encaminha a conexão antiga ao módulo compartilhado. | Compatibilidade dos imports legados. |
 | [src/App.jsx](src/App.jsx) | Protege rotas e aguarda a sessão inicial. | Controle das páginas acessíveis. |
@@ -79,7 +79,7 @@ Referências: [arquitetura aprovada](docs/ARQUITETURA_TCC.md) e [planejamento do
 
 ## Banco de dados e usuários iniciais
 
-O [schema](backend/database/schema.sql) define as **10 tabelas aprovadas**, detalhadas na [arquitetura, seção 2](docs/ARQUITETURA_TCC.md). Conforme confirmação do responsável nesta solicitação, o SQL foi executado manualmente no MySQL Workbench.
+O [schema](backend/database/schema.sql) define as **11 tabelas aprovadas**, detalhadas na [arquitetura, seção 2](docs/ARQUITETURA_TCC.md). Conforme confirmação do responsável nesta solicitação, o SQL foi executado manualmente no MySQL Workbench.
 
 Os scripts são executados localmente no terminal, um por vez. Ambos pedem RE de quatro dígitos, preservam zeros iniciais e ocultam a senha com `getpass`. Armazenam somente uma representação para verificação da senha (hash Werkzeug), não o texto simples. Recusam duplicações e outra conta existente do mesmo perfil; criam contas ativas e ativadas.
 

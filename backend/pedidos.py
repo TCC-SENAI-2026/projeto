@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 
 from auth.decorators import admin_required, login_required
 from database.connection import db_cursor, open_connection
+from resources.controle_estoque import FILTRO_ESTOQUE_PECAS
 
 # Locais permitidos por tipo de produto (label exato enviado pelo frontend)
 LOCAIS_VALIDOS_POR_PRODUTO = {
@@ -51,6 +52,50 @@ def _validar_telefone(tel):
         return True
     nums = re.sub(r'\D', '', tel)
     return 10 <= len(nums) <= 11
+
+
+def _validar_produto_estoque(cursor, estoque_id):
+    if isinstance(estoque_id, bool) or not str(estoque_id).isdigit() or int(estoque_id) < 1:
+        raise ValueError('Selecione um produto válido do estoque.')
+    cursor.execute(
+        'SELECT id, nome_item, tipo_item, ativo, tem_variacoes, quantidade_atual '
+        'FROM estoque WHERE id = %s FOR UPDATE', (int(estoque_id),))
+    produto = cursor.fetchone()
+    if not produto:
+        raise ValueError('Produto do estoque não encontrado.')
+    if produto['tipo_item'] != 'produto' or not produto['ativo'] or produto['tem_variacoes']:
+        raise ValueError('Selecione um produto ativo e sem variações do estoque.')
+    if produto['quantidade_atual'] <= 0:
+        raise ValueError('Produto sem estoque. Selecione outro produto.')
+    return produto
+
+
+def _validar_tecido_cor(cursor, detalhes):
+    material_id = detalhes.get('material_id')
+    cor_id = detalhes.get('material_cor_id')
+    for valor in (material_id, cor_id):
+        if isinstance(valor, bool) or not str(valor).isdigit() or int(valor) < 1:
+            raise ValueError('Selecione um tecido e uma cor válidos do estoque.')
+    cursor.execute(
+        'SELECT id FROM estoque WHERE id = %s AND ativo = 1 AND tem_variacoes = 1 FOR UPDATE',
+        (int(material_id),))
+    if not cursor.fetchone():
+        raise ValueError('Tecido não encontrado, inativo ou sem variações de cor.')
+    cursor.execute(
+        'SELECT id, quantidade_atual FROM material_cores WHERE id = %s AND material_id = %s FOR UPDATE',
+        (int(cor_id), int(material_id)))
+    cor = cursor.fetchone()
+    if not cor:
+        raise ValueError('A cor selecionada não pertence ao tecido informado.')
+    if cor['quantidade_atual'] <= 0:
+        raise ValueError('A cor selecionada está sem estoque.')
+    return int(material_id), int(cor_id)
+
+
+def _validar_local_legado(tipo_produto_id, nome_produto, local):
+    permitidos = LOCAIS_VALIDOS_POR_PRODUTO.get(nome_produto) if tipo_produto_id else None
+    if permitidos and local and local not in permitidos:
+        raise ValueError(f'Local "{local}" não é válido para "{nome_produto}".')
 
 
 def _resolver_catalogo(cursor, tipo, nome):
@@ -120,18 +165,23 @@ def buscar_item_pedido(item_id):
                 pi.pedido_id,
                 pi.observacao,
                 pi.estoque_id,
+                pi.tipo_produto_id,
+                pi.tecido_id, pi.cor_id, pi.material_id, pi.material_cor_id,
                 (pi.imagem_dados IS NOT NULL) AS tem_arte,
                 p.numero_pedido,
-                cp.nome  AS nome_produto,
-                ct.nome  AS tecido,
-                cc.nome  AS cor,
+                COALESCE(cp.nome, ep.nome_item) AS nome_produto,
+                COALESCE(ct.nome, mt.nome_item) AS tecido,
+                COALESCE(cc.nome, mc.nome_cor) AS cor,
                 cpe.nome AS personalizacao,
                 cl.nome  AS local_arte
             FROM pedido_itens pi
             JOIN pedidos p             ON p.id  = pi.pedido_id
-            JOIN catalogo_itens cp     ON cp.id = pi.tipo_produto_id
-            JOIN catalogo_itens ct     ON ct.id = pi.tecido_id
-            JOIN catalogo_itens cc     ON cc.id = pi.cor_id
+            LEFT JOIN catalogo_itens cp ON cp.id = pi.tipo_produto_id
+            LEFT JOIN estoque ep ON ep.id = pi.estoque_id
+            LEFT JOIN estoque mt ON mt.id = pi.material_id
+            LEFT JOIN material_cores mc ON mc.id = pi.material_cor_id
+            LEFT JOIN catalogo_itens ct ON ct.id = pi.tecido_id
+            LEFT JOIN catalogo_itens cc ON cc.id = pi.cor_id
             LEFT JOIN catalogo_itens cpe ON cpe.id = pi.personalizacao_id
             JOIN catalogo_itens cl     ON cl.id = pi.local_arte_id
             WHERE pi.id = %s AND p.excluido_em IS NULL
@@ -240,16 +290,21 @@ def buscar_pedido(pedido_id):
             SELECT
                 pi.id,
                 pi.estoque_id,
+                pi.tipo_produto_id,
+                pi.tecido_id, pi.cor_id, pi.material_id, pi.material_cor_id,
                 pi.observacao,
                 pi.imagem_url,
                 (pi.imagem_dados IS NOT NULL) AS tem_imagem,
-                cp.nome  AS tipo_produto,
+                COALESCE(cp.nome, ep.nome_item) AS tipo_produto,
                 cpe.nome AS personalizacao,
-                ct.nome  AS tecido,
-                cc.nome  AS cor,
+                COALESCE(ct.nome, mt.nome_item) AS tecido,
+                COALESCE(cc.nome, mc.nome_cor) AS cor,
                 cl.nome  AS local_arte
             FROM pedido_itens pi
-            JOIN  catalogo_itens cp  ON cp.id  = pi.tipo_produto_id
+            LEFT JOIN catalogo_itens cp ON cp.id = pi.tipo_produto_id
+            LEFT JOIN estoque ep ON ep.id = pi.estoque_id
+            LEFT JOIN estoque mt ON mt.id = pi.material_id
+            LEFT JOIN material_cores mc ON mc.id = pi.material_cor_id
             LEFT JOIN catalogo_itens cpe ON cpe.id = pi.personalizacao_id
             LEFT JOIN catalogo_itens ct  ON ct.id  = pi.tecido_id
             LEFT JOIN catalogo_itens cc  ON cc.id  = pi.cor_id
@@ -376,34 +431,23 @@ def criar_pedido():
         )
 
         for i, prod in enumerate(produtos):
-            item_nome = prod.get('item', '').strip()
-            if not item_nome:
-                continue
+            produto = _validar_produto_estoque(cursor, prod.get('estoque_id'))
+            estoque_id = produto['id']
+            item_nome = produto['nome_item']
             detalhes = prod.get('detalhes', {})
-            grade    = prod.get('grade', {})
-
-            tipo_produto_id   = _resolver_catalogo(cursor, 'produto', item_nome)
+            grade = prod.get('grade', {})
+            tipo_produto_id = None
             personalizacao_id = _resolver_catalogo(cursor, 'personalizacao', detalhes.get('personalizacao'))
-            tecido_id         = _resolver_catalogo(cursor, 'tecido', detalhes.get('tecido'))
-            cor_id            = _resolver_catalogo(cursor, 'cor', detalhes.get('cor'))
+            material_id, material_cor_id = _validar_tecido_cor(cursor, detalhes)
+            tecido_id = cor_id = None
             local_id          = _resolver_catalogo(cursor, 'local', detalhes.get('local'))
 
-            if not tecido_id or not cor_id or not local_id:
+            if not local_id:
                 cursor.close()
                 conn.rollback()
                 return jsonify(
                     success=False,
                     msg=f'Preencha Tecido, Cor e Local da Arte para o item "{item_nome}".'
-                ), 400
-
-            local_nome = (detalhes.get('local') or '').strip()
-            locais_validos = LOCAIS_VALIDOS_POR_PRODUTO.get(item_nome)
-            if locais_validos and local_nome and local_nome not in locais_validos:
-                cursor.close()
-                conn.rollback()
-                return jsonify(
-                    success=False,
-                    msg=f'Local "{local_nome}" não é válido para "{item_nome}".'
                 ), 400
 
             arquivo_arte = request.files.get(f'arte_{i}')
@@ -426,19 +470,17 @@ def criar_pedido():
                 imagem_dados = None
                 imagem_mime = None
 
-            estoque_id = prod.get('estoque_id') or None
-
             cursor.execute("""
                 INSERT INTO pedido_itens
                     (pedido_id, tipo_produto_id, personalizacao_id,
                      tecido_id, cor_id, local_arte_id, observacao,
-                     imagem_mime, imagem_dados, estoque_id)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                     imagem_mime, imagem_dados, estoque_id, material_id, material_cor_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 pedido_id, tipo_produto_id, personalizacao_id,
                 tecido_id, cor_id, local_id,
-                detalhes.get('observacao') or None,
-                imagem_mime, imagem_dados, estoque_id,
+                None,
+                imagem_mime, imagem_dados, estoque_id, material_id, material_cor_id,
             ))
             item_id = cursor.lastrowid
 
@@ -458,6 +500,10 @@ def criar_pedido():
         cursor.close()
         return jsonify(success=True, data={'id': pedido_id, 'numero_pedido': pedido_id}), 201
 
+    except ValueError as erro:
+        conn.rollback()
+        cursor.close()
+        return jsonify(success=False, msg=str(erro)), 400
     except MySQLError:
         conn.rollback()
         raise
@@ -534,8 +580,8 @@ def atualizar_status(pedido_id):
             cursor.close()
             return jsonify(success=True)
 
-        # Busca itens com estoque vinculado (apenas unidade_medida = 'Unidade')
-        cursor.execute("""
+        # Busca itens com estoque vinculado e controle por pecas (inclui legado).
+        cursor.execute(f"""
             SELECT pi.estoque_id,
                    e.nome_item,
                    COALESCE(SUM(pit.quantidade), 0) AS total_pedido
@@ -544,7 +590,7 @@ def atualizar_status(pedido_id):
             LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
             WHERE pi.pedido_id = %s
               AND pi.estoque_id IS NOT NULL
-              AND e.unidade_medida = 'Unidade'
+              AND {FILTRO_ESTOQUE_PECAS}
             GROUP BY pi.estoque_id, e.nome_item
         """, (pedido_id,))
         itens_baixa = cursor.fetchall()
@@ -638,8 +684,13 @@ def atualizar_pedido(pedido_id):
             return jsonify(success=False, msg='Pedido não encontrado.'), 404
 
         # IDs recebidos devem pertencer a este pedido antes de alterar sua grade.
-        cursor.execute("SELECT id FROM pedido_itens WHERE pedido_id = %s", (pedido_id,))
-        itens_permitidos = {r['id'] for r in cursor.fetchall()}
+        cursor.execute(
+            "SELECT pi.id, pi.estoque_id, pi.tipo_produto_id, cp.nome AS nome_catalogo, "
+            "pi.tecido_id, pi.cor_id, pi.material_id, pi.material_cor_id "
+            "FROM pedido_itens pi LEFT JOIN catalogo_itens cp ON cp.id = pi.tipo_produto_id "
+            "WHERE pi.pedido_id = %s", (pedido_id,))
+        itens_existentes = {r['id']: r for r in cursor.fetchall()}
+        itens_permitidos = set(itens_existentes)
         for produto in produtos:
             item_id = (produto.get('detalhes') or {}).get('id')
             if item_id is not None and (type(item_id) is not int or item_id not in itens_permitidos):
@@ -649,8 +700,8 @@ def atualizar_pedido(pedido_id):
 
         pedido_ja_iniciado = pedido_row['status'] != 'pendente'
 
-        # ── Snapshot ANTES: totais por estoque_id (apenas Unidade) ──
-        cursor.execute("""
+        # Snapshot ANTES: totais por estoque_id com controle por pecas.
+        cursor.execute(f"""
             SELECT pi.estoque_id,
                    COALESCE(SUM(pit.quantidade), 0) AS total
             FROM pedido_itens pi
@@ -658,7 +709,7 @@ def atualizar_pedido(pedido_id):
             LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
             WHERE pi.pedido_id = %s
               AND pi.estoque_id IS NOT NULL
-              AND e.unidade_medida = 'Unidade'
+              AND {FILTRO_ESTOQUE_PECAS}
             GROUP BY pi.estoque_id
         """, (pedido_id,))
         totais_antes = {r['estoque_id']: float(r['total']) for r in cursor.fetchall()}
@@ -694,22 +745,28 @@ def atualizar_pedido(pedido_id):
         ids_processados = []
 
         for prod in produtos:
-            item_nome = (prod.get('item') or '').strip()
-            if not item_nome:
-                continue
-
-            detalhes   = prod.get('detalhes') or {}
-            grade      = prod.get('grade') or {}
-            item_id    = detalhes.get('id')
-            estoque_id = prod.get('estoque_id') or detalhes.get('estoque_id') or None
-
-            tipo_produto_id   = _resolver_catalogo(cursor, 'produto', item_nome)
+            detalhes = prod.get('detalhes') or {}
+            grade = prod.get('grade') or {}
+            item_id = detalhes.get('id')
+            if item_id is not None:
+                existente = itens_existentes[item_id]
+                estoque_id = existente['estoque_id']
+                tipo_produto_id = existente['tipo_produto_id']
+                tecido_id, cor_id = existente['tecido_id'], existente['cor_id']
+                material_id, material_cor_id = existente['material_id'], existente['material_cor_id']
+                item_nome = existente['nome_catalogo'] or (prod.get('item') or '').strip()
+                _validar_local_legado(tipo_produto_id, item_nome, detalhes.get('local'))
+            else:
+                produto = _validar_produto_estoque(cursor, prod.get('estoque_id') or detalhes.get('estoque_id'))
+                estoque_id = produto['id']
+                item_nome = produto['nome_item']
+                tipo_produto_id = None
+                material_id, material_cor_id = _validar_tecido_cor(cursor, detalhes)
+                tecido_id = cor_id = None
             personalizacao_id = _resolver_catalogo(cursor, 'personalizacao', detalhes.get('personalizacao'))
-            tecido_id         = _resolver_catalogo(cursor, 'tecido', detalhes.get('tecido'))
-            cor_id            = _resolver_catalogo(cursor, 'cor', detalhes.get('cor'))
             local_id          = _resolver_catalogo(cursor, 'local', detalhes.get('local'))
 
-            if not tecido_id or not cor_id or not local_id:
+            if not local_id:
                 conn.rollback()
                 cursor.close()
                 conn.close()
@@ -736,20 +793,20 @@ def atualizar_pedido(pedido_id):
                     cursor.execute("""
                         UPDATE pedido_itens
                         SET tipo_produto_id=%s, personalizacao_id=%s, tecido_id=%s,
-                            cor_id=%s, local_arte_id=%s, observacao=%s,
+                            cor_id=%s, local_arte_id=%s,
                             estoque_id=%s, imagem_dados=%s, imagem_mime=%s, imagem_url=NULL
                         WHERE id=%s AND pedido_id=%s
                     """, (tipo_produto_id, personalizacao_id, tecido_id, cor_id, local_id,
-                          detalhes.get('observacao') or None, estoque_id,
+                          estoque_id,
                           img_bytes, img_mime, item_id, pedido_id))
                 else:
                     cursor.execute("""
                         UPDATE pedido_itens
                         SET tipo_produto_id=%s, personalizacao_id=%s, tecido_id=%s,
-                            cor_id=%s, local_arte_id=%s, observacao=%s, estoque_id=%s
+                            cor_id=%s, local_arte_id=%s, estoque_id=%s
                         WHERE id=%s AND pedido_id=%s
                     """, (tipo_produto_id, personalizacao_id, tecido_id, cor_id, local_id,
-                          detalhes.get('observacao') or None, estoque_id,
+                          estoque_id,
                           item_id, pedido_id))
 
                 # Substitui grade
@@ -771,11 +828,11 @@ def atualizar_pedido(pedido_id):
                 cursor.execute("""
                     INSERT INTO pedido_itens
                         (pedido_id, tipo_produto_id, personalizacao_id, tecido_id, cor_id,
-                         local_arte_id, observacao, imagem_mime, imagem_dados, estoque_id)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                         local_arte_id, observacao, imagem_mime, imagem_dados, estoque_id, material_id, material_cor_id)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 """, (pedido_id, tipo_produto_id, personalizacao_id, tecido_id, cor_id,
-                      local_id, detalhes.get('observacao') or None,
-                      img_mime, img_bytes, estoque_id))
+                      local_id, None,
+                      img_mime, img_bytes, estoque_id, material_id, material_cor_id))
                 novo_id = cursor.lastrowid
                 ids_processados.append(novo_id)
 
@@ -811,7 +868,7 @@ def atualizar_pedido(pedido_id):
 
         # ── Ajuste diferencial de estoque (somente se o pedido já foi iniciado) ──
         if pedido_ja_iniciado:
-            cursor.execute("""
+            cursor.execute(f"""
                 SELECT pi.estoque_id,
                        e.nome_item,
                        COALESCE(SUM(pit.quantidade), 0) AS total
@@ -820,7 +877,7 @@ def atualizar_pedido(pedido_id):
                 LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
                 WHERE pi.pedido_id = %s
                   AND pi.estoque_id IS NOT NULL
-                  AND e.unidade_medida = 'Unidade'
+                  AND {FILTRO_ESTOQUE_PECAS}
                 GROUP BY pi.estoque_id, e.nome_item
             """, (pedido_id,))
             totais_depois = {r['estoque_id']: (float(r['total']), r['nome_item'])
@@ -910,6 +967,10 @@ def atualizar_pedido(pedido_id):
         cursor.close()
         return jsonify(success=True)
 
+    except ValueError as erro:
+        conn.rollback()
+        cursor.close()
+        return jsonify(success=False, msg=str(erro)), 400
     except MySQLError:
         conn.rollback()
         raise

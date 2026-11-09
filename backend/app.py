@@ -14,6 +14,7 @@ from database.connection import init_db
 from estoque import estoque_bp
 from login import login_bp
 from pedidos import pedidos_bp
+from perfil import perfil_bp
 from relatorios import relatorios_bp
 from solicitacoes import solicitacoes_bp
 
@@ -38,6 +39,7 @@ def create_app(test_config=None):
     app.register_blueprint(estoque_bp)
     app.register_blueprint(catalogo_bp)
     app.register_blueprint(pedidos_bp)
+    app.register_blueprint(perfil_bp)
     app.register_blueprint(relatorios_bp)
     app.register_blueprint(solicitacoes_bp)
 
@@ -51,6 +53,8 @@ def create_app(test_config=None):
         """
         if request.method == 'OPTIONS':
             return None
+        if request.endpoint == 'colaboradores.foto_colaborador':
+            return login_required(lambda: None)()
         if request.blueprint == 'colaboradores':
             return admin_required(lambda: None)()
         if request.blueprint in ('clientes', 'estoque'):
@@ -65,7 +69,12 @@ def create_app(test_config=None):
 
     @app.after_request
     def prevent_private_caching(response):
-        response.headers['Cache-Control'] = 'no-store'
+        if request.endpoint in ('estoque.servir_imagem_estoque', 'colaboradores.foto_colaborador') and response.status_code in (200, 304):
+            # Foto pode ficar no navegador, mas toda reutilização revalida
+            # sessão e ETag. Não permite armazenamento em cache compartilhado.
+            response.headers['Cache-Control'] = 'private, no-cache'
+        else:
+            response.headers['Cache-Control'] = 'no-store'
         return response
 
     return app

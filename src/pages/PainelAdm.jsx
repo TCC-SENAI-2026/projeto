@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import FotoColaborador from "../components/FotoColaborador";
 import Sidebar from "../components/Sidebar";
 import {
     listarSolicitacoes,
@@ -27,17 +28,18 @@ function formatarDataHora(iso) {
 
 // Converte uma solicitação do service para o formato dos cards do painel
 function paraCard(s) {
+    const perfil = s.tipo === 'perfil';
     const exclusao = s.tipo === "exclusao";
 
     return {
         id: s.id,
-        origem: exclusao ? "exclusao-pedido" : "edicao-pedido",
-        tipo: exclusao ? "Exclusão de pedido" : "Alteração de pedido",
-        categoria: "Pedidos",
+        origem: perfil ? "perfil" : exclusao ? "exclusao-pedido" : "edicao-pedido",
+        tipo: perfil ? "Altera\u00e7\u00e3o de perfil" : exclusao ? "Exclusão de pedido" : "Alteração de pedido",
+        categoria: perfil ? "Perfis" : "Pedidos",
         status: STATUS_PAINEL[s.status],
         icone: exclusao ? "delete" : "edit",
         classe: exclusao ? "exclusao" : "alteracao",
-        identificacao: `Pedido #${s.pedidoId}`,
+        identificacao: perfil ? `Perfil de ${s.solicitante}` : `Pedido #${s.pedidoId}`,
         pessoa: s.solicitante,
         detalhe: exclusao
             ? s.resumo || "Sem identificação"
@@ -193,6 +195,8 @@ function PainelAdm() {
                             Estoque
                         </button>
 
+                        <button className={`filtro ${filtroTipo === "Perfis" ? "ativo" : ""}`}
+                            onClick={() => setFiltroTipo("Perfis")}>Perfis</button>
                     </div>
 
 
@@ -560,9 +564,9 @@ function PainelAdm() {
                                             <div className="alteracao-item" key={a.campo}>
                                                 <span>{a.rotulo}</span>
                                                 <div className="alteracao-valores">
-                                                    <span className="alteracao-antigo">{a.antigo}</span>
+                                                    <span className="alteracao-antigo">{a.tipo === "foto" ? <FotoColaborador src={a.antigo} temFoto={false} /> : (a.antigo || "\u2014")}</span>
                                                     <span>→</span>
-                                                    <span className="alteracao-novo">{a.novo}</span>
+                                                    <span className="alteracao-novo">{a.tipo === "foto" ? <FotoColaborador src={a.novo} temFoto={false} /> : (a.novo || "\u2014")}</span>
                                                 </div>
                                             </div>
                                         ))}

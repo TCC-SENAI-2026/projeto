@@ -1,3 +1,4 @@
+import { nomeTecidoCor } from "../utils/tecidosEstoque";
 import "../styles/ficha-tecnica.css";
 import { TAMANHOS } from "../utils/opcoesProduto";
 
@@ -80,8 +81,7 @@ function FichaConteudo({ pedido, ficha, pedidoId = null, previewArtes = null }) 
                         <div className="fc-produto-corpo">
                             <div className="fc-produto-detalhes">
                                 <div className="fc-campos fc-campos-produto">
-                                    <CampoSe rotulo="Tecido">{detalhes.tecido}</CampoSe>
-                                    <CampoSe rotulo="Cor">{detalhes.cor}</CampoSe>
+                                    <CampoSe rotulo="Tecido">{nomeTecidoCor(detalhes)}</CampoSe>
                                     <CampoSe rotulo="Personalização">{detalhes.personalizacao}</CampoSe>
                                     <CampoSe rotulo="Local da arte">{detalhes.local}</CampoSe>
                                 </div>

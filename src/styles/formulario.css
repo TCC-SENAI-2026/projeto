@@ -5,6 +5,13 @@
     align-items: start;
 }
 
+.form-page-layout.estoque-form-layout {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 .form-card,
 .form-side-card {
     background: #ffffff;
@@ -112,6 +119,40 @@
 
 .form-field.full {
     grid-column: 1 / -1;
+}
+
+.form-field .variacoes-material-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.form-field .variacoes-material-checkbox input {
+    width: 18px;
+    min-height: 18px;
+    height: 18px;
+    padding: 0;
+    accent-color: #2563eb;
+}
+
+.cores-material-lista {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.cores-material-linha {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr)) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+@media (max-width: 760px) {
+    .cores-material-linha {
+        grid-template-columns: 1fr;
+    }
 }
 
 .form-field label {

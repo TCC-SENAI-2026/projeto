@@ -77,6 +77,14 @@
     font-size: 14px;
 }
 
+.equipe-identidade {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.equipe-identidade a { color: inherit; text-underline-offset: 3px; }
+
 .equipe-table thead th {
     text-align: left;
     padding: 10px 12px;

@@ -10,7 +10,7 @@
 - Imagens: Cloudinary. E-mail: Gmail (`tccgrupo0110@gmail.com`) via SMTP.
 - Autenticação: RE + senha, com sessão Flask (cookie `HttpOnly`).
 
-## 2. Modelo de dados — 10 tabelas
+## 2. Modelo de dados — 11 tabelas
 
 ### 2.1 Diagrama entidade-relacionamento
 
@@ -168,7 +168,7 @@ backend/
   config.py                # novo — único lugar lendo variáveis de ambiente (SECRET_KEY, DB_*, SMTP_*)
   database/
     connection.py          # novo — pool de conexão (mysql.connector.pooling), cursor(dictionary=True)
-    schema.sql             # reescrito do zero, única fonte de verdade para as 10 tabelas
+    schema.sql             # reescrito do zero, única fonte de verdade para as 11 tabelas
   auth/
     decorators.py          # novo — login_required / admin_required
   blueprints/

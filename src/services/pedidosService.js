@@ -51,11 +51,17 @@ function apiParaFront(p) {
             arte: null,
             produtos: (p.itens || []).map(item => ({
                 item: item.tipo_produto,
+                estoque_id: item.estoque_id || null,
                 grade: Object.fromEntries(
                     (item.tamanhos || []).map(t => [t.tamanho, t.quantidade])
                 ),
                 detalhes: {
                     id:             item.id,
+                    tipo_produto_id: item.tipo_produto_id ?? null,
+                    material_id: item.material_id ?? null,
+                    material_cor_id: item.material_cor_id ?? null,
+                    tecido_id: item.tecido_id ?? null,
+                    cor_id: item.cor_id ?? null,
                     estoque_id:     item.estoque_id || null,
                     personalizacao: item.personalizacao,
                     tecido:         item.tecido,
@@ -116,13 +122,14 @@ export async function salvarPedido({ pedido, ficha, artesOrdenadas = [] }) {
         produtos: (pedido.produtos || []).map(p => ({
             item:       p.item,
             grade:      p.grade,
-            estoque_id: p.estoque_id || null,
+            estoque_id: p.estoque_id ?? p.detalhes?.estoque_id ?? null,
             detalhes: {
+                material_id: p.detalhes?.material_id ?? null,
+                material_cor_id: p.detalhes?.material_cor_id ?? null,
                 tecido:         p.detalhes?.tecido,
                 cor:            p.detalhes?.cor,
                 personalizacao: p.detalhes?.personalizacao,
                 local:          p.detalhes?.local,
-                observacao:     p.detalhes?.observacao,
             },
         })),
     };
@@ -143,7 +150,15 @@ export async function excluirPedido(id) {
 }
 
 export async function atualizarPedido(id, pedidoNovo) {
-    await api.put(`/pedidos/${id}`, pedidoNovo);
+    const payload = { ...pedidoNovo };
+    if (Array.isArray(pedidoNovo.pedido?.produtos)) {
+        payload.pedido = { ...pedidoNovo.pedido, produtos: pedidoNovo.pedido.produtos.map(produto => {
+            const detalhes = { ...produto.detalhes };
+            delete detalhes.observacao;
+            return { ...produto, detalhes };
+        }) };
+    }
+    await api.put(`/pedidos/${id}`, payload);
 }
 
 export async function atualizarStatus(id, novoStatusFront) {

@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Sidebar from "../components/Sidebar";
+import CoresMaterial from "../components/CoresMaterial";
+import { novaCorMaterial, prepararCoresMaterial } from "../utils/coresMaterial";
 import { api } from "../services/api";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
@@ -15,27 +17,21 @@ function EditarEstoque() {
     const [form, setForm] = useState({
         tipo_item: "Produto",
         nome_item: "",
-        categoria: "",
-        unidade_medida: "",
         fornecedor: "",
         quantidade_atual: "",
         estoque_minimo: "",
         valor_unitario: "",
         observacoes: "",
-        catalogo_item_id: "",
+        tem_variacoes: false,
+        cores: [novaCorMaterial()],
     });
 
-    const [catalogoProdutos, setCatalogoProdutos] = useState([]);
+    const possuiVariacoes = form.tipo_item === "Material" && form.tem_variacoes;
+
     const [imagemFile, setImagemFile] = useState(null);
     const [imagemPreview, setImagemPreview] = useState(null);
     const [temImagemAtual, setTemImagemAtual] = useState(false);
 
-    // Buscar catálogo de produtos
-    useEffect(() => {
-        api.get('/catalogo/produtos', { lista: true })
-            .then(data => setCatalogoProdutos(Array.isArray(data) ? data : []))
-            .catch(() => setCatalogoProdutos([]));
-    }, []);
 
     // BUSCAR ITEM PELO ID
     useEffect(() => {
@@ -45,6 +41,8 @@ function EditarEstoque() {
                 const resposta = await api.get(`/estoque/${id}`);
                 setForm(prev => ({
                     ...prev, ...resposta,
+                    tem_variacoes: !!resposta.tem_variacoes,
+                    cores: resposta.cores?.length ? resposta.cores : [novaCorMaterial()],
                     tipo_item: resposta.tipo_item?.toLowerCase() === 'material' ? 'Material' : 'Produto',
                 }));
                 setTemImagemAtual(!!resposta.tem_imagem);
@@ -93,11 +91,12 @@ function EditarEstoque() {
 
         try {
 
+            const cores = possuiVariacoes ? prepararCoresMaterial(form.cores) : [];
             const fd = new FormData();
+            fd.append('tem_variacoes', possuiVariacoes);
+            fd.append('cores', JSON.stringify(cores));
             fd.append('tipo_item',        form.tipo_item.toLowerCase());
             fd.append('nome_item',        form.nome_item);
-            fd.append('categoria',        form.categoria || '');
-            fd.append('unidade_medida',   form.unidade_medida || '');
             fd.append('fornecedor',       form.fornecedor || '');
             fd.append('quantidade_atual', Number(form.quantidade_atual || 0));
             fd.append('estoque_minimo',   Number(form.estoque_minimo || 0));
@@ -105,7 +104,6 @@ function EditarEstoque() {
                 ? Number(String(form.valor_unitario).replace(',', '.'))
                 : '');
             fd.append('observacoes',      form.observacoes || '');
-            fd.append('catalogo_item_id', form.catalogo_item_id || '');
             if (imagemFile) fd.append('imagem', imagemFile);
 
             await api.putFile(`/editar-estoque/${id}`, fd);
@@ -127,7 +125,7 @@ function EditarEstoque() {
 
             <div className="container">
 
-                <div className="form-page-layout">
+                <div className="form-page-layout estoque-form-layout">
 
                     <main className="form-card">
 
@@ -245,22 +243,20 @@ function EditarEstoque() {
 
                                     </div>
 
-
-                                    {form.tipo_item === "Produto" && (
+                                    {form.tipo_item === "Material" && (
                                         <div className="form-field full">
-                                            <label>Modelo do Catálogo</label>
-                                            <select
-                                                name="catalogo_item_id"
-                                                value={form.catalogo_item_id || ""}
-                                                onChange={handleChange}
-                                            >
-                                                <option value="">Selecione (opcional)</option>
-                                                {catalogoProdutos.map(p => (
-                                                    <option key={p.id} value={p.id}>{p.nome}</option>
-                                                ))}
-                                            </select>
+                                            <label className="variacoes-material-checkbox">
+                                                <input type="checkbox" checked={form.tem_variacoes}
+                                                    onChange={e => setForm(prev => ({
+                                                        ...prev,
+                                                        tem_variacoes: e.target.checked,
+                                                        cores: prev.cores.length ? prev.cores : [novaCorMaterial()],
+                                                    }))} />
+                                                Transformar em categoria de tecido (com cores)
+                                            </label>
                                         </div>
                                     )}
+
 
                                     {form.tipo_item === "Produto" && (
                                         <div className="form-field full">
@@ -296,65 +292,6 @@ function EditarEstoque() {
                                         </div>
                                     )}
 
-                                    <div className="form-field">
-
-                                        <label>Categoria</label>
-
-                                        <select
-                                            name="categoria"
-                                            value={form.categoria || ""}
-                                            onChange={handleChange}
-                                            required
-                                        >
-                                            <option value="">
-                                                Selecione
-                                            </option>
-
-                                            <option value="Uniforme">
-                                                Uniforme
-                                            </option>
-
-                                            <option value="Malharia">
-                                                Malharia
-                                            </option>
-
-                                            <option value="Tecido">
-                                                Tecido
-                                            </option>
-                                        </select>
-
-                                    </div>
-
-
-                                    <div className="form-field">
-
-                                        <label>Unidade de medida</label>
-
-                                        <select
-                                            name="unidade_medida"
-                                            value={form.unidade_medida || ""}
-                                            onChange={handleChange}
-                                            required
-                                        >
-                                            <option value="">
-                                                Selecione
-                                            </option>
-
-                                            <option value="Unidade">
-                                                Unidade
-                                            </option>
-
-                                            <option value="Peça">
-                                                Peça
-                                            </option>
-
-                                            <option value="Metro">
-                                                Metro
-                                            </option>
-                                        </select>
-
-                                    </div>
-
 
                                     <div className="form-field">
 
@@ -386,6 +323,7 @@ function EditarEstoque() {
 
                                 <div className="form-grid">
 
+                                    {!possuiVariacoes && (
                                     <div className="form-field">
 
                                         <label>Quantidade atual</label>
@@ -399,8 +337,10 @@ function EditarEstoque() {
                                         />
 
                                     </div>
+                                    )}
 
 
+                                    {!possuiVariacoes && (
                                     <div className="form-field">
 
                                         <label>Estoque mínimo</label>
@@ -414,6 +354,7 @@ function EditarEstoque() {
                                         />
 
                                     </div>
+                                    )}
 
 
                                     <div className="form-field full">
@@ -432,6 +373,12 @@ function EditarEstoque() {
                                 </div>
 
                             </section>
+
+
+                            {possuiVariacoes && (
+                                <CoresMaterial cores={form.cores}
+                                    onChange={cores => setForm(prev => ({ ...prev, cores }))} />
+                            )}
 
 
                             {/* OBSERVAÇÕES */}

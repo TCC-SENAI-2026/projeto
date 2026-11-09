@@ -1,21 +1,25 @@
--- E-Threads | T02: schema das 10 tabelas aprovadas.
--- Fonte: docs/ARQUITETURA_TCC.md, secoes 2.2 e 7.
--- Aplicacao manual no MySQL Workbench, em uma base vazia, pelo time.
--- Requer MySQL Server >= 8.0.16 para aplicar os CHECKs.
--- Servidor instalado identificado: MySQL Community Server 8.0.46 (mysqld --version).
--- A versao do Workbench/cliente nao substitui a versao do servidor conectado.
--- Este arquivo nao migra dados ou estruturas existentes. CREATE TABLE sem
--- IF NOT EXISTS evidencia tabelas preexistentes e evita ocultar divergencias.
+-- E-Threads | Banco completo: estoque ate 4B e perfil (Partes A/B).
+-- ATENCAO: este script APAGA o banco ethreads_db e TODOS os seus dados.
+-- Exportar um backup antes de executar no MySQL Workbench.
+-- Nao foi executado pelo agente. Requer MySQL Server >= 8.0.16 (CHECKs).
+-- Consolida schema.sql + variacoes de tecidos + catalogo de produto opcional.
+-- Nao executar as migracoes separadas depois deste arquivo.
+-- Nao cria usuarios/senhas nem produtos de exemplo.
+-- Tecido/cor novos usam material_id e material_cor_id; catalogo fica opcional.
+-- Se DB_NAME no backend for diferente, ajustar o nome nas tres linhas abaixo.
 
-CREATE DATABASE IF NOT EXISTS ethreads_db
+DROP DATABASE IF EXISTS ethreads_db;
+CREATE DATABASE ethreads_db
     CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
 USE ethreads_db;
+SET NAMES utf8mb4;
 
 CREATE TABLE colaboradores (
     id                       INT UNSIGNED NOT NULL AUTO_INCREMENT,
     re                       VARCHAR(20) COLLATE utf8mb4_bin NOT NULL,
     nome                     VARCHAR(150) NOT NULL,
+    foto_mime                VARCHAR(50) NULL,
+    foto_dados               MEDIUMBLOB NULL,
     cpf                      VARCHAR(14) NULL,
     email                    VARCHAR(254) NOT NULL,
     telefone                 VARCHAR(20) NULL,
@@ -83,14 +87,6 @@ CREATE TABLE catalogo_itens (
     KEY idx_catalogo_itens_tipo_ativo (tipo, ativo)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Dados iniciais: modelos de produto usados pelo frontend (MODELOS em opcoesProduto.js)
-INSERT IGNORE INTO catalogo_itens (tipo, nome, ativo) VALUES
-    ('produto', 'Camiseta',          1),
-    ('produto', 'Camisa',            1),
-    ('produto', 'Camisa Longa',      1),
-    ('produto', 'Moletom c/ Capuz',  1),
-    ('produto', 'Calça',             1);
-
 CREATE TABLE pedidos (
     id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
     numero_pedido  INT NULL,
@@ -124,6 +120,7 @@ CREATE TABLE pedidos (
 CREATE TABLE estoque (
     id               INT UNSIGNED NOT NULL AUTO_INCREMENT,
     tipo_item        ENUM('produto', 'material') NOT NULL,
+    tem_variacoes    BOOLEAN NOT NULL DEFAULT FALSE,
     nome_item        VARCHAR(150) NOT NULL,
     categoria        VARCHAR(100) NULL,
     catalogo_item_id INT UNSIGNED NULL,
@@ -149,14 +146,36 @@ CREATE TABLE estoque (
     KEY idx_estoque_ativo_quantidade (ativo, quantidade_atual)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE material_cores (
+    id               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    material_id      INT UNSIGNED NOT NULL,
+    nome_cor         VARCHAR(100) NOT NULL,
+    codigo_hex       VARCHAR(7) NULL,
+    quantidade_atual DECIMAL(10,2) NOT NULL DEFAULT 0,
+    estoque_minimo   DECIMAL(10,2) NOT NULL DEFAULT 0,
+    valor_unitario   DECIMAL(10,2) NULL,
+    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                     ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_material_cores_material (material_id),
+    CONSTRAINT fk_material_cores_material FOREIGN KEY (material_id)
+        REFERENCES estoque (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT chk_material_cores_quantidade CHECK (quantidade_atual >= 0),
+    CONSTRAINT chk_material_cores_minimo CHECK (estoque_minimo >= 0),
+    CONSTRAINT chk_material_cores_valor CHECK (valor_unitario >= 0)
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 CREATE TABLE pedido_itens (
     id                INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    estoque_id INT UNSIGNED NULL,
+    estoque_id        INT UNSIGNED NULL,
+    material_id       INT UNSIGNED NULL,
+    material_cor_id   INT UNSIGNED NULL,
     pedido_id         INT UNSIGNED NOT NULL,
-    tipo_produto_id   INT UNSIGNED NOT NULL,
+    tipo_produto_id   INT UNSIGNED NULL, -- legado; novos itens usam estoque_id
     personalizacao_id INT UNSIGNED NULL,
-    tecido_id         INT UNSIGNED NOT NULL,
-    cor_id            INT UNSIGNED NOT NULL,
+    tecido_id         INT UNSIGNED NULL,
+    cor_id            INT UNSIGNED NULL,
     local_arte_id     INT UNSIGNED NOT NULL,
     observacao        TEXT NULL,
     imagem_url        VARCHAR(2048) NULL,   -- legado; mantido para dados existentes
@@ -169,7 +188,13 @@ CREATE TABLE pedido_itens (
     KEY idx_pedido_itens_tecido (tecido_id),
     KEY idx_pedido_itens_cor (cor_id),
     KEY idx_pedido_itens_estoque (estoque_id),
+    KEY idx_pedido_itens_material (material_id),
+    KEY idx_pedido_itens_material_cor (material_cor_id),
     KEY idx_pedido_itens_local (local_arte_id),
+    CONSTRAINT fk_pedido_itens_material FOREIGN KEY (material_id)
+        REFERENCES estoque (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_pedido_itens_material_cor FOREIGN KEY (material_cor_id)
+        REFERENCES material_cores (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT fk_pedido_itens_pedido FOREIGN KEY (pedido_id)
         REFERENCES pedidos (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT fk_pedido_itens_produto FOREIGN KEY (tipo_produto_id)
@@ -223,9 +248,10 @@ CREATE TABLE estoque_movimentacoes (
 
 CREATE TABLE solicitacoes (
     id                          INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    tipo                        ENUM('edicao', 'exclusao') NOT NULL,
+    tipo                        ENUM('edicao', 'exclusao', 'perfil') NOT NULL,
     pedido_id                   INT UNSIGNED NULL,
     estoque_id                  INT UNSIGNED NULL,
+    colaborador_alvo_id          INT UNSIGNED NULL,
     colaborador_solicitante_id   INT UNSIGNED NOT NULL,
     dados_propostos             JSON NULL,
     status                      ENUM('pendente', 'aprovada', 'recusada') NOT NULL DEFAULT 'pendente',
@@ -234,11 +260,11 @@ CREATE TABLE solicitacoes (
     data_decisao                DATETIME NULL,
     PRIMARY KEY (id),
     CONSTRAINT chk_solicitacoes_alvo_exclusivo CHECK (
-        (pedido_id IS NOT NULL AND estoque_id IS NULL)
-        OR (pedido_id IS NULL AND estoque_id IS NOT NULL)
+        ((pedido_id IS NOT NULL) + (estoque_id IS NOT NULL) + (colaborador_alvo_id IS NOT NULL)) = 1
     ),
     KEY idx_solicitacoes_pedido_status (pedido_id, status),
     KEY idx_solicitacoes_estoque_status (estoque_id, status),
+    KEY idx_solicitacoes_colaborador_alvo_status (colaborador_alvo_id, status),
     KEY idx_solicitacoes_solicitante (colaborador_solicitante_id),
     KEY idx_solicitacoes_administrador (administrador_id),
     KEY idx_solicitacoes_status_data (status, data_solicitacao),
@@ -246,41 +272,20 @@ CREATE TABLE solicitacoes (
         REFERENCES pedidos (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT fk_solicitacoes_estoque FOREIGN KEY (estoque_id)
         REFERENCES estoque (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_solicitacoes_colaborador_alvo FOREIGN KEY (colaborador_alvo_id)
+        REFERENCES colaboradores (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT fk_solicitacoes_solicitante FOREIGN KEY (colaborador_solicitante_id)
         REFERENCES colaboradores (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT fk_solicitacoes_administrador FOREIGN KEY (administrador_id)
         REFERENCES colaboradores (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- ===========================================================================
--- ATENCAO: o bloco abaixo NAO deve ser executado em instalacoes novas.
--- Quem rodar este arquivo completo JA tem todas as colunas no CREATE TABLE.
---
--- Execute SOMENTE se o banco ja existia SEM estas colunas:
---
---   ALTER TABLE pedido_itens
---     ADD COLUMN imagem_mime VARCHAR(50) NULL,
---     ADD COLUMN imagem_dados MEDIUMBLOB NULL,
---     ADD COLUMN estoque_id INT UNSIGNED NULL,
---     ADD CONSTRAINT fk_pedido_itens_estoque
---         FOREIGN KEY (estoque_id) REFERENCES estoque(id)
---         ON DELETE RESTRICT ON UPDATE RESTRICT;
---
---   ALTER TABLE estoque
---     ADD COLUMN catalogo_item_id INT UNSIGNED NULL,
---     ADD COLUMN imagem_mime VARCHAR(50) NULL,
---     ADD COLUMN imagem_dados MEDIUMBLOB NULL,
---     ADD CONSTRAINT fk_estoque_catalogo_item
---         FOREIGN KEY (catalogo_item_id) REFERENCES catalogo_itens(id)
---         ON DELETE RESTRICT ON UPDATE RESTRICT;
---
--- ===========================================================================
+-- Verificacao manual apos a criacao (esperado: 11 tabelas):
+SHOW TABLES;
+SHOW CREATE TABLE estoque;
+SHOW CREATE TABLE material_cores;
+SHOW CREATE TABLE pedido_itens;
 
--- A aplicacao impede duas solicitacoes pendentes simultaneas para o mesmo alvo.
--- Nao ha trigger nem alteracao automatica de negocio neste schema.
--- Transacoes na aplicacao devem abranger:
--- 1. pedido + itens + tamanhos;
--- 2. movimentacao + saldo, bloqueando o item com SELECT ... FOR UPDATE;
--- 3. aprovacao: aplicar alteracao real + registrar a decisao atomicamente.
--- As entidades centrais usam exclusao logica; as FKs RESTRICT preservam
--- pedidos, catalogo, estoque e seus relacionamentos enquanto referenciados.
+-- Depois, criar o administrador pelo terminal do projeto:
+-- .\.venv\Scripts\python.exe backend/scripts/create_admin.py
+-- O script pede os dados e a senha de forma interativa; nao ha senha no SQL.

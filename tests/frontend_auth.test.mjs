@@ -225,12 +225,13 @@ describe('Menu lateral com perfis simulados', () => {
     assert.match(html, /user-avatar[^>]*>AS</);
   });
 
-  test('colaborador visualiza somente as quatro áreas autorizadas', () => {
+  test('colaborador visualiza as quatro áreas e o próprio Perfil, sem áreas administrativas', () => {
     const html = renderizar(colaborador('colaborador'), h(Sidebar));
-    for (const nome of ['Inicio', 'Pedidos', 'Estoque', 'Clientes']) {
+    // Perfil próprio é uma área autenticada comum; administração continua restrita.
+    for (const nome of ['Inicio', 'Pedidos', 'Estoque', 'Clientes', 'Perfil']) {
       assert.ok(html.includes(nome), `Colaborador deve visualizar ${nome}.`);
     }
-    for (const nome of ['Colaboradores', 'Relatorios', 'Painel Adm', 'Perfil']) {
+    for (const nome of ['Colaboradores', 'Relatorios', 'Painel Adm']) {
       assert.ok(!html.includes(nome), `Colaborador não deve visualizar ${nome}.`);
     }
     assert.match(html, /user-name[^>]*>Bruno Costa</);
@@ -241,6 +242,10 @@ describe('Menu lateral com perfis simulados', () => {
 });
 
 describe('Guardas React e rotas reais do App', () => {
+  test('Perfil pode ser aberto por colaborador autenticado; sessão ausente continua bloqueada', () => {
+    assert.match(renderizar(colaborador('colaborador'), h(App), '/perfil'), /<h1[^>]*>Perfil<\/h1>/);
+    assert.ok(!renderizar(null, h(App), '/perfil').includes('Carregando perfil...'));
+  });
   test('guarda comum permite colaborador autenticado e bloqueia sessão ausente', () => {
     const rota = h(Routes, null,
       h(Route, { element: h(ProtectedRoute) },
