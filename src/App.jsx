@@ -16,6 +16,7 @@ import FichaTecnica from './pages/Fichatecnica'
 import DefinirSenha from './pages/DefinirSenha'
 import VisualizarPedido from './pages/VisualizarPedido'
 import VisualizarItem from './pages/VisualizarItem'
+import FotoItemPublica from './pages/FotoItemPublica'
 
 import PainelAdm from './pages/PainelAdm'
 
@@ -33,6 +34,7 @@ function App() {
   return (
     <Routes>
       <Route path="/"                       element={<Login />} />
+      <Route path="/pedidos/itens/:id/foto" element={<FotoItemPublica />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/home"                   element={<Inicio />} />
         <Route path="/pedidos"                element={<Pedidos />} />

@@ -19,6 +19,7 @@ function AvisoTopo({ mensagem, resultados = [], onFecharResultado }) {
 
             {resultados.map((s) => {
                 const aprovada = s.status === "aprovada";
+                const perfil = s.tipo === "perfil";
                 const exclusao = s.tipo === "exclusao";
                 const textoAprovada = exclusao
                     ? "o pedido foi excluído."
@@ -26,6 +27,7 @@ function AvisoTopo({ mensagem, resultados = [], onFecharResultado }) {
                 const textoRecusada = exclusao
                     ? "a exclusão do pedido foi recusada."
                     : "sua solicitação foi recusada.";
+                const rotulo = perfil ? (s.resumo || "Alteração de perfil") : `Pedido #${s.pedidoId}`;
                 return (
                     <div
                         key={s.id}
@@ -37,7 +39,7 @@ function AvisoTopo({ mensagem, resultados = [], onFecharResultado }) {
                         </span>
 
                         <span className="aviso-texto">
-                            <strong>Pedido #{s.pedidoId}:</strong>{" "}
+                            <strong>{rotulo}:</strong>{" "}
                             {aprovada ? textoAprovada : textoRecusada}
                             {!aprovada && s.motivo && <> Motivo: {s.motivo}</>}
                         </span>

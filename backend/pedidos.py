@@ -153,6 +153,27 @@ def qrcode_item(item_id):
     return send_file(buf, mimetype='image/png')
 
 
+# ---------- Imagem pública do item (destino do QR impresso) ----------
+# Sem @login_required de propósito: é o que o QR abre direto no celular,
+# sem exigir login. Devolve só a imagem da arte — nenhum outro dado do
+# pedido/cliente é exposto por esta rota.
+
+@pedidos_bp.route('/pedidos/itens/<int:item_id>/imagem-publica', methods=['GET'])
+def imagem_publica_item(item_id):
+    with db_cursor() as cursor:
+        cursor.execute(
+            """SELECT pi.imagem_dados, pi.imagem_mime FROM pedido_itens pi
+               JOIN pedidos p ON p.id = pi.pedido_id
+               WHERE pi.id = %s AND p.excluido_em IS NULL""",
+            (item_id,)
+        )
+        item = cursor.fetchone()
+    if not item or not item.get('imagem_dados'):
+        return jsonify(success=False, msg='Imagem não encontrada.'), 404
+    buf = io.BytesIO(bytes(item['imagem_dados']))
+    return send_file(buf, mimetype=item.get('imagem_mime') or 'image/png')
+
+
 # ---------- Buscar item individual (para VisualizarItem) ----------
 
 @pedidos_bp.route('/pedidos/itens/<int:item_id>', methods=['GET'])

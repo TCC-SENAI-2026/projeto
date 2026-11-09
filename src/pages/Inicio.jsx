@@ -5,6 +5,8 @@ import "../styles/ficha-tecnica.css";
 import Sidebar from "../components/Sidebar";
 import { listarPedidos, buscarPedido } from "../services/pedidosService";
 import FichaModal from "../components/FichaModal";
+import AvisoTopo from "../components/AvisoTopo";
+import useSolicitacoesPedido from "../hooks/useSolicitacoesPedido";
 import { useNavigate, Link } from "react-router-dom";
 import { infoStatus } from "../utils/status";
 import { api } from "../services/api";
@@ -13,6 +15,7 @@ import { estaBaixo, formatarQuantidadeEstoque } from "../utils/estoque";
 function Inicio() {
   const navigate = useNavigate();
   const [pedidos, setPedidos] = useState([]);
+  const { resultados, fecharResultado } = useSolicitacoesPedido();
 
   useEffect(() => {
     // TODO(BACK): GET /api/pedidos (cada pedido precisa de id, status, criadoEm e ficha.cliente).
@@ -81,6 +84,8 @@ function Inicio() {
       <Sidebar />
 
       <div className="container">
+
+        <AvisoTopo resultados={resultados} onFecharResultado={fecharResultado} />
 
         <div className="top">
           <div className="page-header">
