@@ -1,13 +1,13 @@
-# DOCUMENTAÇÃO TÉCNICA DO E-THREADS
+﻿# DOCUMENTAÇÃO TÉCNICA DO E-THREADS
 
 ## Trabalho de Conclusão de Curso — SENAI
 
-**Projeto:** E-Threads — sistema web de gestão e acompanhamento da produção de roupas
-**Data de revisão:** 14 de novembro de 2026
-**Branch observada:** `teste`
-**Objetivo:** registrar a arquitetura, estrutura, fluxos de negócio e dependências reais do projeto, com base no repositório atual e nos documentos de referência.
+**Projeto:** E-Threads — sistema web de gestão e acompanhamento da produção de roupas  
+**Data de revisão:** 14 de novembro de 2026  
+**Branch observada:** `teste`  
+**Objetivo:** registrar o estado real do projeto, com foco no que já existe no repositório, no que foi planejado e no que ainda está pendente.
 
-> Limite importante: esta documentação descreve o estado técnico observado no repositório e as decisões de arquitetura aprovadas. Ela não substitui a validação funcional em ambiente real com banco MySQL e execução do sistema completo.
+> Limite importante: esta documentação foi escrita de forma realista e fiel ao código e aos documentos oficiais. Ela não descreve um sistema perfeito nem concluído; descreve o projeto como ele realmente está estruturado, implementado e em andamento.
 
 ---
 
@@ -23,7 +23,7 @@ O E-Threads é um sistema web de apoio à gestão de uma confecção, com foco e
 - solicitações administrativas de edição e exclusão;
 - relatórios e indicadores de produção.
 
-A aplicação está organizada em duas camadas principais:
+O projeto está organizado em duas camadas principais:
 
 - Frontend em React + Vite + JavaScript
 - Backend em Python + Flask
@@ -43,9 +43,50 @@ A documentação foi revisada com base em:
 
 ---
 
-## 2. Stack tecnológica
+## 2. Status geral do projeto
 
-### 2.1 Frontend
+### 2.1 Implementado no código
+
+É possível identificar no repositório a presença de infraestrutura e módulos para:
+
+- frontend React com páginas e componentes;
+- backend Flask com módulos por domínio;
+- estrutura de configuração e ambiente;
+- conexão com MySQL;
+- autenticação e autorização por sessão;
+- módulos de clientes, pedidos, estoque e colaboradores;
+- testes automatizados em diferentes áreas.
+
+### 2.2 Parcialmente implementado
+
+Alguns módulos e fluxos aparecem com estrutura e intenção definidas, mas ainda exigem validação real em ambiente funcional, como por exemplo:
+
+- fluxo completo de autenticação em execução;
+- aprovação e recusa de solicitações;
+- criação e atualização de pedidos no banco real;
+- gerenciamento completo de estoque e movimentações;
+- geração e visualização de relatórios com dados reais;
+- integração com SMTP e Cloudinary.
+
+### 2.3 Planejado / futuras melhorias
+
+Há elementos previstos na arquitetura e no planejamento, mas ainda não consolidados como implementação final no projeto atual, por exemplo:
+
+- melhoria contínua da segurança e validação de fluxos de aprovação;
+- refinamento de regras de negócio e cobertura de testes;
+- expansão de relatórios e dashboard administrativo;
+- ajustes finais de UX e usabilidade nas telas;
+- refinamento de integração externa e ambiente de produção.
+
+### 2.4 Limitações reais do projeto
+
+O projeto não deve ser apresentado como perfeito ou plenamente concluído. Ele tem caráter acadêmico e funcional, com arquitetura adequada, mas ainda exige validação em ambiente real para confirmar funcionamento completo.
+
+---
+
+## 3. Stack tecnológica
+
+### 3.1 Frontend
 
 - React
 - Vite
@@ -56,7 +97,7 @@ A documentação foi revisada com base em:
 - jspdf / jspdf-autotable
 - qrcode.react
 
-### 2.2 Backend
+### 3.2 Backend
 
 - Python
 - Flask
@@ -66,11 +107,11 @@ A documentação foi revisada com base em:
 - Werkzeug
 - QR Code
 
-### 2.3 Banco de dados
+### 3.3 Banco de dados
 
 - MySQL
 
-### 2.4 Integrações e utilidades
+### 3.4 Integrações e utilidades
 
 - Cloudinary para imagens
 - SMTP/Gmail para envio de e-mail
@@ -79,7 +120,7 @@ A documentação foi revisada com base em:
 
 ---
 
-## 3. Estrutura do repositório
+## 4. Estrutura do repositório
 
 ```text
 projeto/
@@ -144,9 +185,9 @@ projeto/
 
 ---
 
-## 4. Arquitetura geral
+## 5. Arquitetura geral
 
-### 4.1 Frontend
+### 5.1 Frontend
 
 O frontend fica em `src/` e está organizado em:
 
@@ -159,7 +200,7 @@ O frontend fica em `src/` e está organizado em:
 
 A navegação do sistema utiliza React Router, e a comunicação com o backend é feita via `axios` ou fetch, conforme o módulo.
 
-### 4.2 Backend
+### 5.2 Backend
 
 O backend fica em `backend/` e é estruturado em módulos por responsabilidade.
 
@@ -173,11 +214,11 @@ Pontos importantes observados:
 - `backend/scripts/`: utilitários de bootstrap e ambiente;
 - `backend/tests/`: testes de backend e regras de negócio.
 
-### 4.3 Comunicação entre frontend e backend
+### 5.3 Comunicação entre frontend e backend
 
 A configuração de proxy em `vite.config.js` permite que o navegador chame rotas do tipo `/api/...` sem precisar lidar com CORS de origem cruzada.
 
-A arquitetura indica fluxo como:
+O fluxo arquitetural observado é:
 
 1. O usuário navega na interface React.
 2. O frontend envia requisições para o backend Flask.
@@ -187,7 +228,7 @@ A arquitetura indica fluxo como:
 
 ---
 
-## 5. Modelo de dados e banco
+## 6. Modelo de dados e banco
 
 A arquitetura do projeto foi pensada para um banco relacional MySQL, com modelagem própria para as operações de gestão da confecção.
 
@@ -206,7 +247,7 @@ As entidades principais esperadas na modelagem do sistema são:
 
 O desenho corresponde ao descrito em `docs/ARQUITETURA_TCC.md` e ao schema em `backend/database/schema.sql`.
 
-### 5.1 Regras arquiteturais importantes
+### 6.1 Regras arquiteturais importantes
 
 - autenticação por RE + senha;
 - sessão Flask com cookie HttpOnly;
@@ -216,15 +257,15 @@ O desenho corresponde ao descrito em `docs/ARQUITETURA_TCC.md` e ao schema em `b
 - uso de `soft delete`/flags de ativação ao invés de exclusão definitiva em alguns fluxos;
 - separação de produção/negócio de status e solicitação administrativa.
 
-### 5.2 Observações de implementação
+### 6.2 Observações de implementação
 
 A estrutura correta do banco e suas constraints são definidas em documentação e no schema, mas a validação real depende de um ambiente MySQL funcional e da execução de migração/schema no ambiente local.
 
 ---
 
-## 6. Autenticação e segurança
+## 7. Autenticação e segurança
 
-### 6.1 Mecanismo de autenticação
+### 7.1 Mecanismo de autenticação
 
 A aplicação utiliza sessão Flask, em vez de JWT em `localStorage`.
 
@@ -234,7 +275,7 @@ Essa decisão é coerente com o tipo de aplicação:
 - há risco maior de XSS em armazenamento client-side;
 - cookie `HttpOnly` reduz a exposição do token/sessão para scripts do navegador.
 
-### 6.2 Controles observados
+### 7.2 Controles observados
 
 - cookie com `HttpOnly`;
 - uso de `SameSite=Lax`;
@@ -243,7 +284,7 @@ Essa decisão é coerente com o tipo de aplicação:
 - verificação no backend para rotas administrativas;
 - validação de sessão em cada requisição protegida.
 
-### 6.3 Limitações documentadas
+### 7.3 Limitações documentadas
 
 - a autenticação e autorização precisam ser validadas em ambiente real com MySQL ativo;
 - a proteção CSRF deve ser confirmada conforme a implementação efetiva das rotas e do front;
@@ -251,9 +292,9 @@ Essa decisão é coerente com o tipo de aplicação:
 
 ---
 
-## 7. Fluxos principais do sistema
+## 8. Fluxos principais do sistema
 
-### 7.1 Gestão de clientes
+### 8.1 Gestão de clientes
 
 O cliente é tratado como entidade central para pedidos e histórico. O fluxo envolve:
 
@@ -262,18 +303,18 @@ O cliente é tratado como entidade central para pedidos e histórico. O fluxo en
 - relacionamento com pedidos;
 - edição de status e atividade.
 
-### 7.2 Gestão de pedidos
+### 8.2 Gestão de pedidos
 
 A criação e acompanhamento de pedidos envolve:
 
 - cadastro do cliente associado;
-- seleção de produto/itens; 
+- seleção de produto/itens;
 - definição de tamanhos, quantidades e observações;
 - envio para produção;
 - consulta de ficha técnica;
 - alteração ou exclusão por solicitação administrativa.
 
-### 7.3 Estoque
+### 8.3 Estoque
 
 O módulo de estoque controla:
 
@@ -283,7 +324,7 @@ O módulo de estoque controla:
 - status calculado conforme regra de disponibilidade;
 - aprovação administrativa para ajustes e exclusão de itens.
 
-### 7.4 Colaboradores e permissões
+### 8.4 Colaboradores e permissões
 
 O módulo administrativo controla:
 
@@ -293,7 +334,7 @@ O módulo administrativo controla:
 - login por RE;
 - gestão de solicitações pendentes.
 
-### 7.5 Solicitações administrativas
+### 8.5 Solicitações administrativas
 
 A aplicação prevê uma camada de aprovação para ações sensíveis, como:
 
@@ -304,15 +345,15 @@ A aplicação prevê uma camada de aprovação para ações sensíveis, como:
 
 O padrão arquitetural é criar uma solicitação em vez de alterar diretamente o registro principal antes da aprovação.
 
-### 7.6 Relatórios
+### 8.6 Relatórios
 
 Os relatórios são lidos a partir de consultas agregadas sobre pedidos e estoque, sem criação de tabela específica para relatórios, seguindo o desenho da arquitetura do projeto.
 
 ---
 
-## 8. Frontend: organização por módulos
+## 9. Frontend: organização por módulos
 
-### 8.1 Estrutura funcionalmente relevante
+### 9.1 Estrutura funcionalmente relevante
 
 Dentro de `src` há módulos para:
 
@@ -325,7 +366,7 @@ Dentro de `src` há módulos para:
 - relatórios
 - visualização de fotos/imagens e documentos
 
-### 8.2 Padrão observado
+### 9.2 Padrão observado
 
 O projeto combina:
 
@@ -338,9 +379,9 @@ Essa estrutura é adequada para um TCC e facilita manutenção incremental.
 
 ---
 
-## 9. Backend: módulos principais
+## 10. Backend: módulos principais
 
-### 9.1 `backend/app.py`
+### 10.1 `backend/app.py`
 
 Responsável por:
 
@@ -350,7 +391,7 @@ Responsável por:
 - registrar blueprints;
 - configurar CORS e middlewares.
 
-### 9.2 `backend/config.py`
+### 10.2 `backend/config.py`
 
 Centraliza leitura do ambiente e configuração da aplicação. O arquivo considera:
 
@@ -359,11 +400,11 @@ Centraliza leitura do ambiente e configuração da aplicação. O arquivo consid
 - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 - `SMTP_*` para integrações futuras
 
-### 9.3 `backend/database/connection.py`
+### 10.3 `backend/database/connection.py`
 
 Responsável pela conexão com MySQL, com uso de pool de conexões e cursor em formato dicionário para facilitar JSON e leitura de dados.
 
-### 9.4 `backend/resources/`
+### 10.4 `backend/resources/`
 
 Contém utilitários compartilhados.
 
@@ -374,7 +415,7 @@ Exemplos típicos:
 - `controle_estoque.py`
 - `foto_colaborador.py`
 
-### 9.5 `backend/scripts/`
+### 10.5 `backend/scripts/`
 
 Scripts de ambiente e bootstrap para:
 
@@ -384,9 +425,9 @@ Scripts de ambiente e bootstrap para:
 
 ---
 
-## 10. Execução local
+## 11. Execução local
 
-### 10.1 Pré-requisitos
+### 11.1 Pré-requisitos
 
 - Node.js 18+
 - npm
@@ -394,20 +435,20 @@ Scripts de ambiente e bootstrap para:
 - MySQL local ou acessível
 - Git
 
-### 10.2 Dependências do frontend
+### 11.2 Dependências do frontend
 
 ```bash
 npm install
 ```
 
-### 10.3 Dependências do backend
+### 11.3 Dependências do backend
 
 ```bash
 python -m venv .venv
 python -m pip install -r backend/requirements.txt
 ```
 
-### 10.4 Variáveis de ambiente
+### 11.4 Variáveis de ambiente
 
 O backend lê sua configuração a partir de `backend/.env`, com base em `backend/.env.example`.
 
@@ -424,7 +465,7 @@ DB_PASSWORD=sua_senha
 DB_NAME=ethreads_db
 ```
 
-### 10.5 Iniciando o sistema
+### 11.5 Iniciando o sistema
 
 Frontend:
 
@@ -446,9 +487,9 @@ python backend/app.py
 
 ---
 
-## 11. Observações de qualidade e implementação
+## 12. Observações de qualidade e implementação
 
-### 11.1 O que está bem estruturado
+### 12.1 O que está bem estruturado
 
 - separação entre frontend e backend
 - manutenção de módulos por responsabilidade
@@ -456,7 +497,7 @@ python backend/app.py
 - organização de scripts e recursos
 - uso de sessão Flask e decorators de autenticação
 
-### 11.2 O que ainda precisa de validação real
+### 12.2 O que ainda precisa de validação real
 
 - funcionamento do MySQL em ambiente real
 - execução de migração/schema
@@ -468,13 +509,21 @@ python backend/app.py
 - integração com Cloudinary
 - comportamento real de front e back em navegação
 
-### 11.3 Indicadores de maturidade
+### 12.3 Ideias futuras de implementação
 
-O projeto está em fase de implementação/validação, com estrutura adequada para um TCC funcional. O que ainda impede uma conclusão definitiva é a ausência de evidência final de execução completa em ambiente real com banco e fluxos de usuário validados.
+Estas são melhorias e evoluções possíveis, mas não fazem parte do escopo irrealista do projeto atual:
+
+- expansão de relatórios e dashboards analíticos;
+- refinamento do processo de autenticação e recuperação de senha;
+- melhoria contínua de regras e fluxos de aprovação;
+- otimização de performance e filtros de listas grandes;
+- mais cobertura de testes automatizados e validações de regressão;
+- maior automação de deploy e ambiente de produção;
+- evolução de integrações externas e auditoria operacional.
 
 ---
 
-## 12. Limitações conhecidas
+## 13. Limitações conhecidas
 
 - Dependência de MySQL configurado e acessível.
 - Necessidade de arquivo `.env` local com credenciais válidas.
@@ -484,7 +533,7 @@ O projeto está em fase de implementação/validação, com estrutura adequada p
 
 ---
 
-## 13. Testes e evidência
+## 14. Testes e evidência
 
 O repositório contém testes automatizados em `backend/tests/` e em `tests/` para partes relevantes do sistema. Ainda assim, os testes devem ser interpretados com cautela:
 
@@ -504,252 +553,10 @@ A evidência real de funcionamento deve incluir:
 
 ---
 
-## 14. Conclusão
+## 15. Conclusão
 
-O E-Threads está estruturado como um sistema web funcional para gestão de produção e operação de confecção, com separação clara entre frontend, backend, banco de dados e documentação técnica.
+O E-Threads está estruturado como um sistema web para gestão de produção e operação de confecção, com separação clara entre frontend, backend, banco de dados e documentação técnica.
 
-A arquitetura atual é coerente com os objetivos do TCC e com o desenho documentado em `docs/ARQUITETURA_TCC.md`. O projeto está em um estágio de implementação e validação, e a próxima etapa principal é a confirmação de comportamento real em ambiente de execução com MySQL e interfaces funcionando de ponta a ponta.
+A arquitetura atual é coerente com os objetivos do TCC e com o desenho documentado em `docs/ARQUITETURA_TCC.md`. O projeto está em fase de implementação e validação, e a próxima etapa principal é a confirmação de comportamento real em ambiente de execução com MySQL e interfaces funcionando de ponta a ponta.
 
----
-
-## 15. Arquitetura em camadas
-
-O sistema pode ser entendido em camadas independentes, cada uma com responsabilidade específica:
-
-```text
-+-----------------------------------------------------------+
-| Camada de apresentação                                     |
-| - React + Vite                                            |
-| - páginas, componentes, autenticação visual               |
-| - serviços de consumo da API                              |
-+-----------------------------------------------------------+
-                            |
-                            v
-+-----------------------------------------------------------+
-| Camada de aplicação                                        |
-| - Flask + blueprints                                      |
-| - validação de sessão e permissões                        |
-| - regras de negócio e integrações                         |
-+-----------------------------------------------------------+
-                            |
-                            v
-+-----------------------------------------------------------+
-| Camada de dados                                            |
-| - MySQL                                                   |
-| - schema relacional                                        |
-| - transações e integridade referencial                    |
-+-----------------------------------------------------------+
-```
-
-### 15.1 Camada de apresentação
-
-Responsável por:
-
-- navegação do usuário;
-- exibição dos dados em UI;
-- interações do colaborador/comum e administrativo;
-- coleta de dados em formulários;
-- chamadas à API do backend para persistência e consulta.
-
-### 15.2 Camada de aplicação
-
-Responsável por:
-
-- autenticação e autorização;
-- regras de negócio de pedidos, estoque e clientes;
-- validações antes de gravar no banco;
-- processamento de solicitações administrativas;
-- geração de respostas em JSON para o frontend.
-
-### 15.3 Camada de dados
-
-Responsável por:
-
-- persistência de clientes, colaboradores, pedidos, itens e movimentações;
-- integridade referencial e consistência das transações;
-- suporte para consultas e relatórios.
-
----
-
-## 16. Diagramas de sequência
-
-### 16.1 Fluxo de login
-
-```text
-Usuário -> Frontend: informa RE e senha
-Frontend -> Backend: POST /api/login
-Backend -> Banco: busca colaborador por RE
-Banco --> Backend: dados do colaborador
-Backend -> Backend: valida senha e cria sessão
-Backend --> Frontend: sucesso + dados do usuário
-Frontend --> Usuário: redireciona para tela principal
-```
-
-### 16.2 Fluxo de criação de pedido
-
-```text
-Usuário -> Frontend: preenche dados do cliente e pedido
-Frontend -> Backend: POST /api/pedidos
-Backend -> Banco: grava pedido principal
-Backend -> Banco: grava itens e tamanhos em transação
-Banco --> Backend: confirmação
-Backend --> Frontend: pedido criado / ficha técnica
-Frontend --> Usuário: exibe confirmação e novo status
-```
-
-### 16.3 Fluxo de aprovação de solicitação
-
-```text
-Colaborador -> Frontend: solicita edição ou exclusão
-Frontend -> Backend: POST /api/solicitacoes
-Backend -> Banco: grava solicitação com status pendente
-Administrador -> Frontend: visualiza solicitações pendentes
-Frontend -> Backend: POST /api/solicitacoes/:id/aprovar
-Backend -> Banco: valida regra e aplica mudança
-Banco --> Backend: confirmação da transação
-Backend --> Frontend: status aprovado/recusado
-Frontend --> Usuário: exibe resultado final
-```
-
----
-
-## 17. Descrição dos principais endpoints
-
-A lista abaixo representa a visão funcional dos principais módulos do sistema observado no código e na documentação. A nomenclatura pode variar conforme a implementação real final, mas o contrato funcional esperado é este.
-
-### 17.1 Autenticação
-
-- `POST /api/login`
-  - recebe `re` e `senha`
-  - valida colaborador ativo e conta ativada
-  - inicia sessão Flask
-  - retorna dados do usuário logado ou mensagem de erro
-
-- `POST /api/logout`
-  - encerra a sessão do usuário
-  - remove identificação ativa do cookie
-
-- `GET /api/me`
-  - consulta o colaborador autenticado
-  - retorna dados do usuário atual e permissões
-
-### 17.2 Colaboradores
-
-- `GET /api/colaboradores`
-  - lista colaboradores
-  - pode filtrar por status, nome ou RE
-
-- `POST /api/colaboradores`
-  - cadastra novo colaborador ou administrador
-  - gera RE e registra processo de ativação
-
-- `GET /api/colaboradores/:id`
-  - consulta detalhe do colaborador
-
-- `PUT /api/colaboradores/:id`
-  - atualiza dados cadastrais e status
-
-### 17.3 Clientes
-
-- `GET /api/clientes`
-  - lista clientes ativos/inativos
-
-- `POST /api/clientes`
-  - cadastra novo cliente
-
-- `GET /api/clientes/:id`
-  - consulta cliente específico
-
-- `PUT /api/clientes/:id`
-  - atualiza dados do cliente
-
-### 17.4 Pedidos
-
-- `GET /api/pedidos`
-  - lista pedidos com filtros por status e pesquisa
-
-- `POST /api/pedidos`
-  - cria pedido e itens associados
-
-- `GET /api/pedidos/:id`
-  - retorna ficha técnica completa do pedido
-
-- `PUT /api/pedidos/:id`
-  - atualiza dados do pedido ou inicia fluxo de edição por solicitação
-
-### 17.5 Estoque
-
-- `GET /api/estoque`
-  - lista itens em estoque
-
-- `POST /api/estoque`
-  - cadastra novo item
-
-- `POST /api/estoque/movimentacao`
-  - registra entrada ou saída de material
-
-- `PUT /api/estoque/:id`
-  - altera item ou dispara solicitação administrativa
-
-### 17.6 Solicitações
-
-- `GET /api/solicitacoes`
-  - lista solicitações pendentes e históricas
-
-- `POST /api/solicitacoes`
-  - cria nova solicitação de edição ou exclusão
-
-- `POST /api/solicitacoes/:id/aprovar`
-  - aprova a solicitação e aplica alteração real
-
-- `POST /api/solicitacoes/:id/recusar`
-  - rejeita solicitação, sem alterar o dado original
-
-### 17.7 Relatórios
-
-- `GET /api/relatorios/financeiros`
-  - dados relevantes de pedidos e produção
-
-- `GET /api/relatorios/estoque`
-  - resumos de estoque baixo ou indisponível
-
-- `GET /api/relatorios/producao`
-  - consolida pedidos por status e período
-
-> Observação: a documentação da API pode variar conforme a implementação final, e a nomenclatura precisa deve ser confirmada através dos blueprints e dos arquivos do backend.
-
----
-
-## 18. Status de implementação por módulo
-
-A classificação abaixo indica o que foi observado no código e na estrutura do projeto, e não uma garantia de funcionamento completo em produção.
-
-| Módulo | Status observável | Observação |
-|---|---|---|
-| Autenticação | Implementado no código | Sessão Flask e decorators de acesso observados em `backend/` |
-| Colaboradores | Implementado no código | Estrutura e telas existentes; validação de fluxo real ainda necessária |
-| Clientes | Implementado no código | Módulo funcionalmente relevante e presente no frontend/backend |
-| Pedidos | Implementado no código | Fluxo de criação, ficha técnica e histórico previstos |
-| Estoque | Implementado no código | Cadastro e movimentações observados no repositório |
-| Solicitações administrativas | Parcial | Arquitetura e intenção definidas; validação de aprovação ainda necessária |
-| Relatórios | Parcial | Estrutura e módulos presentes; dependem de dados reais do banco |
-| Banco de dados | Parcial | Schema e modelagem definidos; execução real ainda pendente |
-| Integração com e-mail | Parcial | Estrutura e utilitários presentes |
-| Integração de imagens | Parcial | Recursos de upload e manipulação presentes |
-| Testes automatizados | Parcial | Estrutura de testes no repositório, mas validação funcional real continua necessária |
-
----
-
-## 19. Considerações finais
-
-A documentação técnica do E-Threads está bem alinhada com a arquitetura atual do projeto e com a organização do repositório. Ela cobre os principais aspectos de software, negócio e infraestrutura necessários para a continuidade do desenvolvimento.
-
-O ponto crítico para a etapa final do TCC é a validação real em ambiente funcional, principalmente:
-
-- MySQL com schema aplicado;
-- autenticação em execução;
-- fluxos de pedido e estoque validados;
-- aprovação de solicitações testada;
-- relatórios gerados a partir de dados reais.
-
-Sem essas evidências, a documentação técnica descreve corretamente a arquitetura, mas ainda não substitui a prova de funcionamento completo do sistema.
+O documento foi escrito para refletir a realidade do projeto: há uma base sólida, módulos definidos, documentação e estrutura apropriadas para um TCC, mas ainda há pendências, limitações e melhorias futuras que precisam ser reconhecidas de forma honesta.

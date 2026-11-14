@@ -1,76 +1,213 @@
-# Nome do Projeto
+# E-Threads
 
-Breve descrição do que o projeto faz e qual problema ele resolve.
+Sistema web de gestão e acompanhamento da produção de roupas desenvolvido como projeto acadêmico de TCC. O objetivo principal é permitir o controle de pedidos, estoque, clientes, usuários e solicitações de alteração/exclusão dentro de um fluxo de produção e administração.
+
+> Este README foi alinhado ao estado atual do repositório e não descreve uma solução perfeita ou totalmente finalizada. O projeto é uma base funcional em evolução, com arquitetura definida e validações em andamento.
 
 ---
 
-## Tecnologias utilizadas
+## Visão geral
+
+O E-Threads combina:
+
+- Frontend em React + Vite
+- Backend em Python + Flask
+- Banco de dados MySQL
+- Autenticação por sessão do Flask
+- Fluxos para pedidos, estoque, clientes, colaboradores e relatórios
+
+A aplicação foi pensada para uso operacional em uma empresa de confecção/produção, com foco em organização interna, controle de produção e acompanhamento de regras de negócio.
+
+---
+
+## Stack tecnológica
 
 - [React](https://react.dev/)
-- [Node.js](https://nodejs.org/)
-- _(adicione outras libs relevantes aqui)_
+- [Vite](https://vitejs.dev/)
+- [React Router DOM](https://reactrouter.com/)
+- [Python](https://www.python.org/)
+- [Flask](https://flask.palletsprojects.com/)
+- [MySQL](https://www.mysql.com/)
+- [mysql-connector-python](https://pypi.org/project/mysql-connector-python/)
+- [python-dotenv](https://pypi.org/project/python-dotenv/)
+- [Pillow](https://pypi.org/project/Pillow/)
+- [Chart.js](https://www.chartjs.org/)
+- [jspdf](https://github.com/parallax/jsPDF)
+- [qrcode.react](https://www.npmjs.com/package/qrcode.react)
+
+---
+
+## Funcionalidades principais
+
+- Login e autenticação de colaboradores
+- Sessão com controle de acesso por perfil
+- Dashboard de início
+- Criação e acompanhamento de pedidos
+- Seleção de produtos e fichas técnicas
+- Gestão de estoque e movimentações
+- Cadastro e manutenção de clientes
+- Gestão de equipe/colaboradores (área administrativa)
+- Controle de solicitações de edição e exclusão
+- Relatórios e indicadores
+- Upload de imagens relacionadas a itens, clientes e artes
+
+---
+
+## Estrutura do projeto
+
+```text
+projeto/
+├── backend/
+│   ├── .env.example
+│   ├── app.py
+│   ├── config.py
+│   ├── requirements.txt
+│   ├── database/
+│   ├── auth/
+│   ├── scripts/
+│   ├── static/
+│   └── ...
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── services/
+│   ├── auth/
+│   ├── hooks/
+│   ├── styles/
+│   ├── App.jsx
+│   └── main.jsx
+├── docs/
+│   ├── ARQUITETURA_TCC.md
+│   ├── ACOMPANHAMENTO_REQUISITOS.md
+│   └── ...
+├── package.json
+├── vite.config.js
+├── README.md
+├── requisitos.txt
+├── contexto-projeto.txt
+└── ...
+```
 
 ---
 
 ## Pré-requisitos
 
-Antes de começar, certifique-se de ter instalado na sua máquina:
+Antes de iniciar, certifique-se de ter instalado:
 
-- [Node.js](https://nodejs.org/) (versão 18 ou superior recomendada)
+- [Node.js](https://nodejs.org/) (versão LTS recomendada)
+- [npm](https://www.npmjs.com/)
+- [Python 3](https://www.python.org/downloads/)
 - [Git](https://git-scm.com/)
-- Um gerenciador de pacotes: **npm** (já vem com o Node) ou **yarn**
+- MySQL em execução local ou disponível para conexão
 
 ---
 
-## Como rodar o projeto localmente
+## Configuração do ambiente
 
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/nome-do-repositorio.git
+git clone <url-do-repositorio>
+cd projeto
 ```
 
-### 2. Acesse a pasta do projeto
+### 2. Crie o ambiente virtual do backend
 
 ```bash
-cd nome-do-repositorio
+python -m venv .venv
 ```
 
-### 3. Instale as dependências
+Ative o ambiente virtual:
+
+- Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+- Windows CMD:
+
+```cmd
+.venv\Scripts\activate.bat
+```
+
+- Linux/macOS:
+
+```bash
+source .venv/bin/activate
+```
+
+### 3. Instale as dependências do backend
+
+```bash
+pip install -r backend/requirements.txt
+```
+
+### 4. Configure as variáveis de ambiente
+
+Copie o exemplo do backend para o ambiente local:
+
+```bash
+copy backend\.env.example backend\.env
+```
+
+Ou no Linux/macOS:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Edite o arquivo `backend/.env` com os dados do banco e da aplicação, por exemplo:
+
+```env
+APP_ENV=development
+SECRET_KEY=sua_chave_local
+FRONTEND_ORIGIN=http://localhost:5173
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=sua_senha
+DB_NAME=ethreads_db
+```
+
+> O arquivo `.env` não deve ser commitado. Ele fica localmente no ambiente do projeto.
+
+### 5. Instale as dependências do frontend
 
 ```bash
 npm install
 ```
 
-> Isso vai recriar a pasta `node_modules` a partir do `package.json`. Ela não fica salva no GitHub justamente para não sobrecarregar o repositório.
+---
 
-### 4. Configure as variáveis de ambiente
+## Como executar o projeto
 
-Copie o arquivo de exemplo e preencha com suas informações:
+### Opção 1: iniciar backend e frontend em terminais separados
+
+Terminal 1 — Backend Flask:
 
 ```bash
-cp .env.example .env
+python backend/app.py
 ```
 
-Abra o arquivo `.env` e preencha os campos:
+Terminal 2 — Frontend Vite:
 
-```
-DB_HOST=localhost
-DB_USER=seu_usuario
-DB_PASSWORD=sua_senha
-DB_NAME=nome_do_banco
-REACT_APP_API_URL=http://localhost:3001
+```bash
+npm run dev -- --host
 ```
 
-> ⚠️ **Nunca suba o arquivo `.env` para o GitHub.** Ele contém informações sensíveis e já está bloqueado pelo `.gitignore`.
+A interface ficará disponível em:
 
-### 5. Inicie o servidor de desenvolvimento
+- Frontend: http://localhost:5173
+- Backend: http://127.0.0.1:5000
+
+### Opção 2: iniciar pela rotina do projeto
 
 ```bash
 npm start
 ```
 
-O projeto estará disponível em [http://localhost:3000](http://localhost:3000).
+Esse comando utiliza o script localizado em `backend/scripts/iniciar_sistema.cjs` para localizar a virtualenv Python e iniciar o sistema com a estrutura do projeto.
 
 ---
 
@@ -78,39 +215,37 @@ O projeto estará disponível em [http://localhost:3000](http://localhost:3000).
 
 | Comando | Descrição |
 |---|---|
-| `npm start` | Inicia o servidor de desenvolvimento |
-| `npm run build` | Gera a versão de produção na pasta `/build` |
-| `npm test` | Executa os testes |
+| `npm install` | Instala dependências do frontend |
+| `npm run dev -- --host` | Inicia o ambiente Vite para desenvolvimento |
+| `npm start` | Inicia o sistema usando a rotina de bootstrap do projeto |
+| `python backend/app.py` | Inicia a API Flask diretamente |
+| `pip install -r backend/requirements.txt` | Instala dependências do backend |
 
 ---
 
-## Estrutura de pastas
+## Fluxo principal do sistema
 
-```
-├── public/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── services/
-│   └── App.jsx
-├── .env.example       ← modelo das variáveis de ambiente (sem valores reais)
-├── .gitignore         ← arquivos ignorados pelo Git
-├── package.json
-└── README.md
-```
+1. O usuário acessa o sistema e faz login.
+2. A autenticação usa sessão no Flask e valida o colaborador ativo.
+3. O frontend realiza chamadas para a API via proxy do Vite.
+4. O backend valida permissões, regras de negócio e conexão com o MySQL.
+5. O sistema permite gestão de pedidos, estoque, clientes e solicitações conforme o perfil do usuário.
 
 ---
 
-## Contribuindo
+## Observações importantes
 
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/minha-feature`)
-3. Commit suas mudanças (`git commit -m 'feat: minha nova feature'`)
-4. Push para a branch (`git push origin feature/minha-feature`)
-5. Abra um Pull Request
+- O projeto é acadêmico e está em evolução constante.
+- A documentação foi mantida com foco no que realmente existe no repositório e no que foi estruturado até o momento.
+- O sistema ainda exige validação prática com banco real e testes funcionais em ambiente local.
+- Algumas áreas podem estar parcialmente implementadas ou dependentes de ajustes na execução real.
 
 ---
 
-## Licença
+## Documentação complementar
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Para entender melhor a arquitetura e o acompanhamento do desenvolvimento, consulte:
+
+- [docs/ARQUITETURA_TCC.md](docs/ARQUITETURA_TCC.md)
+- [docs/ACOMPANHAMENTO_REQUISITOS.md](docs/ACOMPANHAMENTO_REQUISITOS.md)
+- [requisitos.txt](requisitos.txt)

@@ -2,7 +2,9 @@
 
 > Referência oficial dos requisitos: `requisitos.txt` (numeração já organizada em tabelas, com repetições e ausências preservadas como no original — nada foi renumerado, reescrito ou reclassificado aqui). Arquitetura de referência: `docs/ARQUITETURA_TCC.md`.
 >
-> Este documento registra o acompanhamento do projeto e das tarefas pendentes, e foi revisado em 14/11/2026 com base no estado atual do repositório. Nenhum requisito deve ser marcado como `[x]` sem evidência real de teste e validação em ambiente funcional.
+> Este documento registra o acompanhamento do projeto e das tarefas pendentes, revisado em 14/11/2026 com base no estado atual do repositório. Nenhum requisito deve ser marcado como `[x]` sem evidência real de teste e validação em ambiente funcional.
+>
+> Observação: o documento representa o acompanhamento do projeto e não a garantia de que os requisitos estão totalmente implementados. Ele serve para registrar o que foi planejado, o que está em andamento e o que ainda precisa de validação prática.
 
 ## 1. Status dos requisitos
 
