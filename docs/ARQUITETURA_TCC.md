@@ -1,6 +1,8 @@
 # E-Threads — Arquitetura Aprovada (TCC SENAI 2026)
 
-> Documento de referência para implementação. Reflete a arquitetura discutida e aprovada entre o Tech Lead e o arquiteto do projeto. Não contém SQL executável nem código — serve para orientar as tarefas registradas em `docs/ACOMPANHAMENTO_REQUISITOS.md`.
+> Documento de referência para implementação. Reflete a arquitetura discutida e aprovada para o projeto, e foi revisada em 14/11/2026 com base no estado real do repositório atual. Não contém SQL executável nem código — serve para orientar as tarefas registradas em `docs/ACOMPANHAMENTO_REQUISITOS.md`.
+
+> Observação importante: a estrutura do código presente em `backend/` e `src/` já está em alinhamento com esta arquitetura, mas a documentação continua sendo a fonte de desenho e a execução real em banco e navegador segue exigindo validação prática.
 
 ## 1. Visão geral
 

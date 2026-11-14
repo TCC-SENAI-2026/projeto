@@ -1,6 +1,8 @@
 # E-Threads — Acompanhamento de Requisitos e Tarefas para o Codex
 
-> Referência oficial dos requisitos: `requisitos.txt` (numeração já organizada em tabelas, com repetições e ausências preservadas como no original — nada foi renumerado, reescrito ou reclassificado aqui). Arquitetura de referência: `docs/ARQUITETURA_TCC.md`. Nenhum requisito deve ser marcado como `[x]` sem evidência de teste e validação.
+> Referência oficial dos requisitos: `requisitos.txt` (numeração já organizada em tabelas, com repetições e ausências preservadas como no original — nada foi renumerado, reescrito ou reclassificado aqui). Arquitetura de referência: `docs/ARQUITETURA_TCC.md`.
+>
+> Este documento registra o acompanhamento do projeto e das tarefas pendentes, e foi revisado em 14/11/2026 com base no estado atual do repositório. Nenhum requisito deve ser marcado como `[x]` sem evidência real de teste e validação em ambiente funcional.
 
 ## 1. Status dos requisitos
 
