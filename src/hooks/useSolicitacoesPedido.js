@@ -19,13 +19,23 @@ function useSolicitacoesPedido() {
     const timer = useRef(null);
 
     const recarregar = useCallback(async () => {
-        setSolicitacoes(await listarSolicitacoes());
+        setSolicitacoes(await listarSolicitacoes({ notificar: true }));
     }, []);
 
     useEffect(() => {
         recarregar();
         return () => clearTimeout(timer.current);
     }, [recarregar]);
+
+    useEffect(() => {
+        const timers = solicitacoes
+            .filter(s => s.status !== 'pendente' && !s.visto && Number.isFinite(s.expiraEm))
+            .map(s => setTimeout(() => {
+                setSolicitacoes(atuais => atuais.map(item => item.id === s.id ? { ...item, visto: true } : item));
+                void marcarComoVista(s.id);
+            }, Math.max(0, s.expiraEm - Date.now())));
+        return () => timers.forEach(clearTimeout);
+    }, [solicitacoes]);
 
     const temPendente = useCallback(
         (pedidoId) =>
@@ -35,7 +45,7 @@ function useSolicitacoesPedido() {
         [solicitacoes]
     );
 
-    // Respostas do adm que o funcionário ainda não fechou
+    // Respostas ainda não fechadas e dentro do prazo de exibição.
     const resultados = solicitacoes.filter((s) => s.status !== "pendente" && !s.visto);
 
     async function solicitar(dados) {

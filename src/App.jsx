@@ -62,6 +62,7 @@ function App() {
         <Route path="/painel-adm" element={<PainelAdm />} />
       </Route>
       <Route path="/definir-senha"          element={<DefinirSenha />} />
+      <Route path="/redefinir-senha" element={<DefinirSenha redefinicao />} />
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );

@@ -13,6 +13,18 @@ from estoque import estoque_bp
 
 
 class TestVariacoesEstoque(unittest.TestCase):
+    def test_listagem_filtra_status_e_preserva_padrao_ativo(self):
+        for url, ativo in (('/listar-estoque', 1), ('/listar-estoque?status=inativos', 0)):
+            self.cursor.reset_mock()
+            resposta = self.client.get(url)
+            self.assertEqual(resposta.status_code, 200)
+            sql, parametros = self.cursor.execute.call_args_list[0].args
+            self.assertIn('ativo = %s', sql)
+            self.assertEqual(parametros, (ativo,))
+        self.open_connection.reset_mock()
+        self.assertEqual(self.client.get('/listar-estoque?status=invalido').status_code, 400)
+        self.open_connection.assert_not_called()
+
     def setUp(self):
         app = Flask(__name__)
         app.config.update(TESTING=True, SECRET_KEY='teste-variacoes')

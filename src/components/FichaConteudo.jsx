@@ -28,7 +28,7 @@ function CampoSe(props) {
     return props.children ? <Campo {...props} /> : null;
 }
 
-function FichaConteudo({ pedido, ficha, pedidoId = null, previewArtes = null }) {
+function FichaConteudo({ pedido, ficha, previewArtes = null, situacaoEntrega = "" }) {
     if (!pedido || !ficha) return null;
 
     const produtos = Array.isArray(pedido.produtos) ? pedido.produtos : [];
@@ -44,17 +44,20 @@ function FichaConteudo({ pedido, ficha, pedidoId = null, previewArtes = null }) 
                     </h1>
                     <div className="fc-campos fc-cab-grid">
                         <Campo rotulo="Cliente">{ficha.cliente}</Campo>
+                        <Campo rotulo="Contato">{ficha.contato}</Campo>
+                        <Campo rotulo="E-mail">{ficha.email}</Campo>
                         <Campo rotulo="Data do pedido">{formatarData(ficha.dataPedido)}</Campo>
-                        <Campo rotulo="Entrega">{formatarData(ficha.entrega)}</Campo>
-                        <Campo rotulo="Prioridade">{ficha.prioridade}</Campo>
+                        <Campo rotulo="Entrega">
+                            <span className={`fc-prazo ${situacaoEntrega}`}>
+                                {formatarData(ficha.entrega) || "—"}
+                                {situacaoEntrega === "atrasado" && " (atrasado)"}
+                                {situacaoEntrega === "urgente" && " (urgente)"}
+                            </span>
+                        </Campo>
                         {ficha.colaborador && (
-                            <Campo rotulo="Responsável">{ficha.colaborador}</Campo>
+                            <Campo rotulo="Responsável" className="fc-campo-full">{ficha.colaborador}</Campo>
                         )}
-                        {ficha.observacao && (
-                            <Campo rotulo="Obs. gerais" className="fc-campo-full">
-                                {ficha.observacao}
-                            </Campo>
-                        )}
+                        <Campo rotulo="Observações" className="fc-campo-full">{ficha.observacao}</Campo>
                     </div>
                 </div>
 

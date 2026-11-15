@@ -12,6 +12,28 @@ from perfil import ErroPerfil, aprovar_perfil, processar_alteracao_perfil
 solicitacoes_bp = Blueprint('solicitacoes', __name__)
 
 
+def solicitar_inativacao(alvo, alvo_id, dados, reativar=False):
+    tabela, coluna, nome = {
+        'estoque': ('estoque', 'estoque_id', 'nome_item'),
+        'cliente': ('clientes', 'cliente_id', 'nome'),
+    }[alvo]
+    motivo = dados.get('justificativa') if isinstance(dados, dict) else None
+    if not isinstance(motivo, str) or not 5 <= len(motivo.strip()) <= 2000:
+        return jsonify(success=False, msg='Explique o motivo com 5 a 2000 caracteres.'), 400
+    with db_cursor(commit=True) as cursor:
+        cursor.execute(f'SELECT id, {nome} AS nome FROM {tabela} WHERE id = %s AND ativo = %s FOR UPDATE', (alvo_id, 0 if reativar else 1))
+        registro = cursor.fetchone()
+        if not registro:
+            return jsonify(success=False, msg='Registro não encontrado ou status incompatível com a solicitação.'), 404
+        cursor.execute(f"SELECT id FROM solicitacoes WHERE {coluna} = %s AND status = 'pendente'", (alvo_id,))
+        if cursor.fetchone():
+            return jsonify(success=False, msg='Já existe uma solicitação pendente para este registro.'), 409
+        dp = json.dumps({'resumo': registro['nome'], 'justificativa': motivo.strip(), 'reativar': reativar}, ensure_ascii=False)
+        cursor.execute(f"INSERT INTO solicitacoes (tipo, {coluna}, colaborador_solicitante_id, dados_propostos, status) VALUES (%s, %s, %s, %s, 'pendente')", ('edicao' if reativar else 'exclusao', alvo_id, g.colaborador['id'], dp))
+        nova_id = cursor.lastrowid
+    return jsonify(success=True, data={'id': nova_id}, msg='Solicitação enviada aos administradores.'), 201
+
+
 def data_iso(valor):
     return valor.isoformat() if hasattr(valor, 'isoformat') else str(valor)
 
@@ -29,6 +51,8 @@ def listar_solicitacoes():
                     s.id,
                     s.tipo,
                     s.pedido_id,
+                    s.estoque_id,
+                    s.cliente_id,
                     s.colaborador_alvo_id,
                     s.status,
                     s.data_solicitacao,
@@ -36,7 +60,7 @@ def listar_solicitacoes():
                     co.nome AS nome_solicitante
                 FROM solicitacoes s
                 JOIN colaboradores co ON co.id = s.colaborador_solicitante_id
-                WHERE (s.pedido_id IS NOT NULL OR s.tipo = 'perfil')
+                WHERE (s.pedido_id IS NOT NULL OR s.estoque_id IS NOT NULL OR s.cliente_id IS NOT NULL OR s.tipo = 'perfil')
                 ORDER BY s.data_solicitacao DESC
             """)
         else:
@@ -45,6 +69,8 @@ def listar_solicitacoes():
                     s.id,
                     s.tipo,
                     s.pedido_id,
+                    s.estoque_id,
+                    s.cliente_id,
                     s.colaborador_alvo_id,
                     s.status,
                     s.data_solicitacao,
@@ -52,7 +78,7 @@ def listar_solicitacoes():
                     co.nome AS nome_solicitante
                 FROM solicitacoes s
                 JOIN colaboradores co ON co.id = s.colaborador_solicitante_id
-                WHERE (s.pedido_id IS NOT NULL OR s.tipo = 'perfil')
+                WHERE (s.pedido_id IS NOT NULL OR s.estoque_id IS NOT NULL OR s.cliente_id IS NOT NULL OR s.tipo = 'perfil')
                   AND s.colaborador_solicitante_id = %s
                 ORDER BY s.data_solicitacao DESC
             """, (colaborador['id'],))
@@ -85,6 +111,9 @@ def listar_solicitacoes():
             'id': r['id'],
             'tipo': r['tipo'],
             'pedidoId': r['pedido_id'],
+            'estoqueId': r.get('estoque_id'),
+            'clienteId': r.get('cliente_id'),
+            'reativar': bool((r.get('cliente_id') or r.get('estoque_id')) and r['tipo'] == 'edicao' and dp.get('reativar') is True),
             'colaboradorAlvoId': r.get('colaborador_alvo_id'),
             'status': r['status'],
             'resumo': dp.get('resumo', ''),
@@ -112,6 +141,15 @@ def criar_solicitacao():
             return jsonify(success=False, msg='Campos não permitidos na solicitação de perfil.'), 400
         return processar_alteracao_perfil(dados.get('dados_propostos'), dados.get('colaborador_alvo_id'))
 
+    alvos = [k for k in ('pedido_id', 'pedidoId', 'estoque_id', 'cliente_id') if dados.get(k) is not None]
+    if len(alvos) != 1:
+        return jsonify(success=False, msg='Informe exatamente um alvo.'), 400
+    if alvos[0] in ('estoque_id', 'cliente_id'):
+        alvo_id = dados[alvos[0]]
+        reativar = dados.get('tipo') == 'edicao'
+        if type(alvo_id) is not int or alvo_id < 1 or (dados.get('tipo') != 'exclusao' and not reativar):
+            return jsonify(success=False, msg='Alvo ou tipo invalido.'), 400
+        return solicitar_inativacao('estoque' if alvos[0] == 'estoque_id' else 'cliente', alvo_id, dados, reativar=reativar)
     tipo = dados.get('tipo', 'edicao')
     pedido_id = dados.get('pedido_id') or dados.get('pedidoId')
     resumo = dados.get('resumo', '')
@@ -178,7 +216,7 @@ def decidir_solicitacao(sol_id):
         cursor = conn.cursor(dictionary=True, buffered=True)
 
         cursor.execute("""
-            SELECT id, tipo, pedido_id, colaborador_alvo_id, colaborador_solicitante_id, status, dados_propostos
+            SELECT id, tipo, pedido_id, estoque_id, cliente_id, colaborador_alvo_id, colaborador_solicitante_id, status, dados_propostos
             FROM solicitacoes WHERE id = %s FOR UPDATE
         """, (sol_id,))
         sol = cursor.fetchone()
@@ -202,7 +240,21 @@ def decidir_solicitacao(sol_id):
         if sol['tipo'] == 'perfil' and decisao == 'aprovada':
             aprovar_perfil(cursor, sol, dp)
 
-        if decisao == 'aprovada' and sol['tipo'] != 'perfil':
+        if decisao == 'aprovada' and (sol.get('estoque_id') or sol.get('cliente_id')):
+            reativar = bool((sol.get('cliente_id') or sol.get('estoque_id')) and sol['tipo'] == 'edicao' and dp.get('reativar') is True)
+            if sol['tipo'] != 'exclusao' and not reativar:
+                conn.rollback()
+                cursor.close()
+                return jsonify(success=False, msg='Tipo invalido para este alvo.'), 409
+            tabela, alvo_id = ('estoque', sol['estoque_id']) if sol.get('estoque_id') else ('clientes', sol['cliente_id'])
+            cursor.execute(f'SELECT id FROM {tabela} WHERE id = %s AND ativo = %s FOR UPDATE', (alvo_id, 0 if reativar else 1))
+            if not cursor.fetchone():
+                conn.rollback()
+                cursor.close()
+                return jsonify(success=False, msg='Registro inexistente ou status incompatível com a solicitação.'), 409
+            cursor.execute(f'UPDATE {tabela} SET ativo = %s WHERE id = %s', (1 if reativar else 0, alvo_id))
+
+        if decisao == 'aprovada' and sol['tipo'] != 'perfil' and sol.get('pedido_id'):
             # Serializa a decisao com inicio de producao e edicoes do pedido.
             cursor.execute(
                 "SELECT id FROM pedidos WHERE id = %s AND excluido_em IS NULL FOR UPDATE",

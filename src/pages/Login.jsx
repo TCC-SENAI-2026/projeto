@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
 import Modal from "../components/Modal";
+import { api } from "../services/api";
 import "../styles/login.css";
 
 function Login() {
@@ -10,6 +11,10 @@ function Login() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [modalAberto, setModalAberto] = useState(false);
+  const [reRecuperacao, setReRecuperacao] = useState("");
+  const [mensagemRecuperacao, setMensagemRecuperacao] = useState("");
+  const [erroRecuperacao, setErroRecuperacao] = useState("");
+  const [solicitando, setSolicitando] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [enviando, setEnviando] = useState(false);
 
@@ -21,6 +26,22 @@ function Login() {
     };
   }, []);
 
+
+  async function solicitarRedefinicao(e) {
+    e.preventDefault();
+    if (solicitando) return;
+    setSolicitando(true);
+    setMensagemRecuperacao("");
+    setErroRecuperacao("");
+    try {
+      const resultado = await api.post('/solicitar-redefinicao', { re: reRecuperacao.trim() });
+      setMensagemRecuperacao(resultado.msg);
+    } catch (error) {
+      setErroRecuperacao(error.message);
+    } finally {
+      setSolicitando(false);
+    }
+  }
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -109,24 +130,27 @@ function Login() {
         </button>
       </form>
 
-      <a className="reset-link" onClick={() => setModalAberto(true)}>
+      <button type="button" className="reset-link" onClick={() => setModalAberto(true)}>
         Solicitar redefinição de senha
-      </a>
+      </button>
 
       <Modal aberto={modalAberto} onClose={() => setModalAberto(false)}>
         <div className="modal-header">
           <h2>Redefinir Senha</h2>
         </div>
 
-        <div className="modal-body">
-          <input placeholder="Digite seu RE" disabled />
-          <button type="button" disabled>
-            Enviar
+        <form className="modal-body" onSubmit={solicitarRedefinicao}>
+          <input placeholder="Digite seu RE" aria-label="RE para redefinição" value={reRecuperacao}
+            onChange={(e) => setReRecuperacao(e.target.value)} maxLength={20} required disabled={solicitando} />
+          <button type="submit" disabled={solicitando || !reRecuperacao.trim()}>
+            {solicitando ? "Enviando..." : "Enviar"}
           </button>
           <p className="modal-help">
-            A redefinição de senha ainda não está disponível nesta etapa. Procure o administrador.
+            O link será enviado ao e-mail cadastrado e valerá por 24 horas.
           </p>
-        </div>
+          {mensagemRecuperacao && <p role="status">{mensagemRecuperacao}</p>}
+          {erroRecuperacao && <p role="alert">{erroRecuperacao}</p>}
+        </form>
       </Modal>
 
     </main>

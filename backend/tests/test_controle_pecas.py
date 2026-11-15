@@ -59,7 +59,7 @@ class TestControlePecas(unittest.TestCase):
                 id INTEGER PRIMARY KEY, estoque_id INTEGER, tipo TEXT,
                 quantidade NUMERIC, motivo TEXT, colaborador_id INTEGER);
             CREATE TABLE solicitacoes (
-                id INTEGER PRIMARY KEY, tipo TEXT, pedido_id INTEGER, colaborador_alvo_id INTEGER, colaborador_solicitante_id INTEGER, status TEXT,
+                id INTEGER PRIMARY KEY, tipo TEXT, pedido_id INTEGER, estoque_id INTEGER, cliente_id INTEGER, colaborador_alvo_id INTEGER, colaborador_solicitante_id INTEGER, status TEXT,
                 dados_propostos TEXT, administrador_id INTEGER, data_decisao TEXT);
             INSERT INTO pedidos (id, cliente_id, colaborador_id, numero_pedido, status) VALUES (1, 1, 1, 1, 'pendente');
             INSERT INTO solicitacoes (id, tipo, pedido_id, status, dados_propostos) VALUES (1, 'exclusao', 1, 'pendente', '{}');

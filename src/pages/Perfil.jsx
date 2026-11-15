@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import FotoCaptura from '../components/FotoCaptura';
 import FotoColaborador from '../components/FotoColaborador';
+import AvisoTopo from '../components/AvisoTopo';
+import { DURACAO_AVISO, prepararAvisos, marcarComoVista } from '../services/solicitacoesService';
 import { buscarPerfil, salvarPerfil } from '../services/perfilService';
 import '../styles/padrao.css';
 import '../styles/formulario.css';
@@ -23,6 +25,7 @@ function Perfil() {
     const [salvando, setSalvando] = useState(false);
     const [erro, setErro] = useState('');
     const [mensagem, setMensagem] = useState('');
+    const [resultado, setResultado] = useState(null);
 
     const carregar = useCallback(async () => {
         setErro('');
@@ -32,10 +35,28 @@ function Perfil() {
             setPerfil(resposta.data);
             setForm(resposta.data);
             setSolicitacao(resposta.solicitacao);
+            const decisao = resposta.solicitacao;
+            const avisos = decisao && ['aprovada', 'recusada'].includes(decisao.status)
+                ? prepararAvisos([{ ...decisao, tipo: 'perfil', resumo: 'Alteração de perfil' }], { notificar: true })
+                : [];
+            setResultado(avisos.find(aviso => !aviso.visto) || null);
         } catch (error) { setErro(error.message); }
         finally { setCarregando(false); }
     }, []);
     useEffect(() => { carregar(); }, [carregar]);
+    useEffect(() => {
+        if (!mensagem) return;
+        const timer = setTimeout(() => setMensagem(''), DURACAO_AVISO);
+        return () => clearTimeout(timer);
+    }, [mensagem]);
+    useEffect(() => {
+        if (!resultado) return;
+        const timer = setTimeout(() => {
+            setResultado(null);
+            void marcarComoVista(resultado.id);
+        }, Math.max(0, resultado.expiraEm - Date.now()));
+        return () => clearTimeout(timer);
+    }, [resultado]);
     useEffect(() => {
         const atualizar = () => { if (!editando && !salvando) carregar(); };
         window.addEventListener('focus', atualizar);
@@ -84,12 +105,10 @@ function Perfil() {
                     <p className="form-subtitle">Confira seus dados e acompanhe suas alterações.</p>
                 </div>
                 {erro && <p role="alert">{erro}</p>}
-                {mensagem && <p role="status">{mensagem}</p>}
+                <AvisoTopo mensagem={mensagem} resultados={resultado ? [resultado] : []}
+                    onFecharResultado={id => { setResultado(null); void marcarComoVista(id); }} />
                 {carregando ? <p role="status">Carregando perfil...</p> : perfil ? (
                     <form onSubmit={salvar} autoComplete="off">
-                        {pendente && <p role="status">Alteração aguardando aprovação</p>}
-                        {solicitacao?.status === 'aprovada' && <p role="status">Sua alteração de perfil foi aprovada.</p>}
-                        {solicitacao?.status === 'recusada' && <p role="status">Sua alteração de perfil foi recusada. {solicitacao.motivo}</p>}
                         <section className="form-section">
                             <h2>Foto</h2>
                             {editando ? <FotoCaptura nome={form.nome} arquivo={foto}

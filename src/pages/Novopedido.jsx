@@ -31,7 +31,6 @@ function NovoPedido() {
         email:             clienteInicial?.email || '',
         dataPedido:        '',
         prazoEntrega:      '',
-        obsPersonalizacao: '',
         obsGeral:          '',
     });
 
@@ -72,7 +71,6 @@ function NovoPedido() {
             contato:        form.contato,
             email:          form.email,
             entrega:        form.prazoEntrega,
-            personalizacao: form.obsPersonalizacao,
             observacao:     form.obsGeral,
             logoCliente:    clienteInicial?.logo || null,
             dataCriacao:    new Date().toLocaleDateString('pt-BR'),
@@ -212,19 +210,8 @@ function NovoPedido() {
 
                             <div className="form-grid">
 
-                                <div className="form-field">
-                                    <label htmlFor="obsPersonalizacao">Observação da Personalização</label>
-                                    <input
-                                        id="obsPersonalizacao"
-                                        name="obsPersonalizacao"
-                                        placeholder="Opcional"
-                                        value={form.obsPersonalizacao}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-
                                 <div className="form-field full">
-                                    <label htmlFor="obsGeral">Observações Gerais</label>
+                                    <label htmlFor="obsGeral">Observações</label>
                                     <textarea
                                         id="obsGeral"
                                         name="obsGeral"

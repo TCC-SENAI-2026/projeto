@@ -39,11 +39,11 @@ class TestPerfil(unittest.TestCase):
                 (2,'0002','Pessoa','pessoa@example.invalid','colaborador','222',900,'2026-02-01'),
                 (3,'0003','Outra','outra@example.invalid','colaborador','333',800,'2026-03-01');
             CREATE TABLE solicitacoes (
-                id INTEGER PRIMARY KEY, tipo TEXT, pedido_id INTEGER, estoque_id INTEGER,
+                id INTEGER PRIMARY KEY, tipo TEXT, pedido_id INTEGER, estoque_id INTEGER, cliente_id INTEGER,
                 colaborador_alvo_id INTEGER REFERENCES colaboradores(id), colaborador_solicitante_id INTEGER,
                 dados_propostos TEXT, status TEXT, administrador_id INTEGER,
                 data_solicitacao TEXT DEFAULT CURRENT_TIMESTAMP, data_decisao TEXT,
-                CHECK ((pedido_id IS NOT NULL)+(estoque_id IS NOT NULL)+(colaborador_alvo_id IS NOT NULL)=1));
+                CHECK ((pedido_id IS NOT NULL)+(estoque_id IS NOT NULL)+(colaborador_alvo_id IS NOT NULL)+(cliente_id IS NOT NULL)=1));
         ''')
         self.db.commit()
         self.queries = []

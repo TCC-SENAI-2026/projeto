@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
+import FotoColaborador from "./FotoColaborador";
 import "../styles/padrao.css";
 
 function Sidebar() {
@@ -10,14 +11,9 @@ function Sidebar() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // TODO(BACK): garantir que o endpoint de sessão retorne
-    // os dados do usuário autenticado, incluindo nome e nivel_acesso.
     const { colaborador, sair } = useAuth();
     const menuAberto = menuAbertoEm === location.pathname;
     const administrador = colaborador?.nivel_acesso === "administrador";
-    const partesNome = colaborador?.nome.trim().split(/\s+/) || [];
-    const iniciais = [partesNome[0], partesNome.length > 1 ? partesNome.at(-1) : null]
-        .filter(Boolean).map((nome) => nome[0]).join("").toUpperCase();
 
     function toggleMenu() {
         setMenuAbertoEm(menuAberto ? null : location.pathname);
@@ -159,7 +155,12 @@ function Sidebar() {
                 <div className="sidebar-footer">
                     <details className="user-dropdown">
                         <summary className="user-info">
-                            <div className="user-avatar">{iniciais}</div>
+                            <FotoColaborador
+                                key={colaborador?.id}
+                                id={colaborador?.id}
+                                nome={colaborador?.nome || ""}
+                                pequena
+                            />
 
                             <div className="user-text">
                                 <span className="user-name">{colaborador?.nome}</span>

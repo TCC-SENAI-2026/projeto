@@ -3,7 +3,7 @@ import "../styles/solicitacoes.css";
 /**
  * Avisos no topo da seção:
  *  - mensagem: texto temporário ("Solicitação enviada para o adm."), some sozinho
- *  - resultados: respostas do adm (aprovada/recusada), ficam até o funcionário fechar
+ *  - resultados: respostas temporárias do adm, com expiração controlada pelo hook
  */
 function AvisoTopo({ mensagem, resultados = [], onFecharResultado }) {
     if (!mensagem && resultados.length === 0) return null;
@@ -21,13 +21,20 @@ function AvisoTopo({ mensagem, resultados = [], onFecharResultado }) {
                 const aprovada = s.status === "aprovada";
                 const perfil = s.tipo === "perfil";
                 const exclusao = s.tipo === "exclusao";
-                const textoAprovada = exclusao
+                const cliente = Boolean(s.clienteId);
+                const estoque = Boolean(s.estoqueId);
+                const textoAprovada = cliente
+                    ? (s.reativar ? "a reativação foi aprovada." : "a inativação foi aprovada.")
+                    : estoque ? (s.reativar ? "a reativação do item foi aprovada." : "a exclusão do item foi aprovada.") : exclusao
                     ? "o pedido foi excluído."
                     : "suas alterações foram aprovadas.";
-                const textoRecusada = exclusao
+                const textoRecusada = cliente || estoque ? "sua solicitação foi recusada." : exclusao
                     ? "a exclusão do pedido foi recusada."
                     : "sua solicitação foi recusada.";
-                const rotulo = perfil ? (s.resumo || "Alteração de perfil") : `Pedido #${s.pedidoId}`;
+                const rotulo = perfil ? (s.resumo || "Alteração de perfil")
+                    : cliente ? `Cliente: ${s.resumo || `#${s.clienteId}`}`
+                    : estoque ? `Estoque: ${s.resumo || `#${s.estoqueId}`}`
+                    : s.pedidoId != null ? `Pedido #${s.pedidoId}` : "Solicitação";
                 return (
                     <div
                         key={s.id}

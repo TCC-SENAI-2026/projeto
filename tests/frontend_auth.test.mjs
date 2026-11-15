@@ -222,7 +222,8 @@ describe('Menu lateral com perfis simulados', () => {
     }
     assert.match(html, /user-name[^>]*>Ana Silva</);
     assert.match(html, /user-role[^>]*>Administrador</);
-    assert.match(html, /user-avatar[^>]*>AS</);
+    assert.ok(html.includes('foto-colaborador-pequena'));
+    assert.match(html, /<img[^>]+src="\/api\/colaboradores\/1\/foto"[^>]+alt="Foto de Ana Silva"/);
   });
 
   test('colaborador visualiza as quatro áreas e o próprio Perfil, sem áreas administrativas', () => {
@@ -236,7 +237,8 @@ describe('Menu lateral com perfis simulados', () => {
     }
     assert.match(html, /user-name[^>]*>Bruno Costa</);
     assert.match(html, /user-role[^>]*>Colaborador</);
-    assert.match(html, /user-avatar[^>]*>BC</);
+    assert.ok(html.includes('foto-colaborador-pequena'));
+    assert.match(html, /<img[^>]+src="\/api\/colaboradores\/2\/foto"[^>]+alt="Foto de Bruno Costa"/);
     assert.ok(!html.includes('Ana Silva'));
   });
 });

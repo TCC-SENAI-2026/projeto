@@ -3,6 +3,17 @@ import { api } from './api.js';
 // IDs das solicitações que o usuário já fechou (visto no banner).
 // Guardados no localStorage por ser uma preferência visual do navegador.
 const CHAVE_VISTAS = 'solicitacoes_vistas';
+const CHAVE_PRAZOS = 'solicitacoes_prazos_avisos';
+export const DURACAO_AVISO = 6000;
+
+function lerPrazos() {
+    try {
+        const valor = JSON.parse(localStorage.getItem(CHAVE_PRAZOS) || '{}');
+        return valor && typeof valor === 'object' && !Array.isArray(valor) ? valor : {};
+    } catch {
+        return {};
+    }
+}
 
 function lerVistas() {
     try {
@@ -20,13 +31,30 @@ function salvarVistas(conjunto) {
     }
 }
 
-export async function listarSolicitacoes() {
+export async function listarSolicitacoes({ notificar = false } = {}) {
     const res = await api.get('/solicitacoes');
+    return prepararAvisos(res.data || [], { notificar });
+}
+
+export function prepararAvisos(solicitacoes, { notificar = false } = {}) {
     const vistas = lerVistas();
-    return (res.data || []).map(s => ({
-        ...s,
-        visto: vistas.has(String(s.id)),
-    }));
+    const prazos = lerPrazos();
+    const agora = Date.now();
+    const dados = solicitacoes.map(s => {
+        const chave = String(s.id);
+        if (notificar && s.status !== 'pendente' && !vistas.has(chave) && !Number.isFinite(prazos[chave])) {
+            prazos[chave] = agora + DURACAO_AVISO;
+        }
+        return {
+            ...s,
+            expiraEm: prazos[chave],
+            visto: vistas.has(chave) || (Number.isFinite(prazos[chave]) && prazos[chave] <= agora),
+        };
+    });
+    if (notificar) {
+        try { localStorage.setItem(CHAVE_PRAZOS, JSON.stringify(prazos)); } catch { /* preferência local */ }
+    }
+    return dados;
 }
 
 export async function criarSolicitacao({

@@ -1,15 +1,19 @@
--- E-Threads | Banco completo: estoque ate 4B e perfil (Partes A/B).
--- ATENCAO: este script APAGA o banco ethreads_db e TODOS os seus dados.
--- Exportar um backup antes de executar no MySQL Workbench.
--- Nao foi executado pelo agente. Requer MySQL Server >= 8.0.16 (CHECKs).
--- Consolida schema.sql + variacoes de tecidos + catalogo de produto opcional.
--- Nao executar as migracoes separadas depois deste arquivo.
+-- E-Threads | Modelo consolidado atual: 11 tabelas.
+-- Instalacao em banco vazio; nao e uma migracao de banco existente.
+-- Preserva bancos existentes: nao executa DROP DATABASE nem DROP TABLE.
+-- Se ja houver tabelas, nao executar este arquivo sobre elas.
+-- Requer MySQL Server >= 8.0.16 (CHECKs).
+-- Inclui variacoes de tecidos, imagens, perfil e solicitacoes de clientes.
+-- Inativacao/reativacao de clientes e estoque usam ativo e solicitacoes;
+-- justificativa e reativar ficam em dados_propostos, sem novas colunas.
+-- Ativacao/redefinicao de senha reutilizam tokens.
+-- Notificacoes temporarias sao preferencias locais; PDF consulta dados existentes.
+-- Em banco criado por este arquivo, nao reaplicar as migracoes separadas.
 -- Nao cria usuarios/senhas nem produtos de exemplo.
 -- Tecido/cor novos usam material_id e material_cor_id; catalogo fica opcional.
--- Se DB_NAME no backend for diferente, ajustar o nome nas tres linhas abaixo.
+-- Se DB_NAME no backend for diferente, ajustar o nome nas duas linhas abaixo.
 
-DROP DATABASE IF EXISTS ethreads_db;
-CREATE DATABASE ethreads_db
+CREATE DATABASE IF NOT EXISTS ethreads_db
     CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE ethreads_db;
 SET NAMES utf8mb4;
@@ -251,6 +255,7 @@ CREATE TABLE solicitacoes (
     tipo                        ENUM('edicao', 'exclusao', 'perfil') NOT NULL,
     pedido_id                   INT UNSIGNED NULL,
     estoque_id                  INT UNSIGNED NULL,
+    cliente_id                  INT UNSIGNED NULL,
     colaborador_alvo_id          INT UNSIGNED NULL,
     colaborador_solicitante_id   INT UNSIGNED NOT NULL,
     dados_propostos             JSON NULL,
@@ -260,8 +265,10 @@ CREATE TABLE solicitacoes (
     data_decisao                DATETIME NULL,
     PRIMARY KEY (id),
     CONSTRAINT chk_solicitacoes_alvo_exclusivo CHECK (
-        ((pedido_id IS NOT NULL) + (estoque_id IS NOT NULL) + (colaborador_alvo_id IS NOT NULL)) = 1
+        ((pedido_id IS NOT NULL) + (estoque_id IS NOT NULL) + (colaborador_alvo_id IS NOT NULL) + (cliente_id IS NOT NULL)) = 1
     ),
+    KEY idx_solicitacoes_cliente_status (cliente_id, status),
+    CONSTRAINT fk_solicitacoes_cliente FOREIGN KEY (cliente_id) REFERENCES clientes (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     KEY idx_solicitacoes_pedido_status (pedido_id, status),
     KEY idx_solicitacoes_estoque_status (estoque_id, status),
     KEY idx_solicitacoes_colaborador_alvo_status (colaborador_alvo_id, status),

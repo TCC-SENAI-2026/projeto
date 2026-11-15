@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
-import { jsPDF } from "jspdf";
-import autotable from "jspdf-autotable";
+import { gerarRelatorioProducao, carregarLogoRelatorio } from "../services/gerar_relatorio_producao";
 import Sidebar from "../components/Sidebar";
 import { api } from "../services/api";
 import "../styles/padrao.css";
@@ -16,6 +15,7 @@ function Relatorio() {
 
     const [relatorio, setRelatorio] = useState(null);
     const [erro, setErro] = useState("");
+    const [gerandoPDF, setGerandoPDF] = useState(false);
     useEffect(() => {
         const controller = new AbortController();
         Promise.all([
@@ -104,48 +104,19 @@ function Relatorio() {
         };
     }, [relatorio]);
 
-    function downloadPDF() {
-        if (!relatorio) return;
-        const doc = new jsPDF();
-
-        doc.setFillColor("#1f4e79");
-        doc.rect(0, 0, 210, 30, "F");
-        doc.setTextColor("#ffffff");
-        doc.setFontSize(22);
-        doc.setFont("helvetica", "bold");
-        doc.text("Relatório de Produção", 105, 18, { align: "center" });
-
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "normal");
-        doc.text("Gerado em: " + new Date().toLocaleDateString(), 105, 28, { align: "center" });
-
-        doc.setTextColor("#000000");
-        doc.setFontSize(14);
-        doc.setFont("helvetica", "bold");
-        doc.text(`Resumo Geral - ${relatorio.mes}/${relatorio.ano}`, 20, 45);
-
-        doc.setFontSize(11);
-        doc.setFont("helvetica", "normal");
-        [`Produção Total: ${relatorio.producao_total} peças`, `Pedidos Concluídos: ${relatorio.pedidos_concluidos}`, `Pedidos Pendentes: ${relatorio.pedidos_pendentes}`, `Itens com Estoque Baixo: ${relatorio.estoque_baixo}`]
-            .forEach((linha, i) => doc.text(linha, 20, 55 + i * 7));
-
-        autotable(doc, {
-            startY: 90,
-            head: [[{ content: "Mês", styles: { fillColor: "#1f4e79", textColor: 255 } },
-                    { content: "Produção", styles: { fillColor: "#1f4e79", textColor: 255 } }]],
-            body: relatorio.producao.map(({ mes, total }) => [MESES[mes - 1], total]),
-            styles: { font: "helvetica", fontSize: 11, cellPadding: 4 },
-            alternateRowStyles: { fillColor: "#f2f2f2" },
-            headStyles: { halign: "center" },
-            bodyStyles: { halign: "center" },
-        });
-
-        const pageHeight = doc.internal.pageSize.height;
-        doc.setFontSize(9);
-        doc.setTextColor("#888888");
-        doc.text("© 2026 E-threads - Todos os direitos reservados", 105, pageHeight - 10, { align: "center" });
-
-        doc.save("relatorio-producao.pdf");
+    async function downloadPDF() {
+        if (!relatorio || gerandoPDF) return;
+        setGerandoPDF(true);
+        setErro('');
+        try {
+            const logo = await carregarLogoRelatorio();
+            const { doc, nomeArquivo } = gerarRelatorioProducao(relatorio, { logo });
+            doc.save(nomeArquivo);
+        } catch (error) {
+            setErro(error.message || 'Falha ao gerar o PDF. Tente novamente.');
+        } finally {
+            setGerandoPDF(false);
+        }
     }
 
     const mesAtual = (relatorio ? new Date(relatorio.ano, relatorio.mes - 1, 1) : new Date()).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
@@ -165,8 +136,8 @@ function Relatorio() {
                         <p className="page-subtitle">Estatísticas de {mesAtual}</p>
                     </div>
 
-                    <button className="btn btn-add" onClick={downloadPDF} disabled={!relatorio}>
-                        Baixar PDF
+                    <button className="btn btn-add" onClick={downloadPDF} disabled={!relatorio || gerandoPDF}>
+                        {gerandoPDF ? "Gerando PDF..." : "Baixar PDF"}
                     </button>
                 </div>
 

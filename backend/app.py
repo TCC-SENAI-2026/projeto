@@ -13,6 +13,7 @@ from config import load_config
 from database.connection import init_db
 from estoque import estoque_bp
 from login import login_bp
+from senha import senha_bp
 from pedidos import pedidos_bp
 from perfil import perfil_bp
 from relatorios import relatorios_bp
@@ -34,6 +35,7 @@ def create_app(test_config=None):
     init_csrf(app)
 
     app.register_blueprint(login_bp)
+    app.register_blueprint(senha_bp)
     app.register_blueprint(clientes_bp)
     app.register_blueprint(colaboradores_bp)
     app.register_blueprint(estoque_bp)

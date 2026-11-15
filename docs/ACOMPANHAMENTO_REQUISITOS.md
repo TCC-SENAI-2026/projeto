@@ -185,12 +185,12 @@ Todas as tarefas abaixo aguardam autorização individual para execução — ne
 
 1. **Requisitos relacionados:** decorre do fluxo de autenticação (nº 1, seção *Autenticação e Acesso*); não há requisito específico de "esqueci minha senha" em `requisitos.txt`, mas é parte do módulo de autenticação aprovado em `ARQUITETURA_TCC.md` §5.
 2. **Objetivo:** permitir que o usuário redefina a própria senha sem depender do admin.
-3. **Arquivos:** `backend/blueprints/login.py` ou novo `backend/blueprints/senha.py`.
-4. **Instruções técnicas:** `POST /solicitar-redefinicao` (e-mail) sempre retorna mensagem genérica; `POST /redefinir-senha` valida token `tipo='redefinicao'` e grava novo `senha_hash`.
+3. **Arquivos:** `backend/senha.py`, `backend/app.py`, `backend/resources/email_service.py`, `src/pages/Login.jsx`, `src/pages/DefinirSenha.jsx` e `src/App.jsx`.
+4. **Instruções técnicas:** `POST /solicitar-redefinicao` (RE) sempre retorna mensagem genérica; `POST /redefinir-senha` valida token `tipo='redefinicao'` e grava novo `senha_hash`.
 5. **Fluxo esperado:** idêntico ao de ativação, usando `tokens.tipo='redefinicao'`.
 6. **Dependências:** T02, T04 (reaproveita `seguranca.py`/`email_service.py`).
-7. **Critérios de aceitação:** resposta não revela se o e-mail existe; token de uso único; login funciona com a nova senha.
-8. **Testes/evidências:** teste cobrindo solicitação com e-mail existente/inexistente (resposta idêntica) e redefinição completa.
+7. **Critérios de aceitação:** resposta não revela se o RE existe; token de uso único válido por 24 horas; login funciona com a nova senha.
+8. **Testes/evidências:** teste cobrindo solicitação com RE existente/inexistente (resposta idêntica) e redefinição completa. Ver `docs/EVIDENCIAS_REDEFINICAO_SENHA.md` para resultados e limites da validação.
 
 ---
 
@@ -403,3 +403,8 @@ Esta seção registra divergências entre o código atual e o schema/arquitetura
 | P7 | `start.sh` | Script auxiliar na raiz inicia `backend/app.py` em background **e** depois chama `npm run start` — o `npm run start` agora é o launcher unificado, que subiria um segundo Flask na mesma porta. Após a Fase 03, `start.sh` ficou redundante e potencialmente conflitante. | Avaliar remoção ou simplificação em tarefa futura (sem urgência). |
 
 Nenhuma dessas pendências é bloqueador do login da Fase 03. Elas estão listadas aqui para preservar o conhecimento da auditoria e para que cada tarefa futura (T04, T07, T08, T09, T10, T12, T13, T14) comece com o diagnóstico já feito.
+
+
+### Ajuste aprovado da T05 — 14/11/2026
+
+Solicitação apenas por RE, sem aprovação administrativa. Envio ao e-mail cadastrado pelo SMTP existente (Mailtrap no desenvolvimento). Link de uso único válido por 24 horas, com hash no banco. Novo envio invalida links anteriores; conclusão invalida todos os links de redefinição da conta. Apenas contas ativas e já ativadas podem redefinir a senha. Resposta pública genérica. Implementação em `backend/senha.py` e rota pública `/redefinir-senha`, reutilizando `DefinirSenha.jsx`. Nenhum requisito marcado como concluído; validação real de MySQL/Mailtrap deve ser separada dos testes isolados.

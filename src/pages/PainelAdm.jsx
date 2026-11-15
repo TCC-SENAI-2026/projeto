@@ -29,25 +29,27 @@ function formatarDataHora(iso) {
 // Converte uma solicitação do service para o formato dos cards do painel
 function paraCard(s) {
     const perfil = s.tipo === 'perfil';
+    const estoque = Boolean(s.estoqueId);
+    const cliente = Boolean(s.clienteId);
     const exclusao = s.tipo === "exclusao";
 
     return {
         id: s.id,
-        origem: perfil ? "perfil" : exclusao ? "exclusao-pedido" : "edicao-pedido",
-        tipo: perfil ? "Altera\u00e7\u00e3o de perfil" : exclusao ? "Exclusão de pedido" : "Alteração de pedido",
-        categoria: perfil ? "Perfis" : "Pedidos",
+        origem: cliente ? (s.reativar ? "reativacao-cliente" : "inativacao-cliente") : estoque ? (s.reativar ? "reativacao-estoque" : "exclusao-estoque") : perfil ? "perfil" : exclusao ? "exclusao-pedido" : "edicao-pedido",
+        tipo: cliente ? (s.reativar ? "Reativação de cliente" : "Inativação de cliente") : estoque ? (s.reativar ? "Reativação de estoque" : "Exclusão de estoque") : perfil ? "Altera\u00e7\u00e3o de perfil" : exclusao ? "Exclusão de pedido" : "Alteração de pedido",
+        categoria: cliente ? "Clientes" : estoque ? "Estoque" : perfil ? "Perfis" : "Pedidos",
         status: STATUS_PAINEL[s.status],
         icone: exclusao ? "delete" : "edit",
         classe: exclusao ? "exclusao" : "alteracao",
-        identificacao: perfil ? `Perfil de ${s.solicitante}` : `Pedido #${s.pedidoId}`,
+        identificacao: cliente ? `Cliente #${s.clienteId} - ${s.resumo}` : estoque ? `Estoque #${s.estoqueId} - ${s.resumo}` : perfil ? `Perfil de ${s.solicitante}` : `Pedido #${s.pedidoId}`,
         pessoa: s.solicitante,
-        detalhe: exclusao
+        detalhe: exclusao || cliente || estoque
             ? s.resumo || "Sem identificação"
             : `${s.alteracoes.length} campo(s) alterado(s)`,
         data: formatarDataHora(s.criadoEm),
-        visualizar: exclusao ? "Visualizar" : "Ver alteração",
+        visualizar: exclusao || cliente || estoque ? "Visualizar" : "Ver alteração",
         autorizar: "Autorizar",
-        alteracoes: exclusao ? undefined : s.alteracoes,
+        alteracoes: exclusao || cliente || estoque ? undefined : s.alteracoes,
         motivo: s.motivo,
         justificativa: s.justificativa,
     };
@@ -195,6 +197,8 @@ function PainelAdm() {
                             Estoque
                         </button>
 
+                        <button className={`filtro ${filtroTipo === "Clientes" ? "ativo" : ""}`}
+                            onClick={() => setFiltroTipo("Clientes")}>Clientes</button>
                         <button className={`filtro ${filtroTipo === "Perfis" ? "ativo" : ""}`}
                             onClick={() => setFiltroTipo("Perfis")}>Perfis</button>
                     </div>

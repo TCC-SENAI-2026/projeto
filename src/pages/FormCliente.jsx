@@ -33,9 +33,6 @@ function FormCliente() {
         formData.append('estado', document.getElementById('estado').value)
         formData.append('observacoes', document.getElementById('observacoes').value)
 
-        const status = document.querySelector('input[name="status"]:checked')
-        formData.append('status', status ? status.value : 'ativo')
-
         if (clienteEditar && clienteEditar[11]) {
             formData.append('foto_atual', clienteEditar[11])
         }
@@ -56,7 +53,7 @@ function FormCliente() {
             navigate('/clientes')
         } catch (erro) {
             console.log('Erro ao salvar cliente:', erro)
-            alert(erro.status ? 'Não foi possível salvar o cliente.' : 'Não foi possível conectar ao servidor.')
+            alert(erro.message || 'Não foi possível salvar o cliente.')
         }
     }
 
@@ -292,7 +289,7 @@ function FormCliente() {
                             <h2>Informações Adicionais</h2>
 
                             <p className="section-help">
-                                Observações e status do cliente.
+                                Observações do cliente.
                             </p>
 
                             <div className="form-grid">
@@ -302,32 +299,6 @@ function FormCliente() {
                                     <textarea id="observacoes" placeholder="Ex: Cliente prefere contato por e-mail" />
                                 </div>
 
-                                <div className="form-field">
-
-                                    <p className="form-label-like">Status</p>
-
-                                    <div className="status-toggle">
-
-                                        <input
-                                            type="radio"
-                                            id="cliente_ativo_page"
-                                            name="status"
-                                            value="ativo"
-                                            defaultChecked
-                                        />
-                                        <label htmlFor="cliente_ativo_page">Ativo</label>
-
-                                        <input
-                                            type="radio"
-                                            id="cliente_inativo_page"
-                                            name="status"
-                                            value="inativo"
-                                        />
-                                        <label htmlFor="cliente_inativo_page">Inativo</label>
-
-                                    </div>
-
-                                </div>
 
                             </div>
 

@@ -76,13 +76,28 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
                     <div className="grade-tamanhos">
                         {TAMANHOS.map(tam => (
                             <div key={tam} className="item-tamanho">
-                                <label>{tam}</label>
+                                <label htmlFor={`qtd-${modelo.id}-${tam}`}>{tam}</label>
+                                <div className="controle-quantidade-tamanho">
                                 <input
+                                    id={`qtd-${modelo.id}-${tam}`}
                                     type="number"
                                     min="0"
+                                    step="1"
                                     value={dados.quantidades[tam] || 0}
                                     onChange={e => onChange(`qtd_${tam}`, e.target.value)}
                                 />
+                                <button type="button" className="botao-quantidade aumentar"
+                                    aria-label={`Aumentar quantidade ${tam} de ${modelo.label}`}
+                                    onClick={() => onChange(`qtd_${tam}`, (dados.quantidades[tam] || 0) + 1)}>
+                                    +
+                                </button>
+                                <button type="button" className="botao-quantidade diminuir"
+                                    aria-label={`Diminuir quantidade ${tam} de ${modelo.label}`}
+                                    disabled={!dados.quantidades[tam]}
+                                    onClick={() => onChange(`qtd_${tam}`, Math.max(0, (dados.quantidades[tam] || 0) - 1))}>
+                                    −
+                                </button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -165,6 +180,20 @@ function SelecionarProdutos() {
                 if (!ativo) return;
                 const lista = produtos.map(p => ({ ...p, label: p.nome }));
                 setProdutosEstoque(lista);
+                let logoCliente = null;
+                try {
+                    logoCliente = JSON.parse(localStorage.getItem('dadosFicha') || '{}')?.logoCliente;
+                } catch {
+                    // Um rascunho inválido não impede selecionar os produtos.
+                }
+                setArtes(typeof logoCliente === 'string' && logoCliente
+                    ? Object.fromEntries(lista.map(p => [p.id, {
+                        logoCliente,
+                        nome: logoCliente,
+                        preview: `/api/static/uploads/${encodeURIComponent(logoCliente)}`,
+                        temPreview: TIPOS_IMAGEM.has(obterExtensao(logoCliente)),
+                    }]))
+                    : {});
                 setModelos(Object.fromEntries(lista.map(p => [p.id, {
                     personalizacao: '', tecido: '', cor: '', material_id: null, material_cor_id: null, local: '',
                     quantidades: {}, selecionado: false,
@@ -180,7 +209,7 @@ function SelecionarProdutos() {
             const atual = { ...prev[modeloId] };
             if (campo.startsWith('qtd_')) {
                 const tam = campo.replace('qtd_', '');
-                atual.quantidades = { ...atual.quantidades, [tam]: parseInt(valor) || 0 };
+                atual.quantidades = { ...atual.quantidades, [tam]: Math.max(0, parseInt(valor) || 0) };
             } else {
                 atual[campo] = valor;
             }

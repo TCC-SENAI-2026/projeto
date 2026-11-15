@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import FichaConteudo from "./FichaConteudo";
-import { infoStatus } from "../utils/status";
-import { infoPrioridade } from "../utils/prioridade";
 
 // "2026-11-04" -> Date local (new Date("2026-11-04") daria o dia anterior no Brasil)
 function lerData(texto) {
@@ -10,11 +8,6 @@ function lerData(texto) {
     const [ano, mes, dia] = String(texto).slice(0, 10).split("-").map(Number);
     if (!ano || !mes || !dia) return null;
     return new Date(ano, mes - 1, dia);
-}
-
-function formatarData(texto) {
-    const d = lerData(texto);
-    return d ? d.toLocaleDateString("pt-BR") : "—";
 }
 
 // Retorna "atrasado", "urgente" (hoje ou até 2 dias) ou ""
@@ -32,8 +25,6 @@ function situacaoPrazo(texto, status) {
 }
 
 function FichaModal({ ficha, onFechar, onIniciar, onFinalizar, bloqueado = false }) {
-    const st = infoStatus(ficha);
-    const prio = infoPrioridade(ficha);
     const dados = ficha.ficha || {};
     const prazo = situacaoPrazo(dados.entrega, ficha.status);
 
@@ -81,42 +72,7 @@ function FichaModal({ ficha, onFechar, onIniciar, onFinalizar, bloqueado = false
                 </div>
 
                 <div className="fc-modal-body">
-                    {/* RESUMO DO PEDIDO */}
-                    <div className="fc-resumo">
-                        <div>
-                            <strong>Cliente</strong>
-                            <span>{dados.cliente || "—"}</span>
-                        </div>
-                        <div>
-                            <strong>Contato</strong>
-                            <span>{dados.contato || "—"}</span>
-                        </div>
-                        <div>
-                            <strong>E-mail</strong>
-                            <span>{dados.email || "—"}</span>
-                        </div>
-                        <div>
-                            <strong>Pedido em</strong>
-                            <span>{formatarData(dados.dataPedido)}</span>
-                        </div>
-                        <div>
-                            <strong>Entrega</strong>
-                            <span className={`fc-prazo ${prazo}`}>
-                                {formatarData(dados.entrega)}
-                                {prazo === "atrasado" && " (atrasado)"}
-                                {prazo === "urgente" && " (urgente)"}
-                            </span>
-                        </div>
-
-                        {dados.observacao && (
-                            <div className="fc-resumo-obs">
-                                <strong>Observações gerais</strong>
-                                <span>{dados.observacao}</span>
-                            </div>
-                        )}
-                    </div>
-
-                    <FichaConteudo pedido={ficha.pedido} ficha={ficha.ficha} pedidoId={ficha.id} />
+                    <FichaConteudo pedido={ficha.pedido} ficha={ficha.ficha} situacaoEntrega={prazo} />
                 </div>
 
                 {/* RODAPÉ: ação conforme o status. Não sai na impressão. */}

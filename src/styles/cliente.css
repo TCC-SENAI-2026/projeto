@@ -199,6 +199,34 @@
 }
 
 /* Modal de detalhes */
+.solicitacao-justificativa-modal > form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.solicitacao-justificativa-modal textarea.cliente-observacoes {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 120px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.solicitacao-justificativa-modal textarea:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.solicitacao-justificativa-modal .modal-actions {
+    flex-wrap: wrap;
+}
+
+.solicitacao-justificativa-modal button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
 .cliente-modal.cliente-detalhes-modal {
     display: flex;
     flex-direction: column;

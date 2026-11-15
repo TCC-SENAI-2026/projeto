@@ -1,3 +1,4 @@
+import SolicitarInativacao from '../components/SolicitarInativacao';
 import Modal from "../components/Modal"
 import Sidebar from "../components/Sidebar"
 import { useState, useEffect } from "react"
@@ -9,6 +10,7 @@ import { api } from "../services/api";
 function Clientes() {
 
     const navigate = useNavigate();
+    const [inativacao, setInativacao] = useState(null);
     const [modalAberto, setModalAberto] = useState(false);
     const [clienteSelecionado, setClienteSelecionado] = useState(null);
     const [clientes, setClientes] = useState([]);
@@ -48,6 +50,7 @@ function Clientes() {
     return (
         <>
             <Sidebar />
+            {inativacao && <SolicitarInativacao alvo="cliente" id={inativacao[13]} nome={inativacao[0]} reativar={!inativacao[12]} onClose={() => setInativacao(null)} />}
 
             <div className="container">
 
@@ -289,6 +292,11 @@ function Clientes() {
 
 
                             <div className="modal-actions">
+                                <button type="button" className="btn-sec" onClick={() => {
+                                    setInativacao(clienteSelecionado);
+                                    setModalAberto(false);
+                                }}>{clienteSelecionado[12] ? 'Solicitar inativação' : 'Solicitar reativação'}</button>
+
 
                                 <button
                                     type="button"

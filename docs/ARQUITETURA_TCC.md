@@ -205,7 +205,7 @@ backend/
 4. E-mail enviado ao colaborador com o RE e o link de ativação (via Gmail/SMTP — fluxo já implementado em `resources/email_service.py`, reaproveitado).
 5. Colaborador acessa o link, define a própria senha (`POST /definir-senha`); backend valida o token, grava `senha_hash`, marca `usado_em`, define `conta_ativada=1`.
 6. Login passa a funcionar normalmente com RE + senha.
-- **Redefinição de senha** (fluxo hoje inexistente, a implementar): `POST /solicitar-redefinicao` recebe e-mail e sempre responde mensagem genérica; se o e-mail existir, cria token `tipo='redefinicao'` e envia link; `POST /redefinir-senha` segue a mesma lógica de `/definir-senha`.
+- **Redefinição de senha** (T05, ajuste aprovado em 14/11/2026): `POST /solicitar-redefinicao` recebe RE e sempre responde mensagem genérica; se o RE corresponder a uma conta ativa e já ativada, cria token `tipo='redefinicao'` e envia ao e-mail cadastrado um link de uso único válido por 24 horas, sem aprovação administrativa (Mailtrap no desenvolvimento). Novo envio invalida links anteriores; `POST /redefinir-senha` valida o token, grava o hash da senha e inutiliza os links de redefinição da conta na mesma transação.
 
 ## 6. Fluxos principais
 

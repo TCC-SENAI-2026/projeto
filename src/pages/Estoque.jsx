@@ -1,3 +1,4 @@
+import SolicitarInativacao from '../components/SolicitarInativacao';
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { estaBaixo, formatarQuantidadeEstoque } from "../utils/estoque";
@@ -13,10 +14,12 @@ import "../styles/cliente.css";
 
 function Estoque() {
     const navigate = useNavigate();
+    const [exclusao, setExclusao] = useState(null);
 
     // O filtro vem da URL: /estoque?filtro=baixo
     const [searchParams, setSearchParams] = useSearchParams();
     const filtro = searchParams.get("filtro") || "";
+    const inativos = filtro === 'inativos';
 
     const [estoque, setEstoque] = useState([]);
     const [pesquisa, setPesquisa] = useState("");
@@ -33,28 +36,22 @@ function Estoque() {
     }, [itemSelecionado]);
 
     useEffect(() => {
-        carregarEstoque();
-    }, []);
+        const controller = new AbortController();
+        setEstoque([]);
+        setItemSelecionado(null);
+        carregarEstoque(controller.signal);
+        return () => controller.abort();
+    }, [inativos]);
 
-    async function carregarEstoque() {
+    async function carregarEstoque(signal) {
         try {
-            const data = await api.get('/listar-estoque', { lista: true });
+            const data = await api.get(`/listar-estoque?status=${inativos ? 'inativos' : 'ativos'}`, { lista: true, signal });
+            if (signal.aborted) return;
             setEstoque(Array.isArray(data) ? data : []);
             setErroApi("");
         } catch (erro) {
+            if (signal.aborted) return;
             setErroApi("Não foi possível carregar o estoque. Verifique a conexão.");
-        }
-    }
-
-    async function excluirItem(id) {
-        const confirmar = window.confirm("Deseja realmente excluir este item?");
-        if (!confirmar) return;
-
-        try {
-            await api.delete(`/excluir-estoque/${id}`);
-            carregarEstoque();
-        } catch (erro) {
-            alert(erro.message || "Erro ao excluir item.");
         }
     }
 
@@ -80,6 +77,7 @@ function Estoque() {
     return (
         <>
             <Sidebar />
+            {exclusao && <SolicitarInativacao alvo="estoque" id={exclusao.id} nome={exclusao.nome_item} reativar={!exclusao.ativo} onClose={() => setExclusao(null)} />}
 
             <div className="container">
 
@@ -118,6 +116,7 @@ function Estoque() {
                             <option value="produtos">Produtos</option>
                             <option value="materiais">Materiais</option>
                             <option value="baixo">Estoque Baixo</option>
+                            <option value="inativos">Inativos</option>
                         </select>
 
                         <button
@@ -144,7 +143,7 @@ function Estoque() {
                 {/* ALERTA DE ESTOQUE BAIXO */}
                 {(() => {
                     const baixos = estoque.filter(estaBaixo);
-                    if (!baixos.length || filtro === "baixo") return null;
+                    if (!baixos.length || filtro === "baixo" || inativos) return null;
                     return (
                         <div
                             className="alerta-estoque-baixo"
@@ -234,8 +233,8 @@ function Estoque() {
                                         <div className="status-col info-block">
                                             <span className="mobile-field-label">Status</span>
 
-                                            <span className={baixo ? "status baixo" : "status ok"}>
-                                                {baixo ? "Baixo estoque" : "Disponível"}
+                                            <span className={!item.ativo || baixo ? "status baixo" : "status ok"}>
+                                                {!item.ativo ? "Inativo" : baixo ? "Baixo estoque" : "Disponível"}
                                             </span>
                                         </div>
 
@@ -243,20 +242,21 @@ function Estoque() {
                                         <div className="actions" onClick={(evento) => evento.stopPropagation()}>
                                             <span className="mobile-field-label">Ações</span>
 
-                                            <button
+                                            {Boolean(item.ativo) && <button
                                                 className="action-btn"
                                                 title="Editar"
                                                 onClick={() => navigate(`/editar-estoque/${item.id}`)}
                                             >
                                                 <span className="material-icons">edit</span>
-                                            </button>
+                                            </button>}
 
                                             <button
                                                 className="action-btn"
-                                                title="Excluir"
-                                                onClick={() => excluirItem(item.id)}
+                                                title={item.ativo ? "Excluir" : "Solicitar reativação"}
+                                                aria-label={item.ativo ? "Excluir item" : "Solicitar reativação do item"}
+                                                onClick={() => setExclusao(item)}
                                             >
-                                                <span className="material-icons">delete</span>
+                                                <span className="material-icons">{item.ativo ? 'delete' : 'restore'}</span>
                                             </button>
                                         </div>
                                     </div>
@@ -290,9 +290,9 @@ function Estoque() {
                                     <p className="modal-subtitle">Informações do item de estoque</p>
                                 </div>
                             </div>
-                            <span className={`cliente-status ${estaBaixo(itemSelecionado) ? "inativo" : "ativo"}`}>
+                            <span className={`cliente-status ${!itemSelecionado.ativo || estaBaixo(itemSelecionado) ? "inativo" : "ativo"}`}>
                                 <span className="status-dot"></span>
-                                {estaBaixo(itemSelecionado) ? "Baixo estoque" : "Disponível"}
+                                {!itemSelecionado.ativo ? "Inativo" : estaBaixo(itemSelecionado) ? "Baixo estoque" : "Disponível"}
                             </span>
                         </div>
                         <div className="modal-body cliente-detalhes-body">
@@ -339,6 +339,12 @@ function Estoque() {
                                     <p className="cliente-observacoes">{itemSelecionado.observacoes}</p>
                                 </section>
                             )}
+                        </div>
+                        <div className="modal-actions">
+                            <button type="button" className="btn-sec cliente-acao-editar" onClick={() => {
+                                setExclusao(itemSelecionado);
+                                setItemSelecionado(null);
+                            }}>{itemSelecionado.ativo ? 'Solicitar exclusão' : 'Solicitar reativação'}</button>
                         </div>
                     </>
                 )}

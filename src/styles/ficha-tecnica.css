@@ -832,8 +832,13 @@ body.imprimindo-modal {
 }
 
 .fc-cab-grid .fc-campo {
+    grid-template-columns: minmax(0, 110px) minmax(0, 1fr);
     border-right: 1px solid #cbd5e1;
     border-bottom: 1px solid #cbd5e1;
+}
+
+.fc-cab-grid .fc-campo > strong {
+    border-right-color: #cbd5e1;
 }
 
 .fc-cab-grid .fc-campo:last-child,

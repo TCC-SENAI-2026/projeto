@@ -30,18 +30,29 @@ def montar_link(token):
 def enviar_email(destino, assunto, corpo):
     msg = EmailMessage()
     msg['Subject'] = assunto
-    msg['From'] = EMAIL_REMETENTE
+    msg['From'] = os.environ.get('EMAIL_REMETENTE', EMAIL_REMETENTE)
     msg['To'] = destino
     msg.set_content(corpo)
 
-    with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15) as servidor:
+    with smtplib.SMTP(os.environ.get('SMTP_HOST', SMTP_HOST), int(os.environ.get('SMTP_PORT', SMTP_PORT)), timeout=15) as servidor:
             #servidor.set_debuglevel(1)  # descomente para ver a conversa com o servidor
         servidor.ehlo()
         servidor.starttls()
         servidor.ehlo()
         servidor.esmtp_features['auth'] = 'PLAIN LOGIN'
-        servidor.login(SMTP_USER, SMTP_PASS)
+        servidor.login(os.environ.get('SMTP_USER', SMTP_USER), os.environ.get('SMTP_PASS', SMTP_PASS))
         servidor.send_message(msg)
+
+
+def enviar_link_redefinicao(nome, email, token):
+    primeiro_nome = nome.split()[0] if nome else ''
+    link = f"{os.environ.get('FRONT_URL', FRONT_URL).rstrip('/')}/redefinir-senha?token={token}"
+    enviar_email(email, 'Redefina sua senha de acesso',
+        f'Olá, {primeiro_nome}!\n\n'
+        f'Recebemos uma solicitação para redefinir sua senha no {NOME_SISTEMA}.\n'
+        'O link abaixo é válido por 24 horas e pode ser usado uma única vez:\n\n'
+        f'{link}\n\nSe você não solicitou a redefinição, ignore esta mensagem. '
+        'Sua senha permanece a mesma até a conclusão da troca.')
 
 def enviar_sms(telefone, mensagem):
     # SMS simulado: aparece no console do Flask.

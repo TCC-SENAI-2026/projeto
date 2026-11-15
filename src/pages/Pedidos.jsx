@@ -1,3 +1,4 @@
+import SolicitarInativacao from '../components/SolicitarInativacao';
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
@@ -21,6 +22,7 @@ function Pedidos() {
     const [pedidos, setPedidos] = useState([]);
     const [fichaAberta, setFichaAberta] = useState(null);
     const [pedidoEditando, setPedidoEditando] = useState(null);
+    const [pedidoExcluindo, setPedidoExcluindo] = useState(null);
     const [busca, setBusca] = useState("");
     const [ordemCliente, setOrdemCliente] = useState("asc"); // "asc" ou "desc"
     const [clientesAbertos, setClientesAbertos] = useState([]);
@@ -88,27 +90,8 @@ function Pedidos() {
 
 
     // O funcionário não exclui direto: envia uma solicitação, com o motivo, para o adm aprovar.
-    async function pedirExclusao(p) {
-        if (temPendente(p.id)) return;
-
-        const justificativa = window.prompt(
-            `Por que você quer excluir o pedido #${p.id}?\n` +
-            "O administrador vai ler sua resposta antes de decidir."
-        );
-        if (justificativa === null) return; // clicou em Cancelar
-
-        try {
-            // TODO(BACK): POST /api/solicitacoes com tipo "exclusao" (ver solicitacoesService.js)
-            await solicitar({
-                tipo: "exclusao",
-                pedidoId: p.id,
-                resumo: nomeCliente(p),
-                justificativa,
-            });
-        } catch (erro) {
-            // Ex.: motivo curto demais ("Explique o motivo da exclusão...")
-            alert(erro.message || "Não foi possível enviar a solicitação.");
-        }
+    function pedirExclusao(p) {
+        if (!temPendente(p.id)) setPedidoExcluindo(p);
     }
 
     function mudarFiltro(e) {
@@ -389,6 +372,17 @@ function Pedidos() {
                     onFinalizar={() => mudarStatus(fichaAberta.id, "finalizado")}
                 />
             )}
+
+            {pedidoExcluindo && <SolicitarInativacao
+                alvo="pedido"
+                id={pedidoExcluindo.id}
+                nome={`#${pedidoExcluindo.numero_pedido || pedidoExcluindo.id} - ${nomeCliente(pedidoExcluindo)}`}
+                onClose={() => setPedidoExcluindo(null)}
+                onEnviar={justificativa => solicitar({
+                    tipo: 'exclusao', pedidoId: pedidoExcluindo.id,
+                    resumo: nomeCliente(pedidoExcluindo), justificativa,
+                })}
+            />}
 
             {pedidoEditando && (
                 <EditarPedidoModal

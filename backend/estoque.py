@@ -213,7 +213,9 @@ def cadastrar_estoque():
 @estoque_bp.route('/listar-estoque', methods=['GET'])
 @login_required
 def listar_estoque():
-
+    status = request.args.get('status', 'ativos')
+    if status not in ('ativos', 'inativos'):
+        return jsonify(success=False, msg='Status inválido.'), 400
     connection = None
     cursor = None
 
@@ -225,16 +227,16 @@ def listar_estoque():
 
         SQL = """
             SELECT
-                id, tipo_item, nome_item, categoria, unidade_medida,
+                id, tipo_item, nome_item, categoria, unidade_medida, ativo,
                 fornecedor, quantidade_atual, estoque_minimo,
                 valor_unitario, observacoes, catalogo_item_id, tem_variacoes,
                 (imagem_dados IS NOT NULL) AS tem_imagem
             FROM estoque
-            WHERE ativo = 1
+            WHERE ativo = %s
             ORDER BY id DESC;
         """
 
-        cursor.execute(SQL)
+        cursor.execute(SQL, (0 if status == 'inativos' else 1,))
 
         estoque = cursor.fetchall()
         _anexar_cores(cursor, estoque)
@@ -462,30 +464,8 @@ def editar_estoque(id):
 @estoque_bp.route('/excluir-estoque/<int:id>', methods=['DELETE'])
 @login_required
 def excluir_estoque(id):
-    connection = None
-    cursor = None
-    try:
-        connection = database_connection.open_connection()
-        cursor = connection.cursor(dictionary=True)
-
-        # Usa inativação lógica para preservar integridade referencial
-        # (pedido_itens tem FK RESTRICT para estoque — DELETE físico quebraria pedidos vinculados)
-        cursor.execute("UPDATE estoque SET ativo = 0 WHERE id = %s AND ativo = 1", (id,))
-        connection.commit()
-
-        if cursor.rowcount == 0:
-            return jsonify({'message': 'Item não encontrado ou já inativo.', 'success': False}), 404
-
-        return jsonify({'message': 'Item excluído com sucesso!', 'success': True}), 200
-
-    except Exception as erro:
-        return jsonify({'message': 'Erro ao excluir item.', 'erro': str(erro), 'success': False}), 500
-
-    finally:
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
+    from solicitacoes import solicitar_inativacao
+    return solicitar_inativacao('estoque', id, request.get_json(silent=True))
 
 
 # ==================================================

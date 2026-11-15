@@ -79,7 +79,7 @@ def ler_formulario():
         'email':    texto('email'),
         'endereco': montar_endereco(texto('rua'), texto('numero'), texto('municipio'),
                                     texto('estado'), texto('cep')),
-        'ativo':    1 if request.form.get('status') == 'ativo' else 0,
+        'ativo':    1,
     }
 
 
@@ -157,6 +157,15 @@ def editar_cliente(id_cliente):
         if erro:
             return jsonify({'status': 'erro', 'msg': erro}), 400
 
+        with db_cursor() as cursor:
+            cursor.execute('SELECT ativo FROM clientes WHERE id = %s', (id_cliente,))
+            atual = cursor.fetchone()
+        if not atual:
+            return jsonify(success=False, msg='Cliente inexistente.'), 404
+        status_enviado = request.form.get('status')
+        if status_enviado is not None and status_enviado != ('ativo' if atual['ativo'] else 'inativo'):
+            return jsonify(success=False, msg='Mudanças de status exigem solicitação e aprovação administrativa.'), 403
+
         try:
             logo = salvar_logo()
         except ValueError as erro_arquivo:
@@ -168,10 +177,10 @@ def editar_cliente(id_cliente):
             cursor.execute("""
                 UPDATE clientes
                 SET nome = %s, email = %s, telefone = %s, endereco = %s,
-                    logo_url = COALESCE(%s, logo_url), ativo = %s
+                    logo_url = COALESCE(%s, logo_url)
                 WHERE id = %s;
             """, (dados['nome'], dados['email'], dados['telefone'], dados['endereco'],
-                  logo, dados['ativo'], id_cliente))
+                  logo, id_cliente))
 
         return jsonify({'status': 'ok'})
 
@@ -191,8 +200,5 @@ def editar_cliente(id_cliente):
 @clientes_bp.route('/excluir-cliente/<int:id_cliente>', methods=['POST'])
 @login_required
 def excluir_cliente(id_cliente):
-    # Exclusão lógica: pedidos continuam apontando para o cliente.
-    with db_cursor(commit=True) as cursor:
-        cursor.execute("UPDATE clientes SET ativo = 0 WHERE id = %s;", (id_cliente,))
-
-    return jsonify({'status': 'ok'})
+    from solicitacoes import solicitar_inativacao
+    return solicitar_inativacao('cliente', id_cliente, request.get_json(silent=True))
