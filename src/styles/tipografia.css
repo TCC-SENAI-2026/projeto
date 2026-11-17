@@ -1,0 +1,111 @@
+/* Escala de leitura das telas; preserva os estilos próprios de impressão. */
+@media screen {
+    body {
+        font-size: 18px;
+    }
+
+    .page-title,
+    .painel-header h1 {
+        font-size: 30px;
+    }
+
+    .form-title {
+        font-size: clamp(26px, 2.2vw, 32px);
+    }
+
+    .page-subtitle,
+    .form-subtitle,
+    .painel-header p,
+    .form-field input,
+    .form-field select,
+    .form-field textarea,
+    .search,
+    .modal-value,
+    .cliente-detalhes-modal .modal-value,
+    .cliente-observacoes,
+    .cliente-detalhes-modal .cliente-observacoes {
+        font-size: 18px;
+        line-height: 1.5;
+    }
+
+    .form-section h2,
+    .side-title,
+    .solicitacoes-header h2,
+    .equipe-card-header h3 {
+        font-size: 22px;
+    }
+
+    .form-field label,
+    .section-help,
+    .btn,
+    .btn-filter,
+    .btn-page-sec,
+    .btn-sec,
+    .btn-salvar,
+    .filtro,
+    .filtro-status,
+    .solicitacao-acoes button,
+    .equipe-table,
+    .solicitacao-titulo h3,
+    .solicitacao-detalhes,
+    .menu > a,
+    .menu > button,
+    .menu-dropdown summary {
+        font-size: 17px;
+    }
+
+    .solicitacao-acoes button {
+        height: auto;
+        min-height: 40px;
+        padding: 10px 12px;
+    }
+
+    .equipe-table thead th,
+    .estoque-header span,
+    .table-header,
+    .equipe-card-header small,
+    .equipe-status,
+    .status,
+    .status-pendentes,
+    .status-aprovadas,
+    .status-recusadas,
+    .solicitacao-data,
+    .form-badge,
+    .modal-label,
+    .cliente-detalhes-modal .modal-label,
+    .mobile-field-label {
+        font-size: 14px;
+    }
+
+    .produto p,
+    .estoque-pagina .estoque-main p {
+        font-size: 18px;
+        line-height: 1.4;
+    }
+
+    .empresa p,
+    .quantidade p {
+        font-size: 18px;
+    }
+
+    .aviso-topo {
+        font-size: 17px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .page-title,
+        .painel-header h1 {
+            font-size: 26px;
+        }
+
+        .mobile-field-label,
+        .equipe-table tbody td[data-label]::before {
+            font-size: 14px;
+        }
+
+        .solicitacao-acoes button {
+            min-height: 44px;
+        }
+    }
+}

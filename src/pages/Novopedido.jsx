@@ -1,3 +1,5 @@
+import { useAvisos } from '../hooks/useAvisos';
+import { mascaraTelefone } from '../utils/formatacao';
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
@@ -5,22 +7,13 @@ import "../styles/padrao.css";
 import "../styles/formulario.css";
 import "../styles/Novopedido.css";
 
-// Aplica máscara de telefone brasileiro conforme o usuário digita
-function mascaraTelefone(valor) {
-    const nums = valor.replace(/\D/g, '').slice(0, 11);
-    if (nums.length === 0) return '';
-    if (nums.length <= 2)  return `(${nums}`;
-    if (nums.length <= 6)  return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
-    if (nums.length <= 10) return `(${nums.slice(0,2)}) ${nums.slice(2,6)}-${nums.slice(6)}`;
-    return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
-}
-
 function validarTelefone(valor) {
     const nums = valor.replace(/\D/g, '');
     return nums.length >= 10 && nums.length <= 11;
 }
 
 function NovoPedido() {
+    const { avisar } = useAvisos();
     const navigate = useNavigate();
     const location = useLocation();
     const clienteInicial = location.state?.cliente;
@@ -49,11 +42,11 @@ function NovoPedido() {
         setForm(prev => ({ ...prev, [name]: value }));
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
 
         if (!form.nomeCliente.trim()) {
-            alert('Digite o nome do cliente.');
+            await avisar('Digite o nome do cliente.');
             return;
         }
         if (form.contato && !validarTelefone(form.contato)) {
@@ -61,7 +54,7 @@ function NovoPedido() {
             return;
         }
         if (form.prazoEntrega && form.dataPedido && form.prazoEntrega < form.dataPedido) {
-            alert('O prazo de entrega não pode ser anterior à data do pedido.');
+            await avisar('O prazo de entrega não pode ser anterior à data do pedido.');
             return;
         }
 

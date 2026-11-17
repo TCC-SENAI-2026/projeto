@@ -1,14 +1,23 @@
 import { api } from './api.js';
 
 // IDs das solicitações que o usuário já fechou (visto no banner).
-// Guardados no localStorage por ser uma preferência visual do navegador.
+// Histórico persistente por usuário; sair da sessão não deve apagá-lo.
 const CHAVE_VISTAS = 'solicitacoes_vistas';
 const CHAVE_PRAZOS = 'solicitacoes_prazos_avisos';
 export const DURACAO_AVISO = 6000;
+let contaAvisos = null;
+
+export function definirContaAvisos(id) {
+    contaAvisos = id == null ? null : String(id);
+}
+
+function chaveDaConta(chave) {
+    return contaAvisos === null ? chave : `${chave}:${contaAvisos}`;
+}
 
 function lerPrazos() {
     try {
-        const valor = JSON.parse(localStorage.getItem(CHAVE_PRAZOS) || '{}');
+        const valor = JSON.parse(localStorage.getItem(chaveDaConta(CHAVE_PRAZOS)) || '{}');
         return valor && typeof valor === 'object' && !Array.isArray(valor) ? valor : {};
     } catch {
         return {};
@@ -17,7 +26,7 @@ function lerPrazos() {
 
 function lerVistas() {
     try {
-        return new Set(JSON.parse(localStorage.getItem(CHAVE_VISTAS) || '[]'));
+        return new Set(JSON.parse(localStorage.getItem(chaveDaConta(CHAVE_VISTAS)) || '[]'));
     } catch {
         return new Set();
     }
@@ -25,7 +34,7 @@ function lerVistas() {
 
 function salvarVistas(conjunto) {
     try {
-        localStorage.setItem(CHAVE_VISTAS, JSON.stringify([...conjunto]));
+        localStorage.setItem(chaveDaConta(CHAVE_VISTAS), JSON.stringify([...conjunto]));
     } catch {
         // ignora falha de armazenamento
     }
@@ -52,7 +61,7 @@ export function prepararAvisos(solicitacoes, { notificar = false } = {}) {
         };
     });
     if (notificar) {
-        try { localStorage.setItem(CHAVE_PRAZOS, JSON.stringify(prazos)); } catch { /* preferência local */ }
+        try { localStorage.setItem(chaveDaConta(CHAVE_PRAZOS), JSON.stringify(prazos)); } catch { /* preferência local */ }
     }
     return dados;
 }

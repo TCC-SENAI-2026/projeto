@@ -40,10 +40,10 @@ class TestControlePecas(unittest.TestCase):
                 numero_pedido INTEGER, colaborador_id INTEGER, data_pedido TEXT,
                 prazo_entrega TEXT, prioridade TEXT, obs_geral TEXT,
                 created_at TEXT, data_conclusao TEXT);
-            CREATE TABLE clientes (id INTEGER PRIMARY KEY, nome TEXT, telefone TEXT, email TEXT, ativo INTEGER DEFAULT 1);
+            CREATE TABLE clientes (id INTEGER PRIMARY KEY, nome TEXT, telefone TEXT, email TEXT, ativo INTEGER DEFAULT 1, logo_url TEXT, cadastro_manual INTEGER DEFAULT 1);
             CREATE TABLE colaboradores (id INTEGER PRIMARY KEY, nome TEXT);
             CREATE TABLE catalogo_itens (id INTEGER PRIMARY KEY, tipo TEXT, nome TEXT, ativo INTEGER DEFAULT 1);
-            INSERT INTO clientes VALUES (1, 'Cliente Teste', NULL, NULL, 1);
+            INSERT INTO clientes (id, nome, telefone, email, ativo) VALUES (1, 'Cliente Teste', NULL, NULL, 1);
             INSERT INTO colaboradores VALUES (1, 'Colaborador Teste');
             INSERT INTO catalogo_itens (id, tipo, nome) VALUES
                 (1, 'produto', 'Camiseta'), (2, 'tecido', 'Algodao'),
@@ -192,6 +192,84 @@ class TestControlePecas(unittest.TestCase):
             'produtos': [dict(item='Nome enviado pelo cliente', estoque_id=estoque_id,
                               grade={'M': 3}, detalhes=dict(material_id=material_id, material_cor_id=material_cor_id, local='Gola'))],
         })
+
+    def test_confirmacao_baixa_imediatamente_e_status_nao_desconta_novamente(self):
+        resposta = self.novo_pedido(1)
+        self.assertEqual(resposta.status_code, 201, resposta.get_json())
+        pid = resposta.get_json()['data']['id']
+        self.assertEqual(self.saldos()[1], 7)
+        self.assertEqual(self.db.execute('SELECT status FROM pedidos WHERE id=?', (pid,)).fetchone()[0], 'pendente')
+        for status in ('producao', 'finalizado'):
+            resposta = self.client.patch(f'/pedidos/{pid}/status', json={'status': status})
+            self.assertEqual(resposta.status_code, 200, resposta.get_json())
+            self.assertEqual(self.saldos()[1], 7)
+        resposta = self.client.patch(f'/pedidos/{pid}/status', json={'status': 'finalizado'})
+        self.assertEqual(resposta.status_code, 400)
+        self.assertEqual(self.saldos()[1], 7)
+        self.assertEqual(self.db.execute('SELECT COUNT(*) FROM estoque_movimentacoes').fetchone()[0], 1)
+
+    def test_saldo_exato_permite_confirmar_e_zera_estoque(self):
+        self.db.execute('UPDATE estoque SET quantidade_atual=3 WHERE id=1')
+        self.db.commit()
+        resposta = self.novo_pedido(1)
+        self.assertEqual(resposta.status_code, 201, resposta.get_json())
+        self.assertEqual(self.saldos()[1], 0)
+
+    def test_segundo_pedido_considera_baixa_do_primeiro(self):
+        self.db.execute('UPDATE estoque SET quantidade_atual=5 WHERE id=1')
+        self.db.commit()
+        self.assertEqual(self.novo_pedido(1).status_code, 201)
+        resposta = self.novo_pedido(1)
+        self.assertEqual(resposta.status_code, 400)
+        self.assertIn('Quantidade disponível: 2', resposta.get_json()['msg'])
+        self.assertEqual(self.saldos()[1], 2)
+
+    def test_edicao_pendente_ajusta_baixa_da_criacao(self):
+        resposta = self.novo_pedido(1)
+        pid = resposta.get_json()['data']['id']
+        item_id = self.db.execute('SELECT id FROM pedido_itens WHERE pedido_id=?', (pid,)).fetchone()[0]
+        for quantidade, saldo in ((5, 5), (2, 8)):
+            resposta = self.client.put(f'/pedidos/{pid}', json={'pedido': {'produtos': [
+                dict(item='Camiseta', estoque_id=1, detalhes={'id': item_id, 'local': 'Gola', 'material_id': 6, 'material_cor_id': 101}, grade={'M': quantidade})
+            ]}})
+            self.assertEqual(resposta.status_code, 200, resposta.get_json())
+            self.assertEqual(self.saldos()[1], saldo)
+        resposta = self.client.delete(f'/pedidos/{pid}')
+        self.assertEqual(resposta.status_code, 200, resposta.get_json())
+        self.assertEqual(self.saldos()[1], 10)
+
+    def test_exclusao_antes_de_iniciar_devolve_baixa_da_criacao_uma_vez(self):
+        resposta = self.novo_pedido(1)
+        pid = resposta.get_json()['data']['id']
+        self.assertEqual(self.saldos()[1], 7)
+        resposta = self.client.delete(f'/pedidos/{pid}')
+        self.assertEqual(resposta.status_code, 200, resposta.get_json())
+        self.assertEqual(self.saldos()[1], 10)
+        self.assertNotEqual(self.client.delete(f'/pedidos/{pid}').status_code, 200)
+        self.assertEqual(self.saldos()[1], 10)
+
+    def test_criacao_rejeita_quantidade_maior_que_saldo_sem_gravar_pedido(self):
+        self.db.execute('UPDATE estoque SET quantidade_atual = 2 WHERE id = 1')
+        self.db.commit()
+        resposta = self.novo_pedido(1)
+        self.assertEqual(resposta.status_code, 400)
+        self.assertIn('Estoque insuficiente', resposta.get_json()['msg'])
+        self.assertIn('Quantidade no pedido: 3', resposta.get_json()['msg'])
+        self.assertIn('Quantidade disponível: 2', resposta.get_json()['msg'])
+        self.assertEqual(self.saldos()[1], 2)
+        self.assertEqual(self.db.execute('SELECT COUNT(*) FROM pedidos').fetchone()[0], 1)
+
+    def test_criacao_soma_tamanhos_e_itens_do_mesmo_produto(self):
+        produto = dict(estoque_id=1, grade={'M': 4, 'G': 2},
+                       detalhes=dict(material_id=6, material_cor_id=101, local='Gola'))
+        resposta = self.client.post('/pedidos', json={
+            'nome_cliente': 'Cliente Teste', 'data_pedido': '2026-11-08',
+            'produtos': [produto, produto],
+        })
+        self.assertEqual(resposta.status_code, 400)
+        self.assertIn('Quantidade no pedido: 12', resposta.get_json()['msg'])
+        self.assertEqual(self.saldos()[1], 10)
+        self.assertEqual(self.db.execute('SELECT COUNT(*) FROM pedidos').fetchone()[0], 1)
 
     def test_novo_sem_catalogo_exibe_nome_e_movimenta_estoque_escolhido(self):
         response = self.novo_pedido(2)

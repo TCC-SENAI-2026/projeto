@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "../styles/padrao.css";
-import "../styles/Inicio.css";
+import "../styles/inicio.css";
 import "../styles/ficha-tecnica.css";
 import Sidebar from "../components/Sidebar";
 import { listarPedidos, buscarPedido } from "../services/pedidosService";

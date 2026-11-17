@@ -1,3 +1,4 @@
+import { useAvisos } from '../hooks/useAvisos';
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,8 +8,10 @@ import { novaCorMaterial, prepararCoresMaterial } from "../utils/coresMaterial";
 import { api } from "../services/api";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
+import "../styles/cadastro_estoque.css";
 
 function AddEstoque() {
+    const { avisar } = useAvisos();
 
     const navigate = useNavigate();
     const inputArteRef = useRef(null);
@@ -62,7 +65,7 @@ function AddEstoque() {
         e.preventDefault();
 
         if (!form.nome_item) {
-            alert("Informe o nome do item.");
+            await avisar("Informe o nome do item.");
             return;
         }
 
@@ -85,13 +88,13 @@ function AddEstoque() {
 
             await api.postFile('/cadastrar-estoque', fd);
 
-            alert("Item cadastrado com sucesso!");
+            await avisar("Item cadastrado com sucesso!");
             navigate("/estoque");
 
         } catch (erro) {
 
             console.log("Erro:", erro);
-            alert(erro.message || "Erro ao cadastrar item.");
+            await avisar(erro.message || "Erro ao cadastrar item.");
         }
     }
 
@@ -102,7 +105,7 @@ function AddEstoque() {
 
             <div className="container">
 
-                <div className="form-page-layout estoque-form-layout">
+                <div className="form-page-layout estoque-form-layout cadastro-estoque">
 
                     <main className="form-card">
 
@@ -134,7 +137,7 @@ function AddEstoque() {
 
                             {/* TIPO */}
 
-                            <section className="form-section">
+                            <section className="form-section cadastro-estoque-tipo">
 
                                 <h2>Tipo de item</h2>
 
@@ -201,7 +204,7 @@ function AddEstoque() {
 
                             {/* IDENTIFICAÇÃO */}
 
-                            <section className="form-section">
+                            <section className="form-section cadastro-estoque-identificacao">
 
                                 <h2>Identificação do item</h2>
 
@@ -298,12 +301,12 @@ function AddEstoque() {
 
                             {/* CONTROLE */}
 
-                            <section className="form-section">
+                            <section className="form-section cadastro-estoque-controle">
 
                                 <h2>Controle de estoque</h2>
 
                                 <p className="section-help">
-                                    Informe quantidade e valor do item.
+                                    {possuiVariacoes ? "Informe as quantidades de cada cor na seção Cores." : "Informe a quantidade atual e o mínimo para reposição."}
                                 </p>
 
 
@@ -345,19 +348,7 @@ function AddEstoque() {
                                     )}
 
 
-                                    <div className="form-field full">
 
-                                        <label>Valor unitário</label>
-
-                                        <input
-                                            type="text"
-                                            name="valor_unitario"
-                                            value={form.valor_unitario}
-                                            onChange={handleChange}
-                                            placeholder="Ex.: 39,90"
-                                        />
-
-                                    </div>
 
                                 </div>
 
@@ -365,14 +356,16 @@ function AddEstoque() {
 
 
                             {possuiVariacoes && (
-                                <CoresMaterial cores={form.cores}
-                                    onChange={cores => setForm(prev => ({ ...prev, cores }))} />
+                                <div className="cadastro-estoque-cores">
+                                    <CoresMaterial cores={form.cores}
+                                        onChange={cores => setForm(prev => ({ ...prev, cores }))} />
+                                </div>
                             )}
 
 
                             {/* OBSERVAÇÕES */}
 
-                            <section className="form-section">
+                            <section className="form-section cadastro-estoque-observacoes">
 
                                 <div className="form-grid">
 

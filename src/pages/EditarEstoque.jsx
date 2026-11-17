@@ -1,3 +1,4 @@
+import { useAvisos } from '../hooks/useAvisos';
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -9,6 +10,7 @@ import "../styles/padrao.css";
 import "../styles/formulario.css";
 
 function EditarEstoque() {
+    const { avisar } = useAvisos();
 
     const navigate = useNavigate();
     const { id } = useParams();
@@ -48,14 +50,14 @@ function EditarEstoque() {
                 setTemImagemAtual(!!resposta.tem_imagem);
             } catch (erro) {
                 console.log("Erro ao buscar item:", erro);
-                alert("Erro ao carregar item.");
+                await avisar("Erro ao carregar item.");
                 navigate("/estoque");
             }
         }
 
         carregarItem();
 
-    }, [id, navigate]);
+    }, [id, navigate, avisar]);
 
     function handleArte(e) {
         const file = e.target.files?.[0];
@@ -108,13 +110,13 @@ function EditarEstoque() {
 
             await api.putFile(`/editar-estoque/${id}`, fd);
 
-            alert("Item atualizado com sucesso!");
+            await avisar("Item atualizado com sucesso!");
             navigate("/estoque");
 
         } catch (erro) {
 
             console.log("Erro ao editar:", erro);
-            alert(erro.message || "Erro ao editar item.");
+            await avisar(erro.message || "Erro ao editar item.");
         }
     }
 
@@ -318,7 +320,7 @@ function EditarEstoque() {
                                 <h2>Controle de estoque</h2>
 
                                 <p className="section-help">
-                                    Altere quantidade e valor do item.
+                                    Altere a quantidade do item.
                                 </p>
 
                                 <div className="form-grid">
@@ -357,18 +359,7 @@ function EditarEstoque() {
                                     )}
 
 
-                                    <div className="form-field full">
 
-                                        <label>Valor unitário</label>
-
-                                        <input
-                                            type="text"
-                                            name="valor_unitario"
-                                            value={form.valor_unitario ?? ""}
-                                            onChange={handleChange}
-                                        />
-
-                                    </div>
 
                                 </div>
 

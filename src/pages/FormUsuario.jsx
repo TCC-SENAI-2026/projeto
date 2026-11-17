@@ -1,3 +1,5 @@
+import { useAvisos } from '../hooks/useAvisos';
+import { mascaraTelefone, mascaraCpf, mascaraSalario } from '../utils/formatacao';
 import FotoCaptura from "../components/FotoCaptura";
 import Sidebar from "../components/Sidebar";
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,6 +16,7 @@ const FORM_VAZIO = {
 };
 
 function FormUsuario() {
+    const { avisar } = useAvisos();
 
     const navigate = useNavigate();
     const { id } = useParams();          // vem de /formUsuario/:id (só existe na edição)
@@ -39,21 +42,21 @@ function FormUsuario() {
                 setForm({
                     nome: c.nome_completo || "",
                     re: c.re || "",
-                    cpf: c.cpf || "",
+                    cpf: mascaraCpf(c.cpf),
                     dataNascimento: c.data_nascimento || "",
-                    telefone: c.telefone || "",
+                    telefone: mascaraTelefone(c.telefone),
                     email: c.email || "",
                     endereco: c.endereco || "",
                     nivelAcesso: c.nivel_acesso || "",
                     dataContrato: c.data_contratacao || "",
-                    salario: c.salario || "",
+                    salario: mascaraSalario(c.salario),
                     preferenciaNotificacoes: c.preferencia_notificacoes || "email",
                     status: c.ativo ? "ativo" : "inativo"
                 });
                 setSenhaDefinida(Boolean(c.senha_definida));
                 setTemFoto(!!c.tem_foto);
             } catch {
-                alert("Não foi possível carregar o colaborador.");
+                await avisar("Não foi possível carregar o colaborador.");
                 navigate("/equipe");
             } finally {
                 setCarregando(false);
@@ -61,11 +64,12 @@ function FormUsuario() {
         }
 
         carregarColaborador();
-    }, [id, editando, navigate]);
+    }, [id, editando, navigate, avisar]);
 
     function handleChange(e) {
         const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
+        const mascaras = { telefone: mascaraTelefone, cpf: mascaraCpf, salario: mascaraSalario };
+        setForm({ ...form, [name]: mascaras[name] ? mascaras[name](value) : value });
     }
 
     async function handleSubmit(e) {
@@ -96,14 +100,14 @@ function FormUsuario() {
         try {
             const resultado = await api.post(url, dados);
 
-            alert(
+            await avisar(
                 editando
                     ? "Colaborador atualizado!"
                     : resultado.aviso || "Colaborador cadastrado! O link para definir a senha foi enviado."
             );
             navigate("/equipe");
         } catch (erro) {
-            alert(erro.message || "Erro ao salvar colaborador.");
+            await avisar(erro.message || "Erro ao salvar colaborador.");
         } finally {
             setEnviando(false);
         }
@@ -112,9 +116,9 @@ function FormUsuario() {
     async function reenviarLink() {
         try {
             await api.post(`/reenviar-link/${id}`);
-            alert("Link reenviado!");
+            await avisar("Link reenviado!");
         } catch (erro) {
-            alert(erro.message || "Não foi possível reenviar o link.");
+            await avisar(erro.message || "Não foi possível reenviar o link.");
         }
     }
 
@@ -176,7 +180,7 @@ function FormUsuario() {
 
                                 <div className="form-field">
                                     <label htmlFor="cpf">CPF</label>
-                                    <input id="cpf" name="cpf" placeholder="000.000.000-00" value={form.cpf} onChange={handleChange} />
+                                    <input id="cpf" name="cpf" inputMode="numeric" maxLength={14} placeholder="000.000.000-00" value={form.cpf} onChange={handleChange} />
                                 </div>
 
                                 <div className="form-field">
@@ -186,7 +190,7 @@ function FormUsuario() {
 
                                 <div className="form-field">
                                     <label htmlFor="telefone">Telefone</label>
-                                    <input id="telefone" name="telefone" placeholder="(11) 99999-9999" value={form.telefone} onChange={handleChange} />
+                                    <input id="telefone" name="telefone" type="tel" inputMode="tel" maxLength={15} placeholder="(11) 99999-9999" value={form.telefone} onChange={handleChange} />
                                 </div>
 
                                 <div className="form-field full">
@@ -222,8 +226,8 @@ function FormUsuario() {
                                 </div>
 
                                 <div className="form-field">
-                                    <label htmlFor="salario">Salário</label>
-                                    <input id="salario" name="salario" placeholder="Ex: 3.500,00" value={form.salario} onChange={handleChange} />
+                                    <label htmlFor="salario">Salário (R$)</label>
+                                    <input id="salario" name="salario" inputMode="numeric" placeholder="Ex: 3.500,00" value={form.salario} onChange={handleChange} />
                                 </div>
 
                             </div>

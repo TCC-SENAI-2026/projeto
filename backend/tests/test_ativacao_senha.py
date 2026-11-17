@@ -67,6 +67,21 @@ class AtivacaoSenhaTests(unittest.TestCase):
         return self.client.post('/definir-senha', json={'token': self.token, 'senha': senha},
                                 headers={'X-CSRF-Token': self.csrf})
 
+    def test_rotas_de_senha_nao_guardam_respostas_em_cache(self):
+        self.assertEqual(self.validar().headers.get('Cache-Control'), 'no-store')
+        self.assertEqual(self.salvar().headers.get('Cache-Control'), 'no-store')
+
+    def test_ativar_outro_colaborador_nao_autentica_automaticamente_e_logout_limpa_admin(self):
+        with self.client.session_transaction() as sessao:
+            sessao['colaborador_id'] = 77
+        self.assertEqual(self.salvar().status_code, 200)
+        with self.client.session_transaction() as sessao:
+            self.assertEqual(sessao['colaborador_id'], 77)
+        resposta = self.client.post('/logout', headers={'X-CSRF-Token': self.csrf})
+        self.assertEqual(resposta.status_code, 200)
+        with self.client.session_transaction() as sessao:
+            self.assertNotIn('colaborador_id', sessao)
+
     def test_ativacao_login_e_uso_unico(self):
         self.assertTrue(self.validar().json['valido'])
         self.assertEqual(self.salvar().status_code, 200)

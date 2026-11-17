@@ -1,18 +1,21 @@
+import { useAuth } from '../auth/useAuth';
 import SolicitarInativacao from '../components/SolicitarInativacao';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { estaBaixo, formatarQuantidadeEstoque } from "../utils/estoque";
+import { estaBaixo, filtrarEstoque, formatarQuantidadeEstoque } from "../utils/estoque";
 import { api } from "../services/api.js";
 
 import Sidebar from "../components/Sidebar";
 import Modal from "../components/Modal";
 
 import "../styles/padrao.css";
-import "../styles/Estoque.css";
+import "../styles/estoque.css";
 import "../styles/cliente.css";
 
 
 function Estoque() {
+    const { colaborador } = useAuth();
+    const administrador = colaborador?.nivel_acesso === 'administrador';
     const navigate = useNavigate();
     const [exclusao, setExclusao] = useState(null);
 
@@ -23,6 +26,8 @@ function Estoque() {
 
     const [estoque, setEstoque] = useState([]);
     const [pesquisa, setPesquisa] = useState("");
+    const pesquisando = pesquisa.trim().length > 0;
+    const statusConsulta = pesquisando ? 'todos' : inativos ? 'inativos' : 'ativos';
     const [erroApi, setErroApi] = useState("");
     const [itemSelecionado, setItemSelecionado] = useState(null);
 
@@ -35,51 +40,39 @@ function Estoque() {
         return () => window.removeEventListener("keydown", fecharComEscape);
     }, [itemSelecionado]);
 
-    useEffect(() => {
-        const controller = new AbortController();
-        setEstoque([]);
-        setItemSelecionado(null);
-        carregarEstoque(controller.signal);
-        return () => controller.abort();
-    }, [inativos]);
-
-    async function carregarEstoque(signal) {
+    const carregarEstoque = useCallback(async (signal) => {
         try {
-            const data = await api.get(`/listar-estoque?status=${inativos ? 'inativos' : 'ativos'}`, { lista: true, signal });
-            if (signal.aborted) return;
+            const data = await api.get(`/listar-estoque?status=${statusConsulta}`, { lista: true, signal });
+            if (signal?.aborted) return;
             setEstoque(Array.isArray(data) ? data : []);
             setErroApi("");
-        } catch (erro) {
-            if (signal.aborted) return;
+        } catch {
+            if (signal?.aborted) return;
             setErroApi("Não foi possível carregar o estoque. Verifique a conexão.");
         }
-    }
+    }, [statusConsulta]);
+
+    useEffect(() => {
+        const controller = new AbortController();
+        void Promise.resolve().then(() => carregarEstoque(controller.signal));
+        return () => controller.abort();
+    }, [carregarEstoque]);
+
 
     function mudarFiltro(e) {
+        setItemSelecionado(null);
         const valor = e.target.value;
         setSearchParams(valor ? { filtro: valor } : {});
     }
 
-    const itensFiltrados = estoque.filter((item) => {
-        const correspondeFiltro =
-            filtro === "produtos" ? item.tipo_item?.toLowerCase() === "produto"
-                : filtro === "materiais" ? item.tipo_item?.toLowerCase() === "material"
-                    : filtro === "baixo" ? estaBaixo(item)
-                        : true; // "Todo o Estoque"
-
-        const correspondePesquisa = (item.nome_item ?? "")
-            .toLowerCase()
-            .includes(pesquisa.toLowerCase());
-
-        return correspondeFiltro && correspondePesquisa;
-    });
+    const itensFiltrados = filtrarEstoque(estoque, filtro, pesquisa);
 
     return (
         <>
             <Sidebar />
-            {exclusao && <SolicitarInativacao alvo="estoque" id={exclusao.id} nome={exclusao.nome_item} reativar={!exclusao.ativo} onClose={() => setExclusao(null)} />}
+            {exclusao && <SolicitarInativacao alvo="estoque" id={exclusao.id} nome={exclusao.nome_item} reativar={!exclusao.ativo} onConcluido={() => carregarEstoque()} onClose={() => setExclusao(null)} />}
 
-            <div className="container">
+            <div className="container estoque-pagina">
 
                 {/* CABEÇALHO */}
                 <div className="top top-compact">
@@ -87,7 +80,7 @@ function Estoque() {
                         <div className="page-title-row">
                             <h1 className="page-title">
                                 Estoque
-                                <span className="page-count"> ({estoque.length})</span>
+                                <span className="page-count"> ({itensFiltrados.length})</span>
                             </h1>
                         </div>
 
@@ -216,6 +209,12 @@ function Estoque() {
                                                 )
                                             )}
 
+                                            {item.tipo_item?.toLowerCase() !== "produto" && (
+                                                <div className="img estoque-material-icone" aria-hidden="true">
+                                                    <span className="material-icons">palette</span>
+                                                </div>
+                                            )}
+
                                             <div className="produto estoque-main">
                                                 <span className="mobile-field-label">Item</span>
                                                 <p>{item.nome_item}</p>
@@ -303,8 +302,6 @@ function Estoque() {
                                 ["Fornecedor", itemSelecionado.fornecedor],
                                 ["Quantidade", formatarQuantidadeEstoque(itemSelecionado)],
                                 ...(!itemSelecionado.tem_variacoes ? [["Estoque mínimo", itemSelecionado.estoque_minimo]] : []),
-                                ["Valor unitário", itemSelecionado.valor_unitario == null ? null :
-                                    Number(itemSelecionado.valor_unitario).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })],
                             ].map(([rotulo, valor]) => (
                                 <div className="modal-info" key={rotulo}>
                                     <span className="modal-label">{rotulo}</span>
@@ -344,7 +341,7 @@ function Estoque() {
                             <button type="button" className="btn-sec cliente-acao-editar" onClick={() => {
                                 setExclusao(itemSelecionado);
                                 setItemSelecionado(null);
-                            }}>{itemSelecionado.ativo ? 'Solicitar exclusão' : 'Solicitar reativação'}</button>
+                            }}>{itemSelecionado.ativo ? (administrador ? 'Excluir item' : 'Solicitar exclusão') : (administrador ? 'Reativar' : 'Solicitar reativação')}</button>
                         </div>
                     </>
                 )}

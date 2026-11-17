@@ -1,3 +1,4 @@
+import { mascaraTelefone } from '../utils/formatacao';
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import FotoProdutoEstoque from "./FotoProdutoEstoque";
@@ -45,7 +46,7 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
     // ---------- dados gerais ----------
     function handleFicha(e) {
         const { name, value } = e.target;
-        setFicha(prev => ({ ...prev, [name]: value }));
+        setFicha(prev => ({ ...prev, [name]: name === 'contato' ? mascaraTelefone(value) : value }));
     }
 
     // ---------- produtos ----------
@@ -204,7 +205,7 @@ function EditarPedidoModal({ pedido, onFechar, onSalvar }) {
                             <h2>Dados do Cliente</h2>
                             <div className="form-grid">
                                 <CampoEditavel {...campo("cliente", { rotulo: "Nome do Cliente", full: true })} />
-                                <CampoEditavel {...campo("contato", { rotulo: "Telefone" })} />
+                                <CampoEditavel {...campo("contato", { rotulo: "Telefone", tipo: "tel", placeholder: "(11) 99999-9999" })} />
                                 <CampoEditavel {...campo("email", { rotulo: "E-mail", tipo: "email" })} />
                             </div>
                         </section>

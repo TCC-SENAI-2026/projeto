@@ -1,12 +1,11 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from './useAuth';
 
 export default function ProtectedRoute({ adminOnly = false }) {
   const { colaborador } = useAuth();
-  const location = useLocation();
 
   if (!colaborador) {
-    return <Navigate to={`/?redirect=${encodeURIComponent(location.pathname)}`} replace />;
+    return <Navigate to="/" replace />;
   }
   if (adminOnly && colaborador.nivel_acesso !== 'administrador') {
     return <Navigate to="/home" replace />;

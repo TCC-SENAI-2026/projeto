@@ -76,7 +76,7 @@ def ler_formulario():
     return {
         'nome':     (request.form.get('nome_empresa') or '').strip(),
         'telefone': texto('telefone'),
-        'email':    texto('email'),
+        'email':    (texto('email') or '').lower() or None,
         'endereco': montar_endereco(texto('rua'), texto('numero'), texto('municipio'),
                                     texto('estado'), texto('cep')),
         'ativo':    1,
@@ -127,6 +127,21 @@ def cadastrar_cliente():
         return jsonify({'status': 'erro', 'msg': str(erro_arquivo)}), 400
 
     with db_cursor(commit=True) as cursor:
+        # Aproveita o cliente ainda oculto, preservando seus pedidos anteriores.
+        if dados['email']:
+            cursor.execute(
+                'SELECT id FROM clientes WHERE LOWER(TRIM(email)) = %s '
+                'AND cadastro_manual = 0 AND ativo = 1 ORDER BY id LIMIT 1 FOR UPDATE',
+                (dados['email'],)
+            )
+            existente = cursor.fetchone()
+            if existente:
+                cursor.execute('''
+                    UPDATE clientes SET nome=%s, email=%s, telefone=%s, endereco=%s,
+                        logo_url=COALESCE(%s, logo_url), cadastro_manual=1 WHERE id=%s
+                ''', (dados['nome'], dados['email'], dados['telefone'], dados['endereco'],
+                      logo, existente['id']))
+                return jsonify({'status': 'ok'})
         cursor.execute("""
             INSERT INTO clientes (nome, email, telefone, endereco, logo_url, ativo)
             VALUES (%s, %s, %s, %s, %s, %s);
@@ -141,7 +156,14 @@ def listar_clientes():
     with db_cursor() as cursor:
         cursor.execute("""
             SELECT id, nome, email, telefone, endereco, logo_url, ativo
-            FROM clientes
+            FROM clientes c
+            WHERE c.cadastro_manual = 1 OR (
+                NULLIF(TRIM(c.email), '') IS NOT NULL AND
+                (SELECT COUNT(*) FROM pedidos p
+                 JOIN clientes origem ON origem.id = p.cliente_id
+                 WHERE p.status = 'concluido'
+                   AND LOWER(TRIM(origem.email)) = LOWER(TRIM(c.email))) >= 5
+            )
             ORDER BY nome;
         """)
         clientes = cursor.fetchall()

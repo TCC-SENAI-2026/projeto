@@ -4,7 +4,7 @@ import { gerarRelatorioProducao, carregarLogoRelatorio } from "../services/gerar
 import Sidebar from "../components/Sidebar";
 import { api } from "../services/api";
 import "../styles/padrao.css";
-import "../styles/Relatorio.css";
+import "../styles/relatorio.css";
 
 const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Modal from "../components/Modal";
+import "../styles/cliente.css";
 import Sidebar from "../components/Sidebar";
 import FichaConteudo from "../components/FichaConteudo";
 import { salvarPedido } from "../services/pedidosService";
@@ -14,6 +16,7 @@ function FichaTecnica() {
     const [pedido, setPedido] = useState(null);
     const [ficha, setFicha] = useState(null);
     const [modalAberto, setModalAberto] = useState(false);
+    const [erroPedido, setErroPedido] = useState("");
     const [salvando, setSalvando] = useState(false);
     const [pedidoCriado, setPedidoCriado] = useState(null);
 
@@ -40,6 +43,7 @@ function FichaTecnica() {
     async function finalizar() {
         if (salvando) return;
 
+        setErroPedido("");
         setSalvando(true);
         try {
             const artesOrdenadas = location.state?.artesOrdenadas || [];
@@ -50,7 +54,7 @@ function FichaTecnica() {
             localStorage.removeItem("dadosFicha");
         } catch (erro) {
             console.error("Erro ao salvar pedido:", erro);
-            alert(erro.message || "Não foi possível salvar o pedido. Tente novamente.");
+            setErroPedido(erro.message || "Não foi possível salvar o pedido. Tente novamente.");
         } finally {
             setSalvando(false);
         }
@@ -170,6 +174,31 @@ function FichaTecnica() {
 
                 </div>
             </div>
+
+            <Modal aberto={Boolean(erroPedido)} onClose={() => setErroPedido("")}
+                className="cliente-detalhes-modal" tituloId="erro-pedido-titulo">
+                <div className="modal-header cliente-modal-header">
+                    <div className="cliente-modal-identidade">
+                        <div className="cliente-modal-logo" aria-hidden="true">
+                            <span className="material-icons">warning_amber</span>
+                        </div>
+                        <div>
+                            <h2 className="modal-title" id="erro-pedido-titulo">Pedido não confirmado</h2>
+                            <p className="modal-subtitle">Confira o motivo abaixo para continuar.</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="modal-body cliente-detalhes-body">
+                    <div className="cliente-info-section">
+                        <p className="cliente-observacoes" role="alert">{erroPedido}</p>
+                    </div>
+                </div>
+                <div className="modal-actions">
+                    <button type="button" className="btn-sec cliente-acao-editar" onClick={() => setErroPedido("")}>Fechar</button>
+                    <button type="button" className="btn btn-add cliente-acao-novo"
+                        onClick={() => navigate("/pedidos/novo/produtos")}>Revisar produtos</button>
+                </div>
+            </Modal>
 
             {/* MODAL DE SUCESSO */}
             {modalAberto && (

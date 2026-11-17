@@ -240,3 +240,35 @@
     outline: 2px solid #6366f1;
     outline-offset: 2px;
 }
+
+/* Textos menores do Início, sem alterar os indicadores ou outras páginas. */
+@media screen {
+    .dashboard .card-top > span {
+        font-size: 17px;
+        line-height: 1.5;
+    }
+
+    .dashboard .section-header a {
+        font-size: 16px;
+    }
+
+    .dashboard .recent-header span {
+        font-size: 15px;
+    }
+
+    .dashboard .order-row > span:not(.status),
+    .dashboard .stock-card > span {
+        font-size: 18px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .dashboard .stock-card p {
+        font-size: 17px;
+        line-height: 1.5;
+    }
+
+    .dashboard .order-row .status {
+        font-size: 16px;
+    }
+}

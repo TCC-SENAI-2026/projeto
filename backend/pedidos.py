@@ -383,7 +383,7 @@ def criar_pedido():
         dados = request.get_json(silent=True) or {}
 
     nome_cliente  = (dados.get('nome_cliente') or '').strip()
-    email_cliente = (dados.get('email_cliente') or '').strip() or None
+    email_cliente = (dados.get('email_cliente') or '').strip().lower() or None
     data_pedido   = (dados.get('data_pedido') or '').strip()
     prazo_entrega = dados.get('prazo_entrega') or None
     prioridade    = (dados.get('prioridade') or 'media').strip()
@@ -408,13 +408,20 @@ def criar_pedido():
     try:
         cursor = conn.cursor(dictionary=True, buffered=True)
 
-        # find-or-create cliente:
-        # Busca por nome exato (case-insensitive). Se houver mais de um,
-        # tenta desambiguar por e-mail. Ambiguidade restante → cria novo.
-        cursor.execute(
-            "SELECT id FROM clientes WHERE LOWER(TRIM(nome)) = LOWER(TRIM(%s)) AND ativo = 1",
-            (nome_cliente,)
-        )
+        # E-mail identifica o cliente recorrente; sem ele, não vincula
+        # o pedido a um cadastro que possua outro e-mail.
+        if email_cliente:
+            cursor.execute(
+                "SELECT id FROM clientes WHERE LOWER(TRIM(email)) = %s AND ativo = 1 "
+                "ORDER BY cadastro_manual DESC, id LIMIT 1",
+                (email_cliente,)
+            )
+        else:
+            cursor.execute(
+                "SELECT id FROM clientes WHERE LOWER(TRIM(nome)) = LOWER(TRIM(%s)) "
+                "AND NULLIF(TRIM(email), '') IS NULL AND ativo = 1",
+                (nome_cliente,)
+            )
         correspondencias = cursor.fetchall()
 
         if len(correspondencias) == 1:
@@ -432,7 +439,7 @@ def criar_pedido():
 
         if cliente_id is None:
             cursor.execute(
-                "INSERT INTO clientes (nome, telefone, email) VALUES (%s, %s, %s)",
+                "INSERT INTO clientes (nome, telefone, email, cadastro_manual) VALUES (%s, %s, %s, 0)",
                 (nome_cliente, contato, email_cliente)
             )
             cliente_id = cursor.lastrowid
@@ -451,12 +458,35 @@ def criar_pedido():
             (pedido_id, pedido_id)
         )
 
+        quantidades_por_produto = {}
         for i, prod in enumerate(produtos):
             produto = _validar_produto_estoque(cursor, prod.get('estoque_id'))
             estoque_id = produto['id']
             item_nome = produto['nome_item']
             detalhes = prod.get('detalhes', {})
             grade = prod.get('grade', {})
+            total_item = 0
+            for quantidade in grade.values():
+                if isinstance(quantidade, bool):
+                    raise ValueError('Informe quantidades inteiras e positivas para os produtos.')
+                try:
+                    qtd = int(quantidade)
+                except (TypeError, ValueError):
+                    raise ValueError('Informe quantidades inteiras e positivas para os produtos.')
+                if qtd < 0 or str(qtd) != str(quantidade).strip():
+                    raise ValueError('Informe quantidades inteiras e positivas para os produtos.')
+                total_item += qtd
+            if total_item <= 0:
+                raise ValueError(f'Informe ao menos uma peça para "{item_nome}".')
+            quantidades_por_produto[estoque_id] = quantidades_por_produto.get(estoque_id, 0) + total_item
+            total_pedido = quantidades_por_produto[estoque_id]
+            if total_pedido > produto['quantidade_atual']:
+                raise ValueError(
+                    f'Estoque insuficiente para "{item_nome}". '
+                    f'Quantidade no pedido: {total_pedido}. '
+                    f'Quantidade disponível: {produto["quantidade_atual"]:g}. '
+                    'Reduza a quantidade desse produto ou reponha o estoque para continuar.'
+                )
             tipo_produto_id = None
             personalizacao_id = _resolver_catalogo(cursor, 'personalizacao', detalhes.get('personalizacao'))
             material_id, material_cor_id = _validar_tecido_cor(cursor, detalhes)
@@ -517,6 +547,19 @@ def criar_pedido():
                         (item_id, tamanho, qtd)
                     )
 
+        # A confirmação da ficha técnica baixa os produtos na mesma transação.
+        # O motivo é compartilhado com o fluxo legado para impedir nova baixa.
+        for estoque_id, quantidade in sorted(quantidades_por_produto.items()):
+            cursor.execute(
+                'UPDATE estoque SET quantidade_atual = quantidade_atual - %s WHERE id = %s',
+                (quantidade, estoque_id)
+            )
+            cursor.execute("""
+                INSERT INTO estoque_movimentacoes
+                    (estoque_id, tipo, quantidade, motivo, colaborador_id)
+                VALUES (%s, 'saida', %s, %s, %s)
+            """, (estoque_id, quantidade, f'Baixa automática — Pedido #{pedido_id}', colaborador_id))
+
         conn.commit()
         cursor.close()
         return jsonify(success=True, data={'id': pedido_id, 'numero_pedido': pedido_id}), 201
@@ -568,7 +611,8 @@ def atualizar_status(pedido_id):
             )
         return jsonify(success=True)
 
-    # Início da produção (pendente → em_producao): baixa automática de estoque
+    # Pedidos novos já possuem baixa na criação. O caminho sem movimentação
+    # mantém compatibilidade com pedidos antigos ainda pendentes.
     colaborador_id = g.colaborador['id']
     conn = open_connection()
     try:
@@ -720,6 +764,13 @@ def atualizar_pedido(pedido_id):
                 return jsonify(success=False, msg='Item informado nao pertence a este pedido.'), 400
 
         pedido_ja_iniciado = pedido_row['status'] != 'pendente'
+        if not pedido_ja_iniciado:
+            cursor.execute(
+                "SELECT COUNT(*) AS c FROM estoque_movimentacoes "
+                "WHERE tipo = 'saida' AND motivo = CONCAT('Baixa automática — Pedido #', %s)",
+                (str(pedido_id),)
+            )
+            pedido_ja_iniciado = cursor.fetchone()['c'] > 0
 
         # Snapshot ANTES: totais por estoque_id com controle por pecas.
         cursor.execute(f"""
@@ -887,7 +938,7 @@ def atualizar_pedido(pedido_id):
                     ids_remover
                 )
 
-        # ── Ajuste diferencial de estoque (somente se o pedido já foi iniciado) ──
+        # Ajusta somente a diferença quando o pedido já teve baixa de estoque.
         if pedido_ja_iniciado:
             cursor.execute(f"""
                 SELECT pi.estoque_id,
@@ -1007,12 +1058,11 @@ def atualizar_pedido(pedido_id):
 @pedidos_bp.route('/pedidos/<int:pedido_id>', methods=['DELETE'])
 @admin_required
 def excluir_pedido(pedido_id):
-    with db_cursor(commit=True) as cursor:
-        cursor.execute(
-            "UPDATE pedidos SET excluido_em = NOW() WHERE id = %s AND excluido_em IS NULL",
-            (pedido_id,)
-        )
-        if cursor.rowcount == 0:
-            return jsonify(success=False, msg='Pedido não encontrado.'), 404
-
+    from solicitacoes import aplicar_acao
+    from perfil import ErroPerfil
+    try:
+        with db_cursor(commit=True) as cursor:
+            aplicar_acao(cursor, {'tipo': 'exclusao', 'pedido_id': pedido_id}, {})
+    except ErroPerfil as erro:
+        return jsonify(success=False, msg=str(erro)), erro.status
     return jsonify(success=True)

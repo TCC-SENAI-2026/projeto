@@ -10,6 +10,13 @@ senha_bp = Blueprint('senha', __name__)
 CONFIRMACAO = 'Se o RE corresponder a uma conta ativa, enviaremos um link ao e-mail cadastrado.'
 
 
+@senha_bp.after_request
+def impedir_cache_senha(resposta):
+    resposta.headers['Cache-Control'] = 'no-store'
+    return resposta
+
+
+
 @senha_bp.get('/validar-token')
 def validar_token_ativacao():
     token = request.args.get('token', '')

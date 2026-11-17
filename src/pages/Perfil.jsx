@@ -1,3 +1,4 @@
+import { mascaraTelefone, mascaraCpf } from '../utils/formatacao';
 import { useCallback, useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import FotoCaptura from '../components/FotoCaptura';
@@ -92,7 +93,7 @@ function Perfil() {
     const bloqueados = perfil ? [
         ['RE', perfil.re], ['Nível de acesso', admin ? 'Administrador' : 'Colaborador'],
         ['Salário', perfil.salario == null ? '—' : Number(perfil.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })],
-        ['Data de contrato', perfil.data_contrato], ['Status', perfil.ativo ? 'Ativo' : 'Inativo'], ['CPF', perfil.cpf],
+        ['Data de contrato', perfil.data_contrato], ['Status', perfil.ativo ? 'Ativo' : 'Inativo'], ['CPF', mascaraCpf(perfil.cpf)],
     ] : [];
 
     return (
@@ -124,11 +125,11 @@ function Perfil() {
                                 {EDITAVEIS.map(([campo, rotulo, tipo]) => (
                                     <div className="form-field" key={campo}>
                                         <label htmlFor={`perfil-${campo}`}>{rotulo}</label>
-                                        <input id={`perfil-${campo}`} type={tipo} value={form[campo] ?? ''}
+                                        <input id={`perfil-${campo}`} type={tipo} value={campo === 'telefone' ? mascaraTelefone(form[campo]) : form[campo] ?? ''}
                                             required={campo === 'nome' || campo === 'email'}
-                                            maxLength={{ nome: 150, email: 254, telefone: 20, endereco: 255 }[campo]}
+                                            maxLength={{ nome: 150, email: 254, telefone: 15, endereco: 255 }[campo]}
                                             readOnly={!editando} disabled={salvando}
-                                            onChange={event => setForm(prev => ({ ...prev, [campo]: event.target.value }))} />
+                                            onChange={event => setForm(prev => ({ ...prev, [campo]: campo === 'telefone' ? mascaraTelefone(event.target.value) : event.target.value }))} />
                                     </div>
                                 ))}
                             </div>

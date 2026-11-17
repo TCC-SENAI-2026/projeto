@@ -1,3 +1,4 @@
+import { mascaraTelefone } from '../utils/formatacao';
 import { useState } from "react";
 import "../styles/solicitacoes.css";
 
@@ -43,7 +44,7 @@ function CampoEditavel({
         if (tipo === "select") {
             return opcoes.find((o) => o.value === original)?.label || original;
         }
-        return original;
+        return tipo === 'tel' ? mascaraTelefone(original) : original;
     }
 
     function emitir(novoValor) {
@@ -82,7 +83,8 @@ function CampoEditavel({
     const propsComuns = {
         id,
         name,
-        value: atual,
+        value: tipo === 'tel' ? mascaraTelefone(atual) : atual,
+        ...(tipo === 'tel' ? { inputMode: 'tel', maxLength: 15 } : {}),
         onChange: handleChange,
         onBlur: terminar,
         onKeyDown: handleKeyDown,

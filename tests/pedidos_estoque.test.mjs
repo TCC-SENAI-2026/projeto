@@ -27,6 +27,7 @@ test('revisão envia estoque_id e reabertura preserva id de estoque e catálogo 
         { success: true, data: { id: 12, status: 'pendente', obs_geral: 'Entrega urgente', itens: [
             { id: 30, estoque_id: 42, tipo_produto_id: null, material_id: 6, material_cor_id: 101, tipo_produto: 'Produto personalizado', observacao: 'Texto histórico', tamanhos: [] },
         ] } },
+        [], // Consulta da logo do cliente ao reabrir pedido sem arte.
         { success: true },
     ];
     t.mock.method(globalThis, 'fetch', async (url, options) => {
@@ -52,7 +53,7 @@ test('revisão envia estoque_id e reabertura preserva id de estoque e catálogo 
     assert.equal(reaberto.pedido.produtos[0].detalhes.tipo_produto_id, null);
     assert.equal(reaberto.pedido.produtos[0].detalhes.material_cor_id, 101);
     await atualizarPedido(12, reaberto);
-    const editado = JSON.parse(chamadas[3].options.body);
+    const editado = JSON.parse(chamadas[4].options.body);
     assert.equal(editado.pedido.produtos[0].estoque_id, 42);
     assert.equal(editado.ficha.observacao, 'Entrega urgente');
     assert.ok(!Object.hasOwn(editado.pedido.produtos[0].detalhes, 'observacao'));
@@ -60,7 +61,7 @@ test('revisão envia estoque_id e reabertura preserva id de estoque e catálogo 
 });
 
 test('reabertura de pedido antigo mantém nome do catálogo e ausência de estoque', async t => {
-    t.mock.method(api, 'get', async () => ({ data: { id: 1, itens: [
+    t.mock.method(api, 'get', async url => url === '/listar-clientes' ? [] : ({ data: { id: 1, itens: [
         { id: 4, tipo_produto: 'Camisa Longa', tipo_produto_id: 8, estoque_id: null, tamanhos: [] },
     ] } }));
     const antigo = await buscarPedido(1);

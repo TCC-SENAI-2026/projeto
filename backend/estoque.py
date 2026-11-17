@@ -214,7 +214,7 @@ def cadastrar_estoque():
 @login_required
 def listar_estoque():
     status = request.args.get('status', 'ativos')
-    if status not in ('ativos', 'inativos'):
+    if status not in ('ativos', 'inativos', 'todos'):
         return jsonify(success=False, msg='Status inválido.'), 400
     connection = None
     cursor = None
@@ -236,7 +236,10 @@ def listar_estoque():
             ORDER BY id DESC;
         """
 
-        cursor.execute(SQL, (0 if status == 'inativos' else 1,))
+        if status == 'todos':
+            cursor.execute(SQL.replace('WHERE ativo = %s', ''))
+        else:
+            cursor.execute(SQL, (0 if status == 'inativos' else 1,))
 
         estoque = cursor.fetchall()
         _anexar_cores(cursor, estoque)

@@ -1,3 +1,4 @@
+import { useAuth } from '../auth/useAuth';
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../services/api";
@@ -9,6 +10,8 @@ const TAMANHO_MINIMO_SENHA = 8;
 function DefinirSenha({ redefinicao = false }) {
 
     const navigate = useNavigate();
+    const { sair } = useAuth();
+    const [indoLogin, setIndoLogin] = useState(false);
     const [searchParams] = useSearchParams();
     const token = searchParams.get("token") || "";
 
@@ -68,6 +71,23 @@ function DefinirSenha({ redefinicao = false }) {
         }
     }
 
+    async function irParaLogin() {
+        if (indoLogin) return;
+        setIndoLogin(true);
+        setErro("");
+        try {
+            // O link pode ter sido aberto no navegador usado pelo administrador.
+            await sair();
+            setSenha("");
+            setConfirmar("");
+            navigate("/", { replace: true });
+        } catch (error) {
+            setErro(error.message || "Não foi possível encerrar a sessão. Tente novamente.");
+        } finally {
+            setIndoLogin(false);
+        }
+    }
+
     return (
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
             <div className="form-page-card" style={{ width: "100%", maxWidth: 480 }}>
@@ -92,7 +112,7 @@ function DefinirSenha({ redefinicao = false }) {
                             {redefinicao ? "Este link é inválido ou expirou. Solicite outro no login." : "Este link é inválido ou expirou. Peça a um administrador para reenviar o link de acesso."}
                         </p>
                         <div className="form-actions">
-                            <button type="button" className="btn btn-add" onClick={() => navigate("/")}>
+                            <button type="button" className="btn btn-add" onClick={irParaLogin} disabled={indoLogin}>
                                 Ir para o login
                             </button>
                         </div>
@@ -102,9 +122,11 @@ function DefinirSenha({ redefinicao = false }) {
                 {etapa === "concluido" && (
                     <div role="status">
                         <p>{redefinicao ? "Senha redefinida!" : "Senha definida!"} Entre com seu RE e a nova senha.</p>
-                        <button type="button" className="btn btn-add" onClick={() => navigate("/")}>Ir para o login</button>
+                        <button type="button" className="btn btn-add" onClick={irParaLogin} disabled={indoLogin}>{indoLogin ? "Abrindo login..." : "Ir para o login"}</button>
                     </div>
                 )}
+
+                {erro && etapa !== "formulario" && etapa !== "falha" && <p role="alert">{erro}</p>}
 
                 {etapa === "formulario" && (
                     <form onSubmit={handleSubmit} autoComplete="off">

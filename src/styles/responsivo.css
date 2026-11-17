@@ -487,3 +487,236 @@
         flex-wrap: wrap;
     }
 }
+/* Mantém os controles e nomes longos dentro da área disponível. */
+.top > *,
+.top-right,
+.search-box,
+.equipe-grid,
+.equipe-card,
+.painel-adm-content {
+    min-width: 0;
+}
+
+.equipe-identidade {
+    min-width: 0;
+}
+
+.equipe-identidade > span,
+.solicitacao-info,
+.solicitacao-titulo h3,
+.solicitacao-detalhes {
+    overflow-wrap: anywhere;
+}
+
+.equipe-identidade > :first-child {
+    flex-shrink: 0;
+}
+
+.painel-filtros,
+.filtros-tipos,
+.filtros-status,
+.solicitacao-titulo,
+.solicitacao-detalhes {
+    flex-wrap: wrap;
+}
+
+.painel-title-icon,
+.resumo-icon {
+    flex-shrink: 0;
+}
+
+@media (max-width: 1180px) {
+    .top-right-inline {
+        flex-wrap: wrap;
+    }
+
+    .top-right-inline .search-box {
+        flex: 1 1 220px;
+    }
+
+    .painel-filtros {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .filtros-status {
+        padding: 8px 0 0;
+        border-left: 0;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .solicitacao {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .solicitacao-acoes {
+        grid-column: 2;
+        flex-wrap: wrap;
+    }
+
+    .equipe-card {
+        padding: 18px 14px;
+    }
+
+    .equipe-table th,
+    .equipe-table td {
+        padding: 10px 8px;
+    }
+
+    .equipe-table td:nth-child(3) {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 768px) {
+    .estoque-pagina .estoque-row {
+        align-items: stretch !important;
+    }
+
+    .estoque-pagina .item-info {
+        align-items: flex-start !important;
+    }
+
+    .estoque-pagina .estoque-main {
+        flex: 1;
+        width: auto;
+        align-items: flex-start !important;
+    }
+
+    .estoque-pagina .status-col {
+        align-items: flex-start !important;
+    }
+
+    .estoque-pagina .actions .action-btn,
+    .equipe-acoes .btn-salvar,
+    .filtro,
+    .filtro-status,
+    .solicitacao-acoes button {
+        min-height: 44px;
+    }
+
+    .estoque-pagina .actions .action-btn {
+        width: 44px;
+    }
+
+    .equipe-table,
+    .equipe-table tbody {
+        display: block;
+    }
+
+    .equipe-table tbody tr {
+        display: block;
+        padding: 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        margin-bottom: 12px;
+    }
+
+    .equipe-table tbody td[data-label] {
+        display: grid;
+        grid-template-columns: minmax(100px, .7fr) minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        padding: 8px 0;
+        white-space: normal;
+        text-align: left;
+    }
+
+    .equipe-table tbody td[data-label]::before {
+        content: attr(data-label);
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .equipe-table tbody td[data-label="Nome"] {
+        display: block;
+        padding: 0 0 12px;
+        margin-bottom: 4px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .equipe-table td[data-label="Nome"]::before {
+        display: none;
+    }
+
+    .equipe-status {
+        justify-self: start;
+    }
+
+    .painel-adm-content {
+        gap: 20px;
+    }
+
+    .painel-header {
+        align-items: flex-start;
+    }
+
+    .painel-header h1 {
+        font-size: 22px;
+        overflow-wrap: anywhere;
+    }
+
+    .filtros-tipos > button,
+    .filtros-status > button {
+        flex: 1 1 auto;
+    }
+
+    .solicitacao {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .solicitacao-acoes {
+        grid-column: 1 / -1;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 12px;
+    }
+
+    .solicitacao-acoes button {
+        flex: 1 1 auto;
+    }
+
+    .solicitacoes-header {
+        margin-bottom: 0;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .modal-confirmacao {
+        max-height: calc(100dvh - 28px);
+        overflow-y: auto;
+    }
+
+    .search,
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+        font-size: 16px;
+    }
+}
+
+/* Radios visuais continuam acessíveis sem criar largura fora do formulário. */
+.status-toggle {
+    position: relative;
+}
+
+.status-toggle input[type="radio"] {
+    width: 1px;
+    height: 1px;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+
+@media (max-width: 768px) {
+    .equipe-table tbody tr:last-child {
+        border: 1px solid #e2e8f0;
+    }
+}

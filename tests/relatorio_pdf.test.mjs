@@ -37,3 +37,19 @@ test('dezembro apresenta todos os meses e formata quantidades brasileiras', () =
     assert.equal(doc.lastAutoTable.foot[0].cells[1].raw, '12.000');
     assert.equal(doc.getNumberOfPages(), 2);
 });
+
+test('gráfico tem escala mínima de 100 e quantidade abaixo da coluna', () => {
+    const { doc } = gerarRelatorioProducao({ ...base, mes: 1, producao: [{ mes: 1, total: 7 }] });
+    const textos = doc.internal.pages[1];
+    assert.ok(textos.some(texto => texto.includes('(100) Tj')));
+    const quantidade = textos.find(texto => texto.includes('(7) Tj'));
+    assert.ok(quantidade);
+    const coordenadas = quantidade.match(/([\d.]+) ([\d.]+) Td/);
+    const yEmMilimetros = (doc.internal.pageSize.getHeight() * doc.internal.scaleFactor - Number(coordenadas[2])) / doc.internal.scaleFactor;
+    assert.ok(Math.abs(yEmMilimetros - 209) < 0.01, 'Quantidade deve ficar abaixo da base das barras, em 204 mm');
+});
+
+test('escala cresce quando a produção ultrapassa 100', () => {
+    const { doc } = gerarRelatorioProducao({ ...base, producao: [{ mes: 1, total: 237 }] });
+    assert.ok(doc.internal.pages[1].some(texto => texto.includes('(300) Tj')));
+});

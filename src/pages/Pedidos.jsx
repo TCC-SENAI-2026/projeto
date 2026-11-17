@@ -1,3 +1,6 @@
+import { useAvisos } from '../hooks/useAvisos';
+import { filtrarPedidos, nomeCliente, normalizarBusca } from '../utils/filtros';
+import { useAuth } from '../auth/useAuth';
 import SolicitarInativacao from '../components/SolicitarInativacao';
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -15,6 +18,7 @@ import "../styles/ficha-tecnica.css";
 
 
 function Pedidos() {
+    const { avisar, confirmar } = useAvisos();
     // O filtro vem da URL: /pedidos?status=pendente
     const [searchParams, setSearchParams] = useSearchParams();
     const filtro = searchParams.get("status") || "";
@@ -28,8 +32,12 @@ function Pedidos() {
     const [clientesAbertos, setClientesAbertos] = useState([]);
     const emHistorico = tab === "historico";
     const navigate = useNavigate();
-    const { mensagem, resultados, temPendente, solicitar, fecharResultado } =
+    const { colaborador } = useAuth();
+    const administrador = colaborador?.nivel_acesso === 'administrador';
+    const { mensagem, resultados, temPendente: pendenteRegistrada, solicitar, fecharResultado } =
         useSolicitacoesPedido();
+
+    const temPendente = id => !administrador && pendenteRegistrada(id);
 
     function voltar() {
         setSearchParams({}); // limpa o filtro, senão "?status=finalizado" deixaria a lista vazia
@@ -64,7 +72,7 @@ function Pedidos() {
         const numExibicao = pedidoAtual?.numero_pedido || id;
         if (
             novoStatus === "finalizado" &&
-            !window.confirm(`Finalizar o pedido #${numExibicao}? Ele irá para o histórico.`)
+            !await confirmar(`Finalizar o pedido #${numExibicao}? Ele irá para o histórico.`)
         ) {
             return;
         }
@@ -76,7 +84,7 @@ function Pedidos() {
         } catch (erro) {
             const msg = erro.message || "Não foi possível atualizar o pedido.";
             // Estoque insuficiente: erro 409 com nome dos itens
-            alert(msg);
+            await avisar(msg);
         }
     }
 
@@ -100,28 +108,8 @@ function Pedidos() {
         setTab(valor === "finalizado" ? "historico" : "recentes");
     }
 
-    const nomeCliente = (p) => p.nome_cliente || p.ficha?.cliente || "Sem cliente";
-    const termo = busca.trim().toLowerCase().replace("#", "");
-
-    const visiveis = pedidos.filter((p) => {
-        const naAba = tab === "recentes" ? p.status !== "finalizado" : p.status === "finalizado";
-        const noFiltro = !filtro || p.status === filtro;
-        const naBusca =
-            !termo ||
-            String(p.numero_pedido || p.id).includes(termo) ||
-            String(p.id).includes(termo) ||
-            nomeCliente(p).toLowerCase().includes(termo);
-        return naAba && noFiltro && naBusca;
-    });
-
-    // No histórico os pedidos ficam agrupados por cliente, em ordem alfabética
-    if (emHistorico) {
-        visiveis.sort(
-            (a, b) =>
-                nomeCliente(a).localeCompare(nomeCliente(b), "pt-BR") *
-                (ordemCliente === "asc" ? 1 : -1)
-        );
-    }
+    const termo = normalizarBusca(busca);
+    const visiveis = filtrarPedidos(pedidos, tab, filtro, busca, ordemCliente);
 
     const totalPorCliente = {};
     visiveis.forEach((p) => {
@@ -187,7 +175,7 @@ function Pedidos() {
                             <button
                                 type="button"
                                 className="btn-historico"
-                                onClick={() => setTab("historico")}
+                                onClick={() => { setSearchParams({ status: "finalizado" }); setTab("historico"); }}
                             >
                                 <span className="material-icons">history</span>
                                 Histórico de Pedidos
@@ -377,6 +365,7 @@ function Pedidos() {
                 alvo="pedido"
                 id={pedidoExcluindo.id}
                 nome={`#${pedidoExcluindo.numero_pedido || pedidoExcluindo.id} - ${nomeCliente(pedidoExcluindo)}`}
+                onConcluido={async () => { setPedidos(await listarPedidos()); setFichaAberta(null); }}
                 onClose={() => setPedidoExcluindo(null)}
                 onEnviar={justificativa => solicitar({
                     tipo: 'exclusao', pedidoId: pedidoExcluindo.id,

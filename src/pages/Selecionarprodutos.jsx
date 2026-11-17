@@ -1,3 +1,4 @@
+import { useAvisos } from '../hooks/useAvisos';
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
@@ -164,6 +165,7 @@ function ModeloCard({ modelo, dados, arte, onChange, onArte, onRemoverArte, sele
 }
 
 function SelecionarProdutos() {
+    const { avisar } = useAvisos();
     const navigate = useNavigate();
     const tecidosEstoque = useTecidosEstoque();
 
@@ -260,11 +262,11 @@ function SelecionarProdutos() {
         });
     }
 
-    function handleContinuar() {
+    async function handleContinuar() {
         const selecionadosModelos = produtosEstoque.filter(m => modelos[m.id]?.selecionado);
 
         if (selecionadosModelos.length === 0) {
-            alert('Selecione pelo menos um produto.');
+            await avisar('Selecione pelo menos um produto.');
             return;
         }
 
@@ -291,7 +293,7 @@ function SelecionarProdutos() {
 
         const semQtd = selecionados.filter(p => Object.keys(p.grade).length === 0);
         if (semQtd.length > 0) {
-            alert(`Preencha as quantidades de: ${semQtd.map(p => p.item).join(', ')}`);
+            await avisar(`Preencha as quantidades de: ${semQtd.map(p => p.item).join(', ')}`);
             return;
         }
 
@@ -299,7 +301,7 @@ function SelecionarProdutos() {
             !p.detalhes.material_id || !p.detalhes.material_cor_id || !p.detalhes.local
         );
         if (semDetalhe.length > 0) {
-            alert(`Preencha Tecido, Cor e Local da Arte de: ${semDetalhe.map(p => p.item).join(', ')}`);
+            await avisar(`Preencha Tecido, Cor e Local da Arte de: ${semDetalhe.map(p => p.item).join(', ')}`);
             return;
         }
 

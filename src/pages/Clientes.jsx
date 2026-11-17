@@ -1,3 +1,5 @@
+import { filtrarClientes } from '../utils/filtros';
+import { useAuth } from '../auth/useAuth';
 import SolicitarInativacao from '../components/SolicitarInativacao';
 import Modal from "../components/Modal"
 import Sidebar from "../components/Sidebar"
@@ -9,6 +11,8 @@ import { api } from "../services/api";
 
 function Clientes() {
 
+    const { colaborador } = useAuth();
+    const administrador = colaborador?.nivel_acesso === 'administrador';
     const navigate = useNavigate();
     const [inativacao, setInativacao] = useState(null);
     const [modalAberto, setModalAberto] = useState(false);
@@ -26,7 +30,7 @@ function Clientes() {
                 console.log('Erro ao carregar clientes:', erro);
                 setClientes([]);
             });
-    }, [])
+    }, [navigate])
 
     function abrirCliente(cliente) {
         setClienteSelecionado(cliente)
@@ -34,23 +38,12 @@ function Clientes() {
     }
 
     // Aplica busca e status sobre os registros recebidos da API.
-    const clientesFiltrados = clientes.filter(cliente => {
-        const termo = busca.trim().toLowerCase();
-        const nome = String(cliente[0] ?? '').toLowerCase();
-
-        const bateBusca = nome.includes(termo);
-        const bateStatus =
-            filtroStatus === 'Todos' ||
-            (filtroStatus === 'Ativos' && cliente[12]) ||
-            (filtroStatus === 'Inativos' && !cliente[12]);
-
-        return bateBusca && bateStatus;
-    });
+    const clientesFiltrados = filtrarClientes(clientes, filtroStatus, busca);
 
     return (
         <>
             <Sidebar />
-            {inativacao && <SolicitarInativacao alvo="cliente" id={inativacao[13]} nome={inativacao[0]} reativar={!inativacao[12]} onClose={() => setInativacao(null)} />}
+            {inativacao && <SolicitarInativacao alvo="cliente" id={inativacao[13]} nome={inativacao[0]} reativar={!inativacao[12]} onConcluido={async () => { setClientes(await api.get('/listar-clientes', { lista: true })); setModalAberto(false); }} onClose={() => setInativacao(null)} />}
 
             <div className="container">
 
@@ -295,7 +288,7 @@ function Clientes() {
                                 <button type="button" className="btn-sec" onClick={() => {
                                     setInativacao(clienteSelecionado);
                                     setModalAberto(false);
-                                }}>{clienteSelecionado[12] ? 'Solicitar inativação' : 'Solicitar reativação'}</button>
+                                }}>{clienteSelecionado[12] ? (administrador ? 'Inativar cliente' : 'Solicitar inativação') : (administrador ? 'Reativar cliente' : 'Solicitar reativação')}</button>
 
 
                                 <button

@@ -1,0 +1,101 @@
+.form-page-layout.estoque-form-layout.cadastro-estoque {
+    max-width: 1240px;
+}
+
+.cadastro-estoque > .form-card {
+    padding: 28px;
+}
+
+.cadastro-estoque .form-header {
+    margin-bottom: 24px;
+}
+
+.cadastro-estoque form {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-areas:
+        "tipo tipo"
+        "identificacao controle"
+        "identificacao observacoes"
+        "cores cores"
+        "acoes acoes";
+    gap: 20px 24px;
+    align-items: start;
+}
+
+.cadastro-estoque form > .form-section,
+.cadastro-estoque-cores {
+    min-width: 0;
+    margin: 0;
+    padding: 22px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #fbfcfe;
+}
+
+.cadastro-estoque .cadastro-estoque-tipo {
+    grid-area: tipo;
+    background: #fff;
+}
+
+.cadastro-estoque .cadastro-estoque-identificacao {
+    grid-area: identificacao;
+    align-self: stretch;
+}
+
+.cadastro-estoque .cadastro-estoque-controle {
+    grid-area: controle;
+}
+
+.cadastro-estoque .cadastro-estoque-observacoes {
+    grid-area: observacoes;
+}
+
+.cadastro-estoque-cores {
+    grid-area: cores;
+}
+
+.cadastro-estoque .form-actions {
+    grid-area: acoes;
+    margin-top: 0;
+    padding-top: 20px;
+}
+
+.cadastro-estoque .section-help {
+    margin-bottom: 18px;
+}
+
+.cadastro-estoque .type-card {
+    padding: 14px 18px;
+    gap: 5px;
+}
+
+.cadastro-estoque .form-grid {
+    gap: 20px;
+}
+
+.cadastro-estoque-identificacao .form-field {
+    grid-column: 1 / -1;
+}
+
+.cadastro-estoque .form-field textarea {
+    min-height: 100px;
+}
+
+@media (max-width: 1050px) {
+    .cadastro-estoque form {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "tipo" "identificacao" "controle" "observacoes" "cores" "acoes";
+    }
+}
+
+@media (max-width: 760px) {
+    .cadastro-estoque > .form-card {
+        padding: 20px 16px;
+    }
+
+    .cadastro-estoque form > .form-section,
+    .cadastro-estoque-cores {
+        padding: 18px 14px;
+    }
+}

@@ -1,8 +1,9 @@
+import { filtrarColaboradores } from '../utils/filtros';
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import FotoColaborador from "../components/FotoColaborador";
 import { useNavigate } from "react-router-dom";
-import '../styles/Equipe.css';
+import '../styles/equipe.css';
 import '../styles/padrao.css';
 import { api } from "../services/api";
 
@@ -19,7 +20,7 @@ function Equipe() {
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
     const [busca, setBusca] = useState("");
-    const [filtroStatus, setFiltroStatus] = useState("Todos");
+    const [filtroStatus, setFiltroStatus] = useState("Ativos");
 
     useEffect(() => {
         async function carregarColaboradores() {
@@ -47,25 +48,13 @@ function Equipe() {
     }, []);
 
     // Busca e status são filtrados localmente sobre a lista completa da API.
-    const termo = busca.trim().toLowerCase();
-    const filtrados = usuarios.filter((u) => {
-        const bateBusca =
-            !termo ||
-            [u.nome_completo, u.re, u.email].some((v) => v && v.toLowerCase().includes(termo));
-
-        const bateStatus =
-            filtroStatus === "Todos" ||
-            (filtroStatus === "Ativos" && u.ativo) ||
-            (filtroStatus === "Inativos" && !u.ativo);
-
-        return bateBusca && bateStatus;
-    });
+    const filtrados = filtrarColaboradores(usuarios, filtroStatus, busca);
 
     return (
         <div className="equipe-container">
             <Sidebar />
 
-            <main className="equipe-conteudo">
+            <main className="container equipe-conteudo">
 
                 <div className="top">
                     <div className="page-header">
@@ -146,18 +135,18 @@ function Equipe() {
                                 ) : (
                                     filtrados.map((item) => (
                                         <tr key={item.id_colaborador}>
-                                            <td><div className="equipe-identidade">
+                                            <td data-label="Nome"><div className="equipe-identidade">
                                                 <FotoColaborador id={item.id_colaborador} nome={item.nome_completo} temFoto={!!item.tem_foto} pequena />
                                                 <span>{item.nome_completo}</span>
                                             </div></td>
-                                            <td>{item.re || "—"}</td>
-                                            <td>{NIVEIS[item.nivel_acesso] || item.nivel_acesso}</td>
-                                            <td>
+                                            <td data-label="RE">{item.re || "—"}</td>
+                                            <td data-label="Nível de acesso">{NIVEIS[item.nivel_acesso] || item.nivel_acesso}</td>
+                                            <td data-label="Status">
                                                 <span className={`equipe-status ${item.ativo ? "ativo" : "inativo"}`}>
                                                     {item.ativo ? "Ativo" : "Inativo"}
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td data-label="Ações">
                                                 <div className="equipe-acoes">
                                                     <button
                                                         type="button"

@@ -5,11 +5,7 @@
 }
 
 .equipe-conteudo {
-    margin-left: 220px;
-    width: calc(100% - 220px);
-    min-height: 100vh;
-    padding: 24px 28px;
-    box-sizing: border-box;
+    min-width: 0;
 }
 
 /* Grid de duas colunas */
@@ -316,11 +312,7 @@
 }
 
 @media (max-width: 768px) {
-    .equipe-conteudo {
-        margin-left: 0;
-        width: 100%;
-        padding: 64px 12px 12px;
-    }
+
 
     .equipe-table thead {
         display: none;

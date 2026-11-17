@@ -1,3 +1,4 @@
+import { filtrarSolicitacoes } from '../utils/filtros';
 import { useState, useEffect, useCallback } from "react";
 import FotoColaborador from "../components/FotoColaborador";
 import Sidebar from "../components/Sidebar";
@@ -94,12 +95,7 @@ function PainelAdm() {
     const solicitacaoSelecionada = todas.find((s) => s.id === selecionadaId) || null;
     const totalPendentes = todas.filter((s) => s.status === "Pendentes").length;
 
-    const solicitacoesFiltradas = todas.filter((solicitacao) => {
-        const correspondeTipo =
-            filtroTipo === "Todas" || solicitacao.categoria === filtroTipo;
-        const correspondeStatus = solicitacao.status === filtroStatus;
-        return correspondeTipo && correspondeStatus;
-    });
+    const solicitacoesFiltradas = filtrarSolicitacoes(todas, filtroTipo, filtroStatus);
 
     function fecharModais() {
         setSelecionadaId(null);

@@ -1,3 +1,19 @@
+import { normalizarBusca } from './filtros.js';
+
+export function filtrarEstoque(itens, filtro, pesquisa = '') {
+  const termo = normalizarBusca(pesquisa);
+  return itens.filter(item => {
+    if (termo) return normalizarBusca(item.nome_item).includes(termo);
+    const ativo = item.ativo === true || Number(item.ativo) === 1;
+    if (ativo === (filtro === 'inativos')) return false;
+    const tipo = normalizarBusca(item.tipo_item);
+    const correspondeFiltro = filtro === 'produtos' ? tipo === 'produto'
+      : filtro === 'materiais' ? tipo === 'material'
+        : filtro === 'baixo' ? estaBaixo(item) : true;
+    return correspondeFiltro && normalizarBusca(item.nome_item).includes(termo);
+  });
+}
+
 export function estaBaixo(item) {
   if (item.tipo_item?.toLowerCase() === "material" && item.tem_variacoes) {
     const cores = item.cores || [];

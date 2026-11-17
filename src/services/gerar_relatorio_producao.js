@@ -13,11 +13,11 @@ export function gerarRelatorioProducao(dados, { logo, emitidoEm = new Date() } =
         total: indice < dados.mes ? Number(dados.producao.find(item => item.mes === indice + 1)?.total || 0) : null,
     }));
     const acumulado = meses.reduce((soma, item) => soma + (item.total ?? 0), 0);
-    const texto = (valor, x, y, tamanho = 10, cor = '#475569', negrito = false) => {
+    const texto = (valor, x, y, tamanho = 10, cor = '#475569', negrito = false, opcoes = {}) => {
         doc.setFont('helvetica', negrito ? 'bold' : 'normal');
         doc.setFontSize(tamanho);
         doc.setTextColor(cor);
-        doc.text(String(valor), x, y);
+        doc.text(String(valor), x, y, opcoes);
     };
     function cabecalho(subtitulo) {
         doc.setFillColor('#0f172a');
@@ -53,12 +53,13 @@ export function gerarRelatorioProducao(dados, { logo, emitidoEm = new Date() } =
     // Gráfico vetorial: legível na impressão e independente da animação da tela.
     const x = 29, y = 154, largura = 161, altura = 50;
     const maximo = Math.max(1, ...meses.map(item => item.total || 0));
-    const teto = maximo <= 5 ? 5 : Math.ceil(maximo / (10 ** Math.floor(Math.log10(maximo)))) * (10 ** Math.floor(Math.log10(maximo)));
-    for (let i = 0; i <= 4; i++) {
-        const linha = y + altura - i * altura / 4;
+    // Assim como na tela, a escala chega pelo menos a 100 e cresce se necessário.
+    const teto = Math.max(100, Math.ceil(maximo / 100) * 100);
+    for (let i = 0; i <= 5; i++) {
+        const linha = y + altura - i * altura / 5;
         doc.setDrawColor('#e2e8f0');
         doc.line(x, linha, x + largura, linha);
-        texto(numero(Math.round(teto * i / 4)), 16, linha + 1, 7, '#64748b');
+        texto(numero(Math.round(teto * i / 5)), 16, linha + 1, 7, '#64748b');
     }
     meses.forEach((item, indice) => {
         const centro = x + (indice + .5) * largura / 12;
@@ -67,8 +68,8 @@ export function gerarRelatorioProducao(dados, { logo, emitidoEm = new Date() } =
             doc.setFillColor('#2563eb');
             doc.rect(centro - 4, y + altura - barra, 8, barra, 'F');
         }
-        texto(item.total === null ? '-' : numero(item.total), centro - 3, item.total ? y + altura - item.total / teto * altura - 2 : y + altura - 2, 6, '#475569');
-        texto(MESES[indice].slice(0, 3), centro - 3, y + altura + 6, 7, '#64748b');
+        texto(item.total === null ? '-' : numero(item.total), centro, y + altura + 5, 7, '#0f172a', true, { align: 'center' });
+        texto(MESES[indice].slice(0, 3), centro, y + altura + 10, 7, '#64748b', false, { align: 'center' });
     });
     texto('Mês atual parcial. Meses futuros sem apuração.', 16, 222, 8, '#64748b');
 

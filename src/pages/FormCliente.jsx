@@ -1,3 +1,5 @@
+import { useAvisos } from '../hooks/useAvisos';
+import { mascaraTelefone, mascaraCpfCnpj, mascaraCep } from '../utils/formatacao';
 import Sidebar from "../components/Sidebar"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react"
@@ -11,6 +13,7 @@ const ESTADOS = [
 ]
 
 function FormCliente() {
+    const { avisar } = useAvisos();
 
     const navigate = useNavigate()
     const location = useLocation()
@@ -53,7 +56,7 @@ function FormCliente() {
             navigate('/clientes')
         } catch (erro) {
             console.log('Erro ao salvar cliente:', erro)
-            alert(erro.message || 'Não foi possível salvar o cliente.')
+            await avisar(erro.message || 'Não foi possível salvar o cliente.')
         }
     }
 
@@ -76,10 +79,10 @@ function FormCliente() {
         if (!clienteEditar) return
         document.getElementById('nome_empresa').value = clienteEditar[0] || ''
         document.getElementById('responsavel').value = clienteEditar[1] || ''
-        document.getElementById('cpf_cnpj').value = clienteEditar[2] || ''
-        document.getElementById('telefone').value = clienteEditar[3] || ''
+        document.getElementById('cpf_cnpj').value = mascaraCpfCnpj(clienteEditar[2])
+        document.getElementById('telefone').value = mascaraTelefone(clienteEditar[3])
         document.getElementById('email').value = clienteEditar[4] || ''
-        document.getElementById('cep').value = clienteEditar[5] || ''
+        document.getElementById('cep').value = mascaraCep(clienteEditar[5])
         document.getElementById('municipio').value = clienteEditar[8] || ''
         document.getElementById('estado').value = clienteEditar[9] || ''
         document.getElementById('rua').value = clienteEditar[6] || ''
@@ -101,8 +104,8 @@ function FormCliente() {
             if (cep.length !== 8) return
             fetch(`https://viacep.com.br/ws/${cep}/json/`)
                 .then(res => res.json())
-                .then(dados => {
-                    if (dados.erro) { alert("CEP não encontrado."); return }
+                .then(async dados => {
+                    if (dados.erro) { await avisar("CEP não encontrado."); return }
                     const municipio = document.getElementById("municipio")
                     const rua = document.getElementById("rua")
                     const estado = document.getElementById("estado")
@@ -114,7 +117,7 @@ function FormCliente() {
 
         inputCep.addEventListener("blur", buscarCep)
         return () => inputCep.removeEventListener("blur", buscarCep)
-    }, [])
+    }, [avisar])
 
     return (
         <>
@@ -165,12 +168,12 @@ function FormCliente() {
 
                                 <div className="form-field">
                                     <label htmlFor="cpf_cnpj">CPF / CNPJ</label>
-                                    <input id="cpf_cnpj" placeholder="00.000.000/0000-00" />
+                                    <input id="cpf_cnpj" type="text" inputMode="numeric" maxLength={18} onChange={e => { e.target.value = mascaraCpfCnpj(e.target.value); }} placeholder="00.000.000/0000-00" />
                                 </div>
 
                                 <div className="form-field">
                                     <label htmlFor="telefone">Telefone</label>
-                                    <input id="telefone" placeholder="(11) 99999-9999" />
+                                    <input id="telefone" type="tel" inputMode="tel" maxLength={15} onChange={e => { e.target.value = mascaraTelefone(e.target.value); }} placeholder="(11) 99999-9999" />
                                 </div>
 
                                 <div className="form-field full">
@@ -195,7 +198,7 @@ function FormCliente() {
 
                                 <div className="form-field">
                                     <label htmlFor="cep">CEP</label>
-                                    <input id="cep" placeholder="00000-000" />
+                                    <input id="cep" type="text" inputMode="numeric" maxLength={9} onChange={e => { e.target.value = mascaraCep(e.target.value); }} placeholder="00000-000" />
                                 </div>
 
                                 <div className="form-field">

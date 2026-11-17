@@ -17,14 +17,18 @@ def solicitar_inativacao(alvo, alvo_id, dados, reativar=False):
         'estoque': ('estoque', 'estoque_id', 'nome_item'),
         'cliente': ('clientes', 'cliente_id', 'nome'),
     }[alvo]
+    administrador = g.colaborador['nivel_acesso'] == 'administrador'
     motivo = dados.get('justificativa') if isinstance(dados, dict) else None
-    if not isinstance(motivo, str) or not 5 <= len(motivo.strip()) <= 2000:
+    if not administrador and (not isinstance(motivo, str) or not 5 <= len(motivo.strip()) <= 2000):
         return jsonify(success=False, msg='Explique o motivo com 5 a 2000 caracteres.'), 400
     with db_cursor(commit=True) as cursor:
         cursor.execute(f'SELECT id, {nome} AS nome FROM {tabela} WHERE id = %s AND ativo = %s FOR UPDATE', (alvo_id, 0 if reativar else 1))
         registro = cursor.fetchone()
         if not registro:
             return jsonify(success=False, msg='Registro não encontrado ou status incompatível com a solicitação.'), 404
+        if administrador:
+            cursor.execute(f'UPDATE {tabela} SET ativo = %s WHERE id = %s', (1 if reativar else 0, alvo_id))
+            return jsonify(success=True, modo='direto', msg='Status atualizado.'), 200
         cursor.execute(f"SELECT id FROM solicitacoes WHERE {coluna} = %s AND status = 'pendente'", (alvo_id,))
         if cursor.fetchone():
             return jsonify(success=False, msg='Já existe uma solicitação pendente para este registro.'), 409
@@ -32,6 +36,115 @@ def solicitar_inativacao(alvo, alvo_id, dados, reativar=False):
         cursor.execute(f"INSERT INTO solicitacoes (tipo, {coluna}, colaborador_solicitante_id, dados_propostos, status) VALUES (%s, %s, %s, %s, 'pendente')", ('edicao' if reativar else 'exclusao', alvo_id, g.colaborador['id'], dp))
         nova_id = cursor.lastrowid
     return jsonify(success=True, data={'id': nova_id}, msg='Solicitação enviada aos administradores.'), 201
+
+
+def aplicar_acao(cursor, sol, dp):
+    """Aplica a mesma regra para ação direta do admin e aprovação."""
+    if sol['tipo'] == 'perfil':
+        aprovar_perfil(cursor, sol, dp)
+
+    if (sol.get('estoque_id') or sol.get('cliente_id')):
+        reativar = bool((sol.get('cliente_id') or sol.get('estoque_id')) and sol['tipo'] == 'edicao' and dp.get('reativar') is True)
+        if sol['tipo'] != 'exclusao' and not reativar:
+            raise ErroPerfil('Tipo invalido para este alvo.', 409)
+        tabela, alvo_id = ('estoque', sol['estoque_id']) if sol.get('estoque_id') else ('clientes', sol['cliente_id'])
+        cursor.execute(f'SELECT id FROM {tabela} WHERE id = %s AND ativo = %s FOR UPDATE', (alvo_id, 0 if reativar else 1))
+        if not cursor.fetchone():
+            raise ErroPerfil('Registro inexistente ou status incompatível com a solicitação.', 409)
+        cursor.execute(f'UPDATE {tabela} SET ativo = %s WHERE id = %s', (1 if reativar else 0, alvo_id))
+
+    if sol['tipo'] != 'perfil' and sol.get('pedido_id'):
+        # Serializa a decisao com inicio de producao e edicoes do pedido.
+        cursor.execute(
+            "SELECT id FROM pedidos WHERE id = %s AND excluido_em IS NULL FOR UPDATE",
+            (sol['pedido_id'],)
+        )
+        if not cursor.fetchone():
+            raise ErroPerfil('Pedido inexistente ou ja excluido.', 409)
+        if sol['tipo'] == 'exclusao':
+            pid = sol['pedido_id']
+
+            # Devolve estoque dos itens que tiveram baixa comprovada
+            cursor.execute(f"""
+                SELECT pi.estoque_id,
+                       e.nome_item,
+                       COALESCE(SUM(pit.quantidade), 0) AS total
+                FROM pedido_itens pi
+                JOIN estoque e ON e.id = pi.estoque_id
+                LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
+                WHERE pi.pedido_id = %s
+                  AND pi.estoque_id IS NOT NULL
+                  AND {FILTRO_ESTOQUE_PECAS}
+                GROUP BY pi.estoque_id, e.nome_item
+            """, (pid,))
+            itens_pedido = cursor.fetchall()
+
+            admin_id = g.colaborador['id']
+            for it in itens_pedido:
+                total = float(it['total'])
+                if total <= 0:
+                    continue
+                cursor.execute(
+                    "SELECT COUNT(*) AS c FROM estoque_movimentacoes "
+                    "WHERE estoque_id = %s AND tipo = 'saida' "
+                    "AND motivo = CONCAT('Baixa automática — Pedido #', %s)",
+                    (it['estoque_id'], str(pid))
+                )
+                if cursor.fetchone()['c'] > 0:
+                    cursor.execute(
+                        "UPDATE estoque SET quantidade_atual = quantidade_atual + %s WHERE id = %s",
+                        (total, it['estoque_id'])
+                    )
+                    cursor.execute("""
+                        INSERT INTO estoque_movimentacoes
+                            (estoque_id, tipo, quantidade, motivo, colaborador_id)
+                        VALUES (%s, 'entrada', %s, %s, %s)
+                    """, (it['estoque_id'], total,
+                          f'Devolução por exclusão aprovada — Pedido #{pid}',
+                          admin_id))
+
+            cursor.execute(
+                "UPDATE pedidos SET excluido_em = NOW() WHERE id = %s AND excluido_em IS NULL",
+                (pid,)
+            )
+        else:
+            # Aplica alterações do pedido
+            pedido_novo = dp.get('pedidoNovo') or {}
+            ficha_nova = pedido_novo.get('ficha', {}) if isinstance(pedido_novo, dict) else {}
+
+            campos = {}
+            if 'entrega' in ficha_nova and ficha_nova['entrega']:
+                campos['prazo_entrega'] = ficha_nova['entrega']
+            if 'prioridade' in ficha_nova and ficha_nova['prioridade'] in ('baixa', 'media', 'alta'):
+                campos['prioridade'] = ficha_nova['prioridade']
+            if 'observacao' in ficha_nova:
+                campos['obs_geral'] = ficha_nova['observacao'] or None
+
+            if campos:
+                sets = ', '.join(f"{k} = %s" for k in campos)
+                cursor.execute(
+                    f"UPDATE pedidos SET {sets} WHERE id = %s",
+                    [*campos.values(), sol['pedido_id']]
+                )
+
+            # Aplica artes individuais por produto (se enviadas no pedidoNovo)
+            produtos_novos = (pedido_novo.get('pedido') or {}).get('produtos') or []
+            for prod in produtos_novos:
+                det = prod.get('detalhes') or {}
+                item_id = det.get('id')
+                arte_nova = det.get('arteNova')
+                if item_id and arte_nova and isinstance(arte_nova, str) and ',' in arte_nova:
+                    try:
+                        header, encoded = arte_nova.split(',', 1)
+                        mime = header.split(':')[1].split(';')[0] if ':' in header else 'image/png'
+                        img_bytes = base64.b64decode(encoded)
+                        cursor.execute(
+                            "UPDATE pedido_itens SET imagem_dados = %s, imagem_mime = %s, imagem_url = NULL WHERE id = %s AND pedido_id = %s",
+                            (img_bytes, mime, item_id, sol['pedido_id'])
+                        )
+                    except Exception:
+                        pass
+
 
 
 def data_iso(valor):
@@ -161,10 +274,19 @@ def criar_solicitacao():
         return jsonify(success=False, msg='Tipo de solicitação inválido.'), 400
     if not pedido_id:
         return jsonify(success=False, msg='ID do pedido é obrigatório.'), 400
-    if tipo == 'exclusao' and len(justificativa) < 5:
+    if g.colaborador['nivel_acesso'] != 'administrador' and tipo == 'exclusao' and len(justificativa) < 5:
         return jsonify(success=False, msg='Explique o motivo da exclusão com mais detalhes.'), 400
 
     colaborador_id = g.colaborador['id']
+
+    if g.colaborador['nivel_acesso'] == 'administrador':
+        try:
+            with db_cursor(commit=True) as cursor:
+                aplicar_acao(cursor, {'tipo': tipo, 'pedido_id': pedido_id},
+                             {'pedidoNovo': pedido_novo})
+            return jsonify(success=True, modo='direto', data={'modo': 'direto'}), 200
+        except ErroPerfil as erro:
+            return jsonify(success=False, msg=str(erro)), erro.status
 
     with db_cursor(commit=True) as cursor:
         # Verifica se já existe solicitação pendente para este pedido
@@ -237,116 +359,8 @@ def decidir_solicitacao(sol_id):
             except (ValueError, TypeError):
                 dp = {}
 
-        if sol['tipo'] == 'perfil' and decisao == 'aprovada':
-            aprovar_perfil(cursor, sol, dp)
-
-        if decisao == 'aprovada' and (sol.get('estoque_id') or sol.get('cliente_id')):
-            reativar = bool((sol.get('cliente_id') or sol.get('estoque_id')) and sol['tipo'] == 'edicao' and dp.get('reativar') is True)
-            if sol['tipo'] != 'exclusao' and not reativar:
-                conn.rollback()
-                cursor.close()
-                return jsonify(success=False, msg='Tipo invalido para este alvo.'), 409
-            tabela, alvo_id = ('estoque', sol['estoque_id']) if sol.get('estoque_id') else ('clientes', sol['cliente_id'])
-            cursor.execute(f'SELECT id FROM {tabela} WHERE id = %s AND ativo = %s FOR UPDATE', (alvo_id, 0 if reativar else 1))
-            if not cursor.fetchone():
-                conn.rollback()
-                cursor.close()
-                return jsonify(success=False, msg='Registro inexistente ou status incompatível com a solicitação.'), 409
-            cursor.execute(f'UPDATE {tabela} SET ativo = %s WHERE id = %s', (1 if reativar else 0, alvo_id))
-
-        if decisao == 'aprovada' and sol['tipo'] != 'perfil' and sol.get('pedido_id'):
-            # Serializa a decisao com inicio de producao e edicoes do pedido.
-            cursor.execute(
-                "SELECT id FROM pedidos WHERE id = %s AND excluido_em IS NULL FOR UPDATE",
-                (sol['pedido_id'],)
-            )
-            if not cursor.fetchone():
-                conn.rollback()
-                cursor.close()
-                return jsonify(success=False, msg='Pedido inexistente ou ja excluido.'), 409
-            if sol['tipo'] == 'exclusao':
-                pid = sol['pedido_id']
-
-                # Devolve estoque dos itens que tiveram baixa comprovada
-                cursor.execute(f"""
-                    SELECT pi.estoque_id,
-                           e.nome_item,
-                           COALESCE(SUM(pit.quantidade), 0) AS total
-                    FROM pedido_itens pi
-                    JOIN estoque e ON e.id = pi.estoque_id
-                    LEFT JOIN pedido_item_tamanhos pit ON pit.pedido_item_id = pi.id
-                    WHERE pi.pedido_id = %s
-                      AND pi.estoque_id IS NOT NULL
-                      AND {FILTRO_ESTOQUE_PECAS}
-                    GROUP BY pi.estoque_id, e.nome_item
-                """, (pid,))
-                itens_pedido = cursor.fetchall()
-
-                admin_id = g.colaborador['id']
-                for it in itens_pedido:
-                    total = float(it['total'])
-                    if total <= 0:
-                        continue
-                    cursor.execute(
-                        "SELECT COUNT(*) AS c FROM estoque_movimentacoes "
-                        "WHERE estoque_id = %s AND tipo = 'saida' "
-                        "AND motivo = CONCAT('Baixa automática — Pedido #', %s)",
-                        (it['estoque_id'], str(pid))
-                    )
-                    if cursor.fetchone()['c'] > 0:
-                        cursor.execute(
-                            "UPDATE estoque SET quantidade_atual = quantidade_atual + %s WHERE id = %s",
-                            (total, it['estoque_id'])
-                        )
-                        cursor.execute("""
-                            INSERT INTO estoque_movimentacoes
-                                (estoque_id, tipo, quantidade, motivo, colaborador_id)
-                            VALUES (%s, 'entrada', %s, %s, %s)
-                        """, (it['estoque_id'], total,
-                              f'Devolução por exclusão aprovada — Pedido #{pid}',
-                              admin_id))
-
-                cursor.execute(
-                    "UPDATE pedidos SET excluido_em = NOW() WHERE id = %s AND excluido_em IS NULL",
-                    (pid,)
-                )
-            else:
-                # Aplica alterações do pedido
-                pedido_novo = dp.get('pedidoNovo') or {}
-                ficha_nova = pedido_novo.get('ficha', {}) if isinstance(pedido_novo, dict) else {}
-
-                campos = {}
-                if 'entrega' in ficha_nova and ficha_nova['entrega']:
-                    campos['prazo_entrega'] = ficha_nova['entrega']
-                if 'prioridade' in ficha_nova and ficha_nova['prioridade'] in ('baixa', 'media', 'alta'):
-                    campos['prioridade'] = ficha_nova['prioridade']
-                if 'observacao' in ficha_nova:
-                    campos['obs_geral'] = ficha_nova['observacao'] or None
-
-                if campos:
-                    sets = ', '.join(f"{k} = %s" for k in campos)
-                    cursor.execute(
-                        f"UPDATE pedidos SET {sets} WHERE id = %s",
-                        [*campos.values(), sol['pedido_id']]
-                    )
-
-                # Aplica artes individuais por produto (se enviadas no pedidoNovo)
-                produtos_novos = (pedido_novo.get('pedido') or {}).get('produtos') or []
-                for prod in produtos_novos:
-                    det = prod.get('detalhes') or {}
-                    item_id = det.get('id')
-                    arte_nova = det.get('arteNova')
-                    if item_id and arte_nova and isinstance(arte_nova, str) and ',' in arte_nova:
-                        try:
-                            header, encoded = arte_nova.split(',', 1)
-                            mime = header.split(':')[1].split(';')[0] if ':' in header else 'image/png'
-                            img_bytes = base64.b64decode(encoded)
-                            cursor.execute(
-                                "UPDATE pedido_itens SET imagem_dados = %s, imagem_mime = %s, imagem_url = NULL WHERE id = %s AND pedido_id = %s",
-                                (img_bytes, mime, item_id, sol['pedido_id'])
-                            )
-                        except Exception:
-                            pass
+        if decisao == 'aprovada':
+            aplicar_acao(cursor, sol, dp)
 
         # Atualiza dados_propostos com motivo de recusa, se houver
         if decisao == 'recusada' and motivo:

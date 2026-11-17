@@ -4,10 +4,12 @@
 -- Se ja houver tabelas, nao executar este arquivo sobre elas.
 -- Requer MySQL Server >= 8.0.16 (CHECKs).
 -- Inclui variacoes de tecidos, imagens, perfil e solicitacoes de clientes.
+-- Inclui clientes.cadastro_manual para separar cadastro manual e cliente de pedido.
 -- Inativacao/reativacao de clientes e estoque usam ativo e solicitacoes;
 -- justificativa e reativar ficam em dados_propostos, sem novas colunas.
 -- Ativacao/redefinicao de senha reutilizam tokens.
--- Notificacoes temporarias sao preferencias locais; PDF consulta dados existentes.
+-- Avisos vistos e seus prazos ficam no navegador, separados por usuario;
+-- sair da sessao preserva esse historico. PDF consulta dados existentes.
 -- Em banco criado por este arquivo, nao reaplicar as migracoes separadas.
 -- Nao cria usuarios/senhas nem produtos de exemplo.
 -- Tecido/cor novos usam material_id e material_cor_id; catalogo fica opcional.
@@ -65,6 +67,11 @@ CREATE TABLE tokens (
 
 -- A secao 2.2 nao aprova colaborador_id em clientes; a relacao "cadastra"
 -- ilustrada no diagrama nao acrescenta uma coluna a esta tabela.
+-- Cadastro manual usa cadastro_manual=1 (padrao). Criacao por pedido usa 0.
+-- A listagem inclui cadastros manuais ou clientes com 5 pedidos concluidos
+-- pelo mesmo email (ignorando caixa e espacos nas pontas).
+-- Esta regra e aplicada na consulta do backend, sem trigger ou contador no banco.
+-- ativo controla inativacao e reativacao, independentemente da origem do cadastro.
 CREATE TABLE clientes (
     id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
     nome       VARCHAR(150) NOT NULL,
@@ -73,6 +80,7 @@ CREATE TABLE clientes (
     endereco   VARCHAR(255) NULL,
     logo_url   VARCHAR(2048) NULL,
     ativo      BOOLEAN NOT NULL DEFAULT 1,
+    cadastro_manual BOOLEAN NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     KEY idx_clientes_nome (nome),
@@ -232,6 +240,10 @@ CREATE TABLE pedido_item_tamanhos (
 
 -- O status disponivel/baixo/indisponivel e calculado pela consulta;
 -- inativacao usa ativo=0. Toda mudanca de saldo registra uma movimentacao.
+-- Confirmar a ficha tecnica grava o pedido, desconta o saldo e registra a saida
+-- na mesma transacao. Saldo insuficiente desfaz a operacao inteira.
+-- Iniciar ou concluir um pedido ja baixado nao desconta novamente.
+-- Edicao ajusta a diferenca; exclusao devolve somente o que teve baixa.
 CREATE TABLE estoque_movimentacoes (
     id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
     estoque_id     INT UNSIGNED NOT NULL,

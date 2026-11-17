@@ -25,6 +25,12 @@ class TestVariacoesEstoque(unittest.TestCase):
         self.assertEqual(self.client.get('/listar-estoque?status=invalido').status_code, 400)
         self.open_connection.assert_not_called()
 
+    def test_pesquisa_pode_carregar_ativos_e_inativos(self):
+        resposta = self.client.get('/listar-estoque?status=todos')
+        self.assertEqual(resposta.status_code, 200)
+        consulta = self.cursor.execute.call_args_list[0].args[0]
+        self.assertNotIn('WHERE ativo', consulta)
+
     def setUp(self):
         app = Flask(__name__)
         app.config.update(TESTING=True, SECRET_KEY='teste-variacoes')
