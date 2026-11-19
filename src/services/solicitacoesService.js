@@ -6,9 +6,13 @@ const CHAVE_VISTAS = 'solicitacoes_vistas';
 const CHAVE_PRAZOS = 'solicitacoes_prazos_avisos';
 export const DURACAO_AVISO = 6000;
 let contaAvisos = null;
+let versaoContaAvisos = 0;
 
 export function definirContaAvisos(id) {
-    contaAvisos = id == null ? null : String(id);
+    const conta = id == null ? null : String(id);
+    if (conta === contaAvisos) return;
+    contaAvisos = conta;
+    versaoContaAvisos += 1;
 }
 
 function chaveDaConta(chave) {
@@ -41,7 +45,10 @@ function salvarVistas(conjunto) {
 }
 
 export async function listarSolicitacoes({ notificar = false } = {}) {
-    const res = await api.get('/solicitacoes');
+    const versao = versaoContaAvisos;
+    if (notificar && contaAvisos === null) return [];
+    const res = await api.get(notificar ? '/solicitacoes?escopo=minhas' : '/solicitacoes');
+    if (versao !== versaoContaAvisos) return [];
     return prepararAvisos(res.data || [], { notificar });
 }
 

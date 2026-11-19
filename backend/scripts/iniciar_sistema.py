@@ -6,10 +6,8 @@ garantindo que seja executado pelo Python da venv independentemente do PATH).
 Fluxo:
 1. Verifica conexao com o MySQL e se o schema foi aplicado (tabela
    `colaboradores` acessivel).
-2. Executa `criar_usuarios_teste.py` para cadastrar as contas de
-   desenvolvimento ausentes. Nao altera contas existentes.
-3. Sobe o backend Flask e o frontend Vite em paralelo.
-4. Ctrl+C encerra os dois processos de forma limpa.
+2. Sobe o backend Flask e o frontend Vite em paralelo.
+3. Ctrl+C encerra os dois processos de forma limpa.
 
 Nao instala MySQL, nao recria tabelas, nao sobrescreve senhas.
 Nao deve ser usado em producao.
@@ -88,27 +86,6 @@ def verificar_banco():
     return True
 
 
-def cadastrar_usuarios_teste():
-    """Importa criar_usuarios_teste e roda sua main(). Exit 2 nao bloqueia."""
-    import criar_usuarios_teste
-
-    codigo = criar_usuarios_teste.main()
-    if codigo == 0:
-        return True
-    if codigo == 2:
-        print(
-            "Conflito detectado nas contas de desenvolvimento (acima). "
-            "Nenhum dado foi alterado; prosseguindo com a inicializacao.",
-            file=sys.stderr,
-        )
-        return True
-    print(
-        "Falha ao cadastrar contas de desenvolvimento; o sistema nao sera iniciado.",
-        file=sys.stderr,
-    )
-    return False
-
-
 def _subir(label, args):
     """Popen com saida prefixada por tag, para distinguir Flask e Vite."""
     processo = subprocess.Popen(
@@ -165,14 +142,10 @@ def iniciar_servidores():
 
 
 def main():
-    print("[1/2] Verificando MySQL e schema...", flush=True)
+    print("Verificando MySQL e schema...", flush=True)
     if not verificar_banco():
         return 1
     print("      conexao e schema OK.", flush=True)
-
-    print("[2/2] Cadastrando contas de desenvolvimento...", flush=True)
-    if not cadastrar_usuarios_teste():
-        return 1
 
     return iniciar_servidores() or 0
 

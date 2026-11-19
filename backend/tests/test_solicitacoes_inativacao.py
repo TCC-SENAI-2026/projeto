@@ -128,6 +128,8 @@ class TestSolicitacoesInativacao(unittest.TestCase):
 
     def test_edicao_sem_status_preserva_cliente_inativo(self):
         self.db.executescript('''
+            ALTER TABLE clientes ADD COLUMN responsavel TEXT;
+            ALTER TABLE clientes ADD COLUMN cpf_cnpj TEXT;
             ALTER TABLE clientes ADD COLUMN email TEXT;
             ALTER TABLE clientes ADD COLUMN telefone TEXT;
             ALTER TABLE clientes ADD COLUMN endereco TEXT;
@@ -142,6 +144,8 @@ class TestSolicitacoesInativacao(unittest.TestCase):
 
     def test_cadastro_sem_status_cria_cliente_ativo(self):
         self.db.executescript('''
+            ALTER TABLE clientes ADD COLUMN responsavel TEXT;
+            ALTER TABLE clientes ADD COLUMN cpf_cnpj TEXT;
             ALTER TABLE clientes ADD COLUMN email TEXT;
             ALTER TABLE clientes ADD COLUMN telefone TEXT;
             ALTER TABLE clientes ADD COLUMN endereco TEXT;
@@ -149,8 +153,17 @@ class TestSolicitacoesInativacao(unittest.TestCase):
         ''')
         with patch('clientes.db_cursor', solicitacoes.db_cursor), patch('clientes.salvar_logo', return_value=None):
             res = self.client.post('/cadastrar-cliente', headers=self.headers,
-                                   data={'nome_empresa': 'Novo cliente'})
-        self.assertEqual(res.status_code, 200, res.get_json())
+                                   data={'nome_empresa': 'Novo cliente', 'responsavel': 'Contato',
+                                         'cpf_cnpj': '00.000.000/0001-00'})
+            self.assertEqual(res.status_code, 200, res.get_json())
+            self.assertEqual(self.client.get('/editar-cliente/2').json[1:3],
+                             ['Contato', '00.000.000/0001-00'])
+            res = self.client.post('/editar-cliente/2', headers=self.headers,
+                                   data={'nome_empresa': 'Novo cliente', 'responsavel': 'Outro contato',
+                                         'cpf_cnpj': '000.000.000-00'})
+            self.assertEqual(res.status_code, 200, res.get_json())
+            self.assertEqual(self.client.get('/editar-cliente/2').json[1:3],
+                             ['Outro contato', '000.000.000-00'])
         self.assertEqual(self.db.execute('SELECT ativo FROM clientes WHERE id=2').fetchone()[0], 1)
 
     def reativar_estoque(self):

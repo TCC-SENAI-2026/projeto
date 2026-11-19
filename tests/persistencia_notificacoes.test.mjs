@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { api } from '../src/services/api.js';
-import { definirContaAvisos, prepararAvisos, marcarComoVista, DURACAO_AVISO } from '../src/services/solicitacoesService.js';
+import { definirContaAvisos, listarSolicitacoes, prepararAvisos, marcarComoVista, DURACAO_AVISO } from '../src/services/solicitacoesService.js';
 import { limparDadosTemporarios } from '../src/utils/dados_temporarios.js';
 
 test('aviso expirado não reaparece ao sair, entrar e abrir o perfil novamente', async t => {
@@ -45,4 +45,21 @@ test('aviso expirado não reaparece ao sair, entrar e abrir o perfil novamente',
     assert.equal(prepararAvisos(aviso, { notificar: true })[0].visto, true);
     // Uma decisão nova continua aparecendo normalmente.
     assert.equal(prepararAvisos([{ id: 52, status: 'aprovada' }], { notificar: true })[0].visto, false);
+});
+
+test('avisos consultam apenas solicitações próprias e descartam respostas da conta anterior', async t => {
+    definirContaAvisos(1);
+    t.after(() => definirContaAvisos(null));
+    let responder;
+    const buscar = t.mock.method(api, 'get', () => new Promise(resolve => { responder = resolve; }));
+    const consulta = listarSolicitacoes({ notificar: true });
+    assert.deepEqual(buscar.mock.calls[0].arguments, ['/solicitacoes?escopo=minhas']);
+
+    definirContaAvisos(2);
+    responder({ data: [{ id: 50, status: 'aprovada' }] });
+    assert.deepEqual(await consulta, []);
+
+    const consultaNova = listarSolicitacoes({ notificar: true });
+    responder({ data: [] });
+    assert.deepEqual(await consultaNova, []);
 });

@@ -93,7 +93,7 @@ function Perfil() {
     const bloqueados = perfil ? [
         ['RE', perfil.re], ['Nível de acesso', admin ? 'Administrador' : 'Colaborador'],
         ['Salário', perfil.salario == null ? '—' : Number(perfil.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })],
-        ['Data de contrato', perfil.data_contrato], ['Status', perfil.ativo ? 'Ativo' : 'Inativo'], ['CPF', mascaraCpf(perfil.cpf)],
+        ['Data de contrato', perfil.data_contrato], ['Status', perfil.ativo ? 'Ativo' : 'Inativo'],
     ] : [];
 
     return (
@@ -132,6 +132,9 @@ function Perfil() {
                                             onChange={event => setForm(prev => ({ ...prev, [campo]: campo === 'telefone' ? mascaraTelefone(event.target.value) : event.target.value }))} />
                                     </div>
                                 ))}
+                                <div className="form-field">
+                                    <label>CPF<input value={mascaraCpf(perfil.cpf)} readOnly /></label>
+                                </div>
                             </div>
                         </section>
                         <section className="form-section">

@@ -21,6 +21,7 @@ from werkzeug.security import generate_password_hash
 
 from config import load_config
 from database.connection import db_cursor, init_db
+from resources.seguranca import RE_ADMIN_INICIAL
 
 
 def read_password():
@@ -46,6 +47,10 @@ def generate_available_re(cursor):
 
 def insert_initial_user(cursor, *, role, employee_re, name, email, password_hash):
     """Valida duplicações na transação; UNIQUE também protege RE/e-mail no banco."""
+    if role == 'administrador':
+        employee_re = RE_ADMIN_INICIAL
+    elif employee_re == RE_ADMIN_INICIAL:
+        raise ValueError('RE reservado para o administrador inicial.')
     cursor.execute('SELECT id FROM colaboradores WHERE nivel_acesso = %s LIMIT 1', (role,))
     if cursor.fetchone() is not None:
         raise ValueError('Já existe uma conta deste perfil; este script inicial não pode ser repetido.')
@@ -87,9 +92,11 @@ def main(role):
             raise ValueError('Informe um nome de até 150 caracteres.')
         if len(email) > 254 or not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+', email):
             raise ValueError('Informe um e-mail válido de até 254 caracteres.')
-        employee_re = input(f'RE do {role} (4 dígitos): ').strip()
-        if not re.fullmatch(r'[0-9]{4}', employee_re):
-            raise ValueError('O RE deve conter exatamente 4 dígitos.')
+        employee_re = RE_ADMIN_INICIAL
+        if role != 'administrador':
+            employee_re = input(f'RE do {role} (4 dígitos): ').strip()
+            if not re.fullmatch(r'[0-9]{4}', employee_re):
+                raise ValueError('O RE deve conter exatamente 4 dígitos.')
         password_hash = read_password()
 
         # Aplicação mínima: não importa módulos de negócio nem envia e-mails.

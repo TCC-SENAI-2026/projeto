@@ -75,6 +75,8 @@ CREATE TABLE tokens (
 CREATE TABLE clientes (
     id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
     nome       VARCHAR(150) NOT NULL,
+    responsavel VARCHAR(150) NULL,
+    cpf_cnpj   VARCHAR(18) NULL,
     email      VARCHAR(254) NULL,
     telefone   VARCHAR(20) NULL,
     endereco   VARCHAR(255) NULL,

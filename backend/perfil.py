@@ -184,7 +184,9 @@ def buscar_perfil():
         if not colaborador:
             return jsonify(success=False, msg='Perfil não encontrado.'), 404
         cursor.execute("SELECT id, status, data_solicitacao, data_decisao, dados_propostos FROM solicitacoes "
-                       "WHERE tipo = 'perfil' AND colaborador_alvo_id = %s ORDER BY id DESC LIMIT 1", (colaborador['id'],))
+                       "WHERE tipo = 'perfil' AND colaborador_alvo_id = %s "
+                       "AND colaborador_solicitante_id = %s ORDER BY id DESC LIMIT 1",
+                       (colaborador['id'], colaborador['id']))
         solicitacao = cursor.fetchone()
     if colaborador['data_contrato']:
         colaborador['data_contrato'] = str(colaborador['data_contrato'])

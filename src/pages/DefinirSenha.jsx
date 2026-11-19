@@ -17,6 +17,8 @@ function DefinirSenha({ redefinicao = false }) {
 
     // validando | formulario | invalido
     const [etapa, setEtapa] = useState("validando");
+    const [reValidado, setReValidado] = useState(null);
+    const rePrimeiroAcesso = !redefinicao && reValidado?.token === token ? reValidado.re : null;
     const [senha, setSenha] = useState("");
     const [confirmar, setConfirmar] = useState("");
     const [erro, setErro] = useState("");
@@ -36,7 +38,11 @@ function DefinirSenha({ redefinicao = false }) {
         setEtapa("validando");
         setErro("");
         api.get(`/validar-token?token=${encodeURIComponent(token)}`)
-            .then((dados) => { if (ativo) setEtapa(dados.valido ? "formulario" : "invalido"); })
+            .then((dados) => {
+                if (!ativo) return;
+                setReValidado(dados.valido ? { token, re: dados.re } : null);
+                setEtapa(dados.valido ? "formulario" : "invalido");
+            })
             .catch((error) => {
                 if (ativo) {
                     setErro(error.message);
@@ -120,16 +126,26 @@ function DefinirSenha({ redefinicao = false }) {
                 )}
 
                 {etapa === "concluido" && (
-                    <div role="status">
-                        <p>{redefinicao ? "Senha redefinida!" : "Senha definida!"} Entre com seu RE e a nova senha.</p>
-                        <button type="button" className="btn btn-add" onClick={irParaLogin} disabled={indoLogin}>{indoLogin ? "Abrindo login..." : "Ir para o login"}</button>
-                    </div>
+                    <>
+                        <div className="form-confirmacao-senha" role="status">
+                            <p><strong>{redefinicao ? "Senha redefinida!" : "Senha definida!"}</strong></p>
+                            {rePrimeiroAcesso && <p>Seu RE é <strong>{rePrimeiroAcesso}</strong>.</p>}
+                            <p>Entre com seu RE e a nova senha.</p>
+                        </div>
+                        {erro && <p role="alert">{erro}</p>}
+                        <div className="form-actions">
+                            <button type="button" className="btn btn-add" onClick={irParaLogin} disabled={indoLogin}>
+                                {indoLogin ? "Abrindo login..." : "Ir para o login"}
+                            </button>
+                        </div>
+                    </>
                 )}
 
-                {erro && etapa !== "formulario" && etapa !== "falha" && <p role="alert">{erro}</p>}
+                {erro && etapa === "invalido" && <p role="alert">{erro}</p>}
 
                 {etapa === "formulario" && (
                     <form onSubmit={handleSubmit} autoComplete="off">
+                        {rePrimeiroAcesso && <p>Seu RE para entrar no sistema é <strong>{rePrimeiroAcesso}</strong>.</p>}
                         <p className="form-subtitle">
                             Escolha uma senha com pelo menos {TAMANHO_MINIMO_SENHA} caracteres.
                         </p>

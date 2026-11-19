@@ -155,15 +155,15 @@ def qrcode_item(item_id):
 
 # ---------- Imagem pública do item (destino do QR impresso) ----------
 # Sem @login_required de propósito: é o que o QR abre direto no celular,
-# sem exigir login. Devolve só a imagem da arte — nenhum outro dado do
-# pedido/cliente é exposto por esta rota.
+# sem exigir login. Devolve apenas a foto do produto vinculado no estoque.
 
 @pedidos_bp.route('/pedidos/itens/<int:item_id>/imagem-publica', methods=['GET'])
 def imagem_publica_item(item_id):
     with db_cursor() as cursor:
         cursor.execute(
-            """SELECT pi.imagem_dados, pi.imagem_mime FROM pedido_itens pi
+            """SELECT e.imagem_dados, e.imagem_mime FROM pedido_itens pi
                JOIN pedidos p ON p.id = pi.pedido_id
+               JOIN estoque e ON e.id = pi.estoque_id AND e.tipo_item = 'produto'
                WHERE pi.id = %s AND p.excluido_em IS NULL""",
             (item_id,)
         )

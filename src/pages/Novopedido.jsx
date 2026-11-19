@@ -1,6 +1,7 @@
 import { useAvisos } from '../hooks/useAvisos';
 import { mascaraTelefone } from '../utils/formatacao';
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { guardarRascunhoPedido, lerRascunhoPedido } from "../utils/dados_temporarios";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import "../styles/padrao.css";
@@ -18,14 +19,27 @@ function NovoPedido() {
     const location = useLocation();
     const clienteInicial = location.state?.cliente;
 
-    const [form, setForm] = useState({
-        nomeCliente:       clienteInicial?.nomeCliente || '',
-        contato:           mascaraTelefone(String(clienteInicial?.contato || '')),
-        email:             clienteInicial?.email || '',
-        dataPedido:        '',
-        prazoEntrega:      '',
-        obsGeral:          '',
+    const [form, setForm] = useState(() => {
+        const rascunho = lerRascunhoPedido('identificacaoPedido', {});
+        const cliente = clienteInicial && rascunho.origemCliente !== location.key
+            ? {
+                nomeCliente: clienteInicial.nomeCliente,
+                contato: mascaraTelefone(String(clienteInicial.contato || '')),
+                email: clienteInicial.email,
+                logoCliente: clienteInicial.logo || null,
+                origemCliente: location.key,
+            }
+            : {};
+
+        return {
+            nomeCliente: '', contato: '', email: '', dataPedido: '', prazoEntrega: '',
+            obsGeral: '', logoCliente: null, ...rascunho, ...cliente,
+        };
     });
+
+    useEffect(() => {
+        guardarRascunhoPedido('identificacaoPedido', form);
+    }, [form]);
 
     const [erroTelefone, setErroTelefone] = useState('');
 
@@ -65,7 +79,7 @@ function NovoPedido() {
             email:          form.email,
             entrega:        form.prazoEntrega,
             observacao:     form.obsGeral,
-            logoCliente:    clienteInicial?.logo || null,
+            logoCliente:    form.logoCliente,
             dataCriacao:    new Date().toLocaleDateString('pt-BR'),
         }));
 

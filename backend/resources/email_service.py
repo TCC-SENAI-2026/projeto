@@ -61,20 +61,20 @@ def enviar_sms(telefone, mensagem):
     print(f'[SMS SIMULADO] Para {telefone}: {mensagem}')
 
 
-def enviar_link_ativacao(nome, email, telefone, preferencia, token):
+def enviar_link_ativacao(nome, email, telefone, preferencia, token, re):
     link = montar_link(token)
     primeiro_nome = nome.split()[0] if nome else ''
 
     corpo = (
         f'Olá, {primeiro_nome}!\n\n'
         f'Seu cadastro no sistema {NOME_SISTEMA} foi criado.\n'
+        f'Seu RE para entrar no sistema é {re}.\n'
         'Clique no link abaixo para definir sua senha (válido por 24 horas):\n\n'
         f'{link}\n\n'
         'Se você não esperava este e-mail, ignore esta mensagem.'
     )
 
-    if preferencia in ('email', 'ambos'):
-        enviar_email(email, 'Defina sua senha de acesso', corpo)
+    enviar_email(email, 'Defina sua senha de acesso', corpo)
 
     if preferencia in ('sms', 'ambos'):
         enviar_sms(telefone, f'{NOME_SISTEMA}: defina sua senha em {link} (válido por 24h)')

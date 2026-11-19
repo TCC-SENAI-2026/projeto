@@ -1,8 +1,7 @@
 import { useParams } from "react-router-dom";
 
 // Página pública (sem login, sem Sidebar) — é para onde o QR Code impresso
-// aponta. Mostra só a imagem da arte do item; nenhuma outra tela do sistema
-// fica acessível a partir daqui.
+// aponta. Mostra a foto cadastrada para o produto no estoque.
 function FotoItemPublica() {
     const { id } = useParams();
 
@@ -13,7 +12,7 @@ function FotoItemPublica() {
         }}>
             <img
                 src={`/api/pedidos/itens/${id}/imagem-publica`}
-                alt="Arte do produto"
+                alt="Foto do produto"
                 style={{ maxWidth: "100%", maxHeight: "90vh", objectFit: "contain", borderRadius: 8 }}
                 onError={(e) => {
                     e.currentTarget.hidden = true;
@@ -21,7 +20,7 @@ function FotoItemPublica() {
                 }}
             />
             <p hidden style={{ color: "#f9fafb", fontSize: 16 }}>
-                Nenhuma arte encontrada para este item.
+                Este produto não tem uma foto disponível no estoque.
             </p>
         </div>
     );

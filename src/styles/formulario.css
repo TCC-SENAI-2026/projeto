@@ -252,6 +252,16 @@
     background: #f8fafc;
 }
 
+.form-confirmacao-senha {
+    display: grid;
+    gap: 12px;
+    margin-block: 24px;
+}
+
+.form-confirmacao-senha p {
+    margin: 0;
+}
+
 .form-actions {
     display: flex;
     justify-content: flex-end;

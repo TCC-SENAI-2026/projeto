@@ -155,10 +155,11 @@ def data_iso(valor):
 @login_required
 def listar_solicitacoes():
     colaborador = g.colaborador
+    somente_proprias = request.args.get('escopo') == 'minhas'
     with db_cursor() as cursor:
         # Busca sem dados_propostos para evitar sort buffer overflow (MySQL 1038)
         # com BLOBs base64 grandes armazenados em solicitações de edição antigas.
-        if colaborador['nivel_acesso'] == 'administrador':
+        if colaborador['nivel_acesso'] == 'administrador' and not somente_proprias:
             cursor.execute("""
                 SELECT
                     s.id,

@@ -9,8 +9,9 @@ Os documentos de arquitetura/acompanhamento não foram alterados.
 
 - Servidor instalado identificado pelo binário `mysqld.exe --version`:
   MySQL Community Server **8.0.46**, Win64. Nenhuma conexão foi necessária.
-- RE dos dois scripts: **4 dígitos**, aprovado nesta conversa. É texto para
-  preservar zeros iniciais. O schema mantém `VARCHAR(20)` conforme arquitetura.
+- O RE `100000` fica reservado ao administrador inicial. O cadastro pela
+  aplicação gera REs aleatórios de `100001` a `999999`. O schema mantém
+  `VARCHAR(20)` para preservar os REs existentes, inclusive zeros iniciais.
 - Token CSRF real, inclusive no login, conforme solicitação e T03. Essa
   instrução prevalece sobre o trecho antigo da arquitetura §4 sem token.
 - Blueprints mantidos na raiz do backend, sem reorganizar arquivos da equipe.
@@ -25,7 +26,7 @@ Os documentos de arquitetura/acompanhamento não foram alterados.
 | `resources/database_connection.py` | Compatibilidade legada, sem credenciais fixas |
 | `app.py` | Factory, CORS, CSRF, proteção dos blueprints e erros de banco |
 | `login.py`, `auth/` | RE/senha, sessão, decorators e token CSRF |
-| `scripts/create_admin.py` | Administrador inicial com RE informado |
+| `scripts/create_admin.py` | Administrador inicial com RE fixo `100000` e senha escolhida no terminal |
 | `scripts/create_test_collaborator.py` | Único colaborador de teste, RE gerado |
 | `scripts/bootstrap_user.py`, `scripts/__init__.py` | Validação, hash e transação dos scripts |
 | `tests/test_auth.py`, `tests/test_infrastructure.py`, `tests/test_bootstrap.py` | Testes backend isolados |
@@ -34,6 +35,17 @@ Os documentos de arquitetura/acompanhamento não foram alterados.
 | `../src/App.jsx`, `../src/main.jsx`, `../vite.config.js` | Rotas protegidas e proxy |
 | `../tests/frontend_auth.test.mjs` | Testes React/API simulada reproduzíveis |
 | `../.gitignore` | Ignora o ambiente Python local `.venv` |
+
+## Administrador inicial
+
+Após preparar o banco da instalação, execute `python backend/scripts/create_admin.py`
+em um terminal interativo. Informe o nome, um e-mail válido e uma senha exclusiva
+da instalação. A senha é digitada de forma oculta e gravada como hash.
+
+Entre com o RE `100000` e a senha definida. Em Equipe, cadastre o administrador
+da empresa com o perfil Administrativo. Depois que ele definir a senha pelo
+e-mail e confirmar que consegue entrar com seu próprio RE, use essa nova conta
+para editar o administrador inicial e marcar seu status como Inativo.
 
 ## Como as tabelas se relacionam
 

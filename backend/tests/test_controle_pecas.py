@@ -134,6 +134,21 @@ class TestControlePecas(unittest.TestCase):
         with self.client.session_transaction() as session:
             session['colaborador_id'] = 1
 
+    def test_qr_publico_mostra_foto_do_estoque_e_preserva_arte_do_item(self):
+        self.db.execute("UPDATE estoque SET imagem_dados = ?, imagem_mime = 'image/webp' WHERE id = 1",
+                        (b'foto do estoque',))
+        self.db.execute("UPDATE pedido_itens SET imagem_dados = ?, imagem_mime = 'image/png' WHERE id IN (1, 2)",
+                        (b'logo do cliente',))
+        self.assertEqual(self.client.get('/pedidos/itens/1/arte').data, b'logo do cliente')
+        with self.client.session_transaction() as sessao:
+            sessao.clear()
+        foto = self.client.get('/pedidos/itens/1/imagem-publica')
+        self.assertEqual((foto.status_code, foto.mimetype, foto.data),
+                         (200, 'image/webp', b'foto do estoque'))
+        self.assertEqual(self.client.get('/pedidos/itens/2/imagem-publica').status_code, 404)
+        self.db.execute("UPDATE pedidos SET excluido_em = '2026-11-19' WHERE id = 1")
+        self.assertEqual(self.client.get('/pedidos/itens/1/imagem-publica').status_code, 404)
+
     def saldos(self):
         return {row['id']: row['quantidade_atual']
                 for row in self.db.execute('SELECT id, quantidade_atual FROM estoque')}

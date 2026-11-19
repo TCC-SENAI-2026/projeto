@@ -81,7 +81,7 @@ Referências: [arquitetura aprovada](docs/ARQUITETURA_TCC.md) e [planejamento do
 
 O [schema](backend/database/schema.sql) define as **11 tabelas aprovadas**, detalhadas na [arquitetura, seção 2](docs/ARQUITETURA_TCC.md). Conforme confirmação do responsável nesta solicitação, o SQL foi executado manualmente no MySQL Workbench.
 
-Os scripts são executados localmente no terminal, um por vez. Ambos pedem RE de quatro dígitos, preservam zeros iniciais e ocultam a senha com `getpass`. Armazenam somente uma representação para verificação da senha (hash Werkzeug), não o texto simples. Recusam duplicações e outra conta existente do mesmo perfil; criam contas ativas e ativadas.
+Os scripts são executados localmente no terminal, um por vez. O administrador inicial recebe o RE `100000`. O script de teste solicita um RE de quatro dígitos e preserva zeros iniciais. Ambos ocultam a senha com `getpass`, armazenam o hash Werkzeug e criam contas ativas e ativadas. Os scripts recusam duplicações e outra conta existente do mesmo perfil.
 
 O responsável informou que os dois scripts exibiram sucesso, confirmando a gravação de Administrador e Colaborador no banco. Essa é uma confirmação de execução manual, não um teste realizado pelo agente nesta documentação. Nenhum dado específico das contas é registrado aqui.
 
@@ -101,7 +101,7 @@ Inconsistências confirmadas, sem correção:
 
 - Arquitetura §4 ainda descreve ausência de CSRF dedicado; o código implementa token real, conforme T03 e autorização posterior.
 - Planejamento cita outros caminhos: contexto/guardas estão em `src/auth/`; blueprints permanecem na raiz de `backend/`.
-- Guia antigo descreve RE gerado para colaborador e banco/contas pendentes; ambos os scripts agora pedem RE. O sucesso manual informado é posterior às evidências históricas.
+- O sucesso manual informado é posterior às evidências históricas.
 - Páginas de negócio mantêm chamadas diretas e consultas com campos legados. Só a autenticação usa o novo cliente; T12 integral e CRUDs não estão concluídos.
 
 ## Preparar o ambiente virtual e criar as contas iniciais
@@ -129,7 +129,7 @@ python -m pip install -r requirements.txt
 
 Esses comandos preparam `backend/.venv`. Antes de criar as contas, o banco deve estar criado e o arquivo local `backend/.env` deve estar configurado com sua senha do banco. Não compartilhe seu conteúdo.
 
-Execute primeiro o script do **Administrador**, ainda dentro de `backend` e com o ambiente ativo:
+Execute o script do **Administrador**, ainda dentro de `backend` e com o ambiente ativo:
 
 ```powershell
 python .\scripts\create_admin.py
@@ -139,21 +139,12 @@ Quando o script pedir a confirmação do banco, digite `BANCO CRIADO`. Depois, p
 
 1. Nome.
 2. E-mail.
-3. RE com exatamente quatro dígitos, preservando zeros à esquerda.
-4. Senha com pelo menos oito caracteres.
-5. Confirmação da mesma senha.
+3. Senha com pelo menos oito caracteres.
+4. Confirmação da mesma senha.
+
+O script atribui o RE `100000` ao administrador inicial e o exibe ao concluir.
 
 **A senha e sua confirmação ficam ocultas durante a digitação. É normal não aparecer nada no terminal.** Elas são armazenadas somente como hash; não coloque senhas neste documento ou no Git.
 
-Somente após a mensagem de sucesso do Administrador, execute o script do **Colaborador de teste**:
-
-```powershell
-python .\scripts\create_test_collaborator.py
-```
-
-Confirme `BANCO CRIADO` e informe novamente nome, e-mail, RE de quatro dígitos, senha e confirmação para essa conta. O RE é informado por quem executa o script nos dois casos.
-
-Guarde os REs exibidos e use as respectivas senhas definidas no terminal ao testar o login. Os scripts recusam duplicações e outra conta já existente do mesmo perfil; se algum falhar, pare e não execute o seguinte antes de resolver o erro.
-
-depois de tudo instalado pessoal, rode na pasta raiz do projeto o npm run start ai vcs coloquem o re e a senha que foi colocado no proprio terminal
+Na raiz do projeto, rode `npm run start`. Entre com o RE `100000` e a senha definida no terminal. Cadastre os demais usuários em **Equipe**.
 

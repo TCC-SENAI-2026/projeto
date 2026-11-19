@@ -11,6 +11,9 @@ import {
     TAMANHOS, PERSONALIZACOES, LOCAIS,
 } from "../utils/opcoesProduto";
 import { avisoSaldo } from "../utils/produtosEstoque";
+import {
+    guardarArteRascunhoPedido, guardarRascunhoPedido, lerArtesRascunhoPedido, lerRascunhoPedido,
+} from "../utils/dados_temporarios";
 import { api } from "../services/api";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
@@ -170,10 +173,15 @@ function SelecionarProdutos() {
     const tecidosEstoque = useTecidosEstoque();
 
     const [produtosEstoque, setProdutosEstoque] = useState([]);
-    const [modelos, setModelos] = useState({});
+    const [modelos, setModelos] = useState(() => lerRascunhoPedido('produtosRascunhoPedido', {}));
     const [carregando, setCarregando] = useState(true);
     const [erroProdutos, setErroProdutos] = useState('');
-    const [artes, setArtes] = useState({});
+    const [artes, setArtes] = useState(lerArtesRascunhoPedido);
+    const [logoCliente, setLogoCliente] = useState(null);
+
+    useEffect(() => {
+        guardarRascunhoPedido('produtosRascunhoPedido', modelos);
+    }, [modelos]);
 
     useEffect(() => {
         let ativo = true;
@@ -188,17 +196,18 @@ function SelecionarProdutos() {
                 } catch {
                     // Um rascunho inválido não impede selecionar os produtos.
                 }
-                setArtes(typeof logoCliente === 'string' && logoCliente
-                    ? Object.fromEntries(lista.map(p => [p.id, {
+                setLogoCliente(typeof logoCliente === 'string' && logoCliente
+                    ? {
                         logoCliente,
                         nome: logoCliente,
                         preview: `/api/static/uploads/${encodeURIComponent(logoCliente)}`,
                         temPreview: TIPOS_IMAGEM.has(obterExtensao(logoCliente)),
-                    }]))
-                    : {});
-                setModelos(Object.fromEntries(lista.map(p => [p.id, {
+                    }
+                    : null);
+                setModelos(anteriores => Object.fromEntries(lista.map(p => [p.id, {
                     personalizacao: '', tecido: '', cor: '', material_id: null, material_cor_id: null, local: '',
                     quantidades: {}, selecionado: false,
+                    ...anteriores[p.id],
                 }])));
             })
             .catch(erro => { if (ativo) setErroProdutos(erro.message); })
@@ -237,29 +246,18 @@ function SelecionarProdutos() {
         const ext = obterExtensao(arquivo.name);
         const temPreview = TIPOS_IMAGEM.has(ext);
 
-        setArtes(prev => ({
-            ...prev,
-            [modeloId]: { file: arquivo, nome: arquivo.name, preview: null, temPreview }
+        setArtes(guardarArteRascunhoPedido(modeloId, {
+            file: arquivo, nome: arquivo.name, temPreview,
+            preview: temPreview ? URL.createObjectURL(arquivo) : null,
         }));
-
-        if (temPreview) {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                setArtes(prev => ({
-                    ...prev,
-                    [modeloId]: { ...prev[modeloId], preview: ev.target.result }
-                }));
-            };
-            reader.readAsDataURL(arquivo);
-        }
     }
 
     function removerArte(modeloId) {
-        setArtes(prev => {
-            const novo = { ...prev };
-            delete novo[modeloId];
-            return novo;
-        });
+        setArtes(guardarArteRascunhoPedido(modeloId, null));
+    }
+
+    function arteDoModelo(modeloId) {
+        return Object.hasOwn(artes, modeloId) ? artes[modeloId] : logoCliente;
     }
 
     async function handleContinuar() {
@@ -307,7 +305,7 @@ function SelecionarProdutos() {
 
         // File objects passados via state do router (não serializados em localStorage)
         const artesOrdenadas = selecionadosModelos.map(m => {
-            const arte = artes[m.id];
+            const arte = arteDoModelo(m.id);
             return arte?.file || (arte?.logoCliente ? { logoCliente: arte.logoCliente } : null);
         });
 
@@ -375,7 +373,7 @@ function SelecionarProdutos() {
                                         ...prev, [m.id]: { ...prev[m.id], ...detalhes },
                                     }))}
                                     dados={modelos[m.id]}
-                                    arte={artes[m.id]}
+                                    arte={arteDoModelo(m.id)}
                                     selecionado={modelos[m.id].selecionado}
                                     onChange={(campo, valor) => handleChange(m.id, campo, valor)}
                                     onArte={arquivo => handleArte(m.id, arquivo)}

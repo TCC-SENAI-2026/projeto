@@ -79,7 +79,6 @@ function FormUsuario() {
 
         const dados = new FormData();
         dados.append("nome_completo", form.nome);
-        dados.append("re", form.re);
         dados.append("cpf", form.cpf);
         dados.append("data_nascimento", form.dataNascimento);
         dados.append("telefone", form.telefone);
@@ -173,10 +172,12 @@ function FormUsuario() {
                                     <input id="nome" name="nome" placeholder="Ex: João Silva" value={form.nome} onChange={handleChange} required />
                                 </div>
 
-                                <div className="form-field">
-                                    <label htmlFor="re">RE</label>
-                                    <input id="re" name="re" placeholder="Ex: 123456" value={form.re} onChange={handleChange} />
-                                </div>
+                                {editando && (
+                                    <div className="form-field">
+                                        <label htmlFor="re">RE</label>
+                                        <input id="re" value={form.re} readOnly />
+                                    </div>
+                                )}
 
                                 <div className="form-field">
                                     <label htmlFor="cpf">CPF</label>
@@ -237,7 +238,7 @@ function FormUsuario() {
                             <h2>Acesso ao Sistema</h2>
                             <p className="section-help">
                                 {!editando
-                                    ? "O colaborador receberá um link para definir a própria senha, válido por 24 horas."
+                                    ? "O colaborador receberá o RE gerado automaticamente e um link por e-mail para definir a senha em até 24 horas."
                                     : senhaDefinida
                                         ? "O colaborador já definiu a própria senha."
                                         : "O colaborador ainda não definiu a senha. Use \"Reenviar link\" para mandar um novo link."}
@@ -256,7 +257,7 @@ function FormUsuario() {
 
                                 <div className="form-field">
                                     <label htmlFor="preferenciaNotificacoes">
-                                        {editando ? "Preferência de notificação" : "Enviar link por"}
+                                        Preferência de notificação
                                     </label>
                                     <select id="preferenciaNotificacoes" name="preferenciaNotificacoes"
                                             value={form.preferenciaNotificacoes} onChange={handleChange}>

@@ -6,8 +6,8 @@
 
 | Perfil | RE | Senha | Nível de acesso |
 |---|---|---|---|
-| Administrador Teste | `0123` | `12345678` | `administrador` |
-| Colaborador Teste  | `0234` | `12345678` | `colaborador` |
+| Administrador Teste | `100000` | Definida no terminal | `administrador` |
+
 
 - O RE é tratado como **texto** (preserva zeros à esquerda).
 - A senha é armazenada no MySQL com hash seguro (`werkzeug.security.generate_password_hash`); nunca em texto puro.
@@ -22,48 +22,18 @@
    pip install -r backend/requirements.txt
    ```
 
-## 3. Comando único para iniciar o sistema
+## 3. Criação das contas e inicialização
 
 Da raiz do projeto, após instalar as dependências e configurar o `backend/.env`:
 
-```
+```powershell
+.\.venv\Scripts\python.exe backend/scripts/create_admin.py
 npm run start
 ```
 
-Esse comando faz, em sequência:
+O primeiro comando cria o administrador inicial com RE `100000`. Informe o nome, o e-mail e a senha escolhida no terminal. Use essa conta para cadastrar colaboradores em **Equipe**.
 
-1. Localiza o Python da venv (procura em `.venv` da raiz **ou** em `backend/.venv`; funciona em Windows e macOS).
-2. Verifica a conexão com o MySQL e se o schema (`backend/database/schema.sql`) foi aplicado.
-3. Executa `backend/scripts/criar_usuarios_teste.py` para cadastrar os usuários `0123` e `0234` **somente se ainda não existirem**.
-4. Sobe o backend Flask em `http://127.0.0.1:5000`.
-5. Sobe o frontend Vite em `http://localhost:5173/`.
-6. `Ctrl+C` encerra os dois processos juntos.
-
-**Acessar a aplicação:** abra `http://localhost:5173/` no navegador. O Vite redireciona `/api/*` para o Flask automaticamente.
-
-### Saídas esperadas do bootstrap
-
-Primeira execução contra um banco com schema aplicado:
-```
-CREATED: 0123 (administrador)
-CREATED: 0234 (colaborador)
-```
-
-Execuções seguintes (idempotente):
-```
-SKIP: 0123 ja existe com os mesmos dados
-SKIP: 0234 ja existe com os mesmos dados
-```
-
-Se algum RE já existir **com dados diferentes** dos descritos acima:
-```
-CONFLICT: 0123 ja existe com dados diferentes (nome='...', nivel_acesso='...'). Nenhuma alteracao feita; resolva manualmente antes de continuar.
-```
-O `npm run start` **não** sobrescreve esses dados e **continua** subindo Flask e Vite — a decisão de ajustar o registro é da equipe. Códigos internos do script `criar_usuarios_teste.py`:
-
-- `0` — sucesso (criados ou pulados sem conflito).
-- `1` — erro de configuração ou conexão.
-- `2` — conflito; nenhum dado foi alterado.
+O `npm run start` verifica a conex?o com o MySQL e inicia o Flask e o Vite. A aplica??o fica dispon?vel em `http://localhost:5173/`.
 
 ### Mensagens de erro possíveis em `npm run start`
 
@@ -81,7 +51,7 @@ Se precisar isolar Flask ou Vite para diagnóstico:
 
 ```
 # Só o bootstrap de usuários (sem subir servidores)
-python backend/scripts/criar_usuarios_teste.py
+python backend/scripts/create_admin.py
 
 # Só o backend Flask
 python backend/app.py
@@ -106,7 +76,7 @@ npm run dev
 
 ## 6. Permissões por perfil
 
-### Colaborador (`0234`)
+### Colaborador cadastrado em Equipe
 
 Rotas permitidas:
 - `/home`
@@ -114,9 +84,9 @@ Rotas permitidas:
 - `/estoque`, `/add-estoque`, `/editar-estoque/:id`
 - `/clientes`, `/formCliente`
 
-Rotas bloqueadas (redirecionam para `/home`): `/relatorio`, `/formUsuario`, `/perfil`, `/equipe`, `/painel-adm`.
+Rotas bloqueadas (redirecionam para `/home`): `/relatorio`, `/formUsuario`, `/equipe`, `/painel-adm`.
 
-### Administrador (`0123`)
+### Administrador (`100000`)
 
 Todas as rotas acima **mais**:
 - `/relatorio`
@@ -133,17 +103,16 @@ Com o Flask e o Vite rodando, verificar no navegador:
 
 | # | Cenário | Resultado esperado |
 |---|---|---|
-| 1 | Login `0123` / `12345678` | Redireciona para `/home`; menu com todas as rotas |
-| 2 | Login `0234` / `12345678` | Redireciona para `/home`; menu sem rotas administrativas |
+| 1 | Login `100000` com a senha escolhida | Redireciona para `/home`; menu com todas as rotas |
+| 2 | Login com RE e senha do colaborador cadastrado | Redireciona para `/home`; menu sem rotas administrativas |
 | 3 | Login com senha errada | Mensagem genérica "RE ou senha incorretos." |
 | 4 | Login com RE inexistente (`9999`) | Mesma mensagem genérica do item 3 |
-| 5 | Logado como `0234`, acessar `/painel-adm` direto pela URL | Redireciona para `/home` |
-| 6 | Logado como `0123`, acessar `/painel-adm` | Página renderiza |
+| 5 | Logado como colaborador, acessar `/painel-adm` direto pela URL | Redireciona para `/home` |
+| 6 | Logado como `100000`, acessar `/painel-adm` | Página renderiza |
 | 7 | Após login, pressionar **F5** em qualquer página autenticada | Sessão persiste (consulta `/me` retorna 200) |
 | 8 | Fazer logout e tentar acessar `/pedidos` | Redireciona para `/` |
 | 9 | DevTools → Console → `document.cookie` | Cookie `session` **não aparece** (é HttpOnly) |
 | 10 | DevTools → Network → repetir uma escrita (ex.: cadastrar estoque) sem `X-CSRF-Token` | Resposta 403 "Token CSRF ausente ou inválido." |
-| 11 | SQL manual: `UPDATE colaboradores SET ativo=0 WHERE re='0234';` → tentar logar como `0234` | 403 "Conta sem permissão de acesso." Após o teste: `UPDATE colaboradores SET ativo=1 WHERE re='0234';` |
 
 ## 8. Testes automatizados
 
@@ -162,6 +131,6 @@ Esses testes **não** conectam ao MySQL real; validam a lógica isolada. A valid
 ## 9. Segurança — lembretes
 
 - Nunca commite `backend/.env` (já está no `.gitignore`).
-- Nunca inclua segredos reais neste documento. As senhas acima são **exclusivamente** para desenvolvimento local.
-- Se este projeto for publicado em um servidor compartilhado, **remova as contas `0123` e `0234` do banco** antes do deploy ou use um banco separado.
+- Nunca inclua senhas neste documento.
+- Para a instalação da empresa, use um banco separado e provisione o administrador com `create_admin.py`.
 - O arquivo `backend/.env` fica fora do repositório; cada integrante configura o seu localmente.

@@ -18,11 +18,7 @@ EXTENSOES_LOGO = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}
 
 clientes_bp = Blueprint('clientes', __name__)
 
-# A tabela clientes do schema novo guarda: nome, email, telefone, endereco, logo_url e ativo.
-# O formulário do front ainda envia mais campos (responsável, CPF/CNPJ, observações e o endereço
-# separado em cep/rua/número/município/estado). O endereço separado é gravado em UMA coluna
-# (endereco) num formato fixo e separado de volta ao listar; responsável, CPF/CNPJ e
-# observações não têm coluna no schema e por isso não são gravados.
+# O endereço do formulário é gravado em uma coluna e separado de volta na leitura.
 PADRAO_ENDERECO = re.compile(
     r'^(?P<rua>.+?), (?P<numero>[^,]+?) - (?P<municipio>.+?)/(?P<estado>[A-Z]{2})'
     r'(?: - CEP (?P<cep>[\d-]+))?$'
@@ -66,7 +62,8 @@ def linha_para_front(cliente):
         or str(valor_ativo).strip().lower() in {'1', 'true', 'ativo', 'sim'}
     )
     return [
-        cliente['nome'], '', '', cliente['telefone'] or '', cliente['email'] or '',
+        cliente['nome'], cliente['responsavel'] or '', cliente['cpf_cnpj'] or '',
+        cliente['telefone'] or '', cliente['email'] or '',
         ender['cep'], ender['rua'], ender['numero'], ender['municipio'], ender['estado'],
         '', cliente['logo_url'] or '', ativo, cliente['id'],
     ]
@@ -75,6 +72,8 @@ def linha_para_front(cliente):
 def ler_formulario():
     return {
         'nome':     (request.form.get('nome_empresa') or '').strip(),
+        'responsavel': texto('responsavel'),
+        'cpf_cnpj': texto('cpf_cnpj'),
         'telefone': texto('telefone'),
         'email':    (texto('email') or '').lower() or None,
         'endereco': montar_endereco(texto('rua'), texto('numero'), texto('municipio'),
@@ -86,7 +85,8 @@ def ler_formulario():
 def validar_dados(dados):
     if not dados['nome']:
         return 'Informe o nome da empresa.'
-    limites = (('nome', 150, 'O nome'), ('email', 254, 'O e-mail'),
+    limites = (('nome', 150, 'O nome'), ('responsavel', 150, 'O responsável'),
+               ('cpf_cnpj', 18, 'O CPF/CNPJ'), ('email', 254, 'O e-mail'),
                ('telefone', 20, 'O telefone'), ('endereco', 255, 'O endereço'))
     for campo, maximo, rotulo in limites:
         if dados[campo] and len(dados[campo]) > maximo:
@@ -137,15 +137,17 @@ def cadastrar_cliente():
             existente = cursor.fetchone()
             if existente:
                 cursor.execute('''
-                    UPDATE clientes SET nome=%s, email=%s, telefone=%s, endereco=%s,
+                    UPDATE clientes SET nome=%s, responsavel=%s, cpf_cnpj=%s, email=%s, telefone=%s, endereco=%s,
                         logo_url=COALESCE(%s, logo_url), cadastro_manual=1 WHERE id=%s
-                ''', (dados['nome'], dados['email'], dados['telefone'], dados['endereco'],
+                ''', (dados['nome'], dados['responsavel'], dados['cpf_cnpj'],
+                      dados['email'], dados['telefone'], dados['endereco'],
                       logo, existente['id']))
                 return jsonify({'status': 'ok'})
         cursor.execute("""
-            INSERT INTO clientes (nome, email, telefone, endereco, logo_url, ativo)
-            VALUES (%s, %s, %s, %s, %s, %s);
-        """, (dados['nome'], dados['email'], dados['telefone'], dados['endereco'], logo, dados['ativo']))
+            INSERT INTO clientes (nome, responsavel, cpf_cnpj, email, telefone, endereco, logo_url, ativo)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        """, (dados['nome'], dados['responsavel'], dados['cpf_cnpj'],
+              dados['email'], dados['telefone'], dados['endereco'], logo, dados['ativo']))
 
     return jsonify({'status': 'ok'})
 
@@ -155,7 +157,7 @@ def cadastrar_cliente():
 def listar_clientes():
     with db_cursor() as cursor:
         cursor.execute("""
-            SELECT id, nome, email, telefone, endereco, logo_url, ativo
+            SELECT id, nome, responsavel, cpf_cnpj, email, telefone, endereco, logo_url, ativo
             FROM clientes c
             WHERE c.cadastro_manual = 1 OR (
                 NULLIF(TRIM(c.email), '') IS NOT NULL AND
@@ -198,17 +200,18 @@ def editar_cliente(id_cliente):
         with db_cursor(commit=True) as cursor:
             cursor.execute("""
                 UPDATE clientes
-                SET nome = %s, email = %s, telefone = %s, endereco = %s,
+                SET nome = %s, responsavel = %s, cpf_cnpj = %s, email = %s, telefone = %s, endereco = %s,
                     logo_url = COALESCE(%s, logo_url)
                 WHERE id = %s;
-            """, (dados['nome'], dados['email'], dados['telefone'], dados['endereco'],
+            """, (dados['nome'], dados['responsavel'], dados['cpf_cnpj'],
+                  dados['email'], dados['telefone'], dados['endereco'],
                   logo, id_cliente))
 
         return jsonify({'status': 'ok'})
 
     with db_cursor() as cursor:
         cursor.execute("""
-            SELECT id, nome, email, telefone, endereco, logo_url, ativo
+            SELECT id, nome, responsavel, cpf_cnpj, email, telefone, endereco, logo_url, ativo
             FROM clientes WHERE id = %s;
         """, (id_cliente,))
         cliente = cursor.fetchone()

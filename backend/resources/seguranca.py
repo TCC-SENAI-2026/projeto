@@ -1,6 +1,8 @@
 import hashlib
 import secrets
 
+RE_ADMIN_INICIAL = '100000'
+
 
 def gerar_token():
     """Token aleatório que vai no link enviado ao colaborador."""

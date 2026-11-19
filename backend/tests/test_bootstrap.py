@@ -7,9 +7,15 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.bootstrap_user import generate_available_re, insert_initial_user, main, read_password
+from scripts import criar_usuarios_teste
 
 
 class BootstrapTests(unittest.TestCase):
+    def test_comando_antigo_provisiona_apenas_administrador(self):
+        with patch.object(criar_usuarios_teste, 'main', return_value=0) as provisionar:
+            self.assertEqual(criar_usuarios_teste.criar_administrador_inicial(), 0)
+        provisionar.assert_called_once_with('administrador')
+
     def test_generated_re_preserves_leading_zero_and_retries_collision(self):
         cursor = MagicMock()
         cursor.fetchone.side_effect = [{'id': 1}, None]
@@ -34,7 +40,7 @@ class BootstrapTests(unittest.TestCase):
                 self.assertFalse(any('INSERT' in call.args[0] for call in cursor.execute.call_args_list))
 
     def test_both_profiles_insert_only_named_fields_and_enabled_flags(self):
-        for role, initial_re in [('administrador', '0001'), ('colaborador', '0002')]:
+        for role, initial_re in [('administrador', '100000'), ('colaborador', '0002')]:
             with self.subTest(role=role):
                 cursor = MagicMock()
                 cursor.fetchone.return_value = None
@@ -47,12 +53,12 @@ class BootstrapTests(unittest.TestCase):
                 self.assertIn('1, 1)', sql)
                 self.assertEqual(values, (result, 'Teste', 'test@example.invalid', role, 'hash-simulado'))
                 self.assertEqual(result, initial_re)
-                self.assertEqual(len(result), 4)
 
-    def test_both_profiles_prompt_manual_re_and_preserve_leading_zeros(self):
+    def test_admin_uses_reserved_re_and_test_collaborator_preserves_leading_zeros(self):
         # main é exercitado com terminal, senha, config, app e banco simulados;
         # nenhum .env, cursor SQL real ou script de criação é executado.
         for role in ('administrador', 'colaborador'):
+            re_esperado = '100000' if role == 'administrador' else '0007'
             with self.subTest(role=role), \
                     patch('sys.argv', ['bootstrap-fixture']), \
                     patch('scripts.bootstrap_user.sys.stdin.isatty', return_value=True), \
@@ -63,30 +69,29 @@ class BootstrapTests(unittest.TestCase):
                     patch('scripts.bootstrap_user.Flask') as flask, \
                     patch('scripts.bootstrap_user.init_db') as init_db, \
                     patch('scripts.bootstrap_user.db_cursor') as db, \
-                    patch('scripts.bootstrap_user.insert_initial_user', return_value='0007') as insert, \
+                    patch('scripts.bootstrap_user.insert_initial_user', return_value=re_esperado) as insert, \
                     patch('scripts.bootstrap_user.generate_available_re') as generate_re:
                 cursor = db.return_value.__enter__.return_value
                 cursor.fetchone.return_value = {'acquired': 1}
 
                 self.assertEqual(main(role), 0)
 
-                self.assertEqual(user_input.call_count, 4)
-                self.assertEqual(user_input.call_args.args, (f'RE do {role} (4 dígitos): ',))
+                self.assertEqual(user_input.call_count, 3 if role == 'administrador' else 4)
                 password.assert_called_once_with()
                 config.assert_called_once_with()
                 flask.return_value.config.update.assert_called_once_with({'FIXTURE': True})
                 init_db.assert_called_once_with(flask.return_value)
                 db.assert_called_once_with(commit=True)
                 insert.assert_called_once_with(
-                    cursor, role=role, employee_re='0007', name='Teste',
+                    cursor, role=role, employee_re=re_esperado, name='Teste',
                     email='test@example.invalid', password_hash='hash-simulado',
                 )
                 generate_re.assert_not_called()
-                output.assert_any_call(f'Conta {role} criada. RE para login: 0007')
+                output.assert_any_call(f'Conta {role} criada. RE para login: {re_esperado}')
 
-    def test_both_profiles_reject_invalid_manual_re_before_password_or_connection(self):
+    def test_test_collaborator_rejects_invalid_manual_re_before_password_or_connection(self):
         invalid_res = ('007', '00007', '00a7', '+007', '-007', '٠٠٠٧', '０００７', '', '   ')
-        for role in ('administrador', 'colaborador'):
+        for role in ('colaborador',):
             for employee_re in invalid_res:
                 with self.subTest(role=role, employee_re=employee_re), \
                         patch('sys.argv', ['bootstrap-fixture']), \

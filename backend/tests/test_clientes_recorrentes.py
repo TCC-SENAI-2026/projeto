@@ -19,6 +19,8 @@ class Recorrencia(unittest.TestCase):
         INSERT INTO clientes VALUES(2,'Recorrente',' Pessoa@EXEMPLO.com ',NULL,NULL,NULL,1,0);
         INSERT INTO clientes VALUES(3,'Outro nome','pessoa@exemplo.com',NULL,NULL,NULL,1,0);
         INSERT INTO clientes VALUES(4,'Sem email',NULL,NULL,NULL,NULL,1,0);
+        ALTER TABLE clientes ADD COLUMN responsavel TEXT;
+        ALTER TABLE clientes ADD COLUMN cpf_cnpj TEXT;
         INSERT INTO pedidos VALUES(2,'concluido'),(2,'concluido'),(3,'concluido'),(3,'concluido'),(2,'pendente'),(2,'cancelado');
         ''')
         @contextmanager

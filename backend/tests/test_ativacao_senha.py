@@ -83,9 +83,9 @@ class AtivacaoSenhaTests(unittest.TestCase):
             self.assertNotIn('colaborador_id', sessao)
 
     def test_ativacao_login_e_uso_unico(self):
-        self.assertTrue(self.validar().json['valido'])
+        self.assertEqual(self.validar().json, {'valido': True, 're': '1234'})
         self.assertEqual(self.salvar().status_code, 200)
-        self.assertFalse(self.validar().json['valido'])
+        self.assertEqual(self.validar().json, {'valido': False})
         self.assertEqual(self.salvar().status_code, 400)
         resposta = self.client.post('/login', json={'re': '1234', 'senha': 'Senha segura de teste'},
                                     headers={'X-CSRF-Token': self.csrf})

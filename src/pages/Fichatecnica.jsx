@@ -5,6 +5,7 @@ import "../styles/cliente.css";
 import Sidebar from "../components/Sidebar";
 import FichaConteudo from "../components/FichaConteudo";
 import { salvarPedido } from "../services/pedidosService";
+import { limparDadosTemporarios } from "../utils/dados_temporarios";
 import "../styles/padrao.css";
 import "../styles/formulario.css";
 import "../styles/Novopedido.css";
@@ -50,8 +51,7 @@ function FichaTecnica() {
             const resultado = await salvarPedido({ pedido, ficha, artesOrdenadas });
             setPedidoCriado(resultado);
             setModalAberto(true);
-            localStorage.removeItem("detalhesPedido");
-            localStorage.removeItem("dadosFicha");
+            limparDadosTemporarios();
         } catch (erro) {
             console.error("Erro ao salvar pedido:", erro);
             setErroPedido(erro.message || "Não foi possível salvar o pedido. Tente novamente.");

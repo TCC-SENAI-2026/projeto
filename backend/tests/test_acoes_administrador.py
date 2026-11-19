@@ -46,6 +46,19 @@ class TestAcoesAdministrador(unittest.TestCase):
     def consultas(self):
         return [c.args[0] for c in self.cursor.execute.call_args_list]
 
+    def test_avisos_de_administrador_consultam_somente_sua_conta(self):
+        self.usuario['id'] = 42
+        self.cursor.fetchall.return_value = []
+        resposta = self.client.get('/solicitacoes?escopo=minhas&colaborador_id=1')
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual(resposta.json['data'], [])
+        sql, parametros = self.cursor.execute.call_args.args
+        self.assertIn('s.colaborador_solicitante_id = %s', sql)
+        self.assertEqual(parametros, (42,))
+
+        self.assertEqual(self.client.get('/solicitacoes').status_code, 200)
+        self.assertNotIn('s.colaborador_solicitante_id = %s', self.consultas()[-1])
+
     def test_admin_inativa_reativa_sem_justificativa_ou_solicitacao(self):
         for alvo, tabela in (('cliente', 'clientes'), ('estoque', 'estoque')):
             for tipo, ativo in (('exclusao', 0), ('edicao', 1)):

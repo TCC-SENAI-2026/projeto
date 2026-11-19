@@ -1,4 +1,5 @@
 import io
+import secrets
 from hashlib import sha256
 
 from flask import Blueprint, request, jsonify, send_file
@@ -82,7 +83,6 @@ def ler_formulario():
     """Lê os campos que o formulário do front envia (FormData)."""
     return {
         'nome':                     request.form.get('nome_completo', '').strip(),
-        're':                       vazio_para_none(request.form.get('re')),
         'cpf':                      vazio_para_none(request.form.get('cpf')),
         'telefone':                 vazio_para_none(request.form.get('telefone')),
         'email':                    vazio_para_none(request.form.get('email')),
@@ -101,10 +101,6 @@ def validar_dados(dados):
         return 'Informe o nome do colaborador.'
     if len(dados['nome']) > 150:
         return 'O nome pode ter no máximo 150 caracteres.'
-    if not dados['re']:
-        return 'Informe o RE do colaborador.'
-    if len(dados['re']) > 20:
-        return 'O RE pode ter no máximo 20 caracteres.'
     if not dados['email']:
         return 'Informe o e-mail do colaborador.'
     if len(dados['email']) > 254:
@@ -151,19 +147,26 @@ def cadastrar_colaborador():
              ativo, data_contrato, salario, preferencia_notificacoes, foto_mime, foto_dados, conta_ativada)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0);
     """
-    try:
-        with db_cursor(commit=True) as cursor:
-            cursor.execute(SQL, (dados['re'], dados['nome'], dados['cpf'], dados['email'],
-                dados['telefone'], dados['endereco'], dados['nivel_acesso'] or 'colaborador', dados['ativo'],
-                dados['data_contrato'], dados['salario'], dados['preferencia_notificacoes'], foto_mime, foto_dados))
-            token = criar_token_ativacao(cursor, cursor.lastrowid)
-    except mysql.connector.IntegrityError as erro_db:
-        print('ERRO DE INTEGRIDADE:', erro_db)
-        return jsonify({'status': 'erro', 'msg': mensagem_duplicidade(erro_db)}), 409
+    re_reservado = int(seguranca.RE_ADMIN_INICIAL)
+    for _ in range(100):
+        re_gerado = str(re_reservado + 1 + secrets.randbelow(999999 - re_reservado))
+        try:
+            with db_cursor(commit=True) as cursor:
+                cursor.execute(SQL, (re_gerado, dados['nome'], dados['cpf'], dados['email'],
+                    dados['telefone'], dados['endereco'], dados['nivel_acesso'] or 'colaborador', dados['ativo'],
+                    dados['data_contrato'], dados['salario'], dados['preferencia_notificacoes'], foto_mime, foto_dados))
+                token = criar_token_ativacao(cursor, cursor.lastrowid)
+            break
+        except mysql.connector.IntegrityError as erro_db:
+            if erro_db.errno == 1062 and 'uq_colaboradores_re' in (erro_db.msg or ''):
+                continue
+            return jsonify({'status': 'erro', 'msg': mensagem_duplicidade(erro_db)}), 409
+    else:
+        return jsonify(status='erro', msg='Não foi possível gerar um RE disponível. Tente novamente.'), 503
 
     try:
         email_service.enviar_link_ativacao(dados['nome'], dados['email'], dados['telefone'],
-            dados['preferencia_notificacoes'], token)
+            dados['preferencia_notificacoes'], token, re_gerado)
     except Exception as erro_envio:
         print('ERRO AO ENVIAR LINK DE ATIVACAO:', erro_envio)
         return jsonify({
@@ -179,7 +182,7 @@ def cadastrar_colaborador():
 def reenviar_link(id_colaborador):
     with db_cursor() as cursor:
         cursor.execute("""
-            SELECT nome, email, telefone, preferencia_notificacoes, conta_ativada
+            SELECT nome, re, email, telefone, preferencia_notificacoes, conta_ativada
             FROM colaboradores
             WHERE id = %s AND ativo = 1;
         """, (id_colaborador,))
@@ -200,7 +203,7 @@ def reenviar_link(id_colaborador):
 
     try:
         email_service.enviar_link_ativacao(colaborador['nome'], colaborador['email'],
-            colaborador['telefone'], colaborador['preferencia_notificacoes'], token)
+            colaborador['telefone'], colaborador['preferencia_notificacoes'], token, colaborador['re'])
     except Exception as erro_envio:
         print('ERRO AO REENVIAR LINK DE ATIVACAO:', erro_envio)
         return jsonify({'status': 'erro', 'msg': 'Não foi possível enviar o link.'}), 500
@@ -264,7 +267,7 @@ def editar_colaborador(id_colaborador):
 
         SQL = """
             UPDATE colaboradores
-            SET nome = %s, re = %s, cpf = %s, telefone = %s, email = %s,
+            SET nome = %s, cpf = %s, telefone = %s, email = %s,
                 endereco = %s, nivel_acesso = COALESCE(%s, nivel_acesso), data_contrato = %s, salario = %s,
                 preferencia_notificacoes = %s, ativo = %s
             WHERE id = %s;
@@ -276,7 +279,7 @@ def editar_colaborador(id_colaborador):
                     return jsonify(status='erro', msg='Colaborador não encontrado.'), 404
                 if alterar_foto:
                     SQL = SQL.replace('ativo = %s', 'ativo = %s, foto_mime = %s, foto_dados = %s')
-                valores = (dados['nome'], dados['re'], dados['cpf'], dados['telefone'],
+                valores = (dados['nome'], dados['cpf'], dados['telefone'],
                     dados['email'], dados['endereco'], dados['nivel_acesso'], dados['data_contrato'],
                     dados['salario'], dados['preferencia_notificacoes'], dados['ativo'],
                     *((foto_mime, foto_dados) if alterar_foto else ()), id_colaborador)

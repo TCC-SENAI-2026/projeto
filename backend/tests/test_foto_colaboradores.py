@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from PIL import Image
+from mysql.connector import IntegrityError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app import create_app
@@ -84,9 +85,24 @@ class TestFotoColaboradores(unittest.TestCase):
                 response = self.client.post('/editar-colaborador/12', headers=self.headers, data={**self.form, **extra})
                 self.assertEqual(response.status_code, 200, response.get_json())
                 sql, valores = self.cursor.execute.call_args.args
+                self.assertNotIn('re =', sql)
                 self.assertEqual('foto_dados = %s' in sql, espera_foto)
                 if extra.get('remover_foto'):
                     self.assertEqual(valores[-3:-1], (None, None))
+
+    def test_cadastro_repete_re_em_colisao_e_envia_o_re_gravado(self):
+        self.cursor.execute.side_effect = [
+            IntegrityError(msg="Duplicate entry for key 'uq_colaboradores_re'", errno=1062),
+            None,
+        ]
+        with patch('colaboradores.secrets.randbelow', side_effect=[0, 1]):
+            resposta = self.client.post('/cadastrar-colaborador', headers=self.headers,
+                                        data={**self.form, 're': '100000'})
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual([chamada.args[1][0] for chamada in self.cursor.execute.call_args_list],
+                         ['100001', '100002'])
+        self.email.assert_called_once_with('Teste', 'teste@example.invalid', None,
+                                           'email', 'token-simulado', '100002')
 
     def test_rota_foto_com_sessao_de_colaborador_mime_etag_e_revalidacao(self):
         foto = imagem()

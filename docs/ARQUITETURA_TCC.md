@@ -125,7 +125,7 @@ erDiagram
 - Um único modelo cobre os dois fluxos (hoje só existe ativação).
 
 **clientes**
-`id PK · nome · email · telefone · endereco · logo_url (Cloudinary) · ativo BOOLEAN DEFAULT 1 · created_at`
+`id PK · nome · responsavel NULL · cpf_cnpj NULL · email · telefone · endereco · logo_url (Cloudinary) · ativo BOOLEAN DEFAULT 1 · created_at`
 
 **catalogo_itens** — catálogo administrável de produtos/tecidos/cores/locais/personalizações
 `id PK · tipo ENUM('produto','personalizacao','tecido','cor','local') · nome · ativo BOOLEAN DEFAULT 1 · created_at` · `UNIQUE(tipo, nome)`

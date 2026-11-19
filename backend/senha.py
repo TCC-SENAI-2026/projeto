@@ -23,13 +23,15 @@ def validar_token_ativacao():
     if not token or len(token) > 256:
         return jsonify(valido=False)
     with db_cursor() as cursor:
-        cursor.execute('''SELECT t.id FROM tokens t
+        cursor.execute('''SELECT c.re FROM tokens t
             JOIN colaboradores c ON c.id = t.colaborador_id
             WHERE t.token_hash = %s AND t.tipo = 'ativacao'
             AND t.usado_em IS NULL AND t.expira_em > NOW()
             AND c.ativo = 1 AND c.conta_ativada = 0''', (seguranca.hash_token(token),))
-        valido = cursor.fetchone() is not None
-    return jsonify(valido=valido)
+        colaborador = cursor.fetchone()
+    if not colaborador:
+        return jsonify(valido=False)
+    return jsonify(valido=True, re=colaborador['re'])
 
 
 @senha_bp.post('/definir-senha')

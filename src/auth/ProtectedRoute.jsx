@@ -12,5 +12,5 @@ export default function ProtectedRoute({ adminOnly = false }) {
   }
 
   // Esta guarda controla a navegação. O Flask valida novamente as permissões da API.
-  return <Outlet />;
+  return <Outlet key={colaborador.id} />;
 }
