@@ -24,9 +24,19 @@ function situacaoPrazo(texto, status) {
     return "";
 }
 
-function FichaModal({ ficha, onFechar, onIniciar, onFinalizar, bloqueado = false }) {
+function FichaModal({
+    ficha,
+    onFechar,
+    onIniciar,
+    onFinalizar,
+    bloqueado = false,
+    mostrarBotaoIniciar = true,
+    mostrarBotaoFinalizar = true,
+}) {
     const dados = ficha.ficha || {};
     const prazo = situacaoPrazo(dados.entrega, ficha.status);
+    const possuiAcaoRodape = (ficha.status === "producao" && mostrarBotaoFinalizar)
+        || (ficha.status === "pendente" && mostrarBotaoIniciar);
 
     useEffect(() => {
         const onKey = (e) => e.key === "Escape" && onFechar();
@@ -40,9 +50,9 @@ function FichaModal({ ficha, onFechar, onIniciar, onFinalizar, bloqueado = false
     }, [onFechar]);
 
     return createPortal(
-        <div className="fc-modal-overlay" onClick={onFechar}>
+        <div className="fc-modal-overlay fc-modal-ficha-overlay" onClick={onFechar}>
             <div
-                className="fc-modal"
+                className="fc-modal fc-modal-ficha"
                 onClick={(e) => e.stopPropagation()}
                 role="dialog"
                 aria-modal="true"
@@ -75,42 +85,44 @@ function FichaModal({ ficha, onFechar, onIniciar, onFinalizar, bloqueado = false
                     <FichaConteudo pedido={ficha.pedido} ficha={ficha.ficha} situacaoEntrega={prazo} />
                 </div>
 
-                {/* RODAPÉ: ação conforme o status. Não sai na impressão. */}
-                {(ficha.status === "pendente" || ficha.status === "producao") && (
-                    <div className="fc-modal-rodape no-print">
-                        <button type="button" className="btn-page-sec" onClick={onFechar}>
-                            Fechar
+                {/* Rodapé com ação por status e fechamento móvel. */}
+                <div className={`fc-modal-rodape no-print${possuiAcaoRodape ? "" : " fc-modal-rodape-sem-acao"}`}>
+                    <button
+                        type="button"
+                        className="btn-page-sec fc-modal-fechar-rodape"
+                        onClick={onFechar}
+                    >
+                        Fechar
+                    </button>
+
+                    {ficha.status === "pendente" && mostrarBotaoIniciar && (
+                        <button
+                            type="button"
+                            className="btn btn-add"
+                            disabled={bloqueado}
+                            onClick={onIniciar}
+                        >
+                            <span className="material-icons" style={{ fontSize: 18, marginRight: 6 }}>
+                                play_arrow
+                            </span>
+                            Iniciar pedido
                         </button>
+                    )}
 
-                        {ficha.status === "pendente" && (
-                            <button
-                                type="button"
-                                className="btn btn-add"
-                                disabled={bloqueado}
-                                onClick={onIniciar}
-                            >
-                                <span className="material-icons" style={{ fontSize: 18, marginRight: 6 }}>
-                                    play_arrow
-                                </span>
-                                Iniciar pedido
-                            </button>
-                        )}
-
-                        {ficha.status === "producao" && (
-                            <button
-                                type="button"
-                                className="btn btn-add"
-                                disabled={bloqueado}
-                                onClick={onFinalizar}
-                            >
-                                <span className="material-icons" style={{ fontSize: 18, marginRight: 6 }}>
-                                    check_circle
-                                </span>
-                                Finalizar pedido
-                            </button>
-                        )}
-                    </div>
-                )}
+                    {ficha.status === "producao" && mostrarBotaoFinalizar && (
+                        <button
+                            type="button"
+                            className="btn btn-add"
+                            disabled={bloqueado}
+                            onClick={onFinalizar}
+                        >
+                            <span className="material-icons" style={{ fontSize: 18, marginRight: 6 }}>
+                                check_circle
+                            </span>
+                            Finalizar pedido
+                        </button>
+                    )}
+                </div>
             </div>
         </div>,
         document.body

@@ -61,6 +61,7 @@ function Login() {
   if (colaborador) return <Navigate to="/home" replace />;
 
   return (
+    <>
     <main className="login">
 
       <img src="/img/E-threads.png" className="logo" alt="E-Threads" />
@@ -127,27 +128,31 @@ function Login() {
       <button type="button" className="reset-link" onClick={() => setModalAberto(true)}>
         Solicitar redefinição de senha
       </button>
-
-      <Modal aberto={modalAberto} onClose={() => setModalAberto(false)}>
-        <div className="modal-header">
-          <h2>Redefinir Senha</h2>
-        </div>
-
-        <form className="modal-body" onSubmit={solicitarRedefinicao}>
-          <input placeholder="Digite seu RE" aria-label="RE para redefinição" value={reRecuperacao}
-            onChange={(e) => setReRecuperacao(e.target.value)} maxLength={20} required disabled={solicitando} />
-          <button type="submit" disabled={solicitando || !reRecuperacao.trim()}>
-            {solicitando ? "Enviando..." : "Enviar"}
-          </button>
-          <p className="modal-help">
-            O link será enviado ao e-mail cadastrado e valerá por 24 horas.
-          </p>
-          {mensagemRecuperacao && <p role="status">{mensagemRecuperacao}</p>}
-          {erroRecuperacao && <p role="alert">{erroRecuperacao}</p>}
-        </form>
-      </Modal>
-
     </main>
+
+    <Modal
+      aberto={modalAberto}
+      onClose={() => setModalAberto(false)}
+      className="modal-redefinir-senha"
+    >
+      <div className="modal-header">
+        <h2>Redefinir Senha</h2>
+      </div>
+
+      <form className="modal-body" onSubmit={solicitarRedefinicao}>
+        <input placeholder="Digite seu RE" aria-label="RE para redefinição" value={reRecuperacao}
+          onChange={(e) => setReRecuperacao(e.target.value)} maxLength={20} required disabled={solicitando} />
+        <button type="submit" disabled={solicitando || !reRecuperacao.trim()}>
+          {solicitando ? "Enviando..." : "Enviar"}
+        </button>
+        <p className="modal-help">
+          O link será enviado ao e-mail cadastrado e valerá por 24 horas.
+        </p>
+        {mensagemRecuperacao && <p role="status">{mensagemRecuperacao}</p>}
+        {erroRecuperacao && <p role="alert">{erroRecuperacao}</p>}
+      </form>
+    </Modal>
+    </>
   );
 }
 

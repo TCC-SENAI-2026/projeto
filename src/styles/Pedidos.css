@@ -202,6 +202,18 @@
     /* alinha com os botões de ação */
 }
 
+@media (min-width: 769px) {
+    .pedidos-header span:nth-child(3),
+    .pedidos-header span:last-child {
+        text-align: center;
+    }
+
+    .pedido-card > .status-col,
+    .pedido-card > .actions {
+        justify-content: center;
+    }
+}
+
 .btn-historico {
     display: inline-flex;
     align-items: center;
@@ -224,6 +236,12 @@
 
 .btn-historico .material-icons {
     font-size: 18px;
+}
+
+@media (min-width: 1181px) {
+    .top-right-inline .search-box.pedidos-search-box {
+        flex-basis: 280px;
+    }
 }
 
 .pedido-card .prio-selo {

@@ -244,7 +244,12 @@ function Inicio() {
         </div>
       </div>
       {fichaAberta && (
-        <FichaModal ficha={fichaAberta} onFechar={() => setFichaAberta(null)} />
+        <FichaModal
+          ficha={fichaAberta}
+          onFechar={() => setFichaAberta(null)}
+          mostrarBotaoIniciar={false}
+          mostrarBotaoFinalizar={false}
+        />
       )}
     </>
   );

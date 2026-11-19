@@ -94,18 +94,188 @@
     }
 
     @media (max-width: 768px) {
-        .page-title,
-        .painel-header h1 {
-            font-size: 26px;
+        body {
+            font-size: 17px;
         }
 
+        .page-title,
+        .painel-header h1 {
+            font-size: 24px;
+            line-height: 1.2;
+        }
+
+        .form-title {
+            font-size: 24px;
+        }
+
+        .page-subtitle,
+        .form-subtitle,
+        .painel-header p,
+        .modal-value,
+        .cliente-detalhes-modal .modal-value,
+        .cliente-observacoes,
+        .cliente-detalhes-modal .cliente-observacoes {
+            font-size: 16px;
+            line-height: 1.45;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea,
+        .search {
+            font-size: 16px;
+        }
+
+        .form-section h2,
+        .side-title,
+        .solicitacoes-header h2,
+        .equipe-card-header h3 {
+            font-size: 20px;
+        }
+
+        .form-field label,
+        .section-help,
+        .btn,
+        .btn-filter,
+        .btn-page-sec,
+        .btn-sec,
+        .btn-salvar,
+        .filtro,
+        .filtro-status,
+        .solicitacao-acoes button,
+        .solicitacao-titulo h3,
+        .solicitacao-detalhes,
+        .menu > a,
+        .menu > button,
+        .menu-dropdown summary {
+            font-size: 16px;
+        }
+
+        .equipe-table thead th,
+        .estoque-header span,
+        .table-header,
+        .equipe-card-header small,
+        .equipe-status,
+        .status,
+        .status-pendentes,
+        .status-aprovadas,
+        .status-recusadas,
+        .solicitacao-data,
+        .form-badge,
+        .modal-label,
+        .cliente-detalhes-modal .modal-label,
         .mobile-field-label,
         .equipe-table tbody td[data-label]::before {
+            font-size: 13px;
+        }
+
+        .produto p,
+        .estoque-pagina .estoque-main p,
+        .empresa p,
+        .quantidade p {
+            font-size: 16px;
+        }
+
+        .aviso-topo {
+            font-size: 16px;
+        }
+
+        .dashboard-card h2,
+        .dashboard-card-baixo h2,
+        .report-card h2,
+        .report-card-baixo h2 {
+            font-size: 22px;
+        }
+
+        .chart-head p {
             font-size: 14px;
         }
 
         .solicitacao-acoes button {
             min-height: 44px;
+        }
+    }
+
+    @media (max-width: 560px) {
+        body {
+            font-size: 16px;
+        }
+
+        .page-title,
+        .painel-header h1,
+        .form-title {
+            font-size: 22px;
+        }
+
+        .page-subtitle,
+        .form-subtitle,
+        .painel-header p,
+        .modal-value,
+        .cliente-detalhes-modal .modal-value,
+        .cliente-observacoes,
+        .cliente-detalhes-modal .cliente-observacoes {
+            font-size: 15px;
+        }
+
+        .form-section h2,
+        .side-title,
+        .solicitacoes-header h2,
+        .equipe-card-header h3 {
+            font-size: 18px;
+        }
+
+        .form-field label,
+        .section-help,
+        .btn,
+        .btn-filter,
+        .btn-page-sec,
+        .btn-sec,
+        .btn-salvar,
+        .filtro,
+        .filtro-status,
+        .solicitacao-acoes button,
+        .solicitacao-titulo h3,
+        .solicitacao-detalhes,
+        .menu > a,
+        .menu > button,
+        .menu-dropdown summary {
+            font-size: 15px;
+        }
+
+        .equipe-table thead th,
+        .estoque-header span,
+        .table-header,
+        .equipe-card-header small,
+        .equipe-status,
+        .status,
+        .status-pendentes,
+        .status-aprovadas,
+        .status-recusadas,
+        .solicitacao-data,
+        .form-badge,
+        .modal-label,
+        .cliente-detalhes-modal .modal-label,
+        .mobile-field-label,
+        .equipe-table tbody td[data-label]::before {
+            font-size: 13px;
+        }
+
+        .produto p,
+        .estoque-pagina .estoque-main p,
+        .empresa p,
+        .quantidade p {
+            font-size: 15px;
+        }
+
+        .aviso-topo {
+            font-size: 15px;
+        }
+
+        .dashboard-card h2,
+        .dashboard-card-baixo h2,
+        .report-card h2,
+        .report-card-baixo h2 {
+            font-size: 20px;
         }
     }
 }

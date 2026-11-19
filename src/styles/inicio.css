@@ -218,6 +218,14 @@
     color: #64748b;
 }
 
+.dashboard .recent-header > span:last-child {
+    text-align: center;
+}
+
+.dashboard .order-row > .status {
+    justify-self: center;
+}
+
 .recent-orders {
     display: flex;
     flex-direction: column;

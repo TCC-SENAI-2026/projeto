@@ -155,7 +155,7 @@ function Pedidos() {
                     </div>
 
                     <div className="top-right top-right-inline">
-                        <div className="search-box">
+                        <div className="search-box pedidos-search-box">
                             <span className="material-icons search-icon">search</span>
 
                             <input
